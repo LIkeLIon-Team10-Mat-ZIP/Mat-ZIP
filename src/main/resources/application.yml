@@ -2,8 +2,3 @@ spring:
   profiles:
     active: local
     include: secret
-  datasource:
-    url: jdbc:mysql://127.0.0.1:3306/kotudy__refactor?useUnicode=true&characterEncoding=utf8&autoReconnect=true&serverTimezone=Asia/Seoul
-    username: kotudy
-    password: kotudy1234
-    driver-class-name: com.mysql.cj.jdbc.Driver
