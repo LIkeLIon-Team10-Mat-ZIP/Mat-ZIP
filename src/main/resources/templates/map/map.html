@@ -11,7 +11,6 @@
             height: 100vh;
             margin: 0;
             padding: 0;
-            background-color: #f0f0f0;
         }
         .map_wrap, .map_wrap * {margin:0;padding:0;font-family:'Malgun Gothic',dotum,'돋움',sans-serif;font-size:12px;}
         .map_wrap a, .map_wrap a:hover, .map_wrap a:active{color:#000;text-decoration: none;}
@@ -70,7 +69,7 @@
     </div>
 </div>
 
-<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=868d9aa6d8d0e67bad6c59729809c3fa&libraries=services"></script>
+<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=868d9aa6d8d0e67bad6c59729809c3fa&libraries=services,clusterer"></script>
 <script>
     // 마커를 담을 배열입니다
     var markers = [];
@@ -89,6 +88,13 @@
 
     // 검색 결과 목록이나 마커를 클릭했을 때 장소명을 표출할 인포윈도우를 생성합니다
     var infowindow = new kakao.maps.InfoWindow({zIndex:1});
+
+    // 마커 클러스터러를 생성합니다
+    var clusterer = new kakao.maps.MarkerClusterer({
+        map: map, // 마커들을 클러스터로 관리하고 표시할 지도 객체
+        averageCenter: true, // 클러스터에 포함된 마커들의 평균 위치를 클러스터 마커 위치로 설정
+        minLevel: 7 // 클러스터 할 최소 지도 레벨
+    });
 
     // 키워드로 장소를 검색합니다
     searchPlaces();
@@ -181,6 +187,8 @@
             fragment.appendChild(itemEl);
         }
 
+        clusterer.addMarkers(markers);
+
         // 검색결과 항목들을 검색결과 목록 Element에 추가합니다
         listEl.appendChild(fragment);
         menuEl.scrollTop = 0;
@@ -229,7 +237,9 @@
             });
 
         marker.setMap(map); // 지도 위에 마커를 표출합니다
-        markers.push(marker);  // 배열에 생성된 마커를 추가합니다
+        markers.push(marker);  // 배열에 생성된 마커를
+
+
 
         return marker;
     }
