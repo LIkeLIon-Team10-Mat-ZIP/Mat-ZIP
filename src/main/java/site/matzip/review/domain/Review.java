@@ -1,6 +1,9 @@
 package site.matzip.review.domain;
 
-import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,5 +26,6 @@ public class Review extends BaseEntity {
     @Builder.Default
     private List<ReviewImage> reviewImages = new ArrayList<>();
     private Double rating;
+    private String title;
     private String content;
 }
