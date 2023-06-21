@@ -9,7 +9,6 @@ import lombok.ToString;
 @Entity
 @Getter
 @NoArgsConstructor
-@ToString
 public class Member {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
