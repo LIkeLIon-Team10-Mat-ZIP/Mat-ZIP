@@ -4,10 +4,10 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-import site.matzip.review.domain.Review;
 import site.matzip.comment.domain.Comment;
 import site.matzip.comment.domain.CommentRepository;
 import site.matzip.commentImage.domain.CommentImage;
+import site.matzip.review.domain.Review;
 
 import java.util.List;
 

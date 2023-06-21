@@ -11,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 @ActiveProfiles("test")
 class CommentServiceTest {
-
     @Autowired
     private CommentService commentService;
 

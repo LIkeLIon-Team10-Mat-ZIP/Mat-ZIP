@@ -8,8 +8,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 @SpringBootApplication
 public class MatzipApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(MatzipApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(MatzipApplication.class, args);
+    }
 
 }

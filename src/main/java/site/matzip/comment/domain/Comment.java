@@ -5,9 +5,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-import site.matzip.review.domain.Review;
 import site.matzip.base.domain.BaseEntity;
 import site.matzip.commentImage.domain.CommentImage;
+import site.matzip.review.domain.Review;
 
 import java.util.ArrayList;
 import java.util.List;
