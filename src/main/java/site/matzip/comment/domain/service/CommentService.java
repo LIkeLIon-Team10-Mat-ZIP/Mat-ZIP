@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-import site.matzip.article.domain.Article;
+import site.matzip.review.domain.Review;
 import site.matzip.comment.domain.Comment;
 import site.matzip.comment.domain.CommentRepository;
 import site.matzip.commentImage.domain.CommentImage;
@@ -16,9 +16,9 @@ import java.util.List;
 public class CommentService {
     private final CommentRepository commentRepository;
 
-    public void create(Article article, List<CommentImage> commentImages, String title, String content) {
+    public void create(Review review, List<CommentImage> commentImages, String title, String content) {
         Comment comment = Comment.builder()
-                .article(article)
+                .review(review)
                 .title(title)
                 .content(content)
                 .commentImages(commentImages)
@@ -29,7 +29,7 @@ public class CommentService {
 
     public void remove(Long id) {
         Comment comment = commentRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Review not found"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Comment not found"));
 
         commentRepository.delete(comment);
     }

@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-import site.matzip.article.domain.Article;
+import site.matzip.review.domain.Review;
 import site.matzip.base.domain.BaseEntity;
 import site.matzip.commentImage.domain.CommentImage;
 
@@ -21,8 +21,8 @@ public class Comment extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "article_id")
-    private Article article;
+    @JoinColumn(name = "review_id")
+    private Review review;
     @OneToMany(mappedBy = "comment", cascade = {CascadeType.ALL})
     @Builder.Default
     private List<CommentImage> commentImages = new ArrayList<>();

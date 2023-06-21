@@ -1,4 +1,4 @@
-package site.matzip.article.domain;
+package site.matzip.review.domain;
 
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -15,11 +15,11 @@ import java.util.List;
 @Getter
 @SuperBuilder
 @NoArgsConstructor
-public class Article extends BaseEntity {
+public class Review extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @OneToMany(mappedBy = "article", cascade = {CascadeType.ALL})
+    @OneToMany(mappedBy = "review", cascade = {CascadeType.ALL})
     @OrderBy("id desc")
     @Builder.Default
     private List<Comment> comments = new ArrayList<>();
