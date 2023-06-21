@@ -14,16 +14,19 @@ import java.util.List;
 public class MatzipService {
     private final MatzipRepository matzipRepository;
 
-    public RsData create(MatzipCreationDTO creationDTO) {
+    public RsData<Matzip> create(MatzipCreationDTO creationDTO) {
         Matzip matzip = Matzip.builder()
                 .matzipName(creationDTO.getMatzipName())
                 .address(creationDTO.getAddress())
                 .description(creationDTO.getDescription())
                 .matzipType(creationDTO.getMatzipTypeEnum())
+                .openingTime(creationDTO.getOpeningTime())
+                .closingTime(creationDTO.getClosingTime())
+                .phoneNumber(creationDTO.getPhoneNumber())
                 .build();
 
         Matzip savedMatzip = matzipRepository.save(matzip);
-        return RsData.of("S-1", "맛집이 등록 되었습니다.");
+        return RsData.of("S-1", "맛집이 등록 되었습니다.",savedMatzip);
     }
 
     public List<Matzip> findAll() {
