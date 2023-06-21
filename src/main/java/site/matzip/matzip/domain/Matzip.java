@@ -1,6 +1,8 @@
 package site.matzip.matzip.domain;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
@@ -13,12 +15,12 @@ import static jakarta.persistence.GenerationType.IDENTITY;
 @Entity
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Matzip {
     @Id
-    @GeneratedValue(strategy = IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @CreatedDate
-    private LocalDateTime createDate;
     private String matzipName;
     private String description;
     private String address;
@@ -26,6 +28,5 @@ public class Matzip {
     private MatzipType matzipType;
     private LocalTime openingTime;
     private LocalTime closingTime;
-
 
 }
