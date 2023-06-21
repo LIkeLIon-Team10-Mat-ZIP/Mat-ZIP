@@ -1,4 +1,4 @@
-package site.matzip.review.domain;
+package site.matzip.comment.domain;
 
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import site.matzip.article.domain.Article;
 import site.matzip.base.domain.BaseEntity;
-import site.matzip.reviewImage.domain.ReviewImage;
+import site.matzip.commentImage.domain.CommentImage;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,16 +16,16 @@ import java.util.List;
 @Getter
 @SuperBuilder
 @NoArgsConstructor
-public class Review extends BaseEntity {
+public class Comment extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "article_id")
     private Article article;
-    @OneToMany(mappedBy = "review", cascade = {CascadeType.ALL})
+    @OneToMany(mappedBy = "comment", cascade = {CascadeType.ALL})
     @Builder.Default
-    private List<ReviewImage> reviewImages = new ArrayList<>();
+    private List<CommentImage> commentImages = new ArrayList<>();
     private Double rating;
     private String title;
     private String content;

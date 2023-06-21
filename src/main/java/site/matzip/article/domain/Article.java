@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import site.matzip.base.domain.BaseEntity;
-import site.matzip.review.domain.Review;
+import site.matzip.comment.domain.Comment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,9 +19,9 @@ public class Article extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @OneToMany(mappedBy = "review", cascade = {CascadeType.ALL})
+    @OneToMany(mappedBy = "article", cascade = {CascadeType.ALL})
     @OrderBy("id desc")
     @Builder.Default
-    private List<Review> reviews = new ArrayList<>();
+    private List<Comment> comments = new ArrayList<>();
 
 }
