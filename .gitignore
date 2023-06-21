@@ -38,3 +38,7 @@ out/
 
 ### Custom ###
 application-secret.yml
+application-test.yml
+
+### initData ###
+NotProd.java
