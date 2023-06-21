@@ -23,7 +23,6 @@ public class Comment extends BaseEntity {
     @JoinColumn(name = "review_id")
     private Review review;
     @OneToMany(mappedBy = "comment", cascade = {CascadeType.ALL})
-    @Builder.Default
     private List<CommentImage> commentImages = new ArrayList<>();
     private Double rating;
     private String title;
