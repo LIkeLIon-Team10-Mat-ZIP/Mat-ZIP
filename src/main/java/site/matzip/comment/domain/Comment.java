@@ -1,10 +1,10 @@
 package site.matzip.comment.domain;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
 import site.matzip.base.domain.BaseEntity;
 import site.matzip.commentImage.domain.CommentImage;
 import site.matzip.review.domain.Review;
@@ -14,8 +14,7 @@ import java.util.List;
 
 @Entity
 @Getter
-@SuperBuilder
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Comment extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,4 +28,12 @@ public class Comment extends BaseEntity {
     private Double rating;
     private String title;
     private String content;
+
+    @Builder
+    public Comment(Review review, Double rating, String title, String content) {
+        this.review = review;
+        this.rating = rating;
+        this.title = title;
+        this.content = content;
+    }
 }
