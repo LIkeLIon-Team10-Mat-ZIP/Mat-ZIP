@@ -16,15 +16,28 @@ public class Member {
     private Long id;
     private String username;
     private String password;
+    private String nickname;
     private String email;
     @Enumerated(EnumType.STRING)
     private MemberRole role;
 
     @Builder
-    public Member(String username, String password, String email) {
+    public Member(String username, String password, String nickname ,String email) {
         this.username = username;
         this.password = password;
+        this.nickname = nickname;
         this.email = email;
         role = MemberRole.ROLE_MEMBER;
+    }
+
+    public String getEmail() {
+        if (email == null) {
+            return "";
+        }
+        return email;
+    }
+
+    public void updateEmail(String email) {
+        this.email = email;
     }
 }
