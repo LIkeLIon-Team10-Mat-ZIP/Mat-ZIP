@@ -1,9 +1,6 @@
 package site.matzip.review.domain;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,6 +17,9 @@ import java.util.List;
 @SuperBuilder
 @NoArgsConstructor
 public class Review extends BaseEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     @ManyToOne
     private Article article;
     @OneToMany(mappedBy = "review", cascade = {CascadeType.ALL})

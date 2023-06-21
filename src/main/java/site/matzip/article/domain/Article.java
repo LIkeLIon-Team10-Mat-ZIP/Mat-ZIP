@@ -1,9 +1,6 @@
 package site.matzip.article.domain;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OrderBy;
+import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,16 +16,12 @@ import java.util.List;
 @SuperBuilder
 @NoArgsConstructor
 public class Article extends BaseEntity {
-
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     @OneToMany(mappedBy = "review", cascade = {CascadeType.ALL})
     @OrderBy("id desc")
     @Builder.Default
     private List<Review> reviews = new ArrayList<>();
-
-    //private Member username;
-
-    //private Restaurant restaurant;
-
-    //private Marker place;
 
 }
