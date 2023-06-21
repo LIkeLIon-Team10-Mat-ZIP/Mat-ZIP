@@ -185,6 +185,11 @@
             })(marker, places[i].place_name);
 
             fragment.appendChild(itemEl);
+
+            // 마커에 클릭 이벤트를 등록한다 (우클릭 : rightclick)
+            kakao.maps.event.addListener(marker, 'click', function() {
+                alert('마커를 클릭했습니다!');
+            });
         }
 
         clusterer.addMarkers(markers);
