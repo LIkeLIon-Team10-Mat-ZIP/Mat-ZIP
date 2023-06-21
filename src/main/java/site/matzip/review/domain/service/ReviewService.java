@@ -14,7 +14,6 @@ import java.util.List;
 @Service
 @AllArgsConstructor
 public class ReviewService {
-
     private final ReviewRepository reviewRepository;
 
     public void create(Article article, List<ReviewImage> reviewImages, String title, String content) {
@@ -28,7 +27,7 @@ public class ReviewService {
         reviewRepository.save(review);
     }
 
-    public void delete(Long id) {
+    public void remove(Long id) {
         Review review = reviewRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Review not found"));
 
