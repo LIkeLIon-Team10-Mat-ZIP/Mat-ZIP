@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import site.matzip.matzip.domain.Matzip;
 import site.matzip.matzip.dto.MatzipCreationDTO;
 import site.matzip.matzip.repository.MatzipRepository;
-import site.matzip.matzip.rsData.RsData;
+import site.matzip.base.rsData.RsData;
 
 import java.util.List;
 

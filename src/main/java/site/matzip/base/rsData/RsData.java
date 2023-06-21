@@ -1,4 +1,4 @@
-package site.matzip.matzip.rsData;
+package site.matzip.base.rsData;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
