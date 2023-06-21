@@ -1,20 +1,14 @@
 package site.matzip.matzip.domain;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
+import lombok.*;
 
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 
-import static jakarta.persistence.GenerationType.IDENTITY;
 
 @Entity
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
 public class Matzip {
@@ -24,6 +18,7 @@ public class Matzip {
     private String matzipName;
     private String description;
     private String address;
+    private String phoneNumber;
     @Enumerated(EnumType.STRING)
     private MatzipType matzipType;
     private LocalTime openingTime;
