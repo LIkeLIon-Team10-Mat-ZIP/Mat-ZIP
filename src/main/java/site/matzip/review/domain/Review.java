@@ -20,7 +20,8 @@ public class Review extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "article_id")
     private Article article;
     @OneToMany(mappedBy = "review", cascade = {CascadeType.ALL})
     @Builder.Default

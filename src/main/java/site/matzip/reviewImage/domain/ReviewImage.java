@@ -12,11 +12,11 @@ import site.matzip.review.domain.Review;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ReviewImage {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long Id;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "review_id")
     private Review review;
     @NotNull
     private String imageUrl;
