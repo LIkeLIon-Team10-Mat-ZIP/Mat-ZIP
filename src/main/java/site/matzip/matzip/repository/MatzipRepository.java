@@ -1,9 +1,9 @@
-package site.matzip.restaurant.repository;
+package site.matzip.matzip.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import site.matzip.restaurant.domain.Restaurant;
+import site.matzip.matzip.domain.Matzip;
 
 @Repository
-public interface RestaurantRepository extends JpaRepository<Restaurant, Long> {
+public interface MatzipRepository extends JpaRepository<Matzip, Long> {
 }

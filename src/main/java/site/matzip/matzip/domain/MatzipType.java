@@ -1,5 +1,12 @@
-package site.matzip.restaurant.domain;
+package site.matzip.matzip.domain;
 
-public enum RestaurantType {
-    Korean,Japanese,Chinese,Asian,Western,Bar
+public enum MatzipType {
+    Korean,
+    Japanese,
+    Chinese,
+    Asian,
+    Western,
+    Bar,
+    Cafe,
+    etc
 }

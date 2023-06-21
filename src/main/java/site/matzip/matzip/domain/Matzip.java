@@ -1,4 +1,4 @@
-package site.matzip.restaurant.domain;
+package site.matzip.matzip.domain;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -13,17 +13,17 @@ import static jakarta.persistence.GenerationType.IDENTITY;
 @Entity
 @Getter
 @NoArgsConstructor
-public class Restaurant {
+public class Matzip {
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
     @CreatedDate
     private LocalDateTime createDate;
-    private String restaurantName;
+    private String matzipName;
     private String description;
     private String address;
     @Enumerated(EnumType.STRING)
-    private RestaurantType restaurantType;
+    private MatzipType matzipType;
     private LocalTime openingTime;
     private LocalTime closingTime;
 

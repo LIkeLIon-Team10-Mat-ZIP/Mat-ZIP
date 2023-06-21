@@ -1,8 +1,8 @@
-package site.matzip.restaurant.service;
+package site.matzip.matzip.service;
 
 import org.springframework.stereotype.Service;
 
 @Service
-public class RestaurantService {
+public class MatzipService {
 
 }
