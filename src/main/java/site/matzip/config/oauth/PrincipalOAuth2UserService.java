@@ -2,6 +2,7 @@ package site.matzip.config.oauth;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
@@ -24,10 +25,17 @@ public class PrincipalOAuth2UserService extends DefaultOAuth2UserService {
     @Autowired
     private MemberRepository memberRepository;
 
+    @Value("${token.content-type}")
+    private String contentType;
+
+    @Value("${token.grant_type}")
+    private String grantType;
+
     @Override
     @Transactional
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         OAuth2User oAuth2User = super.loadUser(userRequest);
+        String accessToken = userRequest.getAccessToken().getTokenValue();
 
         OAuth2UserInfo oAuth2UserInfo = null;
         if (userRequest.getClientRegistration().getRegistrationId().equals("kakao")) {
@@ -37,10 +45,10 @@ public class PrincipalOAuth2UserService extends DefaultOAuth2UserService {
             log.info("카카오만 지원합니다");
         }
 
-        return createOAuth2User(oAuth2User, oAuth2UserInfo);
+        return createOAuth2User(oAuth2User, oAuth2UserInfo, accessToken);
     }
 
-    private PrincipalDetails createOAuth2User(OAuth2User oAuth2User, OAuth2UserInfo oAuth2UserInfo) {
+    private PrincipalDetails createOAuth2User(OAuth2User oAuth2User, OAuth2UserInfo oAuth2UserInfo, String accessToken) {
         BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
         assert oAuth2UserInfo != null;
         String provider = oAuth2UserInfo.getProvider();
