@@ -8,7 +8,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- 데이지 UI 불러오기 -->
     <link href="https://cdn.jsdelivr.net/npm/daisyui@2.51.5/dist/full.css" rel="stylesheet" type="text/css"/>
-    <title>키워드로 장소검색하고 목록으로 표출하기</title>
+    <title>맛집 등록</title>
     <style>
         body {
             display: flex;
@@ -75,11 +75,42 @@
         #placeInfo p {
             margin: 5px 0;
         }
+
+        #myform fieldset{
+            display: inline-block; /* 하위 별점 이미지들이 있는 영역만 자리를 차지함.*/
+            border: 0; /* 필드셋 테두리 제거 */
+        }
+        #myform input[type=radio]{
+            display: none; /* 라디오박스 감춤 */
+        }
+        #myform label{
+            font-size: 3em; /* 이모지 크기 */
+            color: transparent; /* 기존 이모지 컬러 제거 */
+            text-shadow: 0 0 0 #f0f0f0; /* 새 이모지 색상 부여 */
+        }
+        #myform label:hover{
+            text-shadow: 0 0 0 #a00; /* 마우스 호버 */
+        }
+        #myform label:hover ~ label{
+            text-shadow: 0 0 0 #a00; /* 마우스 호버 뒤에오는 이모지들 */
+        }
+        #myform fieldset{
+            display: inline-block; /* 하위 별점 이미지들이 있는 영역만 자리를 차지함.*/
+            direction: rtl; /* 이모지 순서 반전 */
+            border: 0; /* 필드셋 테두리 제거 */
+        }
+        #myform fieldset legend{
+            text-align: left;
+        }
+        #myform input[type=radio]:checked ~ label {
+            text-shadow: 0 0 0 #a00; /* 마우스 클릭 체크 */
+        }
+
     </style>
 </head>
 <body>
 <div class="map_wrap">
-    <div id="map" style="width:100%;height:100%;position:relative;overflow:hidden;"></div>
+    <div id="map" style="width:100%;height:100%;position:absolute;overflow:hidden;"></div>
     <div id="menu_wrap" class="bg_white">
         <div class="option">
             <div>
@@ -260,16 +291,18 @@
         html += '</select>';
         html += '</div>';
 
-        // 시간 입력 필드 추가
-        html += '<div>';
-        html += '<label>오픈 시간:</label>';
-        html += '<input type="time" id="openingTimeInput"/>';
-        html += '</div>';
+        // 별점 추가
+        html += '<form name="myform" id="myform" method="post" action="./save">';
+        html += '<fieldset>';
+        html += '<legend>평점</legend>';
+        html += '<input type="radio" name="rating" value="5" id="rate1"><label for="rate1">⭐</label>';
+        html += '<input type="radio" name="rating" value="4" id="rate2"><label for="rate2">⭐</label>';
+        html += '<input type="radio" name="rating" value="3" id="rate3"><label for="rate3">⭐</label>';
+        html += '<input type="radio" name="rating" value="2" id="rate4"><label for="rate4">⭐</label>';
+        html += '<input type="radio" name="rating" value="1" id="rate5"><label for="rate5">⭐</label>';
+        html += '</fieldset>';
+        html += '</form>';
 
-        html += '<div>';
-        html += '<label>마감 시간:</label>';
-        html += '<input type="time" id="closingTimeInput"/>';
-        html += '</div>';
 
         html += '<div>';
         html += '<button class="w-full text-white rounded-3xl py-2 h-8 flex items-center justify-center shadow" style="background-color: #2E8B57;" onclick="registerAsMatzip()"><strong>맛집으로 등록</strong></button>';
@@ -282,19 +315,17 @@
     function registerAsMatzip() {
         // 맛집 정보를 수집합니다
         var description = document.getElementById('descriptionInput').value;
-        var openingTime = document.getElementById('openingTimeInput').value;
-        var closingTime = document.getElementById('closingTimeInput').value;
         var matzipType = document.getElementById('matzipTypeSelect').value;
-
+        var rating = document.querySelector('input[name="rating"]:checked').value;
+        console.log(rating);
         // 맛집 정보를 객체로 생성합니다
         var matzipCreationDTO = {
             matzipName: placeName,
             address: placeAddress,
             phoneNumber: placePhone,
             description: description,
-            openingTime: openingTime,
-            closingTime: closingTime,
-            matzipType: matzipType
+            matzipType: matzipType,
+            rating: rating
         };
 
         // 서버로 맛집 정보를 전송합니다

@@ -21,7 +21,5 @@ public class Matzip {
     private String phoneNumber;
     @Enumerated(EnumType.STRING)
     private MatzipType matzipType;
-    private LocalTime openingTime;
-    private LocalTime closingTime;
     private double rating;
 }

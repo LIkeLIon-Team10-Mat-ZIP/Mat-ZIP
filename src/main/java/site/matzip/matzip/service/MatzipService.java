@@ -20,9 +20,8 @@ public class MatzipService {
                 .address(creationDTO.getAddress())
                 .description(creationDTO.getDescription())
                 .matzipType(creationDTO.getMatzipTypeEnum())
-                .openingTime(creationDTO.getOpeningTime())
-                .closingTime(creationDTO.getClosingTime())
                 .phoneNumber(creationDTO.getPhoneNumber())
+                .rating(creationDTO.getRating())
                 .build();
 
         Matzip savedMatzip = matzipRepository.save(matzip);

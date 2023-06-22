@@ -23,9 +23,7 @@ public class MatzipCreationDTO {
     @NotNull(message = "맛집의 유형을 입력해주세요")
     private String matzipType;
     private String description;
-    //추가정보
-    private LocalTime openingTime;
-    private LocalTime closingTime;
+    private double rating;
 
     public MatzipType getMatzipTypeEnum() {
         return MatzipType.valueOf(matzipType);

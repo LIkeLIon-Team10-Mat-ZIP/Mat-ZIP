@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import site.matzip.base.rsData.RsData;
 import site.matzip.matzip.domain.Matzip;
 import site.matzip.matzip.dto.MatzipCreationDTO;
 import site.matzip.matzip.dto.MatzipListDTO;
@@ -52,8 +53,6 @@ public class MatzipController {
                         .address(matzip.getAddress())
                         .phoneNumber(matzip.getPhoneNumber())
                         .matzipType(matzip.getMatzipType())
-                        .openingTime(matzip.getOpeningTime())
-                        .closingTime(matzip.getClosingTime())
                         .build())
                 .collect(Collectors.toList());
 
