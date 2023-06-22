@@ -49,7 +49,6 @@ public class MatzipController {
         List<MatzipListDTO> matzipDtoList = matzipList.stream()
                 .map(matzip -> MatzipListDTO.builder()
                         .matzipName(matzip.getMatzipName())
-                        .description(matzip.getDescription())
                         .address(matzip.getAddress())
                         .phoneNumber(matzip.getPhoneNumber())
                         .matzipType(matzip.getMatzipType())

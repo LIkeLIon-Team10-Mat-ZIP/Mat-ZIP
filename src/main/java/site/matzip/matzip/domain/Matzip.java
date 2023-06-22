@@ -2,8 +2,11 @@ package site.matzip.matzip.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import site.matzip.member.domain.Member;
 
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Entity
@@ -16,10 +19,10 @@ public class Matzip {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String matzipName;
-    private String description;
     private String address;
     private String phoneNumber;
     @Enumerated(EnumType.STRING)
     private MatzipType matzipType;
-    private double rating;
+    @OneToMany(mappedBy = "matzip", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<MatzipRecommendation> matzipRecommendations;
 }
