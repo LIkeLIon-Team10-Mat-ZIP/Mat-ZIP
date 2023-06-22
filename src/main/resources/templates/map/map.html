@@ -2,6 +2,8 @@
 <html>
 <head>
     <meta charset="utf-8">
+    <meta name="_csrf" th:content="${_csrf.token}" />
+    <meta name="_csrf_header" th:content="${_csrf.headerName}" />
     <!-- 테일윈드 불러오기 -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- 데이지 UI 불러오기 -->
@@ -225,29 +227,102 @@
         // 검색된 장소 위치를 기준으로 지도 범위를 재설정합니다
         map.setBounds(bounds);
     }
-
+    var placeName, placeAddress,placePhone
     // 마커를 클릭했을 때 주소 정보를 표시하는 함수입니다
     function showPlaceInfo(place) {
         // 주소 정보를 가져옵니다
-        var placeName = place.place_name;
-        var placeAddress = place.address_name;
-        var placePhone = place.phone;
+        placeName= place.place_name;
+        placeAddress = place.address_name;
+        placePhone = place.phone;
 
         // HTML 요소에 주소 정보를 표시합니다
         var html = '<h2>' + placeName + '</h2>';
         html += '<p>주소: ' + placeAddress + '</p>';
         html += '<p>전화번호: ' + placePhone + '</p>';
-        html += '<button class="w-full text-white rounded-3xl py-2 h-8 flex items-center justify-center shadow" style="background-color: #2E8B57;" onclick="registerAsRestaurant()"><strong>맛집으로 등록</strong></button>';
+
+        // 입력 필드 추가
+        html += '<div>';
+        html += '<label>설명:</label>';
+        html += '<input type="text" id="descriptionInput" required/>';
+        html += '</div>';
+
+        html += '<div>';
+        html += '<label>유형:</label>';
+        html += '<select id="matzipTypeSelect" required>';
+        html += '<option value="Korean">한식</option>';
+        html += '<option value="Japanese">일식</option>';
+        html += '<option value="Chinese">중식</option>';
+        html += '<option value="Asian">아시안</option>';
+        html += '<option value="Western">양식</option>';
+        html += '<option value="Bar">술집</option>';
+        html += '<option value="Cafe">카페</option>';
+        html += '<option value="etc">기타</option>';
+        html += '</select>';
+        html += '</div>';
+
+        // 시간 입력 필드 추가
+        html += '<div>';
+        html += '<label>오픈 시간:</label>';
+        html += '<input type="time" id="openingTimeInput"/>';
+        html += '</div>';
+
+        html += '<div>';
+        html += '<label>마감 시간:</label>';
+        html += '<input type="time" id="closingTimeInput"/>';
+        html += '</div>';
+
+        html += '<div>';
+        html += '<button class="w-full text-white rounded-3xl py-2 h-8 flex items-center justify-center shadow" style="background-color: #2E8B57;" onclick="registerAsMatzip()"><strong>맛집으로 등록</strong></button>';
+        html += '</div>';
 
         placeInfo.innerHTML = html;
         placeInfo.style.display = 'block';
     }
 
-    function registerAsRestaurant() {
-        // 맛집으로 등록 버튼을 눌렀을 때의 동작을 정의합니다
-        // 여기에 맛집 등록 로직을 작성하면 됩니다
-        // 예시로 간단히 alert 창을 띄우도록 하겠습니다
-        alert('맛집으로 등록되었습니다!');
+    function registerAsMatzip() {
+        // 맛집 정보를 수집합니다
+        var description = document.getElementById('descriptionInput').value;
+        var openingTime = document.getElementById('openingTimeInput').value;
+        var closingTime = document.getElementById('closingTimeInput').value;
+        var matzipType = document.getElementById('matzipTypeSelect').value;
+
+        // 맛집 정보를 객체로 생성합니다
+        var matzipCreationDTO = {
+            matzipName: placeName,
+            address: placeAddress,
+            phoneNumber: placePhone,
+            description: description,
+            openingTime: openingTime,
+            closingTime: closingTime,
+            matzipType: matzipType
+        };
+
+        // 서버로 맛집 정보를 전송합니다
+        // CSRF 토큰을 가져옵니다
+        var csrfToken = document.querySelector('meta[name=_csrf]').getAttribute('content');
+        var csrfHeader = document.querySelector('meta[name=_csrf_header]').getAttribute('content');
+
+        // 서버로 맛집 정보를 전송합니다
+        fetch('/matzip/create', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                [csrfHeader]: csrfToken  // CSRF 토큰을 헤더에 포함합니다
+            },
+            body: JSON.stringify(matzipCreationDTO)
+        })
+            .then(response => {
+                if (response.ok) {
+                    alert('맛집으로 등록되었습니다!');
+                } else {
+                    alert('맛집 등록에 실패했습니다.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                console.log(error);
+                alert('맛집 등록에 실패했습니다.');
+            });
     }
 
     // 검색결과 항목을 Element로 반환하는 함수입니다

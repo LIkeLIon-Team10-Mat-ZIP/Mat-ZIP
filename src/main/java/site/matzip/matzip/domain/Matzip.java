@@ -23,5 +23,5 @@ public class Matzip {
     private MatzipType matzipType;
     private LocalTime openingTime;
     private LocalTime closingTime;
-
+    private double rating;
 }
