@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Create Matzip</title>
+</head>
+<body>
+<h2>맛집 등록</h2>
+
+<form th:action="@{/matzip/create}" method="post">
+    <div>
+        <label>맛집 이름:</label>
+        <input type="text" name="matzipName" required/>
+    </div>
+    <div>
+        <label>주소:</label>
+        <input type="text" name="address" required/>
+    </div>
+    <div>
+        <label>설명:</label>
+        <input type="text" name="description" required/>
+    </div>
+    <div>
+        <label>유형:</label>
+        <select name="matzipType" required>
+            <option value="Korean">한식</option>
+            <option value="Japanese">일식</option>
+            <option value="Chinese">중식</option>
+            <option value="Asian">아시안</option>
+            <option value="Western">양식</option>
+            <option value="Bar">술집</option>
+            <option value="Cafe">카페</option>
+            <option value="etc">기타</option>
+        </select>
+    </div>
+    <div>
+        <label>전화번호:</label>
+        <input type="text" name="phoneNumber" pattern="^\d{2,3}-\d{3,4}-\d{4}$" title="올바른 형식: 010-1234-5678 or 02-123-4567"/>
+    </div>
+    <div>
+        <label>오픈 시간:</label>
+        <input type="time" name="openingTime"/>
+    </div>
+    <div>
+        <label>마감 시간:</label>
+        <input type="time" name="closingTime"/>
+    </div>
+
+    <div>
+        <button type="submit">Submit</button>
+    </div>
+</form>
+</body>
+</html>

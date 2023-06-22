@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>맛집리스트</title>
+</head>
+<body>
+<h1>맛집 목록</h1>
+
+<table>
+    <thead>
+    <tr>
+        <th>맛집이름</th>
+        <th>설명</th>
+        <th>주소</th>
+        <th>전화번호</th>
+        <th>맛집유형</th>
+        <th>오픈시간</th>
+        <th>마감시간</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="matzip : ${matzipList}">
+        <td th:text="${matzip.matzipName}"></td>
+        <td th:text="${matzip.description}"></td>
+        <td th:text="${matzip.address}"></td>
+        <td th:text="${matzip.phoneNumber}"></td>
+        <td th:text="${matzip.matzipType}"></td>
+        <td th:text="${matzip.openingTime}"></td>
+        <td th:text="${matzip.closingTime}"></td>
+    </tr>
+    </tbody>
+</table>
+
+<a href="/matzip/create" class="btn btn-primary">맛집등록</a>
+</body>
+</html>
