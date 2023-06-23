@@ -472,7 +472,7 @@
             // 맛집 정보를 수집합니다
             var description = document.getElementById('descriptionInput').value;
             var matzipType = document.getElementById('matzipTypeSelect').value;
-            var rating = document.querySelector('input[name="rating"]:checked').value;
+            var rating = document.querySelector('input[name="rating"]:checked')?.value ?? 0;
             // 주소-좌표 변환 객체를 생성합니다
             var geocoder = new kakao.maps.services.Geocoder();
             geocoder.addressSearch(placeAddress, function (result, status) {
