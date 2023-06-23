@@ -3,20 +3,29 @@ package site.matzip.config.oauth;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
+import org.springframework.security.oauth2.core.OAuth2AccessToken;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
+import org.springframework.security.oauth2.core.OAuth2RefreshToken;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestTemplate;
 import site.matzip.config.auth.PrincipalDetails;
 import site.matzip.config.oauth.provider.KakaoUserInfo;
 import site.matzip.config.oauth.provider.OAuth2UserInfo;
 import site.matzip.member.domain.Member;
 import site.matzip.member.repository.MemberRepository;
 
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -25,17 +34,32 @@ public class PrincipalOAuth2UserService extends DefaultOAuth2UserService {
     @Autowired
     private MemberRepository memberRepository;
 
+
     @Value("${token.content-type}")
     private String contentType;
 
     @Value("${token.grant_type}")
     private String grantType;
 
+    @Value("${spring.security.oauth2.client.registration.kakao.clientId}")
+    private String clientId;
+
+    @Value("${spring.security.oauth2.client.registration.kakao.redirect-uri}")
+    private String redirectUri;
+
+    @Value("${spring.security.oauth2.client.provider.kakao.token-uri}")
+    private String tokenUri;
+
     @Override
     @Transactional
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         OAuth2User oAuth2User = super.loadUser(userRequest);
-        String accessToken = userRequest.getAccessToken().getTokenValue();
+        String authCode = userRequest.getAccessToken().getTokenValue();
+        OAuth2AccessToken accessToken = userRequest.getAccessToken();
+
+        System.out.println("authCode.getTokenValue() = " + accessToken.getTokenValue());
+        System.out.println("authCode.getExpiresAt() = " + accessToken.getExpiresAt());
+        System.out.println("authCode.getScopes() = " + accessToken.getScopes());
 
         OAuth2UserInfo oAuth2UserInfo = null;
         if (userRequest.getClientRegistration().getRegistrationId().equals("kakao")) {
@@ -45,10 +69,11 @@ public class PrincipalOAuth2UserService extends DefaultOAuth2UserService {
             log.info("카카오만 지원합니다");
         }
 
-        return createOAuth2User(oAuth2User, oAuth2UserInfo, accessToken);
+        return createOAuth2User(oAuth2User, oAuth2UserInfo, authCode);
     }
 
-    private PrincipalDetails createOAuth2User(OAuth2User oAuth2User, OAuth2UserInfo oAuth2UserInfo, String accessToken) {
+    private PrincipalDetails createOAuth2User(OAuth2User oAuth2User, OAuth2UserInfo oAuth2UserInfo, String authCode) {
+        getAccessToken(authCode);
         BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
         assert oAuth2UserInfo != null;
         String provider = oAuth2UserInfo.getProvider();
@@ -69,6 +94,32 @@ public class PrincipalOAuth2UserService extends DefaultOAuth2UserService {
         }
 
         return new PrincipalDetails(findMember.get(), oAuth2User.getAttributes());
+    }
+
+    private void getAccessToken(String authCode) {
+        RestTemplate rt = new RestTemplate();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-type", contentType);
+
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("grant_type", grantType);
+        params.add("client_id", clientId);
+        params.add("redirect_uri", redirectUri);
+        params.add("code", authCode);
+
+        // 해더와 바디를 하나의 오브젝트로 만들기
+        HttpEntity<MultiValueMap<String, String>> kakaoTokenRequest =
+                new HttpEntity<>(params, headers);
+
+        // Http 요청하고 리턴값을 response 변수로 받기
+        ResponseEntity<String> response = rt.exchange(
+                tokenUri, // Host
+                HttpMethod.POST, // Request Method
+                kakaoTokenRequest,	// RequestBody
+                String.class);	// return Object
+
+        System.out.println("response = " + response);
     }
 
     private PrincipalDetails saveNewMember(OAuth2User oAuth2User, String username, String password, String nickname, String email) {

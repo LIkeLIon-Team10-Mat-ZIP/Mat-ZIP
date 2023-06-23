@@ -19,4 +19,10 @@ public class MemberController {
     public String showLogin() {
         return "usr/member/login";
     }
+
+    @GetMapping("/login/oauth2/code/kakao")
+    public String code(String code) {
+        System.out.println("code COntroller = " + code);
+        return "";
+    }
 }
