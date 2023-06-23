@@ -66,6 +66,7 @@ public class MatzipController {
                         .matzipName(matzip.getMatzipName())
                         .address(matzip.getAddress())
                         .phoneNumber(matzip.getPhoneNumber())
+                        .matzipUrl(matzip.getMatzipUrl())
                         .matzipType(matzip.getMatzipType())
                         .x(matzip.getX())
                         .y(matzip.getY())

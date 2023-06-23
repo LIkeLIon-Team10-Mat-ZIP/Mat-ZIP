@@ -2,6 +2,8 @@
 <html>
 <head>
     <meta charset="utf-8">
+    <!-- 테일윈드 불러오기 -->
+    <script src="https://cdn.tailwindcss.com"></script>
     <title>다음 지도 API</title>
     <style>
         body {
@@ -13,46 +15,110 @@
             height: 100vh;
         }
         #map {
+            position: relative;
             width: 70vw;
             height: 80vh;
+        }
+        #placeInfo {
+            display: none;
+            position: absolute;
+            width: 300px;
+            top: 10px;
+            right: 10px;
+            padding: 10px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+            z-index: 2;
+        }
+        #placeInfo h2 {
+            margin: 0;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        #placeInfo p {
+            margin: 5px 0;
         }
     </style>
 </head>
 <body>
-<div id="map"></div>
+<div id="map">
+    <div id="placeInfo">
+        <h2 id="placeName">맛집 이름</h2>
+        <p id="placeAddress">주소</p>
+        <p id="placePhone">전화번호</p>
+        <p id="placeDescription">설명</p>
+        <a id="mapLink" target="_blank" class="inline-block w-full py-1 px-4 rounded-3xl text-center bg-gray-100 shadow mb-2">큰지도 보기</a>
+        <br>
+        <a id="routeLink" target="_blank" class="inline-block w-full py-1 px-4 rounded-3xl text-center bg-gray-100 shadow mb-2">길찾기</a>
+        <br>
+        <a id="detailLink" target="_blank" class="inline-block w-full py-1 px-4 rounded-3xl text-center bg-gray-100 shadow mb-2">상세정보</a>
+        <br>
+        <a id="reviewButton" target="_blank" class="inline-block w-full py-1 px-4 rounded-3xl text-center bg-gray-100 shadow mb-1">리뷰 등록</a>
+    </div>
+</div>
 
 <script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=868d9aa6d8d0e67bad6c59729809c3fa"></script>
 <script>
-    var mapContainer = document.getElementById('map'), // 지도를 표시할 div
+    var mapContainer = document.getElementById('map'),
         mapOption = {
-            center: new kakao.maps.LatLng(37.56682, 126.97865), // 지도의 중심좌표
-            level: 3, // 지도의 확대 레벨
-            mapTypeId : kakao.maps.MapTypeId.ROADMAP // 지도종류
+            center: new kakao.maps.LatLng(37.56682, 126.97865),
+            level: 3,
+            mapTypeId : kakao.maps.MapTypeId.ROADMAP
         };
 
-    var map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
+    var map = new kakao.maps.Map(mapContainer, mapOption);
 
-    // 마커 이미지의 이미지 주소입니다
     var imageSrc = "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png";
-
-    // 마커 이미지의 이미지 크기 입니다
     var imageSize = new kakao.maps.Size(24, 35);
-
-    // 마커 이미지를 생성합니다
     var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize);
+    var currentInfoWindow = null;
+
+    var placeInfo = document.getElementById('placeInfo');
+    var placeName = document.getElementById('placeName');
+    var placeAddress = document.getElementById('placeAddress');
+    var placePhone = document.getElementById('placePhone');
+    var placeDescription = document.getElementById('placeDescription');
+    var mapLink = document.getElementById('mapLink');
+    var routeLink = document.getElementById('routeLink');
+    var detailLink = document.getElementById('detailLink');
 
     fetch('/matzip/api/search')
         .then(response => response.json())
         .then(data => {
-            console.log(data);
             data.forEach(place => {
-                console.log(place);
-                // 마커를 생성합니다
                 var marker = new kakao.maps.Marker({
                     map: map,
                     position: new kakao.maps.LatLng(place.y, place.x),
                     title : place.matzipName,
                     image : markerImage
+                });
+
+                var iwContent = '<div style="padding:5px; overflow-wrap: break-word;">' + place.matzipName + '</div>';
+
+                var infowindow = new kakao.maps.InfoWindow({
+                    content : iwContent
+                });
+
+                kakao.maps.event.addListener(marker, 'click', function() {
+                    if (currentInfoWindow) {
+                        currentInfoWindow.close();
+                    }
+                    infowindow.open(map, marker);
+                    currentInfoWindow = infowindow;
+
+                    // Update place info
+                    placeName.innerText = place.matzipName;
+                    placeAddress.innerText = '주소: ' + place.address;
+                    placePhone.innerText = '전화번호: ' + place.phoneNumber;
+                    placeDescription.innerText = '설명: ' + place.description;
+                    mapLink.href = 'https://map.kakao.com/link/map/' + place.matzipName + ',' + place.y + ',' + place.x;
+                    mapLink.innerText = '큰지도보기';
+                    routeLink.href = 'https://map.kakao.com/link/to/' + place.matzipName + ',' + place.y + ',' + place.x;
+                    routeLink.innerText = '길찾기';
+                    detailLink.href = place.matzipUrl;
+                    detailLink.innerText = '상세정보';
+                    placeInfo.style.display = 'block'; // Show place info
                 });
             });
         })

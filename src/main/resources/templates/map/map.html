@@ -414,7 +414,7 @@
 
 
         // 서버 전송시에 사용될 변수를 전역변수로 표시했습니다.
-        var placeName, placeAddress, placePhone;
+        var placeName, placeAddress, placePhone, placeUrl;
 
         // 마커를 클릭했을 때 주소 정보를 표시하는 함수입니다.
         function showPlaceInfo(place) {
@@ -422,6 +422,7 @@
             placeName = place.place_name;
             placeAddress = place.address_name;
             placePhone = place.phone;
+            placeUrl = place.place_url;
 
             // HTML 요소에 주소 정보를 표시합니다.
             var html = '<h2>' + placeName + '</h2>';
@@ -485,6 +486,7 @@
                         matzipName: placeName,
                         address: placeAddress,
                         phoneNumber: placePhone,
+                        matzipUrl: placeUrl,
                         description: description,
                         matzipType: matzipType,
                         rating: rating,

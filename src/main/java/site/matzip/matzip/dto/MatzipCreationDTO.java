@@ -20,6 +20,7 @@ public class MatzipCreationDTO {
     @Pattern(regexp = "^\\(?(\\d{2,3})\\)?[- ]?(\\d{3,4})[- ]?(\\d{4})$",
             message = "전화번호 형식이 잘못되었습니다. (올바른 형식: 010-1234-5678 or 02-123-4567)")
     private String phoneNumber;
+    private String matzipUrl;
     @NotNull(message = "맛집의 유형을 입력해주세요")
     private String matzipType;
     private String description;
