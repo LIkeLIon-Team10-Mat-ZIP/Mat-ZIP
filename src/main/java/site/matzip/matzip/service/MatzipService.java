@@ -28,15 +28,14 @@ public class MatzipService {
                 .x(creationDTO.getX())
                 .y(creationDTO.getY())
                 .build();
+        Matzip savedMatzip = matzipRepository.save(matzip);
         //맛집 추천 생성
         MatzipRecommendation matzipRecommendation = MatzipRecommendation.builder()
                 .rating(creationDTO.getRating())
                 .description(creationDTO.getDescription())
-                .matzip(matzip)
+                .matzip(savedMatzip)
                 .build();
-
-
-        Matzip savedMatzip = matzipRepository.save(matzip);
+        matzipRecommendationRepository.save(matzipRecommendation);
         return RsData.of("S-1", "맛집이 등록 되었습니다.", savedMatzip);
     }
 
