@@ -1,11 +1,11 @@
-package site.matzip.comment.domain.service;
+package site.matzip.comment.service;
 
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import site.matzip.comment.domain.Comment;
-import site.matzip.comment.domain.CommentRepository;
+import site.matzip.comment.repository.CommentRepository;
 import site.matzip.review.domain.Review;
 
 @Service
