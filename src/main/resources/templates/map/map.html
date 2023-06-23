@@ -310,6 +310,16 @@
             minLevel: 7 // 클러스터 할 최소 지도 레벨
         });
 
+        //지도 영역 외의 다른 부분을 클릭했을 때 placeInfo를 숨깁니다.
+        document.addEventListener('click', function(event) {
+            var target = event.target;
+            var mapContainer = document.getElementById('map');
+            var placeInfo = document.getElementById('placeInfo');
+            if (target !== mapContainer && !mapContainer.contains(target) && target !== placeInfo && !placeInfo.contains(target)) {
+                placeInfo.style.display = 'none'; // Hide place info
+            }
+        });
+
         // 키워드로 장소를 검색합니다
         searchPlaces();
 
