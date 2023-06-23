@@ -3,9 +3,23 @@
 <head>
     <meta charset="utf-8">
     <title>다음 지도 API</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        #map {
+            width: 70vw;
+            height: 80vh;
+        }
+    </style>
 </head>
 <body>
-<div id="map" style="width:750px;height:350px;"></div>
+<div id="map"></div>
 
 <script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=868d9aa6d8d0e67bad6c59729809c3fa"></script>
 <script>
