@@ -60,15 +60,6 @@
 
 <script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=868d9aa6d8d0e67bad6c59729809c3fa"></script>
 <script>
-    document.addEventListener('click', function(event) {
-        var target = event.target;
-        var mapContainer = document.getElementById('map');
-        var placeInfo = document.getElementById('placeInfo');
-        if (target !== mapContainer && !mapContainer.contains(target) && target !== placeInfo && !placeInfo.contains(target)) {
-            placeInfo.style.display = 'none'; // Hide place info
-        }
-    });
-
     var mapContainer = document.getElementById('map'),
         mapOption = {
             center: new kakao.maps.LatLng(37.56682, 126.97865),
@@ -91,6 +82,16 @@
     var mapLink = document.getElementById('mapLink');
     var routeLink = document.getElementById('routeLink');
     var detailLink = document.getElementById('detailLink');
+
+    //지도 영역 외의 다른 부분을 클릭했을 때 placeInfo를 숨깁니다.
+    document.addEventListener('click', function(event) {
+        var target = event.target;
+        var mapContainer = document.getElementById('map');
+        var placeInfo = document.getElementById('placeInfo');
+        if (target !== mapContainer && !mapContainer.contains(target) && target !== placeInfo && !placeInfo.contains(target)) {
+            placeInfo.style.display = 'none'; // Hide place info
+        }
+    });
 
     fetch('/matzip/api/search')
         .then(response => response.json())
