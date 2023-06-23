@@ -390,6 +390,7 @@
                     itemEl.onclick = function () {
                         displayInfowindow(marker, title);
                         showPlaceInfo(place);
+                        map.setCenter(marker.getPosition()); // 마커 위치로 중앙 이동
                     };
                 })(marker, places[i].place_name, places[i]);
 
