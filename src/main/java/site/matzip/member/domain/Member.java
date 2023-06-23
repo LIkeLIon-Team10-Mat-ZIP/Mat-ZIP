@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import site.matzip.comment.domain.Comment;
+import site.matzip.matzip.domain.MatzipRecommendation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,8 +22,8 @@ public class Member {
     private String email;
     @Enumerated(EnumType.STRING)
     private MemberRole role;
-    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Comment> comments = new ArrayList<>();
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<MatzipRecommendation> matzipRecommendations = new ArrayList<>();
 
     @Builder
     public Member(String username, String password, String nickname, String email) {
