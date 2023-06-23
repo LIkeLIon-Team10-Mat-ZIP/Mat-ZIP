@@ -57,7 +57,7 @@ public class MatzipController {
         return "/matzip/list";
     }
 
-    @GetMapping("/api/search")
+    @GetMapping("/api/list")
     @ResponseBody
     public ResponseEntity<List<MatzipListDTO>> search() {
         List<Matzip> matzipList = matzipService.findAll();

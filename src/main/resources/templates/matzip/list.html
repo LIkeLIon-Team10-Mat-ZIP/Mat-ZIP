@@ -93,10 +93,13 @@
         }
     });
 
-    fetch('/matzip/api/search')
+    // 서버에 matzip 정보를 요청합니다
+    fetch('/matzip/api/list')
         .then(response => response.json())
         .then(data => {
+            // 각 맛집 정보에 대해서 반복 처리를 합니다
             data.forEach(place => {
+                // 해당 위치에 마커를 생성합니다
                 var marker = new kakao.maps.Marker({
                     map: map,
                     position: new kakao.maps.LatLng(place.y, place.x),
@@ -104,12 +107,15 @@
                     image : markerImage
                 });
 
+                // 정보창에 표시할 내용을 설정합니다
                 var iwContent = '<div style="padding:5px; overflow-wrap: break-word;">' + place.matzipName + '</div>';
 
+                // 정보창을 생성합니다
                 var infowindow = new kakao.maps.InfoWindow({
                     content : iwContent
                 });
 
+                // 마커에 클릭 이벤트를 등록합니다
                 kakao.maps.event.addListener(marker, 'click', function() {
                     if (currentInfoWindow) {
                         currentInfoWindow.close();
@@ -117,7 +123,7 @@
                     infowindow.open(map, marker);
                     currentInfoWindow = infowindow;
 
-                    // 장소를 업데이트합니다.
+                    // 장소 정보를 업데이트합니다.
                     placeName.innerText = place.matzipName;
                     placeAddress.innerText = '주소: ' + place.address;
                     placePhone.innerText = '전화번호: ' + place.phoneNumber;
