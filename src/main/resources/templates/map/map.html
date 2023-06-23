@@ -2,7 +2,6 @@
 <html layout:decorate="~{common/layout/defaultLayout.html}">
 <head>
     <meta charset="utf-8">
-
     <meta name="_csrf" th:content="${_csrf.token}" />
     <meta name="_csrf_header" th:content="${_csrf.headerName}" />
     <!-- 테일윈드 불러오기 -->
@@ -10,188 +9,47 @@
     <!-- 데이지 UI 불러오기 -->
     <link href="https://cdn.jsdelivr.net/npm/daisyui@2.51.5/dist/full.css" rel="stylesheet" type="text/css"/>
     <title>맛집 등록</title>
-
     <style>
         .map_wrap, .map_wrap * {
             margin: 0;
             padding: 0;
-            font-family: 'Malgun Gothic', dotum, '돋움', sans-serif;
-            font-size: 12px;
         }
-
-        .map_wrap a, .map_wrap a:hover, .map_wrap a:active {
-            color: #000;
-            text-decoration: none;
-        }
-
-        .map_wrap {
-            position: relative;
-        }
-
-        #menu_wrap {
-            position: absolute;
-            top: 0;
-            left: 0;
-            bottom: 0;
-            width: 250px;
-            margin: 10px 0 30px 10px;
-            padding: 5px;
-            overflow-y: auto;
-            background: rgba(255, 255, 255, 0.7);
-            z-index: 1;
-            font-size: 12px;
-            border-radius: 10px;
-        }
-
-        .bg_white {
-            background: #fff;
-        }
-
-        #menu_wrap hr {
-            display: block;
-            height: 1px;
-            border: 0;
-            border-top: 2px solid #5F5F5F;
-            margin: 3px 0;
-        }
-
-        #menu_wrap .option {
-            text-align: center;
-        }
-
-        #menu_wrap .option p {
-            margin: 10px 0;
-        }
-
-        #menu_wrap .option button {
-            margin-left: 5px;
-        }
-
-        #placesList li {
-            list-style: none;
-        }
-
-        #placesList .item {
-            position: relative;
-            border-bottom: 1px solid #888;
-            overflow: hidden;
-            cursor: pointer;
-            min-height: 65px;
-        }
-
-        #placesList .item span {
-            display: block;
-            margin-top: 4px;
-        }
-
-        #placesList .item h5, #placesList .item .info {
-            text-overflow: ellipsis;
-            overflow: hidden;
-            white-space: nowrap;
-        }
-
-        #placesList .item .info {
-            padding: 10px 0 10px 10px;
-        }
-
-        #placesList .info .gray {
-            color: #8a8a8a;
-        }
-
-        #placesList .info .jibun {
-            padding-left: 26px;
-            background: url(https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/places_jibun.png) no-repeat;
-        }
-
-        #placesList .info .tel {
-            color: #009900;
-        }
-
-        #placesList .item .markerbg {
-            float: left;
-            position: absolute;
-            width: 36px;
-            height: 37px;
-            margin: 10px 0 0 10px;
-            background: url(https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_number_blue.png) no-repeat;
-        }
-
-        #placesList .item .marker_1 {
-            background-position: 0 -10px;
-        }
-
-        #placesList .item .marker_2 {
-            background-position: 0 -56px;
-        }
-
-        #placesList .item .marker_3 {
-            background-position: 0 -102px
-        }
-
-        #placesList .item .marker_4 {
-            background-position: 0 -148px;
-        }
-
-        #placesList .item .marker_5 {
-            background-position: 0 -194px;
-        }
-
-        #placesList .item .marker_6 {
-            background-position: 0 -240px;
-        }
-
-        #placesList .item .marker_7 {
-            background-position: 0 -286px;
-        }
-
-        #placesList .item .marker_8 {
-            background-position: 0 -332px;
-        }
-
-        #placesList .item .marker_9 {
-            background-position: 0 -378px;
-        }
-
-        #placesList .item .marker_10 {
-            background-position: 0 -423px;
-        }
-
-        #placesList .item .marker_11 {
-            background-position: 0 -470px;
-        }
-
-        #placesList .item .marker_12 {
-            background-position: 0 -516px;
-        }
-
-        #placesList .item .marker_13 {
-            background-position: 0 -562px;
-        }
-
-        #placesList .item .marker_14 {
-            background-position: 0 -608px;
-        }
-
-        #placesList .item .marker_15 {
-            background-position: 0 -654px;
-        }
-
-        #pagination {
-            margin: 10px auto;
-            text-align: center;
-        }
-
-        #pagination a {
-            display: inline-block;
-            margin-right: 10px;
-        }
-
-        #pagination .on {
-            font-weight: bold;
-            cursor: default;
-            color: #777;
-        }
-        
+        .map_wrap, .map_wrap * {margin:0;padding:0;font-family:'Malgun Gothic',dotum,'돋움',sans-serif;font-size:12px;}
+        .map_wrap a, .map_wrap a:hover, .map_wrap a:active{color:#000;text-decoration: none;}
+        .map_wrap {position:relative;width:70%;height:80%;}
+        #menu_wrap {position:absolute;top:0;left:0;bottom:0;width:250px;margin:10px 0 30px 10px;padding:5px;overflow-y:auto;background:rgba(255, 255, 255, 0.7);z-index: 1;font-size:12px;border-radius: 10px;}
+        .bg_white {background:#fff;}
+        #menu_wrap hr {display: block; height: 1px;border: 0; border-top: 2px solid #5F5F5F;margin:3px 0;}
+        #menu_wrap .option{text-align: center;}
+        #menu_wrap .option p {margin:10px 0;}
+        #menu_wrap .option button {margin-left:5px;}
+        #placesList li {list-style: none;}
+        #placesList .item {position:relative;border-bottom:1px solid #888;overflow: hidden;cursor: pointer;min-height: 65px;}
+        #placesList .item span {display: block;margin-top:4px;}
+        #placesList .item h5, #placesList .item .info {text-overflow: ellipsis;overflow: hidden;white-space: nowrap;}
+        #placesList .item .info{padding:10px 0 10px 10px;}
+        #placesList .info .gray {color:#8a8a8a;}
+        #placesList .info .jibun {padding-left:26px;background:url(https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/places_jibun.png) no-repeat;}
+        #placesList .info .tel {color:#009900;}
+        #placesList .item .markerbg {float:left;position:absolute;width:36px; height:37px;margin:10px 0 0 10px;background:url(https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_number_blue.png) no-repeat;}
+        #placesList .item .marker_1 {background-position: 0 -10px;}
+        #placesList .item .marker_2 {background-position: 0 -56px;}
+        #placesList .item .marker_3 {background-position: 0 -102px}
+        #placesList .item .marker_4 {background-position: 0 -148px;}
+        #placesList .item .marker_5 {background-position: 0 -194px;}
+        #placesList .item .marker_6 {background-position: 0 -240px;}
+        #placesList .item .marker_7 {background-position: 0 -286px;}
+        #placesList .item .marker_8 {background-position: 0 -332px;}
+        #placesList .item .marker_9 {background-position: 0 -378px;}
+        #placesList .item .marker_10 {background-position: 0 -423px;}
+        #placesList .item .marker_11 {background-position: 0 -470px;}
+        #placesList .item .marker_12 {background-position: 0 -516px;}
+        #placesList .item .marker_13 {background-position: 0 -562px;}
+        #placesList .item .marker_14 {background-position: 0 -608px;}
+        #placesList .item .marker_15 {background-position: 0 -654px;}
+        #pagination {margin:10px auto;text-align: center;}
+        #pagination a {display:inline-block;margin-right:10px;}
+        #pagination .on {font-weight: bold; cursor: default;color:#777;}
         #placeInfo {
             display: none;
             position: absolute;
@@ -455,10 +313,9 @@
         html += '<button class="w-full text-white rounded-3xl py-2 h-8 flex items-center justify-center shadow" style="background-color: #2E8B57;" onclick="registerAsMatzip()"><strong>맛집으로 등록</strong></button>';
         html += '</div>';
 
-            var el = document.createElement('li'),
-                itemStr = '<div class="info">' +
-                    '   <h5>' + places.place_name + '</h5>';
-
+        placeInfo.innerHTML = html;
+        placeInfo.style.display = 'block';
+    }
 
     function registerAsMatzip() {
         // 맛집 정보를 수집합니다
@@ -466,49 +323,81 @@
         var matzipType = document.getElementById('matzipTypeSelect').value;
         var rating = document.querySelector('input[name="rating"]:checked').value;
 
-        // 맛집 정보를 객체로 생성합니다
-        var matzipCreationDTO = {
-            matzipName: placeName,
-            address: placeAddress,
-            phoneNumber: placePhone,
-            description: description,
-            matzipType: matzipType,
-            rating: rating
-        };
+        // 주소-좌표 변환 객체를 생성합니다
+        var geocoder = new kakao.maps.services.Geocoder();
+        var coords;
 
-        // 서버로 맛집 정보를 전송합니다
-        // CSRF 토큰을 가져옵니다
-        var csrfToken = document.querySelector('meta[name=_csrf]').getAttribute('content');
-        var csrfHeader = document.querySelector('meta[name=_csrf_header]').getAttribute('content');
+        // 주소로 좌표를 검색합니다
+        geocoder.addressSearch(placeAddress, function(result, status) {
+            // 정상적으로 검색이 완료됐으면
+            if (status === kakao.maps.services.Status.OK) {
+                coords = new kakao.maps.LatLng(result[0].y, result[0].x);
 
-        // 서버로 맛집 정보를 전송합니다
-        fetch('/matzip/create', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                [csrfHeader]: csrfToken  // CSRF 토큰을 헤더에 포함합니다
-            },
-            body: JSON.stringify(matzipCreationDTO)
-        })
-            .then(response => {
-                if (response.ok) {
-                    alert('맛집으로 등록되었습니다!');
-                } else {
-                    alert('맛집 등록에 실패했습니다.');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                console.log(error);
-                alert('맛집 등록에 실패했습니다.');
-            });
+
+                // 맛집 정보를 객체로 생성합니다
+                var matzipCreationDTO = {
+                    matzipName: placeName,
+                    address: placeAddress,
+                    phoneNumber: placePhone,
+                    description: description,
+                    matzipType: matzipType,
+                    rating: rating,
+                    x: coords.getLng(),
+                    y: coords.getLat()
+                };
+
+                console.log(matzipCreationDTO);
+
+                // 서버로 맛집 정보를 전송합니다
+                // CSRF 토큰을 가져옵니다
+                var csrfToken = document.querySelector('meta[name=_csrf]').getAttribute('content');
+                var csrfHeader = document.querySelector('meta[name=_csrf_header]').getAttribute('content');
+
+                // 서버로 맛집 정보를 전송합니다
+                fetch('/matzip/create', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        [csrfHeader]: csrfToken  // CSRF 토큰을 헤더에 포함합니다
+                    },
+                    body: JSON.stringify(matzipCreationDTO)
+                })
+                    .then(response => {
+                        if (response.ok) {
+                            alert('맛집으로 등록되었습니다!');
+                        } else {
+                            alert('맛집 등록에 실패했습니다.');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        console.log(error);
+                        alert('맛집 등록에 실패했습니다.');
+                    });
+            }
+        });
     }
 
-            itemStr += '  <span class="tel">' + places.phone + '</span>' +
-                '</div>';
 
-            el.innerHTML = itemStr;
-            el.className = 'item';
+    // 검색결과 항목을 Element로 반환하는 함수입니다
+    function getListItem(index, places) {
+
+        var el = document.createElement('li'),
+            itemStr = '<div class="info">' +
+                '   <h5>' + places.place_name + '</h5>';
+
+        if (places.road_address_name) {
+            itemStr += '    <span>' + places.road_address_name + '</span>' +
+                '   <span class="jibun gray">' +  places.address_name  + '</span>';
+        } else {
+            itemStr += '    <span>' +  places.address_name  + '</span>';
+        }
+
+        itemStr += '  <span class="tel">' + places.phone  + '</span>' +
+            '</div>';
+
+        el.innerHTML = itemStr;
+        el.className = 'item';
 
             return el;
         }

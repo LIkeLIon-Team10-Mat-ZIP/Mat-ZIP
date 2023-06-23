@@ -23,6 +23,6 @@ public class Matzip {
     private String phoneNumber;
     @Enumerated(EnumType.STRING)
     private MatzipType matzipType;
-    @OneToMany(mappedBy = "matzip", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<MatzipRecommendation> matzipRecommendations;
+    private double x;
+    private double y;
 }

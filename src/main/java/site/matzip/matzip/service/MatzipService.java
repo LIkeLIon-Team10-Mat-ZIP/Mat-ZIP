@@ -25,7 +25,8 @@ public class MatzipService {
                 .address(creationDTO.getAddress())
                 .matzipType(creationDTO.getMatzipTypeEnum())
                 .phoneNumber(creationDTO.getPhoneNumber())
-                .matzipRecommendations(new ArrayList<>())
+                .x(creationDTO.getX())
+                .y(creationDTO.getY())
                 .build();
         //맛집 추천 생성
         MatzipRecommendation matzipRecommendation = MatzipRecommendation.builder()
@@ -33,7 +34,7 @@ public class MatzipService {
                 .description(creationDTO.getDescription())
                 .matzip(matzip)
                 .build();
-        matzip.getMatzipRecommendations().add(matzipRecommendation);
+
 
         Matzip savedMatzip = matzipRepository.save(matzip);
         return RsData.of("S-1", "맛집이 등록 되었습니다.", savedMatzip);

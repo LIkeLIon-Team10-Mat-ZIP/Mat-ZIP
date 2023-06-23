@@ -24,6 +24,8 @@ public class MatzipCreationDTO {
     private String matzipType;
     private String description;
     private double rating;
+    private double x;
+    private double y;
 
     public MatzipType getMatzipTypeEnum() {
         return MatzipType.valueOf(matzipType);
