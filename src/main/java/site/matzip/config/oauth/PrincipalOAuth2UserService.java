@@ -7,6 +7,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
@@ -25,7 +26,7 @@ import site.matzip.config.oauth.provider.OAuth2UserInfo;
 import site.matzip.member.domain.Member;
 import site.matzip.member.repository.MemberRepository;
 
-import java.util.*;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -33,8 +34,7 @@ public class PrincipalOAuth2UserService extends DefaultOAuth2UserService {
 
     @Autowired
     private MemberRepository memberRepository;
-
-
+    
     @Value("${token.content-type}")
     private String contentType;
 
