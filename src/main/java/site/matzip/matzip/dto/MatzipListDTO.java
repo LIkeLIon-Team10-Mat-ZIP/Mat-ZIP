@@ -16,6 +16,6 @@ public class MatzipListDTO {
     private String phoneNumber;
     @Enumerated(EnumType.STRING)
     private MatzipType matzipType;
-    private LocalTime openingTime;
-    private LocalTime closingTime;
+    private double x;
+    private double y;
 }
