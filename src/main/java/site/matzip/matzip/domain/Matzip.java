@@ -28,8 +28,6 @@ public class Matzip {
     private LocalTime openingTime;
     private LocalTime closingTime;
     @OneToMany(mappedBy = "matzip", cascade = {CascadeType.ALL})
-    private List<Comment> comments = new ArrayList<>();
-    @OneToMany(mappedBy = "matzip", cascade = {CascadeType.ALL})
     private List<Review> reviews = new ArrayList<>();
 
 }
