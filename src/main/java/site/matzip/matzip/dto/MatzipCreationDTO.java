@@ -17,16 +17,15 @@ public class MatzipCreationDTO {
     private String matzipName;
     @NotBlank(message = "맛집 주소를 입력해주세요.")
     private String address;
-    @NotBlank(message = "맛집에 대한 설명을 입력해주세요")
-    private String description;
-    @NotNull(message = "맛집의 유형을 입력해주세요")
-    private String matzipType;
-    //추가정보
     @Pattern(regexp = "^\\(?(\\d{2,3})\\)?[- ]?(\\d{3,4})[- ]?(\\d{4})$",
             message = "전화번호 형식이 잘못되었습니다. (올바른 형식: 010-1234-5678 or 02-123-4567)")
     private String phoneNumber;
-    private LocalTime openingTime;
-    private LocalTime closingTime;
+    @NotNull(message = "맛집의 유형을 입력해주세요")
+    private String matzipType;
+    private String description;
+    private double rating;
+    private double x;
+    private double y;
 
     public MatzipType getMatzipTypeEnum() {
         return MatzipType.valueOf(matzipType);
