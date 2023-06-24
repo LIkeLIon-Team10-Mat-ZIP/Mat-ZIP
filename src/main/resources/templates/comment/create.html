@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html layout:decorate="~{common/layout/defaultLayout.html}">
+<head>
+    <title>코멘트 등록</title>
+</head>
+<body>
+
+<main layout:fragment="Content">
+    <form th:action="@{/comment/create}" method="post">
+        <!-- 임시로 해놓음 추후 value 수정예정 -->
+        <input type="hidden" name="authorId" value="1">
+        <input type="hidden" name="reviewId" value="2">
+        <div>
+            <label>제목:</label>
+            <input class="input input-bordered w-full max-w-xs" type="text" name="title" required/>
+        </div>
+
+        <div>
+            <label>내용:</label>
+            <input class="textarea" type="text" name="content" required/>
+        </div>
+
+        <div class="rating rating-lg rating-half">
+            <label>별점:</label>
+            <input type="radio" name="rating" class="rating-hidden"/>
+            <input type="radio" name="rating" value="0.5" class="bg-green-500 mask mask-star-2 mask-half-1"/>
+            <input type="radio" name="rating" value="1.0" class="bg-green-500 mask mask-star-2 mask-half-2"/>
+            <input type="radio" name="rating" value="1.5" class="bg-green-500 mask mask-star-2 mask-half-1" checked/>
+            <input type="radio" name="rating" value="2.0" class="bg-green-500 mask mask-star-2 mask-half-2"/>
+            <input type="radio" name="rating" value="2.5" class="bg-green-500 mask mask-star-2 mask-half-1"/>
+            <input type="radio" name="rating" value="3.0" class="bg-green-500 mask mask-star-2 mask-half-2"/>
+            <input type="radio" name="rating" value="3.5" class="bg-green-500 mask mask-star-2 mask-half-1"/>
+            <input type="radio" name="rating" value="4.0" class="bg-green-500 mask mask-star-2 mask-half-2"/>
+            <input type="radio" name="rating" value="4.5" class="bg-green-500 mask mask-star-2 mask-half-1"/>
+            <input type="radio" name="rating" value="5.0" class="bg-green-500 mask mask-star-2 mask-half-2"/>
+        </div>
+        <div>
+            <button class="btn btn-outline" type="submit">Submit</button>
+        </div>
+    </form>
+</main>
+
+</body>
+
+</html>
