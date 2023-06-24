@@ -7,8 +7,8 @@
 
 <main layout:fragment="Content">
     <form th:action="@{/comment/create}" method="post">
-        <!-- 임시로 해놓음 추후 value 수정예정 -->
-        <input type="hidden" name="authorId" value="1">
+        <!-- TODO : reviewId 값을 가져오는건 추후 연결되면 진행할예정 -->
+        <input type="hidden" name="authorId" th:value="${authorId}">
         <input type="hidden" name="reviewId" value="2">
         <div>
             <label>제목:</label>

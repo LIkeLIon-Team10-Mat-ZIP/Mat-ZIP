@@ -1,8 +1,8 @@
 package site.matzip.comment.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -21,8 +21,12 @@ public class CommentController {
     private final CommentService commentService;
 
     @GetMapping("/create")
-    public String create(Model model) {
-        model.addAttribute("commentCreationDTO", new CommentCreationDTO());
+    public String create(Model model, HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        Long authorId = (Long) session.getAttribute("memberId");
+        //TODO : 임시로 값을 부여 추후 session 을 활용할지, rq를 활용할지 팀원들과 상의예
+        model.addAttribute("authorId", 1);
+
         return "/comment/create";
     }
 
