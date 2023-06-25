@@ -29,7 +29,6 @@ public class CommentService {
         Comment comment = Comment.builder()
                 .author(author)
                 .review(review)
-                .rating(commentCreationDTO.getRating())
                 .title(commentCreationDTO.getTitle())
                 .content(commentCreationDTO.getContent())
                 .build();
