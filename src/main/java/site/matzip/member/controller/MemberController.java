@@ -1,13 +1,18 @@
 package site.matzip.member.controller;
 
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
+import site.matzip.config.oauth.PrincipalOAuth2UserService;
 
 @Controller
+@RequiredArgsConstructor
 @RequestMapping("/usr/member")
 public class MemberController {
+
+    @Autowired
+    PrincipalOAuth2UserService principalOAuth2UserService;
 
     @GetMapping("/")
     @ResponseBody
@@ -24,5 +29,12 @@ public class MemberController {
     public String code(String code) {
         System.out.println("code COntroller = " + code);
         return "";
+    }
+
+    @GetMapping("/unlink/{token}")
+    public String asdf(@PathVariable String token) {
+        principalOAuth2UserService.unlink(token);
+
+        return "map/map";
     }
 }
