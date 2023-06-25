@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class MemberAccessToken {
+public class MemberToken {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -23,7 +23,7 @@ public class MemberAccessToken {
     private Member member;
 
     @Builder
-    public MemberAccessToken(String accessToken, LocalDateTime accessTokenExpiredAt) {
+    public MemberToken(String accessToken, LocalDateTime accessTokenExpiredAt) {
         this.accessToken = accessToken;
         this.accessTokenExpiredAt = accessTokenExpiredAt;
     }

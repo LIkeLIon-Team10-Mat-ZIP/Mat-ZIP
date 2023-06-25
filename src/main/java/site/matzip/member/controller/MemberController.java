@@ -11,9 +11,6 @@ import site.matzip.config.oauth.PrincipalOAuth2UserService;
 @RequestMapping("/usr/member")
 public class MemberController {
 
-    @Autowired
-    PrincipalOAuth2UserService principalOAuth2UserService;
-
     @GetMapping("/")
     @ResponseBody
     public String test() {
@@ -29,12 +26,5 @@ public class MemberController {
     public String code(String code) {
         System.out.println("code COntroller = " + code);
         return "";
-    }
-
-    @GetMapping("/unlink/{token}")
-    public String asdf(@PathVariable String token) {
-        principalOAuth2UserService.unlink(token);
-
-        return "map/map";
     }
 }

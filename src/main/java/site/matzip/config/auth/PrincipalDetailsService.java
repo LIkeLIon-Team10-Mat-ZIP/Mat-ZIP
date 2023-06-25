@@ -24,6 +24,6 @@ public class PrincipalDetailsService implements UserDetailsService {
             return null;
         }
 
-        return new User(member.getUsername(), member.getPassword(), new ArrayList<>());
+        return new User(member.getUsername(), null, new ArrayList<>());
     }
 }
