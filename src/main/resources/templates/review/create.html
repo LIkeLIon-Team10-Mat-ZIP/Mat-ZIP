@@ -1,32 +1,122 @@
 <!DOCTYPE html>
-<html layout:decorate="~{common/layout/defaultLayout.html}">
+<html>
 <head>
-    <title>리뷰 등록</title>
+    <meta charset="utf-8">
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+    <!-- 테일윈드 불러오기 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 데이지 UI 불러오기 -->
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@2.51.5/dist/full.css" rel="stylesheet" type="text/css"/>
+    <title>리뷰 작성</title>
+    <style>
+        /* 별점 표시를 위한 스타일 */
+        .rating {
+            unicode-bidi: bidi-override;
+            direction: rtl;
+        }
+
+        .rating > span {
+            display: inline-block;
+            position: relative;
+            width: 1.1em;
+        }
+
+        .rating > span:hover:before,
+        .rating > span:hover ~ span:before {
+            content: "\2605";
+            position: absolute;
+        }
+    </style>
 </head>
 <body>
+<h1>리뷰 작성</h1>
+<p>맛집 정보:</p>
+<p>맛집 이름: <span id="matzipName"></span></p>
+<p>맛집 주소: <span id="address"></span></p>
+<p>전화번호: <span id="phoneNumber"></span></p>
+<p>평점: <span id="rating" class="rating"></span></p>
 
-<main layout:fragment="Content">
-    <form th:action="@{/review/create}" th:object="${reviewCreationDTO}" method="post">
-        <input type="hidden" name="author" th:value="${author}">
-        <div class="rating">
-            <input type="radio" name="rating" value="1" class="mask mask-star-2 bg-orange-400"/>
-            <input type="radio" name="rating" value="2" class="mask mask-star-2 bg-orange-400" checked/>
-            <input type="radio" name="rating" value="3" class="mask mask-star-2 bg-orange-400"/>
-            <input type="radio" name="rating" value="4" class="mask mask-star-2 bg-orange-400"/>
-            <input type="radio" name="rating" value="5" class="mask mask-star-2 bg-orange-400"/>
-        </div>
+<!-- 리뷰 작성 폼 -->
+<form id="reviewForm" action="/matzip/createWithReview" method="POST">
+    <!-- 맛집 정보를 히든 필드로 전달 -->
+    <input type="hidden" name="matzipName" id="matzipNameInput">
+    <input type="hidden" name="address" id="addressInput">
+    <input type="hidden" name="phoneNumber" id="phoneNumberInput">
+    <input type="hidden" name="rating" id="ratingInput">
+    <input type="hidden" name="matzipType" id="matzipTypeInput">
+    <label for="reviewContent">리뷰 내용:</label>
+    <textarea id="reviewContent" name="reviewContent"></textarea>
 
-        <div>
-            <label>내용:</label>
-            <input class="textarea textarea-bordered textarea-lg w-full max-w-xs" type="text" name="content" required/>
-        </div>
+    <input type="submit" value="리뷰 작성">
+</form>
 
-        <div>
-            <button class="btn btn-outline" type="submit">Submit</button>
-        </div>
-    </form>
-</main>
+<script>
+    // 세션 스토리지에서 저장된 맛집 정보를 가져옵니다
+    var matzipCreationDTOString = sessionStorage.getItem('matzipCreationDTO');
+    var matzipCreationDTO = JSON.parse(matzipCreationDTOString);
 
+    // 맛집 정보를 화면에 표시합니다
+    document.getElementById('matzipName').textContent = matzipCreationDTO.matzipName;
+    document.getElementById('address').textContent = matzipCreationDTO.address;
+    document.getElementById('phoneNumber').textContent = matzipCreationDTO.phoneNumber;
+
+    // 평점을 별로 표시합니다
+    var rating = parseInt(matzipCreationDTO.rating);
+    var ratingStars = '';
+    for (var i = 1; i <= 5; i++) {
+        if (i <= rating) {
+            ratingStars += '<span style="color: gold;">\u2605</span>'; // 별 모양
+        } else {
+            ratingStars += '<span>\u2606</span>'; // 빈 별 모양
+        }
+    }
+    document.getElementById('rating').innerHTML = ratingStars;
+
+    // 맛집 정보를 히든 필드에 설정합니다
+    document.getElementById('matzipNameInput').value = matzipCreationDTO.matzipName;
+    document.getElementById('addressInput').value = matzipCreationDTO.address;
+    document.getElementById('phoneNumberInput').value = matzipCreationDTO.phoneNumber;
+    document.getElementById('ratingInput').value = matzipCreationDTO.rating;
+    document.getElementById('matzipTypeInput').value = matzipCreationDTO.matzipType;
+
+    // 리뷰 작성 폼 제출 시 처리할 함수
+    document.getElementById('reviewForm').addEventListener('submit', function (event) {
+        event.preventDefault(); // 기본 동작인 폼 제출을 막습니다
+        // 서버로 맛집 정보를 전송합니다
+        // CSRF 토큰을 가져옵니다
+        var csrfToken = document.querySelector('meta[name=_csrf]').getAttribute('content');
+        var csrfHeader = document.querySelector('meta[name=_csrf_header]').getAttribute('content');
+
+
+        // 서버로 리뷰 작성 폼을 제출합니다
+        fetch('/matzip/createWithReview', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                [csrfHeader]: csrfToken  // CSRF 토큰을 헤더에 포함합니다
+            },
+            body: JSON.stringify({
+                matzipCreationDTO: matzipCreationDTO,
+                reviewCreationDTO: {
+                    content: document.getElementById('reviewContent').value,
+                    rating: rating
+                }
+            })
+        })
+            .then(response => {
+                if (response.ok) {
+                    alert('리뷰가 작성되었습니다!');
+                    window.location.href = '/matzip/list';
+                } else {
+                    alert('리뷰 작성에 실패했습니다.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('리뷰 작성에 실패했습니다.');
+            });
+    });
+</script>
 </body>
-
 </html>

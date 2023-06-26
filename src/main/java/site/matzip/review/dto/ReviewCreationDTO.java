@@ -7,6 +7,6 @@ import site.matzip.member.domain.Member;
 public class ReviewCreationDTO {
     private Long reviewId;
     private Member author;
-    private Long rating;
+    private double rating;
     private String content;
 }

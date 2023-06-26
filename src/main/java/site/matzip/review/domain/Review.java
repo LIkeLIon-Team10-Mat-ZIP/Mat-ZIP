@@ -1,10 +1,7 @@
 package site.matzip.review.domain;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import site.matzip.base.domain.BaseEntity;
 import site.matzip.comment.domain.Comment;
 import site.matzip.matzip.domain.Matzip;
@@ -17,11 +14,13 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@Builder
 public class Review extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long rating;
+    private double rating;
     private String content;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "matzip_id")

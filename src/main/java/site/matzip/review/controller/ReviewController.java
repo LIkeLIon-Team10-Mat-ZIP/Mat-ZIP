@@ -33,14 +33,4 @@ public class ReviewController {
         return "/review/create";
     }
 
-    @PreAuthorize("isAuthenticated()")
-    @PostMapping("/create")
-    public String create(@ModelAttribute ReviewCreationDTO reviewCreationDTO, @ModelAttribute MatzipCreationDTO matzipCreationDTO, BindingResult result) {
-        if (result.hasErrors()) {
-            return "/review/create";
-        }
-
-        reviewService.create(matzipCreationDTO, reviewCreationDTO);
-        return "redirect:/";
-    }
 }

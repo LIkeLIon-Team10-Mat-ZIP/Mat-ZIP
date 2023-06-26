@@ -10,7 +10,9 @@ import site.matzip.matzip.domain.Matzip;
 import site.matzip.matzip.domain.MatzipRecommendation;
 import site.matzip.matzip.dto.MatzipCreationDTO;
 import site.matzip.matzip.dto.MatzipListDTO;
+import site.matzip.matzip.dto.MatzipRewiewDTO;
 import site.matzip.matzip.service.MatzipService;
+import site.matzip.review.dto.ReviewCreationDTO;
 
 
 import java.util.List;
@@ -28,6 +30,17 @@ public class MatzipController {
             return "/matzip/create";
         }
         matzipService.create(matzipCreationDTO);
+        return "redirect:/matzip/list";
+    }
+    @PostMapping("/createWithReview")
+    public String createWithReview(@RequestBody MatzipRewiewDTO matzipReviewDTO, BindingResult result) {
+        if (result.hasErrors()) {
+            return "/matzip/create";
+        }
+        MatzipCreationDTO matzipCreationDTO = matzipReviewDTO.getMatzipCreationDTO();
+        ReviewCreationDTO reviewCreationDTO = matzipReviewDTO.getReviewCreationDTO();
+        matzipService.create(matzipCreationDTO,reviewCreationDTO);
+
         return "redirect:/matzip/list";
     }
 
