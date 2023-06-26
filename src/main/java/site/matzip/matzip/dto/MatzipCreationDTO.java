@@ -4,11 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 import site.matzip.matzip.domain.MatzipType;
-
-import java.time.LocalTime;
 
 @Data
 public class MatzipCreationDTO {
