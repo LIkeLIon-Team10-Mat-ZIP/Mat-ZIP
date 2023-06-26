@@ -2,13 +2,11 @@ package site.matzip.matzip.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import site.matzip.base.rsData.RsData;
 import site.matzip.matzip.domain.Matzip;
 import site.matzip.matzip.dto.MatzipCreationDTO;
@@ -57,5 +55,24 @@ public class MatzipController {
 
         model.addAttribute("matzipList", matzipDtoList);
         return "/matzip/list";
+    }
+
+    @GetMapping("/api/list")
+    @ResponseBody
+    public ResponseEntity<List<MatzipListDTO>> search() {
+        List<Matzip> matzipList = matzipService.findAll();
+        List<MatzipListDTO> matzipDtoList = matzipList.stream()
+                .map(matzip -> MatzipListDTO.builder()
+                        .matzipName(matzip.getMatzipName())
+                        .address(matzip.getAddress())
+                        .phoneNumber(matzip.getPhoneNumber())
+                        .matzipUrl(matzip.getMatzipUrl())
+                        .matzipType(matzip.getMatzipType())
+                        .x(matzip.getX())
+                        .y(matzip.getY())
+                        .build())
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(matzipDtoList);
     }
 }

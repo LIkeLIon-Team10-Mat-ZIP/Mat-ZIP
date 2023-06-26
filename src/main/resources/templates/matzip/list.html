@@ -1,36 +1,146 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html>
 <head>
-    <title>맛집리스트</title>
+    <meta charset="utf-8">
+    <!-- 테일윈드 불러오기 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>다음 지도 API</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        #map {
+            position: relative;
+            width: 70vw;
+            height: 80vh;
+        }
+        #placeInfo {
+            display: none;
+            position: absolute;
+            width: 300px;
+            top: 10px;
+            right: 10px;
+            padding: 10px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+            z-index: 2;
+        }
+        #placeInfo h2 {
+            margin: 0;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        #placeInfo p {
+            margin: 5px 0;
+        }
+    </style>
 </head>
 <body>
-<h1>맛집 목록</h1>
+<div id="map">
+    <div id="placeInfo">
+        <h2 id="placeName">맛집 이름</h2>
+        <p id="placeAddress">주소</p>
+        <p id="placePhone">전화번호</p>
+        <p id="placeDescription">설명</p>
+        <a id="mapLink" target="_blank" class="inline-block w-full py-1 px-4 rounded-3xl text-center bg-gray-100 shadow mb-2">큰지도 보기</a>
+        <br>
+        <a id="routeLink" target="_blank" class="inline-block w-full py-1 px-4 rounded-3xl text-center bg-gray-100 shadow mb-2">길찾기</a>
+        <br>
+        <a id="detailLink" target="_blank" class="inline-block w-full py-1 px-4 rounded-3xl text-center bg-gray-100 shadow mb-2">상세정보</a>
+        <br>
+        <a id="reviewButton" target="_blank" class="inline-block w-full py-1 px-4 rounded-3xl text-center bg-gray-100 shadow mb-1">리뷰 등록</a>
+    </div>
+</div>
 
-<table>
-    <thead>
-    <tr>
-        <th>맛집이름</th>
-        <th>설명</th>
-        <th>주소</th>
-        <th>전화번호</th>
-        <th>맛집유형</th>
-        <th>오픈시간</th>
-        <th>마감시간</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="matzip : ${matzipList}">
-        <td th:text="${matzip.matzipName}"></td>
-        <td th:text="${matzip.description}"></td>
-        <td th:text="${matzip.address}"></td>
-        <td th:text="${matzip.phoneNumber}"></td>
-        <td th:text="${matzip.matzipType}"></td>
-        <td th:text="${matzip.openingTime}"></td>
-        <td th:text="${matzip.closingTime}"></td>
-    </tr>
-    </tbody>
-</table>
+<script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=868d9aa6d8d0e67bad6c59729809c3fa"></script>
+<script>
+    var mapContainer = document.getElementById('map'),
+        mapOption = {
+            center: new kakao.maps.LatLng(37.56682, 126.97865),
+            level: 3,
+            mapTypeId : kakao.maps.MapTypeId.ROADMAP
+        };
 
-<a href="/matzip/create" class="btn btn-primary">맛집등록</a>
+    var map = new kakao.maps.Map(mapContainer, mapOption);
+
+    var imageSrc = "https://ifh.cc/g/64zAsK.png";
+    var imageSize = new kakao.maps.Size(36, 37);
+    var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize);
+    var currentInfoWindow = null;
+
+    var placeInfo = document.getElementById('placeInfo');
+    var placeName = document.getElementById('placeName');
+    var placeAddress = document.getElementById('placeAddress');
+    var placePhone = document.getElementById('placePhone');
+    var placeDescription = document.getElementById('placeDescription');
+    var mapLink = document.getElementById('mapLink');
+    var routeLink = document.getElementById('routeLink');
+    var detailLink = document.getElementById('detailLink');
+
+    //지도 영역 외의 다른 부분을 클릭했을 때 placeInfo를 숨깁니다.
+    document.addEventListener('click', function(event) {
+        var target = event.target;
+        var mapContainer = document.getElementById('map');
+        var placeInfo = document.getElementById('placeInfo');
+        if (target !== mapContainer && !mapContainer.contains(target) && target !== placeInfo && !placeInfo.contains(target)) {
+            placeInfo.style.display = 'none'; // Hide place info
+        }
+    });
+
+    // 서버에 matzip 정보를 요청합니다
+    fetch('/matzip/api/list')
+        .then(response => response.json())
+        .then(data => {
+            // 각 맛집 정보에 대해서 반복 처리를 합니다
+            data.forEach(place => {
+                // 해당 위치에 마커를 생성합니다
+                var marker = new kakao.maps.Marker({
+                    map: map,
+                    position: new kakao.maps.LatLng(place.y, place.x),
+                    title : place.matzipName,
+                    image : markerImage
+                });
+
+                // 정보창에 표시할 내용을 설정합니다
+                var iwContent = '<div style="padding:5px; overflow-wrap: break-word;">' + place.matzipName + '</div>';
+
+                // 정보창을 생성합니다
+                var infowindow = new kakao.maps.InfoWindow({
+                    content : iwContent
+                });
+
+                // 마커에 클릭 이벤트를 등록합니다
+                kakao.maps.event.addListener(marker, 'click', function() {
+                    if (currentInfoWindow) {
+                        currentInfoWindow.close();
+                    }
+                    infowindow.open(map, marker);
+                    currentInfoWindow = infowindow;
+
+                    // 장소 정보를 업데이트합니다.
+                    placeName.innerText = place.matzipName;
+                    placeAddress.innerText = '주소: ' + place.address;
+                    placePhone.innerText = '전화번호: ' + place.phoneNumber;
+                    placeDescription.innerText = '설명: ' + place.description;
+                    mapLink.href = 'https://map.kakao.com/link/map/' + place.matzipName + ',' + place.y + ',' + place.x;
+                    mapLink.innerText = '큰지도보기';
+                    routeLink.href = 'https://map.kakao.com/link/to/' + place.matzipName + ',' + place.y + ',' + place.x;
+                    routeLink.innerText = '길찾기';
+                    detailLink.href = place.matzipUrl;
+                    detailLink.innerText = '상세정보';
+                    placeInfo.style.display = 'block'; // Show place info
+                });
+            });
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+</script>
 </body>
 </html>
