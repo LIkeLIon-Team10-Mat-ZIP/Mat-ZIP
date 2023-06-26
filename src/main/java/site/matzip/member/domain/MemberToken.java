@@ -22,9 +22,15 @@ public class MemberToken {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @Builder
-    public MemberToken(String accessToken, LocalDateTime accessTokenExpiredAt) {
+    public void updateToken(String accessToken, LocalDateTime accessTokenExpiredAt) {
         this.accessToken = accessToken;
         this.accessTokenExpiredAt = accessTokenExpiredAt;
+    }
+
+    @Builder
+    public MemberToken(String accessToken, LocalDateTime accessTokenExpiredAt, Member member) {
+        this.accessToken = accessToken;
+        this.accessTokenExpiredAt = accessTokenExpiredAt;
+        this.member = member;
     }
 }

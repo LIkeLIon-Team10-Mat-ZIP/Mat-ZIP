@@ -1,5 +1,6 @@
 package site.matzip.member.service;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
@@ -13,7 +14,7 @@ import site.matzip.member.repository.MemberTokenRepository;
 
 @Service
 @RequiredArgsConstructor
-public class MemerService {
+public class MemberService {
     private final MemberRepository memberRepository;
     private final MemberTokenRepository memberTokenRepository;
 
@@ -78,10 +79,12 @@ public class MemerService {
     }
 
     private Member findMember(Long memberId) {
-        return memberRepository.findById(memberId).orElseThrow(() -> new IllegalArgumentException("찾고자 하는 Member의 ID값이 없습니다."));
+        return memberRepository.findById(memberId)
+                .orElseThrow(() -> new EntityNotFoundException("Member not found"));
     }
 
     private MemberToken findMemberToken(Long memberId) {
-        return memberTokenRepository.findByMemberId(memberId).orElseThrow(() -> new IllegalArgumentException("찾고자 하는 MemberToken의 값이 없습니다."));
+        return memberTokenRepository.findByMemberId(memberId)
+                .orElseThrow(() -> new EntityNotFoundException("MemberToken not found"));
     }
 }

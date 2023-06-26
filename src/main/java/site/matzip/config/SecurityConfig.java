@@ -1,5 +1,6 @@
 package site.matzip.config;
 
+import jakarta.servlet.http.Cookie;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -42,8 +43,23 @@ public class SecurityConfig {
                 )
                 .logout(
                         logout -> logout
-                                .logoutUrl("/usr/member/logout")
-                );
+                                .invalidateHttpSession(true)
+                                .deleteCookies("JSESSIONID") // JSESSIONID 쿠키 삭제
+                                .addLogoutHandler((request, response, authentication) -> {
+                                    // 추가적인 로그아웃 핸들링 로직
+                                    Cookie[] cookies = request.getCookies();
+                                    if (cookies != null) {
+                                        for (Cookie cookie : cookies) {
+                                            if (cookie.getName().equals("JSESSIONID")) {
+                                                cookie.setMaxAge(0);
+                                                response.addCookie(cookie);
+                                                break;
+                                            }
+                                        }
+                                    }
+                                })
+                )
+        ;
 
         return http.build();
     }
