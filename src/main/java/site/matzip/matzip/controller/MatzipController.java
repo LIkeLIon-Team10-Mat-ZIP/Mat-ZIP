@@ -71,7 +71,7 @@ public class MatzipController {
             double rating = 0;
             String description = "";
             if (!recommendations.isEmpty()) {
-                MatzipRecommendation recommendation = recommendations.get(0); // 첫 번째 평가 정보 사용
+                MatzipRecommendation recommendation = recommendations.get(0); // 첫 번째 평가 정보 사용함. 이거 내가 작성한걸로 나오게 바꿔야함
                 rating = recommendation.getRating();
                 description = recommendation.getDescription();
             }

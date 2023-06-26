@@ -11,22 +11,12 @@
     <link href="https://cdn.jsdelivr.net/npm/daisyui@2.51.5/dist/full.css" rel="stylesheet" type="text/css"/>
     <title>리뷰 작성</title>
     <style>
-        /* 별점 표시를 위한 스타일 */
-        .rating {
-            unicode-bidi: bidi-override;
-            direction: rtl;
+        .rating .star {
+            font-size: 2em;
         }
 
-        .rating > span {
-            display: inline-block;
-            position: relative;
-            width: 1.1em;
-        }
-
-        .rating > span:hover:before,
-        .rating > span:hover ~ span:before {
-            content: "\2605";
-            position: absolute;
+        .empty {
+            color: #ccc;
         }
     </style>
 </head>
@@ -64,15 +54,42 @@
 
     // 평점을 별로 표시합니다
     var rating = parseInt(matzipCreationDTO.rating);
-    var ratingStars = '';
-    for (var i = 1; i <= 5; i++) {
-        if (i <= rating) {
-            ratingStars += '<span style="color: gold;">\u2605</span>'; // 별 모양
-        } else {
-            ratingStars += '<span>\u2606</span>'; // 빈 별 모양
+    var ratingContainer = document.getElementById('rating');
+    for (var i = 1; i <= rating; i++) {
+        var star = document.createElement('span');
+        star.textContent = '⭐';
+        star.classList.add('star');
+        star.setAttribute('data-rating', i);
+        ratingContainer.appendChild(star);
+    }
+
+    // 별점 클릭 이벤트 핸들러
+    var stars = document.getElementsByClassName('star');
+    for (var j = 0; j < stars.length; j++) {
+        stars[j].addEventListener('click', function () {
+            var selectedRating = this.getAttribute('data-rating');
+            matzipCreationDTO.rating = selectedRating; // 평점 업데이트
+            document.getElementById('ratingInput').value = selectedRating;
+            updateRatingDisplay();
+        });
+    }
+
+    // 평점 표시 업데이트 함수
+    function updateRatingDisplay() {
+        var currentRating = parseInt(matzipCreationDTO.rating);
+        var stars = document.getElementsByClassName('star');
+        for (var k = 0; k < stars.length; k++) {
+            var starRating = stars[k].getAttribute('data-rating');
+            if (starRating <= currentRating) {
+                stars[k].classList.remove('empty');
+            } else {
+                stars[k].classList.add('empty');
+            }
         }
     }
-    document.getElementById('rating').innerHTML = ratingStars;
+
+    // 초기 별점 표시 업데이트
+    updateRatingDisplay();
 
     // 맛집 정보를 히든 필드에 설정합니다
     document.getElementById('matzipNameInput').value = matzipCreationDTO.matzipName;
