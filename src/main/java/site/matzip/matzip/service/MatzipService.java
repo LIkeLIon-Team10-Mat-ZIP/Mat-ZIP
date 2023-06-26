@@ -24,6 +24,7 @@ public class MatzipService {
                 .address(creationDTO.getAddress())
                 .matzipType(creationDTO.getMatzipTypeEnum())
                 .phoneNumber(creationDTO.getPhoneNumber())
+                .matzipUrl(creationDTO.getMatzipUrl())
                 .x(creationDTO.getX())
                 .y(creationDTO.getY())
                 .build();

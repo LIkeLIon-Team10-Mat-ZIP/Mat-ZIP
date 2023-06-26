@@ -20,6 +20,7 @@ public class Matzip {
     private String matzipName;
     private String address;
     private String phoneNumber;
+    private String matzipUrl;
     @Enumerated(EnumType.STRING)
     private MatzipType matzipType;
     private double x;
