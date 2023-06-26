@@ -23,7 +23,7 @@ public class Member {
     private String email;
     @Enumerated(EnumType.STRING)
     private MemberRole role;
-    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MatzipRecommendation> matzipRecommendations = new ArrayList<>();
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Review> reviews = new ArrayList<>();
