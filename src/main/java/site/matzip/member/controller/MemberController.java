@@ -30,7 +30,7 @@ public class MemberController {
         return "usr/member/login";
     }
 
-    //@PreAuthorize("isAuthenticated()")
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("/logout")
     public String logout(@AuthenticationPrincipal PrincipalDetails principalDetails,
                          HttpServletRequest request,

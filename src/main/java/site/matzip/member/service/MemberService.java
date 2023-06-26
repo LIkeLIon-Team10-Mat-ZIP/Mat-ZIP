@@ -2,6 +2,7 @@ package site.matzip.member.service;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -13,6 +14,7 @@ import site.matzip.member.repository.MemberRepository;
 import site.matzip.member.repository.MemberTokenRepository;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class MemberService {
     private final MemberRepository memberRepository;
@@ -51,8 +53,7 @@ public class MemberService {
                 HttpMethod.POST, // Request Method
                 kakaoTokenRequest,	// RequestBody
                 String.class);	// return Object
-
-        System.out.println("response = " + response);
+        log.info("logout response = {}", response);
     }
 
     public void unlink(Long memberId) {
@@ -74,8 +75,7 @@ public class MemberService {
                 HttpMethod.POST, // Request Method
                 kakaoTokenRequest,	// RequestBody
                 String.class);	// return Object
-
-        System.out.println("response = " + response);
+        log.info("unlink response = {}", response);
     }
 
     private Member findMember(Long memberId) {
