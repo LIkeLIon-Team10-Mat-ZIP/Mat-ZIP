@@ -26,22 +26,43 @@ public class MatzipService {
 
     //맛집 생성 메서드
     public RsData<Matzip> create(MatzipCreationDTO creationDTO, Member author) {
-        Matzip matzip = createMatzipEntity(creationDTO);
-        Matzip savedMatzip = matzipRepository.save(matzip);
-        MatzipRecommendation matzipRecommendation = createMatzipRecommendationEntity(creationDTO, savedMatzip, author);
-        matzipRecommendationRepository.save(matzipRecommendation);
-        return RsData.of("S-1", "맛집이 등록 되었습니다.", savedMatzip);
+        Optional<Matzip> optionalExistingMatzip = matzipRepository.findByKakaoId(creationDTO.getKakaoId());
+        if (optionalExistingMatzip.isPresent()) {
+            Matzip existingMatzip = optionalExistingMatzip.get();
+            MatzipRecommendation matzipRecommendation = createMatzipRecommendationEntity(creationDTO, existingMatzip, author);
+            matzipRecommendationRepository.save(matzipRecommendation);
+            return RsData.of("S-1", "맛집 추천 정보가 등록되었습니다.", existingMatzip);
+        } else {
+            Matzip matzip = createMatzipEntity(creationDTO);
+            Matzip savedMatzip = matzipRepository.save(matzip);
+            MatzipRecommendation matzipRecommendation = createMatzipRecommendationEntity(creationDTO, savedMatzip, author);
+            matzipRecommendationRepository.save(matzipRecommendation);
+            return RsData.of("S-1", "맛집이 등록되었습니다.", savedMatzip);
+        }
     }
     //오버로딩: 리뷰 같이 등록시에 리뷰 DTO까지 매개변수로 포함
     public RsData<Matzip> create(MatzipCreationDTO creationDTO, ReviewCreationDTO reviewCreationDTO, Member author) {
-        Matzip matzip = createMatzipEntity(creationDTO);
-        Matzip savedMatzip = matzipRepository.save(matzip);
-        MatzipRecommendation matzipRecommendation = createMatzipRecommendationEntity(creationDTO, savedMatzip, author);
-        matzipRecommendationRepository.save(matzipRecommendation);
-        Review review = createReviewEntity(savedMatzip, reviewCreationDTO, author);
-        reviewRepository.save(review);
-        return RsData.of("S-1", "맛집과 리뷰가 등록 되었습니다.", savedMatzip);
+        Optional<Matzip> optionalExistingMatzip = matzipRepository.findByKakaoId(creationDTO.getKakaoId());
+        if (optionalExistingMatzip.isPresent()) {
+            Matzip existingMatzip = optionalExistingMatzip.get();
+            MatzipRecommendation matzipRecommendation = createMatzipRecommendationEntity(creationDTO, existingMatzip, author);
+            matzipRecommendationRepository.save(matzipRecommendation);
+            Review review = createReviewEntity(existingMatzip, reviewCreationDTO, author);
+            reviewRepository.save(review);
+            return RsData.of("S-1", "맛집과 리뷰가 등록되었습니다.", existingMatzip);
+        } else {
+            Matzip matzip = createMatzipEntity(creationDTO);
+            Matzip savedMatzip = matzipRepository.save(matzip);
+            MatzipRecommendation matzipRecommendation = createMatzipRecommendationEntity(creationDTO, savedMatzip, author);
+            matzipRecommendationRepository.save(matzipRecommendation);
+            Review review = createReviewEntity(savedMatzip, reviewCreationDTO, author);
+            reviewRepository.save(review);
+            return RsData.of("S-1", "맛집과 리뷰가 등록되었습니다.", savedMatzip);
+        }
     }
+
+
+
     //맛집 엔티티 생성 메서드
     private Matzip createMatzipEntity(MatzipCreationDTO creationDTO) {
         return Matzip.builder()
@@ -81,5 +102,6 @@ public class MatzipService {
     public List<Matzip> findAll() {
         return matzipRepository.findAll();
     }
+
 
 }

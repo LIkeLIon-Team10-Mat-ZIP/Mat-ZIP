@@ -14,4 +14,6 @@ public interface MatzipRepository extends JpaRepository<Matzip, Long> {
     List<Matzip> findAllWithRecommendations();
 
     Optional<Matzip> findByMatzipNameAndAddress(String matzipName, String address);
+
+    Optional<Matzip> findByKakaoId(Long kakaoId);
 }
