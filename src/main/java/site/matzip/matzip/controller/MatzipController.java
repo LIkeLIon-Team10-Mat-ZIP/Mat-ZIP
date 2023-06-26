@@ -75,7 +75,17 @@ public class MatzipController {
                 rating = recommendation.getRating();
                 description = recommendation.getDescription();
             }
-            return MatzipListDTO.builder().matzipName(matzip.getMatzipName()).address(matzip.getAddress()).phoneNumber(matzip.getPhoneNumber()).matzipUrl(matzip.getMatzipUrl()).matzipType(matzip.getMatzipType()).x(matzip.getX()).y(matzip.getY()).rating(rating).description(description).build();
+            return MatzipListDTO.builder()
+                    .matzipName(matzip.getMatzipName())
+                    .address(matzip.getAddress())
+                    .phoneNumber(matzip.getPhoneNumber())
+                    .matzipUrl(matzip.getMatzipUrl())
+                    .matzipType(matzip.getMatzipType())
+                    .x(matzip.getX())
+                    .y(matzip.getY())
+                    .rating(rating)
+                    .description(description)
+                    .build();
         }).collect(Collectors.toList());
 
         return ResponseEntity.ok(matzipDtoList);
