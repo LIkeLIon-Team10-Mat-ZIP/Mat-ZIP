@@ -2,14 +2,13 @@ package site.matzip.matzip.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import site.matzip.base.rsData.RsData;
 import site.matzip.matzip.domain.Matzip;
 import site.matzip.matzip.domain.MatzipRecommendation;
 import site.matzip.matzip.dto.MatzipCreationDTO;
 import site.matzip.matzip.repository.MatzipRecommendationRepository;
 import site.matzip.matzip.repository.MatzipRepository;
-import site.matzip.base.rsData.RsData;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
