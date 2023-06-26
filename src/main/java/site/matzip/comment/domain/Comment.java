@@ -6,11 +6,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import site.matzip.base.domain.BaseEntity;
-import site.matzip.commentImage.domain.CommentImage;
+import site.matzip.member.domain.Member;
 import site.matzip.review.domain.Review;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Getter
@@ -22,16 +19,16 @@ public class Comment extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "review_id")
     private Review review;
-    @OneToMany(mappedBy = "comment", cascade = {CascadeType.ALL})
-    private List<CommentImage> commentImages = new ArrayList<>();
-    private Double rating;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
+    private Member author;
     private String title;
     private String content;
 
     @Builder
-    public Comment(Review review, Double rating, String title, String content) {
+    public Comment(Review review, Member author, String title, String content) {
         this.review = review;
-        this.rating = rating;
+        this.author = author;
         this.title = title;
         this.content = content;
     }
