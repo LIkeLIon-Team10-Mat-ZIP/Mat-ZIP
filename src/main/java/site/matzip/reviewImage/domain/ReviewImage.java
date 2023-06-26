@@ -1,27 +1,26 @@
-package site.matzip.commentImage.domain;
+package site.matzip.reviewImage.domain;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
-import site.matzip.comment.domain.Comment;
+import site.matzip.review.domain.Review;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class CommentImage {
+public class ReviewImage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long Id;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "comment_id")
-    private Comment comment;
     @NotNull
     private String imageUrl;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "review_id")
+    private Review review;
 
     @Builder
-    public CommentImage(Comment comment, String imageUrl) {
-        this.comment = comment;
+    public ReviewImage(String imageUrl) {
         this.imageUrl = imageUrl;
     }
 }

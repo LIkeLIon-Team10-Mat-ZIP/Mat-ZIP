@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html layout:decorate="~{common/layout/defaultLayout.html}">
+<head>
+    <title>코멘트 등록</title>
+</head>
+<body>
+
+<main layout:fragment="Content">
+    <form th:action="@{/comment/create}" method="post">
+        <!-- TODO : reviewId 값을 가져오는건 추후 연결되면 진행할예정 -->
+        <input type="hidden" name="authorId" th:value="${authorId}">
+        <input type="hidden" name="reviewId" value="2">
+        <div>
+            <label>제목:</label>
+            <input class="input input-bordered w-full max-w-xs" type="text" name="title" required/>
+        </div>
+
+        <div>
+            <label>내용:</label>
+            <input class="textarea" type="text" name="content" required/>
+        </div>
+
+        <div>
+            <button class="btn btn-outline" type="submit">Submit</button>
+        </div>
+    </form>
+</main>
+
+</body>
+
+</html>

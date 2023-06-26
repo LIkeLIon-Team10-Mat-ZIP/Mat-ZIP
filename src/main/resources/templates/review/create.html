@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html layout:decorate="~{common/layout/defaultLayout.html}">
+<head>
+    <title>리뷰 등록</title>
+</head>
+<body>
+
+<main layout:fragment="Content">
+    <form th:action="@{/review/create}" th:object="${reviewCreationDTO}" method="post">
+        <input type="hidden" name="author" th:value="${author}">
+        <div class="rating">
+            <input type="radio" name="rating" value="1" class="mask mask-star-2 bg-orange-400"/>
+            <input type="radio" name="rating" value="2" class="mask mask-star-2 bg-orange-400" checked/>
+            <input type="radio" name="rating" value="3" class="mask mask-star-2 bg-orange-400"/>
+            <input type="radio" name="rating" value="4" class="mask mask-star-2 bg-orange-400"/>
+            <input type="radio" name="rating" value="5" class="mask mask-star-2 bg-orange-400"/>
+        </div>
+
+        <div>
+            <label>내용:</label>
+            <input class="textarea textarea-bordered textarea-lg w-full max-w-xs" type="text" name="content" required/>
+        </div>
+
+        <div>
+            <button class="btn btn-outline" type="submit">Submit</button>
+        </div>
+    </form>
+</main>
+
+</body>
+
+</html>

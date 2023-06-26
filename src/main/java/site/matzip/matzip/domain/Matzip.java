@@ -2,9 +2,8 @@ package site.matzip.matzip.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
-import site.matzip.member.domain.Member;
+import site.matzip.review.domain.Review;
 
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,4 +28,6 @@ public class Matzip {
 
     private double x;
     private double y;
+    @OneToMany(mappedBy = "matzip", cascade = {CascadeType.ALL})
+    private List<Review> reviews = new ArrayList<>();
 }
