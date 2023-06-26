@@ -4,7 +4,7 @@ import lombok.Data;
 import site.matzip.review.dto.ReviewCreationDTO;
 
 @Data
-public class MatzipRewiewDTO {
+public class MatzipReviewDTO {
     MatzipCreationDTO matzipCreationDTO;
     ReviewCreationDTO reviewCreationDTO;
 

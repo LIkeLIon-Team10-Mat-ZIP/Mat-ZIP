@@ -21,11 +21,11 @@ public class Matzip {
     private String address;
     private String phoneNumber;
     private String matzipUrl;
+    private Long kakaoId;
     @Enumerated(EnumType.STRING)
     private MatzipType matzipType;
     @OneToMany(mappedBy = "matzip", cascade = CascadeType.ALL)
     private List<MatzipRecommendation> recommendations;
-
     private double x;
     private double y;
     @OneToMany(mappedBy = "matzip", cascade = {CascadeType.ALL})

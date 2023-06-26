@@ -13,7 +13,7 @@ import site.matzip.matzip.domain.Matzip;
 import site.matzip.matzip.domain.MatzipRecommendation;
 import site.matzip.matzip.dto.MatzipCreationDTO;
 import site.matzip.matzip.dto.MatzipListDTO;
-import site.matzip.matzip.dto.MatzipRewiewDTO;
+import site.matzip.matzip.dto.MatzipReviewDTO;
 import site.matzip.matzip.service.MatzipService;
 import site.matzip.member.domain.Member;
 import site.matzip.review.dto.ReviewCreationDTO;
@@ -41,7 +41,7 @@ public class MatzipController {
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/createWithReview")
-    public String createWithReview(@RequestBody MatzipRewiewDTO matzipReviewDTO, BindingResult result, @AuthenticationPrincipal PrincipalDetails principalDetails) {
+    public String createWithReview(@RequestBody MatzipReviewDTO matzipReviewDTO, BindingResult result, @AuthenticationPrincipal PrincipalDetails principalDetails) {
         if (result.hasErrors()) {
             return "/matzip/create";
         }
