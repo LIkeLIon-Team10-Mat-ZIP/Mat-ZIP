@@ -40,8 +40,11 @@ public class MatzipService {
         return RsData.of("S-1", "맛집이 등록 되었습니다.", savedMatzip);
     }
 
+    public List<Matzip> findAllWithRecommendations() {
+        return matzipRepository.findAllWithRecommendations();
+    }
+
     public List<Matzip> findAll() {
-        List<Matzip> list = matzipRepository.findAll();
-        return list;
+        return matzipRepository.findAll();
     }
 }
