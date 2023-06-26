@@ -108,7 +108,12 @@
                 });
 
                 // 정보창에 표시할 내용을 설정합니다
-                var iwContent = '<div style="padding:5px; overflow-wrap: break-word;">' + place.matzipName + '</div>';
+                var iwContent;
+                if (place.matzipName.length > 9) { // 예시로 50자를 기준으로 하였습니다. 원하는 기준으로 변경하세요.
+                    iwContent = '<div style="padding:5px; overflow-wrap: break-word; font-size:0.8em;">' + place.matzipName + '</div>';
+                } else {
+                    iwContent = '<div style="padding:5px; overflow-wrap: break-word;">' + place.matzipName + '</div>';
+                }
 
                 // 정보창을 생성합니다
                 var infowindow = new kakao.maps.InfoWindow({
