@@ -1,6 +1,10 @@
 package site.matzip.member.service;
 
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -35,7 +39,7 @@ public class MemberService {
     @Value("${spring.security.oauth2.client.provider.kakao.token-uri}")
     private String tokenUri;
 
-    public void logout(Long memberId) {
+    public void logout(Long memberId, HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
         MemberToken findMemberToken = findMemberToken(memberId);
 
         RestTemplate rt = new RestTemplate();
@@ -54,6 +58,7 @@ public class MemberService {
                 kakaoTokenRequest,	// RequestBody
                 String.class);	// return Object
         log.info("logout response = {}", response);
+        deleteCookie(servletRequest, servletResponse);
     }
 
     public void unlink(Long memberId) {
@@ -76,6 +81,18 @@ public class MemberService {
                 kakaoTokenRequest,	// RequestBody
                 String.class);	// return Object
         log.info("unlink response = {}", response);
+    }
+
+    private void deleteCookie(HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
+        HttpSession session = servletRequest.getSession(false);
+        if (session != null) {
+            session.invalidate(); // 세션 무효화
+        }
+        // JSESSIONID 쿠키 삭제
+        Cookie cookie = new Cookie("JSESSIONID", "");
+        cookie.setMaxAge(0);
+        cookie.setPath("/");
+        servletResponse.addCookie(cookie);
     }
 
     private Member findMember(Long memberId) {

@@ -36,17 +36,7 @@ public class MemberController {
                          HttpServletRequest request,
                          HttpServletResponse response) {
 
-        HttpSession session = request.getSession(false);
-        if (session != null) {
-            session.invalidate(); // 세션 무효화
-        }
-        // JSESSIONID 쿠키 삭제
-        Cookie cookie = new Cookie("JSESSIONID", "");
-        cookie.setMaxAge(0);
-        cookie.setPath("/");
-        response.addCookie(cookie);
-
-        memberService.logout(principalDetails.getMember().getId());
+        memberService.logout(principalDetails.getMember().getId(), request, response);
 
         return "redirect:/";
     }
