@@ -38,7 +38,7 @@ public class MemberController {
         cookie.setMaxAge(0);
         cookie.setPath("/");
         response.addCookie(cookie);
-        memberService.logout(principalDetails.getMember().getId(), request, response);
+
         return "redirect:/";
     }
 }
