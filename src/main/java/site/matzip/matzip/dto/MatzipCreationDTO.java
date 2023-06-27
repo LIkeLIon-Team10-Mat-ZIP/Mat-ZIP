@@ -17,6 +17,7 @@ public class MatzipCreationDTO {
             message = "전화번호 형식이 잘못되었습니다. (올바른 형식: 010-1234-5678 or 02-123-4567)")
     private String phoneNumber;
     private String matzipUrl;
+    private Long kakaoId;
     @NotNull(message = "맛집의 유형을 입력해주세요")
     private String matzipType;
     private String description;
