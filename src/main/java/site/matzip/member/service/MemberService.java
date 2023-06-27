@@ -46,7 +46,7 @@ public class MemberService {
         RestTemplate rt = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set("Authorization", "Bearer "+ findMemberToken.getAccessToken());
+        headers.set("Authorization", "Bearer " + findMemberToken.getAccessToken());
 
         // 해더와 바디를 하나의 오브젝트로 만들기
         HttpEntity<MultiValueMap<String, String>> kakaoTokenRequest =
@@ -56,8 +56,8 @@ public class MemberService {
         ResponseEntity<String> response = rt.exchange(
                 "https://kapi.kakao.com/v1/user/logout", // Host
                 HttpMethod.POST, // Request Method
-                kakaoTokenRequest,	// RequestBody
-                String.class);	// return Object
+                kakaoTokenRequest,    // RequestBody
+                String.class);    // return Object
         log.info("logout response = {}", response);
     }
 
@@ -68,7 +68,7 @@ public class MemberService {
         RestTemplate rt = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set("Authorization", "Bearer "+ findMemberToken.getAccessToken());
+        headers.set("Authorization", "Bearer " + findMemberToken.getAccessToken());
 
         // 해더와 바디를 하나의 오브젝트로 만들기
         HttpEntity<MultiValueMap<String, String>> kakaoTokenRequest =
@@ -78,8 +78,8 @@ public class MemberService {
         ResponseEntity<String> response = rt.exchange(
                 "https://kapi.kakao.com/v1/user/unlink", // Host
                 HttpMethod.POST, // Request Method
-                kakaoTokenRequest,	// RequestBody
-                String.class);	// return Object
+                kakaoTokenRequest,    // RequestBody
+                String.class);    // return Object
         log.info("unlink response = {}", response);
     }
 

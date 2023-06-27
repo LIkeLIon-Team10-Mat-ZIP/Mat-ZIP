@@ -5,6 +5,7 @@ import jakarta.persistence.Enumerated;
 import lombok.Builder;
 import lombok.Data;
 import site.matzip.matzip.domain.MatzipType;
+
 @Data
 @Builder
 public class MatzipListDTO {
