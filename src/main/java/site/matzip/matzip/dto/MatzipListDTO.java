@@ -17,4 +17,5 @@ public class MatzipListDTO {
     private MatzipType matzipType;
     private double x;
     private double y;
+    private double rating;
 }

@@ -17,7 +17,7 @@ public class MatzipRecommendation {
     private double rating;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
-    private Member member;
+    private Member author;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "matzip_id")
     private Matzip matzip;

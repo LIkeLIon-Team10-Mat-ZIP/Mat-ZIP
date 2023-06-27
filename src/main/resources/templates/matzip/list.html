@@ -48,6 +48,7 @@
         <p id="placeAddress">주소</p>
         <p id="placePhone">전화번호</p>
         <p id="placeDescription">설명</p>
+        <p id="placeRating">내 평점</p>
         <a id="mapLink" target="_blank" class="inline-block w-full py-1 px-4 rounded-3xl text-center bg-gray-100 shadow mb-2">큰지도 보기</a>
         <br>
         <a id="routeLink" target="_blank" class="inline-block w-full py-1 px-4 rounded-3xl text-center bg-gray-100 shadow mb-2">길찾기</a>
@@ -79,6 +80,7 @@
     var placeAddress = document.getElementById('placeAddress');
     var placePhone = document.getElementById('placePhone');
     var placeDescription = document.getElementById('placeDescription');
+    var placeRating = document.getElementById('placeRating')
     var mapLink = document.getElementById('mapLink');
     var routeLink = document.getElementById('routeLink');
     var detailLink = document.getElementById('detailLink');
@@ -128,6 +130,7 @@
                     placeAddress.innerText = '주소: ' + place.address;
                     placePhone.innerText = '전화번호: ' + place.phoneNumber;
                     placeDescription.innerText = '설명: ' + place.description;
+                    placeRating.innerText = '내 평점: ' + place.rating;
                     mapLink.href = 'https://map.kakao.com/link/map/' + place.matzipName + ',' + place.y + ',' + place.x;
                     mapLink.innerText = '큰지도보기';
                     routeLink.href = 'https://map.kakao.com/link/to/' + place.matzipName + ',' + place.y + ',' + place.x;
@@ -135,6 +138,7 @@
                     detailLink.href = place.matzipUrl;
                     detailLink.innerText = '상세정보';
                     placeInfo.style.display = 'block'; // Show place info
+
                 });
             });
         })

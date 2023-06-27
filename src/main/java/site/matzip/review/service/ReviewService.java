@@ -17,29 +17,6 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final MatzipRepository matzipRepository;
 
-    @Transactional
-    public void create(MatzipCreationDTO matzipCreationDTO, ReviewCreationDTO reviewCreationDTO) {
-        //맛집 등록
-        Matzip matzip = Matzip.builder()
-                .matzipName(matzipCreationDTO.getMatzipName())
-                .address(matzipCreationDTO.getAddress())
-                .matzipType(matzipCreationDTO.getMatzipTypeEnum())
-                .phoneNumber(matzipCreationDTO.getPhoneNumber())
-                .x(matzipCreationDTO.getX())
-                .y(matzipCreationDTO.getY())
-                .build();
-        Matzip savedMatzip = matzipRepository.save(matzip);
-
-        //리뷰 등록
-        Review review = Review.builder()
-                .matzip(savedMatzip)
-                .author(reviewCreationDTO.getAuthor())
-                .rating(reviewCreationDTO.getRating())
-                .content(reviewCreationDTO.getContent())
-                .build();
-        reviewRepository.save(review);
-    }
-
     public void remove(Long reviewId) {
         Review findReview = findReview(reviewId);
         reviewRepository.delete(findReview);
