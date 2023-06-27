@@ -37,45 +37,46 @@
     <p>맛집 주소: <span id="address"></span></p>
     <p>전화번호: <span id="phoneNumber"></span></p>
     <p>평점: <span id="rating" class="rating"></span></p>
-    div class="min-h-screen flex items-center justify-center mt-[-70px] w-full">
-    <form th:action="@{/review/create}" th:object="${reviewCreationDTO}" method="post" style="width: 650px" onsubmit="CreateReview__submit(this); return false;">
-        <input type="hidden" name="author" th:value="${author}">
-        <div class="flex flex-col mb-8">
-            <span class="text-3xl mb-10"><i class="fa-solid fa-pencil"></i> Review</span>
-            <span class="mb-2 text-lg"><i class="fa-solid fa-ranking-star"></i> 별점</span>
-            <div class="rating rating-md rating-half">
-                <input type="radio" name="rating" value="0.5" class="bg-yellow-500 mask mask-star-2 mask-half-1"
-                       checked/>
-                <input type="radio" name="rating" value="1.0" class="bg-yellow-500 mask mask-star-2 mask-half-2"/>
-                <input type="radio" name="rating" value="1.5" class="bg-yellow-500 mask mask-star-2 mask-half-1"/>
-                <input type="radio" name="rating" value="2.0" class="bg-yellow-500 mask mask-star-2 mask-half-2"/>
-                <input type="radio" name="rating" value="2.5" class="bg-yellow-500 mask mask-star-2 mask-half-1"/>
-                <input type="radio" name="rating" value="3.0" class="bg-yellow-500 mask mask-star-2 mask-half-2"/>
-                <input type="radio" name="rating" value="3.5" class="bg-yellow-500 mask mask-star-2 mask-half-1"/>
-                <input type="radio" name="rating" value="4.0" class="bg-yellow-500 mask mask-star-2 mask-half-2"/>
-                <input type="radio" name="rating" value="4.5" class="bg-yellow-500 mask mask-star-2 mask-half-1"/>
-                <input type="radio" name="rating" value="5.0" class="bg-yellow-500 mask mask-star-2 mask-half-2"/>
+    <div class="min-h-screen flex items-center justify-center mt-[-70px] w-full">
+        <form th:action="@{/review/create}" th:object="${reviewCreationDTO}" method="post" style="width: 650px"
+              onsubmit="CreateReview__submit(this); return false;">
+            <input type="hidden" name="author" th:value="${author}">
+            <div class="flex flex-col mb-8">
+                <span class="text-3xl mb-10"><i class="fa-solid fa-pencil"></i> Review</span>
+                <span class="mb-2 text-lg"><i class="fa-solid fa-ranking-star"></i> 별점</span>
+                <div class="rating rating-md rating-half">
+                    <input type="radio" name="rating" value="0.5" class="bg-yellow-500 mask mask-star-2 mask-half-1"
+                           checked/>
+                    <input type="radio" name="rating" value="1.0" class="bg-yellow-500 mask mask-star-2 mask-half-2"/>
+                    <input type="radio" name="rating" value="1.5" class="bg-yellow-500 mask mask-star-2 mask-half-1"/>
+                    <input type="radio" name="rating" value="2.0" class="bg-yellow-500 mask mask-star-2 mask-half-2"/>
+                    <input type="radio" name="rating" value="2.5" class="bg-yellow-500 mask mask-star-2 mask-half-1"/>
+                    <input type="radio" name="rating" value="3.0" class="bg-yellow-500 mask mask-star-2 mask-half-2"/>
+                    <input type="radio" name="rating" value="3.5" class="bg-yellow-500 mask mask-star-2 mask-half-1"/>
+                    <input type="radio" name="rating" value="4.0" class="bg-yellow-500 mask mask-star-2 mask-half-2"/>
+                    <input type="radio" name="rating" value="4.5" class="bg-yellow-500 mask mask-star-2 mask-half-1"/>
+                    <input type="radio" name="rating" value="5.0" class="bg-yellow-500 mask mask-star-2 mask-half-2"/>
+                </div>
             </div>
-        </div>
-        <div class="mb-5 flex flex-col">
-            <span class="mb-2 text-lg"><i class="fa-solid fa-camera"></i> 이미지 등록</span>
-            <input type="file" class="file-input file-input-bordered file-input-error w-full max-w-3xl"/>
-        </div>
-        <div>
+            <div class="mb-5 flex flex-col">
+                <span class="mb-2 text-lg"><i class="fa-solid fa-camera"></i> 이미지 등록</span>
+                <input type="file" class="file-input file-input-bordered file-input-error w-full max-w-3xl"/>
+            </div>
             <div>
-                <span class="text-lg"><i class="fa-solid fa-comments"></i> 내용</span>
-                <label>
+                <div>
+                    <span class="text-lg"><i class="fa-solid fa-comments"></i> 내용</span>
+                    <label>
                         <textarea class="textarea textarea-error textarea-lg w-full max-w-3xl" rows="7" name="content"
                         ></textarea>
-                </label>
-            </div>
-            <button class="btn btn-outline btn-error btn-sm" type="button" onclick="fff()">hihihi</button>
+                    </label>
+                </div>
+                <button class="btn btn-outline btn-error btn-sm" type="button" onclick="fff()">hihihi</button>
 
-            <div class="flex justify-end">
-                <button class="btn btn-outline btn-error btn-sm">Submit</button>
+                <div class="flex justify-end">
+                    <button class="btn btn-outline btn-error btn-sm">Submit</button>
+                </div>
             </div>
-        </div>
-    </form>
+        </form>
     </div>
     <form th:action="@{/review/create}" th:object="${reviewCreationDTO}" method="post">
         <input type="hidden" name="author" th:value="${author}">
