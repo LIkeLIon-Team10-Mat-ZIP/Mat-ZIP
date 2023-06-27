@@ -40,6 +40,7 @@ public class MemberService {
     private String tokenUri;
 
     public void logout(Long memberId, HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
+        //deleteCookie(servletRequest, servletResponse);
         MemberToken findMemberToken = findMemberToken(memberId);
 
         RestTemplate rt = new RestTemplate();
@@ -58,7 +59,6 @@ public class MemberService {
                 kakaoTokenRequest,	// RequestBody
                 String.class);	// return Object
         log.info("logout response = {}", response);
-        deleteCookie(servletRequest, servletResponse);
     }
 
     public void unlink(Long memberId) {
