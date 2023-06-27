@@ -8,7 +8,7 @@
         <!-- Navbar / Hamburger-Bar 둘다 값을 넣어주세요.-->
         <!-- Navbar -->
         <div class="flex h-full items-center hidden sm:block">
-            <a sec:authorize="isAnonymous()" class="btn btn-ghost rounded-btn" href="/usr/member/login">로그인</a>
+            <a sec:authorize="isAnonymous()" class="btn btn-ghost rounded-btn" href="/oauth2/authorization/kakao">로그인</a>
             <a sec:authorize="isAuthenticated()" class="btn btn-ghost rounded-btn" href="#">내 정보</a>
             <a sec:authorize="isAuthenticated()" class="btn btn-ghost rounded-btn" href="javascript:"
                onclick="$(this).next().submit();">로그아웃</a>

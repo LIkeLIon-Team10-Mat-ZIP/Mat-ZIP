@@ -1,7 +1,6 @@
 package site.matzip.config;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -9,8 +8,6 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import site.matzip.config.auth.UserLoginFailureHandler;
 import site.matzip.config.oauth.PrincipalOAuth2UserService;
@@ -21,8 +18,7 @@ import site.matzip.config.oauth.PrincipalOAuth2UserService;
 @EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
 
-    @Autowired
-    private PrincipalOAuth2UserService principalOAuth2UserService;
+    private final PrincipalOAuth2UserService principalOAuth2UserService;
     private final UserLoginFailureHandler userLoginFailureHandler;
 
     @Bean
@@ -40,17 +36,10 @@ public class SecurityConfig {
                                 .userInfoEndpoint()
                                 .userService(principalOAuth2UserService) // OAuth2.0 로그인을 성공하면 해당 service 실행
                 )
-                .logout(
-                        logout -> logout
-                                .logoutUrl("/usr/member/logout")
-                );
+                .logout()
+        ;
 
         return http.build();
-    }
-
-    @Bean
-    PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
     }
 
     @Bean
