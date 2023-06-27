@@ -1,7 +1,6 @@
 package site.matzip.review.domain;
 
 import jakarta.persistence.*;
-
 import lombok.*;
 import site.matzip.base.domain.BaseEntity;
 import site.matzip.comment.domain.Comment;

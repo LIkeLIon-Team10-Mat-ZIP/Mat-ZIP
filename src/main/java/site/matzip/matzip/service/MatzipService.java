@@ -13,7 +13,6 @@ import site.matzip.review.domain.Review;
 import site.matzip.review.dto.ReviewCreationDTO;
 import site.matzip.review.repository.ReviewRepository;
 
-
 import java.util.List;
 import java.util.Optional;
 
@@ -40,6 +39,7 @@ public class MatzipService {
             return RsData.of("S-1", "맛집이 등록되었습니다.", savedMatzip);
         }
     }
+
     //오버로딩: 리뷰 같이 등록시에 리뷰 DTO까지 매개변수로 포함
     public RsData<Matzip> create(MatzipCreationDTO creationDTO, ReviewCreationDTO reviewCreationDTO, Member author) {
         Optional<Matzip> optionalExistingMatzip = matzipRepository.findByKakaoId(creationDTO.getKakaoId());
@@ -62,7 +62,6 @@ public class MatzipService {
     }
 
 
-
     //맛집 엔티티 생성 메서드
     private Matzip createMatzipEntity(MatzipCreationDTO creationDTO) {
         return Matzip.builder()
@@ -76,6 +75,7 @@ public class MatzipService {
                 .y(creationDTO.getY())
                 .build();
     }
+
     //개인의 맛집 추천(후기) 엔티티 생성
     private MatzipRecommendation createMatzipRecommendationEntity(MatzipCreationDTO creationDTO, Matzip savedMatzip, Member author) {
         return MatzipRecommendation.builder()
@@ -85,6 +85,7 @@ public class MatzipService {
                 .author(author)
                 .build();
     }
+
     //리뷰 엔티티 만드는 메서드
     private Review createReviewEntity(Matzip savedMatzip, ReviewCreationDTO reviewCreationDTO, Member author) {
         return Review.builder()
