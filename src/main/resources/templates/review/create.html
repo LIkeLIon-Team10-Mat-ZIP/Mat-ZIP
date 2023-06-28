@@ -10,6 +10,29 @@
     <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
     <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css"/>
     <!-- 토스트 UI 에디터 불러오기 끝 -->
+
+    <style>
+        #selectedImages {
+            display: flex;
+            justify-content: flex-start;
+            flex-wrap: wrap;
+            gap: 10px; /* 여백을 조절할 값 */
+        }
+
+        .selectedImageContainer {
+            width: 120px;
+            height: 120px;
+            border: 2px solid #CCC;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .selectedImage {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+    </style>
 </head>
 <body>
 
@@ -23,7 +46,7 @@
     </script>
     <div class="flex justify-center mx-auto max-w-5xl mt-20">
         <div class="w-full">
-            <form id="reviewForm" action="/matzip/createWithReview" method="POST"
+            <form id="reviewForm" action="/matzip/createWithReview" method="POST" enctype="multipart/form-data"
                   onsubmit="copyEditorContentToTextarea();">
                 <input type="hidden" name="matzipName" id="matzipNameInput">
                 <input type="hidden" name="address" id="addressInput">
@@ -72,11 +95,10 @@
                         </div>
                     </div>
                     <div class="flex flex-col p-3">
-                        <input type="file" class="file-input file-input-bordered w-full"/>
-                        <div class="flex justify-between my-2">
-                            <img src="https://search.pstatic.net/common/?src=https%3A%2F%2Fldb-phinf.pstatic.net%2F20230315_55%2F1678864965197X3zz0_JPEG%2FIMG_6113.JPEG"
-                                 class="w-40 h-40 object-cover"/>
-                        </div>
+
+                        <input type="file" id="imageInput" multiple class="file-input file-input-bordered w-full"
+                               onchange="checkFileCount(event)" accept="image/*"/>
+                        <div id="selectedImages" class="flex justify-start my-2"></div>
                         <div>
                             <div>
                                 <div class="mt-2 flex justify-center">
@@ -152,7 +174,7 @@
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    [csrfHeader]: csrfToken  // CSRF 토큰을 헤더에 포함합니다
+                    [csrfHeader]: csrfToken // CSRF 토큰을 헤더에 포함합니다
                 },
                 body: JSON.stringify({
                     matzipCreationDTO: matzipCreationDTO,
@@ -175,6 +197,65 @@
                     alert('리뷰 작성에 실패했습니다.');
                 });
         });
+
+        function checkFileCount(event) {
+            const fileInput = event.target;
+            const files = fileInput.files;
+
+            // 파일 개수가 5개를 초과하는 경우
+            if (files.length > 5) {
+                fileInput.value = null; // 파일 선택을 초기화합니다.
+                alert("최대 5개까지 선택할 수 있습니다.");
+                clearSelectedImages(); // 미리보기 이미지를 모두 삭제합니다.
+            } else {
+                showSelectedImages(event); // 파일 개수가 5개 이하인 경우, 이미지를 표시합니다.
+            }
+        }
+
+        function showSelectedImages(event) {
+            const fileInput = event.target;
+            const selectedImagesDiv = document.getElementById("selectedImages");
+
+            // 선택한 파일들의 정보를 얻습니다.
+            const files = fileInput.files;
+
+            // 기존에 표시된 이미지들을 모두 제거합니다.
+            selectedImagesDiv.innerHTML = "";
+
+            // 선택한 각 이미지 파일마다 반복합니다.
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+
+                // FileReader를 사용하여 이미지 파일을 읽습니다.
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const imageURL = e.target.result;
+
+                    // 이미지 컨테이너를 생성합니다.
+                    const imageContainer = document.createElement("div");
+                    imageContainer.classList.add("selectedImageContainer");
+
+                    // 이미지를 표시하기 위한 HTML 요소를 동적으로 생성합니다.
+                    const imgElement = document.createElement("img");
+                    imgElement.src = imageURL;
+                    imgElement.classList.add("selectedImage");
+
+                    // 이미지를 컨테이너에 추가합니다.
+                    imageContainer.appendChild(imgElement);
+
+                    // 컨테이너를 추가합니다.
+                    selectedImagesDiv.appendChild(imageContainer);
+                };
+
+                // FileReader를 사용하여 이미지 파일을 읽습니다.
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function clearSelectedImages() {
+            const selectedImagesDiv = document.getElementById("selectedImages");
+            selectedImagesDiv.innerHTML = "";
+        }
     </script>
 </main>
 

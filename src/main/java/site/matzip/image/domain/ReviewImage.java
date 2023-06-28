@@ -1,4 +1,4 @@
-package site.matzip.reviewImage.domain;
+package site.matzip.image.domain;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -15,12 +15,14 @@ public class ReviewImage {
     private Long Id;
     @NotNull
     private String imageUrl;
+    private String originalImageName;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "review_id")
     private Review review;
 
     @Builder
-    public ReviewImage(String imageUrl) {
+    public ReviewImage(String imageUrl, String originalImageName) {
         this.imageUrl = imageUrl;
+        this.originalImageName = originalImageName;
     }
 }

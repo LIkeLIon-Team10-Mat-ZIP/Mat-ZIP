@@ -5,7 +5,7 @@ import lombok.*;
 import site.matzip.base.domain.BaseEntity;
 import site.matzip.matzip.domain.Matzip;
 import site.matzip.member.domain.Member;
-import site.matzip.reviewImage.domain.ReviewImage;
+import site.matzip.image.domain.ReviewImage;
 
 import java.util.ArrayList;
 import java.util.List;
