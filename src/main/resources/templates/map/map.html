@@ -222,7 +222,7 @@
             <h1 class="text-lg">Search</h1>
         </div>
         -->
-        <div class="map_wrap h-[500px] w-[100%] mt-5">
+        <div class="map_wrap h-[80vh] w-[70vw] mt-5">
             <div id="map" class="w-full h-full"></div>
             <div id="menu_wrap" class="bg_white">
                 <div class="option">
@@ -663,11 +663,38 @@
         // 검색결과 목록 또는 마커를 클릭했을 때 호출되는 함수입니다
         // 인포윈도우에 장소명을 표시합니다
         function displayInfowindow(marker, title) {
-            var content = '<div style="padding:5px;z-index:1;">' + title + '</div>';
+            var content;
+            if (title.length > 9) {
+                content = '<div style="padding:5px;z-index:1;font-size:0.9em;">' + title + '</div>';
+            } else {
+                content = '<div style="padding:5px;z-index:1;">' + title + '</div>';
+            }
 
             infowindow.setContent(content);
             infowindow.open(map, marker);
         }
+
+        //리뷰 리스트 출력합니다
+        function displayReviews(matzipId) {
+            fetch(`/reviews/api/${matzipId}`)
+                .then(response => response.json())
+                .then(reviews => {
+                    // reviews 배열을 순회하며 HTML 요소를 동적으로 생성합니다.
+                    reviews.forEach(review => {
+                        const reviewElement = document.createElement('div');
+                        reviewElement.innerHTML = `
+                        <p>${review.author.name}</p>
+                        <p>${review.rating}</p>
+                        <p>${review.content}</p>
+                    `;
+                        // 생성한 요소를 문서에 추가합니다.
+                        document.body.appendChild(reviewElement);
+                    });
+                });
+        }
+
+        // 페이지 로드 시 리뷰를 로드합니다.
+        window.addEventListener('load', () => displayReviews(matzipId));
 
         // 검색결과 목록의 자식 Element를 제거하는 함수입니다
         function removeAllChildNods(el) {

@@ -50,4 +50,11 @@ public class ReviewController {
         reviewService.create(reviewCreationDTO, author, matzip);
         return "redirect:/matzip/list";
     }
+
+    @GetMapping("/api/{matzipId}")
+    @ResponseBody
+    public ResponseEntity<List<Review>> getReviewsByMatzip(@PathVariable Long matzipId) {
+        List<Review> reviews = reviewService.getReviewsByMatzip(matzipId);
+        return ResponseEntity.ok(reviews);
+    }
 }
