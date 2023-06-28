@@ -65,6 +65,9 @@
         <a id="reviewButton" target="_blank"
            class="inline-block w-full py-1 px-4 rounded-3xl text-center bg-gray-100 shadow mb-1">리뷰 등록</a>
     </div>
+    <div id="reviewList">
+
+    </div>
 </div>
 
 <script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=868d9aa6d8d0e67bad6c59729809c3fa"></script>
@@ -160,32 +163,6 @@
         .catch((error) => {
             console.error('Error:', error);
         });
-
-    function fetchReviewsAndDisplay(matzipId) {
-        fetch('/api/' + matzipId + '?pageSize=5&pageNumber=0')
-            .then(response => response.json())
-            .then(reviews => {
-                var reviewContainer = document.createElement('div');
-                reviewContainer.classList.add('review-list');
-
-                // 리뷰가 없을 경우 '리뷰가 없습니다.' 문구 추가
-                if (reviews.length === 0) {
-                    var emptyMessage = document.createElement('p');
-                    emptyMessage.textContent = '리뷰가 없습니다.';
-                    reviewContainer.appendChild(emptyMessage);
-                } else {
-                    reviews.forEach(review => {
-                        var reviewItem = document.createElement('p');
-                        reviewItem.innerText = review.content;
-                        reviewContainer.appendChild(reviewItem);
-                    });
-                }
-                document.getElementById('placeInfo').appendChild(reviewContainer);
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
-    }
 
 
 </script>

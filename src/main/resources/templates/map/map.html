@@ -279,8 +279,16 @@
             var target = event.target;
             var mapContainer = document.getElementById('map');
             var placeInfo = document.getElementById('placeInfo');
-            if (target !== mapContainer && !mapContainer.contains(target) && target !== placeInfo && !placeInfo.contains(target)) {
-                placeInfo.style.display = 'none'; // Hide place info
+            var placesList = document.getElementById('placesList');
+            var pagination = document.getElementById('pagination');
+
+            // 검색 결과 목록이나 페이지네이션이 클릭된 경우 placeInfo를 보이게 설정
+            if (target === placesList || placesList.contains(target)){
+                placeInfo.style.display = 'block';
+            }
+            // 그 외의 경우(지도 또는 검색 결과 목록 및 페이지네이션 외의 영역)에만 placeInfo를 숨김
+            else if (!mapContainer.contains(target) && !placeInfo.contains(target)) {
+                placeInfo.style.display = 'none';
             }
         });
 
@@ -352,7 +360,7 @@
                 // LatLngBounds 객체에 좌표를 추가합니다
                 bounds.extend(placePosition);
 
-                // 마커와 검색결과 항목에 mouseover 했을때
+                // 마커와 검색결과 항목에 click 했을때
                 // 해당 장소에 인포윈도우에 장소명을 표시합니다
                 // mouseout 했을 때는 인포윈도우를 닫습니다
                 (function (marker, title, place) {
@@ -361,11 +369,11 @@
                         showPlaceInfo(place);
                     });
 
-                    itemEl.onclick = function () {
+                    itemEl.addEventListener('click', function () {
                         displayInfowindow(marker, title);
                         showPlaceInfo(place);
                         map.setCenter(marker.getPosition()); // 마커 위치로 중앙 이동
-                    };
+                    });
                 })(marker, places[i].place_name, places[i]);
 
                 fragment.appendChild(itemEl);
@@ -663,7 +671,6 @@
         // 검색결과 목록 또는 마커를 클릭했을 때 호출되는 함수입니다
         // 인포윈도우에 장소명을 표시합니다
         function displayInfowindow(marker, title) {
-            var content;
             if (title.length > 9) {
                 content = '<div style="padding:5px;z-index:1;font-size:0.9em;">' + title + '</div>';
             } else {
@@ -674,27 +681,6 @@
             infowindow.open(map, marker);
         }
 
-        //리뷰 리스트 출력합니다
-        function displayReviews(matzipId) {
-            fetch(`/reviews/api/${matzipId}`)
-                .then(response => response.json())
-                .then(reviews => {
-                    // reviews 배열을 순회하며 HTML 요소를 동적으로 생성합니다.
-                    reviews.forEach(review => {
-                        const reviewElement = document.createElement('div');
-                        reviewElement.innerHTML = `
-                        <p>${review.author.name}</p>
-                        <p>${review.rating}</p>
-                        <p>${review.content}</p>
-                    `;
-                        // 생성한 요소를 문서에 추가합니다.
-                        document.body.appendChild(reviewElement);
-                    });
-                });
-        }
-
-        // 페이지 로드 시 리뷰를 로드합니다.
-        window.addEventListener('load', () => displayReviews(matzipId));
 
         // 검색결과 목록의 자식 Element를 제거하는 함수입니다
         function removeAllChildNods(el) {

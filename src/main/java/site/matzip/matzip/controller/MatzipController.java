@@ -52,11 +52,8 @@ public class MatzipController {
         }
         MatzipCreationDTO matzipCreationDTO = matzipReviewDTO.getMatzipCreationDTO();
         ReviewCreationDTO reviewCreationDTO = matzipReviewDTO.getReviewCreationDTO();
-
         Member author = rq.getMember(authentication);
-
         matzipService.create(matzipCreationDTO, reviewCreationDTO, author);
-
         return "redirect:/matzip/list";
     }
 
@@ -64,7 +61,6 @@ public class MatzipController {
     public String list(Model model) {
         List<Matzip> matzipList = matzipService.findAll();
         List<MatzipListDTO> matzipDtoList = matzipList.stream().map(matzip -> MatzipListDTO.builder().matzipName(matzip.getMatzipName()).address(matzip.getAddress()).phoneNumber(matzip.getPhoneNumber()).matzipType(matzip.getMatzipType()).build()).collect(Collectors.toList());
-
         model.addAttribute("matzipList", matzipDtoList);
         return "/matzip/list";
     }
