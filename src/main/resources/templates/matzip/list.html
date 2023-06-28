@@ -55,7 +55,7 @@
         <br>
         <a id="detailLink" target="_blank" class="inline-block w-full py-1 px-4 rounded-3xl text-center bg-gray-100 shadow mb-2">상세정보</a>
         <br>
-        <a id="reviewButton" target="_blank" class="inline-block w-full py-1 px-4 rounded-3xl text-center bg-gray-100 shadow mb-1">리뷰 등록</a>
+        <a id="reviewButton" class="inline-block w-full py-1 px-4 rounded-3xl text-center bg-gray-100 shadow mb-1">리뷰 등록</a>
     </div>
 </div>
 
@@ -139,7 +139,7 @@
                     detailLink.href = place.matzipUrl;
                     detailLink.innerText = '상세정보';
                     placeInfo.style.display = 'block'; // Show place info
-                    reviewButton.href = `/review/create?matzipId=${place.matzipId}`;
+                    reviewButton.href = `/review/create/${place.matzipId}`;
                 });
             });
         })
