@@ -114,6 +114,7 @@ public class MemberService {
         Member member = Member.builder()
                 .username(username)
                 .kakao_nickname(kakao_nickname)
+                .nickname(kakao_nickname)
                 .password(password)
                 .email(email)
                 .build();

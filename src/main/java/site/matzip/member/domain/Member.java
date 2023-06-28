@@ -24,6 +24,7 @@ public class Member {
     private Long id;
     private String username;
     private String kakao_nickname;
+    private String nickname;
     private String email;
     @Enumerated(EnumType.STRING)
     private MemberRole role;
@@ -32,16 +33,17 @@ public class Member {
 
 
 //    @Builder
-//    public Member(String username, String nickname, String email) {
+//    public Member(String username, String kakao_nickname, String email) {
 //        this.username = username;
-//        this.nickname = nickname;
+//        this.kakao_nickname = kakao_nickname;
 //        this.email = email;
 //        role = MemberRole.ROLE_MEMBER;
 //    }
     @Builder
-    public Member(String username, String kakao_nickname, String password, String email) {
+    public Member(String username, String kakao_nickname, String nickname, String password, String email) {
         this.username = username;
         this.kakao_nickname = kakao_nickname;
+        this.nickname = nickname;
         this.email = email;
         this.password = password;
         role = MemberRole.ROLE_MEMBER;
