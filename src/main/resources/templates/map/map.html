@@ -211,44 +211,6 @@
         #placeInfo p {
             margin: 5px 0;
         }
-
-        #myform fieldset {
-            display: inline-block; /* 하위 별점 이미지들이 있는 영역만 자리를 차지함.*/
-            border: 0; /* 필드셋 테두리 제거 */
-        }
-
-        #myform input[type=radio] {
-            display: none; /* 라디오박스 감춤 */
-        }
-
-        #myform label {
-            font-size: 2em; /* 이모지 크기 */
-            color: transparent; /* 기존 이모지 컬러 제거 */
-            text-shadow: 0 0 0 #f0f0f0; /* 새 이모지 색상 부여 */
-        }
-
-        #myform label:hover {
-            text-shadow: 0 0 0 #a00; /* 마우스 호버 */
-        }
-
-        #myform label:hover ~ label {
-            text-shadow: 0 0 0 #a00; /* 마우스 호버 뒤에오는 이모지들 */
-        }
-
-        #myform fieldset {
-            display: inline-block; /* 하위 별점 이미지들이 있는 영역만 자리를 차지함.*/
-            direction: rtl; /* 이모지 순서 반전 */
-            border: 0; /* 필드셋 테두리 제거 */
-        }
-
-        #myform fieldset legend {
-            text-align: left;
-        }
-
-        #myform input[type=radio]:checked ~ label {
-            text-shadow: 0 0 0 #a00; /* 마우스 클릭 체크 */
-        }
-
     </style>
 </head>
 <body>
@@ -282,7 +244,8 @@
             </div>
         </div>
     </div>
-
+    <div id="isLogin" sec:authorize="isAuthenticated()" th:text="true" style="display: none;"></div>
+    <div id="isLogin" sec:authorize="isAnonymous()" th:text="false" style="display: none;"></div>
     <script type="text/javascript"
             src="//dapi.kakao.com/v2/maps/sdk.js?appkey=868d9aa6d8d0e67bad6c59729809c3fa&libraries=services,clusterer"></script>
     <script>
@@ -427,7 +390,6 @@
         // 서버 전송시에 사용될 변수를 전역변수로 표시했습니다.
         var placeName, placeAddress, placePhone, placeUrl, placeId;
 
-        // 마커를 클릭했을 때 주소 정보를 표시하는 함수입니다.
         function showPlaceInfo(place) {
             // 주소 정보를 가져옵니다.
             placeName = place.place_name;
@@ -462,24 +424,47 @@
             html += '</div>';
 
             // 별점 추가
-            html += '<form name="myform" id="myform" method="post" action="./save">';
-            html += '<fieldset>';
+            html += '<form method="post" action="./save">';
             html += '<legend>평점</legend>';
-            html += '<input type="radio" name="rating" value="5" id="rate1"><label for="rate1">⭐</label>';
-            html += '<input type="radio" name="rating" value="4" id="rate2"><label for="rate2">⭐</label>';
-            html += '<input type="radio" name="rating" value="3" id="rate3"><label for="rate3">⭐</label>';
-            html += '<input type="radio" name="rating" value="2" id="rate4"><label for="rate4">⭐</label>';
-            html += '<input type="radio" name="rating" value="1" id="rate5"><label for="rate5">⭐</label>';
-            html += '</fieldset>';
+            html += '<div class="rating rating-md rating-half" id="rating">';
+            html += '<input id="rating-0.5" type="radio" name="rating" value="0.5" class="bg-yellow-500 mask mask-star-2 mask-half-1"/>';
+            html += '<input id="rating-1.0" type="radio" name="rating" value="1.0" class="bg-yellow-500 mask mask-star-2 mask-half-2"/>';
+            html += '<input id="rating-1.5" type="radio" name="rating" value="1.5" class="bg-yellow-500 mask mask-star-2 mask-half-1"/>';
+            html += '<input id="rating-2.0" type="radio" name="rating" value="2.0" class="bg-yellow-500 mask mask-star-2 mask-half-2"/>';
+            html += '<input id="rating-2.5" type="radio" name="rating" value="2.5" class="bg-yellow-500 mask mask-star-2 mask-half-1"/>';
+            html += '<input id="rating-3.0" type="radio" name="rating" value="3.0" class="bg-yellow-500 mask mask-star-2 mask-half-2" checked/>';
+            html += '<input id="rating-3.5" type="radio" name="rating" value="3.5" class="bg-yellow-500 mask mask-star-2 mask-half-1"/>';
+            html += '<input id="rating-4.0" type="radio" name="rating" value="4.0" class="bg-yellow-500 mask mask-star-2 mask-half-2"/>';
+            html += '<input id="rating-4.5" type="radio" name="rating" value="4.5" class="bg-yellow-500 mask mask-star-2 mask-half-1"/>';
+            html += '<input id="rating-5.0" type="radio" name="rating" value="5.0" class="bg-yellow-500 mask mask-star-2 mask-half-2"/>';
+            html += '</div>';
             html += '</form>';
-
+            // 버튼 추가 및 제어
             html += '<div>';
-            html += '<button class="w-full text-white rounded-3xl py-2 h-8 flex items-center justify-center shadow" style="background-color: #2E8B57;" onclick="registerAsMatzip()"><strong>맛집으로 등록</strong></button>';
-            html += '<button class="w-full text-white rounded-3xl py-2 h-8 flex items-center justify-center shadow mt-2" style="background-color: #2E8B57;" onclick="writeReview()"><strong>리뷰 작성</strong></button>';
+            if (isLoggedIn()) { // 로그인 상태인 경우
+                html += '<button class="w-full text-white rounded-3xl py-2 h-8 flex items-center justify-center shadow" style="background-color: #2E8B57;" onclick="registerAsMatzip()"><strong>맛집으로 등록</strong></button>';
+                html += '<button class="w-full text-white rounded-3xl py-2 h-8 flex items-center justify-center shadow mt-2" style="background-color: #2E8B57;" onclick="writeReview()"><strong>리뷰 작성</strong></button>';
+            } else { // 로그인 상태가 아닌 경우
+                html += '<button class="w-full text-white rounded-3xl py-2 h-8 flex items-center justify-center shadow mt-2" style="background-color: #2E8B57;" onclick="redirectToLoginPage()"><strong>로그인</strong></button>';
+            }
             html += '</div>';
 
             placeInfo.innerHTML = html;
             placeInfo.style.display = 'block';
+        }
+
+        // 마커를 클릭했을 때 주소 정보를 표시하는 함수입니다.
+
+        // 로그인 상태 확인 함수
+        function isLoggedIn() {
+            var isLoginElement = document.getElementById('isLogin');
+            var isLoggedIn = isLoginElement.textContent.trim() === 'true';
+            return isLoggedIn;
+        }
+
+        // 로그인 페이지로 이동하는 함수
+        function redirectToLoginPage() {
+            window.location.href = '/usr/member/login';
         }
 
         function registerAsMatzip() {
@@ -488,7 +473,6 @@
             var description = document.getElementById('descriptionInput').value;
             var matzipType = document.getElementById('matzipTypeSelect').value;
             var rating = document.querySelector('input[name="rating"]:checked')?.value ?? 0;
-
             // 별점을 입력하지 않았을 경우 확인 메시지를 표시합니다
             if (rating === 0) {
                 var confirmMessage = confirm("평점을 입력하지 않으셨습니다. 평점을 0점으로 처리하시겠습니까?");
@@ -586,7 +570,6 @@
                     };
 
                     console.log(matzipCreationDTO);
-
                     // 맛집 정보를 세션 스토리지에 저장합니다
                     var matzipCreationDTOString = JSON.stringify(matzipCreationDTO);
                     sessionStorage.setItem('matzipCreationDTO', matzipCreationDTOString);

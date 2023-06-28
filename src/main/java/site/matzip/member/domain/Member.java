@@ -27,9 +27,9 @@ public class Member {
 
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
 
-    private List<MatzipRecommendation> matzipRecommendations = new ArrayList<>();
+    private final List<MatzipRecommendation> matzipRecommendations = new ArrayList<>();
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Review> reviews = new ArrayList<>();
+    private final List<Review> reviews = new ArrayList<>();
 
     @Builder
     public Member(String username, String nickname, String email) {
