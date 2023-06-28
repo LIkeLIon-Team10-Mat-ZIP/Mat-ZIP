@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.web.savedrequest.SavedRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.RequestScope;
 import site.matzip.base.rsData.RsData;
@@ -94,5 +95,15 @@ public class Rq {
     // 메세지에 ttl 적용
     private String msgWithTtl(String msg) {
         return Ut.url.encode(msg) + ";ttl=" + new Date().getTime();
+    }
+
+
+    public boolean isRefererAdminPage() {
+        SavedRequest savedRequest = (SavedRequest) session.getAttribute("SPRING_SECURITY_SAVED_REQUEST");
+
+        if (savedRequest == null) return false;
+
+        String referer = savedRequest.getRedirectUrl();
+        return referer != null && referer.contains("/adm");
     }
 }
