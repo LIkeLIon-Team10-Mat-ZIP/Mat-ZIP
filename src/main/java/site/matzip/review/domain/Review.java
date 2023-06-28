@@ -3,9 +3,10 @@ package site.matzip.review.domain;
 import jakarta.persistence.*;
 import lombok.*;
 import site.matzip.base.domain.BaseEntity;
+import site.matzip.comment.domain.Comment;
+import site.matzip.image.domain.ReviewImage;
 import site.matzip.matzip.domain.Matzip;
 import site.matzip.member.domain.Member;
-import site.matzip.image.domain.ReviewImage;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +29,9 @@ public class Review extends BaseEntity {
     @JoinColumn(name = "member_id")
     private Member author;
     @OneToMany(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ReviewImage> reviewImages = new ArrayList<>();
+    private final List<ReviewImage> reviewImages = new ArrayList<>();
+    @OneToMany(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true)
+    private final List<Comment> comments = new ArrayList<>();
 
     @Builder
     public Review(Matzip matzip, Member author, Long rating, String content) {

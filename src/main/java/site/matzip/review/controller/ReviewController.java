@@ -1,6 +1,7 @@
 package site.matzip.review.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -11,8 +12,11 @@ import site.matzip.config.auth.PrincipalDetails;
 import site.matzip.matzip.domain.Matzip;
 import site.matzip.matzip.service.MatzipService;
 import site.matzip.member.domain.Member;
+import site.matzip.review.domain.Review;
 import site.matzip.review.dto.ReviewCreationDTO;
 import site.matzip.review.service.ReviewService;
+
+import java.util.List;
 
 @Controller
 @RequestMapping("/review")
