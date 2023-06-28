@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html layout:decorate="~{common/layout/defaultLayout.html}">
+<head>
+    <title>리뷰 등록</title>
+
+    <!-- 토스트 UI 에디터 불러오기 시작 -->
+    <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
+    <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css"/>
+    <!-- 토스트 UI 에디터 불러오기 끝 -->
+</head>
+<body>
+
+<main layout:fragment="Content">
+
+    <script>
+        function copyEditorContentToTextarea() {
+            const editorContent = editor1.getHTML(); // 에디터의 내용을 가져옵니다.
+            document.getElementById("content").value = editorContent; // 숨겨진 <textarea>에 복사합니다.
+        }
+    </script>
+    <div class="flex justify-center mx-auto max-w-5xl mt-20">
+        <div class="w-full">
+            <form id="reviewForm" th:action="@{|/review/create/${matzip.id}|}" th:object="${reviewCreationDTO}"
+                  method="POST"
+                  onsubmit="copyEditorContentToTextarea();">
+                <div class="flex flex-col">
+                    <span class="font-bold text-xl p-3 border-b border-gray-400"><i
+                            class="fa-regular fa-pen-to-square"></i> 리뷰 작성</span>
+                    <div class="flex p-3">
+                        <div class="flex-grow">
+                            <div class="flex items-center">
+                                <span class="font-bold text-xl mr-3" th:text="${matzip.matzipName}"></span>
+                                <button class="btn btn-outline btn-xs" type="submit">상세보기</button>
+                            </div>
+                            <div class="flex flex-col">
+                                <span th:text="${matzip.matzipType}"></span>
+                                <span th:text="${matzip.address}"></span>
+                                <span th:text="${matzip.phoneNumber}"></span>
+                            </div>
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="mb-2 text-lg">별점</span>
+                            <div class="rating rating-md rating-half" id="rating">
+                                <input id="rating-0.5" type="radio" name="rating" value="0.5"
+                                       class="bg-yellow-500 mask mask-star-2 mask-half-1"/>
+                                <input id="rating-1.0" type="radio" name="rating" value="1.0"
+                                       class="bg-yellow-500 mask mask-star-2 mask-half-2"/>
+                                <input id="rating-1.5" type="radio" name="rating" value="1.5"
+                                       class="bg-yellow-500 mask mask-star-2 mask-half-1"/>
+                                <input id="rating-2.0" type="radio" name="rating" value="2.0"
+                                       class="bg-yellow-500 mask mask-star-2 mask-half-2"/>
+                                <input id="rating-2.5" type="radio" name="rating" value="2.5"
+                                       class="bg-yellow-500 mask mask-star-2 mask-half-1"/>
+                                <input id="rating-3.0" type="radio" name="rating" value="3.0"
+                                       class="bg-yellow-500 mask mask-star-2 mask-half-2" checked/>
+                                <input id="rating-3.5" type="radio" name="rating" value="3.5"
+                                       class="bg-yellow-500 mask mask-star-2 mask-half-1"/>
+                                <input id="rating-4.0" type="radio" name="rating" value="4.0"
+                                       class="bg-yellow-500 mask mask-star-2 mask-half-2"/>
+                                <input id="rating-4.5" type="radio" name="rating" value="4.5"
+                                       class="bg-yellow-500 mask mask-star-2 mask-half-1"/>
+                                <input id="rating-5.0" type="radio" name="rating" value="5.0"
+                                       class="bg-yellow-500 mask mask-star-2 mask-half-2"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex flex-col p-3">
+                        <input type="file" class="file-input file-input-bordered w-full"/>
+                        <div class="flex justify-between my-2">
+                            <img src="https://search.pstatic.net/common/?src=https%3A%2F%2Fldb-phinf.pstatic.net%2F20230315_55%2F1678864965197X3zz0_JPEG%2FIMG_6113.JPEG"
+                                 class="w-40 h-40 object-cover"/>
+                        </div>
+                        <div>
+                            <div>
+                                <div class="mt-2 flex justify-center">
+                                    <!-- 에디터 시작 -->
+                                    <div id="editor-1" class="editor-ui w-full break-all"></div>
+                                    <!-- 에디터 끝 -->
+                                    <input id="content" type="hidden" name="content">
+                                </div>
+                            </div>
+
+                            <div class="mt-2 flex justify-end">
+                                <button class="btn btn-neutral btn-sm" type="submit">등록하기</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // 에디터 클래스를 사용하기 쉽도록 변경(여기서 `쉽다`는 뜻은 `짧게 쓸 수 있다`라는 뜻)
+        const Editor = toastui.Editor;
+        const editor1 = new Editor({
+            el: document.querySelector("#editor-1"),
+            initialEditType: 'wysiwyg',
+            initialValue: "",
+            height: "50vh",
+            previewStyle: "vertical",
+            placeholder: "리뷰 내용을 입력해주세요"
+        });
+    </script>
+</main>
+
+</body>
+
+</html>

@@ -100,6 +100,7 @@ public class MatzipController {
                 description = recommendation.getDescription();
             }
             return MatzipListDTO.builder()
+                    .matzipId(matzip.getId())
                     .matzipName(matzip.getMatzipName())
                     .address(matzip.getAddress())
                     .phoneNumber(matzip.getPhoneNumber())
