@@ -1,5 +1,6 @@
 package site.matzip.matzip.service;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import site.matzip.base.rsData.RsData;
@@ -104,5 +105,7 @@ public class MatzipService {
         return matzipRepository.findAll();
     }
 
-
+    public Matzip findMatzip(Long matzipId) {
+        return matzipRepository.findById(matzipId).orElseThrow(() -> new EntityNotFoundException("Matzip not Found"));
+    }
 }
