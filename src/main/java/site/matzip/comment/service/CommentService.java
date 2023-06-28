@@ -1,5 +1,6 @@
 package site.matzip.comment.service;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import site.matzip.comment.domain.Comment;
@@ -20,5 +21,13 @@ public class CommentService {
                 .build();
 
         commentRepository.save(comment);
+    }
+
+    public void remove(Comment comment) {
+        commentRepository.delete(comment);
+    }
+
+    public Comment findComment(Long commentId) {
+        return commentRepository.findById(commentId).orElseThrow(() -> new EntityNotFoundException("Comment not Found"));
     }
 }
