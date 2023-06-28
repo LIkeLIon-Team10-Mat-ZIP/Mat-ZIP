@@ -7,6 +7,8 @@ import site.matzip.matzip.repository.MatzipRepository;
 import site.matzip.review.domain.Review;
 import site.matzip.review.repository.ReviewRepository;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class ReviewService {
@@ -20,5 +22,9 @@ public class ReviewService {
 
     private Review findReview(Long reviewId) {
         return reviewRepository.findById(reviewId).orElseThrow(() -> new EntityNotFoundException("Review not Found"));
+    }
+
+    public List<Review> getReviewsByMatzip(Long matzipId) {
+        return reviewRepository.findByMatzipId(matzipId);
     }
 }
