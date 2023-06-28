@@ -9,13 +9,17 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import site.matzip.member.domain.Member;
+import site.matzip.member.domain.MemberRole;
 import site.matzip.member.domain.MemberToken;
 import site.matzip.member.repository.MemberRepository;
 import site.matzip.member.repository.MemberTokenRepository;
+
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -23,6 +27,7 @@ import site.matzip.member.repository.MemberTokenRepository;
 public class MemberService {
     private final MemberRepository memberRepository;
     private final MemberTokenRepository memberTokenRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Value("${token.content-type}")
     private String contentType;
@@ -103,5 +108,21 @@ public class MemberService {
     private MemberToken findMemberToken(Long memberId) {
         return memberTokenRepository.findByMemberId(memberId)
                 .orElseThrow(() -> new EntityNotFoundException("MemberToken not found"));
+    }
+
+    public Member signUp(String username, String nickname, String password, String email) {
+        password = passwordEncoder.encode(password);
+        Member member = Member.builder()
+                .username(username)
+                .nickname(nickname)
+                .password(password)
+                .email(email)
+                .build();
+        member = memberRepository.save(member);
+        return member;
+    }
+
+    public Optional<Member> findByUsername(String username) {
+        return memberRepository.findByUsername(username);
     }
 }

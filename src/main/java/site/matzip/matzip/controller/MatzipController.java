@@ -3,7 +3,12 @@ package site.matzip.matzip.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -16,6 +21,7 @@ import site.matzip.matzip.dto.MatzipListDTO;
 import site.matzip.matzip.dto.MatzipReviewDTO;
 import site.matzip.matzip.service.MatzipService;
 import site.matzip.member.domain.Member;
+import site.matzip.member.service.MemberService;
 import site.matzip.review.dto.ReviewCreationDTO;
 
 import java.util.List;
@@ -26,27 +32,48 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class MatzipController {
     private final MatzipService matzipService;
+    private final MemberService memberService;
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/create")
-    public String create(@RequestBody MatzipCreationDTO matzipCreationDTO, BindingResult result, @AuthenticationPrincipal PrincipalDetails principalDetails) {
+    public String create(@RequestBody MatzipCreationDTO matzipCreationDTO, BindingResult result, Authentication authentication) {
         if (result.hasErrors()) {
             return "/matzip/create";
         }
-        Member author = principalDetails.getMember();
+        Member author = getMember(authentication);
         matzipService.create(matzipCreationDTO, author);
         return "redirect:/matzip/list";
     }
 
+    private Member getMember(Authentication authentication) {
+        Object principal = authentication.getPrincipal();
+        Member author = null;
+
+        if (principal instanceof PrincipalDetails) {
+            // 주어진 PrincipalDetails 객체 사용
+            PrincipalDetails principalDetails = (PrincipalDetails) principal;
+            author = principalDetails.getMember();
+        } else if (principal instanceof UserDetails) {
+            // 주어진 Authentication 객체를 사용하고 UserDetails 중에서 member 찾기
+            UserDetails userDetails = (UserDetails) principal;
+            String username = userDetails.getUsername();
+            author = memberService.findByUsername(username)
+                    .orElseThrow(() -> new UsernameNotFoundException("username(%s) not found".formatted(username)));
+        }
+        return author;
+    }
+
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/createWithReview")
-    public String createWithReview(@RequestBody MatzipReviewDTO matzipReviewDTO, BindingResult result, @AuthenticationPrincipal PrincipalDetails principalDetails) {
+    public String createWithReview(@RequestBody MatzipReviewDTO matzipReviewDTO, BindingResult result, Authentication authentication) {
         if (result.hasErrors()) {
             return "/matzip/create";
         }
         MatzipCreationDTO matzipCreationDTO = matzipReviewDTO.getMatzipCreationDTO();
         ReviewCreationDTO reviewCreationDTO = matzipReviewDTO.getReviewCreationDTO();
-        Member author = principalDetails.getMember();
+
+        Member author = getMember(authentication);
+
         matzipService.create(matzipCreationDTO, reviewCreationDTO, author);
 
         return "redirect:/matzip/list";
