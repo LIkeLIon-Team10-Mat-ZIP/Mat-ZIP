@@ -32,7 +32,7 @@ public class ReviewService {
         reviewRepository.delete(findReview);
     }
 
-    private Review findReview(Long reviewId) {
+    public Review findReview(Long reviewId) {
         return reviewRepository.findById(reviewId).orElseThrow(() -> new EntityNotFoundException("Review not Found"));
     }
 
