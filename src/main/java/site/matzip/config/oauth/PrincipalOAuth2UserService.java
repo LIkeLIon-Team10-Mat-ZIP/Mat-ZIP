@@ -76,7 +76,7 @@ public class PrincipalOAuth2UserService extends DefaultOAuth2UserService {
 
         Member createdMember = Member.builder()
                 .username(oAuth2UserInfo.getProvider() + "_" + oAuth2UserInfo.getProviderId())
-                .nickname(oAuth2UserInfo.getName())
+                .kakao_nickname(oAuth2UserInfo.getName())
                 .email(oAuth2UserInfo.getEmail())
                 .build();
 

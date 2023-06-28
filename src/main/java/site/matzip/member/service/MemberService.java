@@ -109,11 +109,11 @@ public class MemberService {
                 .orElseThrow(() -> new EntityNotFoundException("MemberToken not found"));
     }
 
-    public Member signUp(String username, String nickname, String password, String email) {
+    public Member signUp(String username, String kakao_nickname, String password, String email) {
         password = passwordEncoder.encode(password);
         Member member = Member.builder()
                 .username(username)
-                .nickname(nickname)
+                .kakao_nickname(kakao_nickname)
                 .password(password)
                 .email(email)
                 .build();

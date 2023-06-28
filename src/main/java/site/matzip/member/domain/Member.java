@@ -23,7 +23,7 @@ public class Member {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String username;
-    private String nickname;
+    private String kakao_nickname;
     private String email;
     @Enumerated(EnumType.STRING)
     private MemberRole role;
@@ -39,9 +39,9 @@ public class Member {
 //        role = MemberRole.ROLE_MEMBER;
 //    }
     @Builder
-    public Member(String username, String nickname, String password, String email) {
+    public Member(String username, String kakao_nickname, String password, String email) {
         this.username = username;
-        this.nickname = nickname;
+        this.kakao_nickname = kakao_nickname;
         this.email = email;
         this.password = password;
         role = MemberRole.ROLE_MEMBER;
