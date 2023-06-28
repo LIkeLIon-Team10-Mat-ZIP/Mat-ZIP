@@ -46,7 +46,7 @@
     </script>
     <div class="flex justify-center mx-auto max-w-5xl mt-20">
         <div class="w-full">
-            <form id="reviewForm" action="/matzip/createWithReview" method="POST"
+            <form id="reviewForm" action="/matzip/createWithReview" method="POST" enctype="multipart/form-data"
                   onsubmit="copyEditorContentToTextarea();">
                 <input type="hidden" name="matzipName" id="matzipNameInput">
                 <input type="hidden" name="address" id="addressInput">
@@ -174,7 +174,7 @@
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    [csrfHeader]: csrfToken  // CSRF 토큰을 헤더에 포함합니다
+                    [csrfHeader]: csrfToken // CSRF 토큰을 헤더에 포함합니다
                 },
                 body: JSON.stringify({
                     matzipCreationDTO: matzipCreationDTO,

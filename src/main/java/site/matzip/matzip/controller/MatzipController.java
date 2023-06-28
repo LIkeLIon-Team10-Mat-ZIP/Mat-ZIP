@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import site.matzip.base.rsData.RsData;
 import site.matzip.config.auth.PrincipalDetails;
 import site.matzip.matzip.domain.Matzip;
 import site.matzip.matzip.domain.MatzipRecommendation;
@@ -71,7 +72,7 @@ public class MatzipController {
 
         Member author = getMember(authentication);
 
-        matzipService.create(matzipCreationDTO, reviewCreationDTO, author);
+        RsData<Matzip> savedMatzip = matzipService.create(matzipCreationDTO, reviewCreationDTO, author);
 
         return "redirect:/matzip/list";
     }
