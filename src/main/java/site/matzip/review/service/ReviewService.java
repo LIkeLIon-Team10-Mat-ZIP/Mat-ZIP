@@ -2,6 +2,8 @@ package site.matzip.review.service;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import site.matzip.matzip.repository.MatzipRepository;
 import site.matzip.review.domain.Review;
@@ -13,8 +15,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ReviewService {
     private final ReviewRepository reviewRepository;
-    private final MatzipRepository matzipRepository;
-
     public void remove(Long reviewId) {
         Review findReview = findReview(reviewId);
         reviewRepository.delete(findReview);
@@ -24,7 +24,8 @@ public class ReviewService {
         return reviewRepository.findById(reviewId).orElseThrow(() -> new EntityNotFoundException("Review not Found"));
     }
 
-    public List<Review> getReviewsByMatzip(Long matzipId) {
-        return reviewRepository.findByMatzipId(matzipId);
-    }
+     public List<Review> findByMatzipId(Long matzipId, Pageable pageable) {
+         Page<Review> reviewPage = reviewRepository.findByMatzipId(matzipId, pageable);
+         return reviewPage.getContent();
+     }
 }

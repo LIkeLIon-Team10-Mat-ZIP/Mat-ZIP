@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import site.matzip.base.rq.Rq;
 import site.matzip.config.auth.PrincipalDetails;
 import site.matzip.matzip.domain.Matzip;
 import site.matzip.matzip.domain.MatzipRecommendation;
@@ -30,6 +31,7 @@ import java.util.stream.Collectors;
 public class MatzipController {
     private final MatzipService matzipService;
     private final MemberService memberService;
+    private final Rq rq;
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/create")
@@ -37,27 +39,9 @@ public class MatzipController {
         if (result.hasErrors()) {
             return "/matzip/create";
         }
-        Member author = getMember(authentication);
+        Member author = rq.getMember(authentication);
         matzipService.create(matzipCreationDTO, author);
         return "redirect:/matzip/list";
-    }
-
-    private Member getMember(Authentication authentication) {
-        Object principal = authentication.getPrincipal();
-        Member author = null;
-
-        if (principal instanceof PrincipalDetails) {
-            // 주어진 PrincipalDetails 객체 사용
-            PrincipalDetails principalDetails = (PrincipalDetails) principal;
-            author = principalDetails.getMember();
-        } else if (principal instanceof UserDetails) {
-            // 주어진 Authentication 객체를 사용하고 UserDetails 중에서 member 찾기
-            UserDetails userDetails = (UserDetails) principal;
-            String username = userDetails.getUsername();
-            author = memberService.findByUsername(username)
-                    .orElseThrow(() -> new UsernameNotFoundException("username(%s) not found".formatted(username)));
-        }
-        return author;
     }
 
     @PreAuthorize("isAuthenticated()")
@@ -69,7 +53,7 @@ public class MatzipController {
         MatzipCreationDTO matzipCreationDTO = matzipReviewDTO.getMatzipCreationDTO();
         ReviewCreationDTO reviewCreationDTO = matzipReviewDTO.getReviewCreationDTO();
 
-        Member author = getMember(authentication);
+        Member author = rq.getMember(authentication);
 
         matzipService.create(matzipCreationDTO, reviewCreationDTO, author);
 
