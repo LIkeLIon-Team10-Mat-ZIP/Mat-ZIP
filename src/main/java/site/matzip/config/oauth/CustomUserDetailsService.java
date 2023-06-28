@@ -9,16 +9,10 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import site.matzip.config.auth.PrincipalDetails;
 import site.matzip.member.domain.Member;
-import site.matzip.member.domain.MemberRole;
-import site.matzip.member.domain.MemberToken;
 import site.matzip.member.repository.MemberRepository;
 import site.matzip.member.repository.MemberTokenRepository;
 
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,7 +21,6 @@ import java.util.List;
 @Transactional(readOnly = false)
 public class CustomUserDetailsService implements UserDetailsService{
     private final MemberRepository memberRepository;
-    private final MemberTokenRepository memberTokenRepository;
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Member member = memberRepository.findByUsername(username)

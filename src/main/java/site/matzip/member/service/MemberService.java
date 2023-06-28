@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import site.matzip.member.domain.Member;
-import site.matzip.member.domain.MemberRole;
 import site.matzip.member.domain.MemberToken;
 import site.matzip.member.repository.MemberRepository;
 import site.matzip.member.repository.MemberTokenRepository;
