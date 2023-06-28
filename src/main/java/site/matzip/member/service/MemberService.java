@@ -13,8 +13,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+import site.matzip.base.rsData.RsData;
 import site.matzip.member.domain.Member;
 import site.matzip.member.domain.MemberToken;
+import site.matzip.member.dto.NicknameUpdateDTO;
 import site.matzip.member.repository.MemberRepository;
 import site.matzip.member.repository.MemberTokenRepository;
 
@@ -124,5 +126,21 @@ public class MemberService {
 
     public Optional<Member> findByUsername(String username) {
         return memberRepository.findByUsername(username);
+    }
+
+    public RsData<Member> modifyNickname(Member member, NicknameUpdateDTO nicknameUpdateDTO) {
+        if (isNicknameTaken(nicknameUpdateDTO.getNickname())) {
+            return RsData.of("F-1", "이미 사용중인 닉네임 입니다.");
+        }
+
+        member.updateNickname(nicknameUpdateDTO.getNickname());
+
+        return RsData.of("S-1", "닉네임이 변경되었습니다.");
+    }
+
+    private boolean isNicknameTaken(String nickname) {
+        Optional<Member> member = memberRepository.findByNickname(nickname);
+
+        return member.isPresent();
     }
 }
