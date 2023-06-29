@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import site.matzip.image.domain.ProfileImage;
 import site.matzip.matzip.domain.MatzipRecommendation;
 import site.matzip.review.domain.Review;
 
@@ -30,6 +31,9 @@ public class Member {
     private MemberRole role;
     //TODO:이 부분도 oAuth만 이용시 필요없음. 삭제예정
     private String password;
+
+    @OneToOne(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    private ProfileImage profileImage;
 
 
 //    @Builder
