@@ -108,4 +108,3 @@ public class MatzipService {
     public Matzip findMatzip(Long matzipId) {
         return matzipRepository.findById(matzipId).orElseThrow(() -> new EntityNotFoundException("Matzip not Found"));
     }
-}
