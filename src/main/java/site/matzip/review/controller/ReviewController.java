@@ -11,6 +11,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import site.matzip.config.auth.PrincipalDetails;
 import site.matzip.matzip.domain.Matzip;
+import site.matzip.matzip.dto.MatzipInfoDTO;
 import site.matzip.matzip.service.MatzipService;
 import site.matzip.member.domain.Member;
 import site.matzip.review.domain.Review;
@@ -38,7 +39,8 @@ public class ReviewController {
     @GetMapping("/create/{id}")
     public String create(Model model, @PathVariable Long id, ReviewCreationDTO reviewCreationDTO) {
         Matzip matzip = matzipService.findMatzip(id);
-        model.addAttribute("matzip", matzip);
+        MatzipInfoDTO matzipInfoDTO = new MatzipInfoDTO(matzip);
+        model.addAttribute("matzipInfoDTO", matzipInfoDTO);
         model.addAttribute("reviewCreationDTO", reviewCreationDTO);
         return "/review/add";
     }
