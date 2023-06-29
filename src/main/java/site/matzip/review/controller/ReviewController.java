@@ -2,6 +2,7 @@ package site.matzip.review.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -17,6 +18,8 @@ import site.matzip.review.dto.ReviewCreationDTO;
 import site.matzip.review.service.ReviewService;
 
 import java.util.List;
+import java.util.Objects;
+
 
 @Controller
 @RequestMapping("/review")
@@ -60,5 +63,18 @@ public class ReviewController {
     public ResponseEntity<List<Review>> getReviewsByMatzip(@PathVariable Long matzipId) {
         List<Review> reviews = reviewService.getReviewsByMatzip(matzipId);
         return ResponseEntity.ok(reviews);
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @DeleteMapping("/{id}")
+    public String delete(@PathVariable Long id, @AuthenticationPrincipal PrincipalDetails principalDetail) {
+        Review review = reviewService.findReview(id);
+
+        if (!Objects.equals(review.getAuthor().getId(), principalDetail.getMember().getId())) {
+            throw new AccessDeniedException("You do not have permission to delete.");
+        }
+
+        reviewService.remove(review);
+        return "redirect:/matzip/list";
     }
 }

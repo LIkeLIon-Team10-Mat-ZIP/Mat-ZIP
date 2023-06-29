@@ -27,12 +27,11 @@ public class ReviewService {
         reviewRepository.save(review);
     }
 
-    public void remove(Long reviewId) {
-        Review findReview = findReview(reviewId);
-        reviewRepository.delete(findReview);
+    public void remove(Review review) {
+        reviewRepository.delete(review);
     }
 
-    private Review findReview(Long reviewId) {
+    public Review findReview(Long reviewId) {
         return reviewRepository.findById(reviewId).orElseThrow(() -> new EntityNotFoundException("Review not Found"));
     }
 
