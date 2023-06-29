@@ -6,11 +6,16 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.savedrequest.SavedRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.RequestScope;
 import site.matzip.base.rsData.RsData;
 import site.matzip.base.utill.Ut;
+import site.matzip.config.auth.PrincipalDetails;
+import site.matzip.member.domain.Member;
+import site.matzip.member.service.MemberService;
 
 import java.util.Date;
 
@@ -22,10 +27,10 @@ public class Rq {
     private final HttpSession session;
     private final User user;
     //private Member member = null; // 레이지 로딩, 처음부터 넣지 않고, 요청이 들어올 때 넣는다.
-    //private final MemberService memberService;
+    private final MemberService memberService;
 
-    public Rq(HttpServletRequest req, HttpServletResponse resp, HttpSession session) {
-        //this.memberService = memberService;
+    public Rq(HttpServletRequest req, HttpServletResponse resp, HttpSession session, MemberService memberService) {
+        this.memberService = memberService;
         this.req = req;
         this.resp = resp;
         this.session = session;
@@ -49,18 +54,6 @@ public class Rq {
     public boolean isLogout() {
         return !isLogin();
     }
-
-    // 로그인 된 회원의 객체
-//    public Member getMember() {
-//        if (isLogout()) return null;
-//
-//        // 데이터가 없는지 체크
-//        if (member == null) {
-//            member = memberService.findByUsername(user.getUsername()).orElseThrow();
-//        }
-//
-//        return member;
-//    }
 
     // 뒤로가기 + 메세지
     public String historyBack(String msg) {
@@ -105,5 +98,24 @@ public class Rq {
 
         String referer = savedRequest.getRedirectUrl();
         return referer != null && referer.contains("/adm");
+    }
+
+    //TODO:이부분 추후에 삭제 예정
+    public Member getMember(Authentication authentication) {
+        Object principal = authentication.getPrincipal();
+        Member author = null;
+
+        if (principal instanceof PrincipalDetails) {
+            // 주어진 PrincipalDetails 객체 사용
+            PrincipalDetails principalDetails = (PrincipalDetails) principal;
+            author = principalDetails.getMember();
+        } else if (principal instanceof UserDetails) {
+            // 주어진 Authentication 객체를 사용하고 UserDetails 중에서 member 찾기
+            UserDetails userDetails = (UserDetails) principal;
+            String username = userDetails.getUsername();
+            author = memberService.findByUsername(username)
+                    .orElseThrow(() -> new UsernameNotFoundException("username(%s) not found".formatted(username)));
+        }
+        return author;
     }
 }

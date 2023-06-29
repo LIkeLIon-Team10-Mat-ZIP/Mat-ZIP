@@ -1,6 +1,8 @@
 package site.matzip.review.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -14,6 +16,7 @@ import site.matzip.matzip.domain.Matzip;
 import site.matzip.matzip.dto.MatzipInfoDTO;
 import site.matzip.matzip.service.MatzipService;
 import site.matzip.member.domain.Member;
+
 import site.matzip.review.domain.Review;
 import site.matzip.review.dto.ReviewCreationDTO;
 import site.matzip.review.service.ReviewService;
@@ -63,8 +66,9 @@ public class ReviewController {
 
     @GetMapping("/api/{matzipId}")
     @ResponseBody
-    public ResponseEntity<List<Review>> getReviewsByMatzip(@PathVariable Long matzipId) {
-        List<Review> reviews = reviewService.getReviewsByMatzip(matzipId);
+    public ResponseEntity<List<Review>> getReviewsByMatzipId(@PathVariable Long matzipId, @RequestParam int pageSize, @RequestParam int pageNumber) {
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        List<Review> reviews = reviewService.findByMatzipId(matzipId, pageable);
         return ResponseEntity.ok(reviews);
     }
 
