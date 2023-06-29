@@ -34,43 +34,42 @@
             form.submit(); // 폼 발송
         }
     </script>
-    
-    <div class="flex justify-center mx-auto max-w-5xl">
-        <div class="flex items-center">
-            <div>
-                <h2 class="card-title">
-                    <i class="fa-regular fa-pen-to-square"></i>
-                    닉네임 변경
-                </h2>
-                <div class="card bg-base-100 shadow-xl mt-2" style="width: 450px">
-                    <div class="card-body">
-                        <form th:action method="POST" class="flex flex-col" th:object="${NicknameUpdateDTO}"
-                              onsubmit="ModifyNicknameForm__submit(this); return false;">
-                            <div class="flex justify-center">
-                                <div class="flex flex-col mt-5 items-start">
-                                    <div class="mb-2 text-lg">닉네임</div>
-                                    <p class="mb-3"><i class="fa-regular fa-face-smile"></i> 변경하실 닉네임을 입력해 주세요.</p>
-                                    <div class="flex items-center space-x-4">
-                                        <input type="text" name="nickname" placeholder="닉네임" autocomplete="off"
-                                               class="bg-black bg-opacity-10 h-10 p-4 w-72"/>
-                                    </div>
+
+    <div class="flex justify-center mx-auto max-w-5xl mt-20">
+        <div class="flex flex-col w-full">
+            <div class="p-3 border-b border-gray-400">
+                <span class="font-bold text-xl">
+                    <i class="fa-solid fa-user-pen mr-1"></i>닉네임 변경
+                </span>
+            </div>
+            <div class="card bg-base-100 shadow-xl flex-grow mt-2">
+                <div class="card-body">
+                    <form th:action method="POST" class="flex flex-col" th:object="${NicknameUpdateDTO}"
+                          onsubmit="ModifyNicknameForm__submit(this); return false;">
+                        <div class="flex justify-center">
+                            <div class="flex flex-col mt-5">
+                                <p class="mb-3 text-lg"><i class="fa-regular fa-face-smile"></i> 변경하실 닉네임을 입력해 주세요.</p>
+                                <div class="flex items-center space-x-4">
+                                    <input type="text" name="nickname" placeholder="닉네임" autocomplete="off"
+                                           class="bg-pink-100 h-10 p-4 w-80"/>
+                                </div>
+                                <div class="flex justify-end mt-5">
+                                    <a href="/usr/member/myPage"
+                                       class="btn btn-sm bg-pink-200 h-10 w-16 mr-2 text-sm flex items-center justify-center hover:bg-pink-100">취소</a>
+                                    <button class="btn btn-sm bg-pink-200 h-10 w-16 text-sm flex items-center justify-center hover:bg-pink-100"
+                                            type="submit">
+                                        <span class="text-center">변경</span>
+                                    </button>
                                 </div>
                             </div>
-
-                            <div class="mt-5 card-actions justify-end">
-                                <a href="/usr/member/myPage"
-                                   class="bg-black bg-opacity-10 h-10 p-4 w-16 ml-4 text-sm flex items-center justify-center hover:bg-opacity-30">취소</a>
-                                <button class="bg-black bg-opacity-10 h-10 p-4 w-16 text-sm flex items-center justify-center hover:bg-opacity-30" type="submit">
-                                    <span class="text-center">변경</span>
-                                </button>
-                            </div>
-                        </form>
-                    </div>
+                        </div>
+                    </form>
                 </div>
             </div>
+
         </div>
     </div>
-    
+
 </main>
 
 </body>
