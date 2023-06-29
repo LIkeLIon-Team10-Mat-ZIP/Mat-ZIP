@@ -63,7 +63,7 @@ public class MatzipController {
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/createWithReview")
-    public String createWithReview(@RequestBody MatzipReviewDTO matzipReviewDTO, BindingResult result, Authentication authentication) {
+    public String createWithReview(@ModelAttribute MatzipReviewDTO matzipReviewDTO, BindingResult result, Authentication authentication) {
         if (result.hasErrors()) {
             return "/matzip/create";
         }
