@@ -68,7 +68,7 @@ public class MatzipController {
     @ResponseBody
     public ResponseEntity<List<MatzipReviewListDTO>> searchAllWithReviews(Authentication authentication) {
         try {
-            List<MatzipListDTO> matzipDtoList = matzipService.showAllDTO(rq.getMember(authentication).getId());
+            List<MatzipListDTO> matzipDtoList = matzipService.findAndConvertAll(rq.getMember(authentication).getId());
             List<ReviewListDTO> reviewDtoList = reviewService.findAll();
             List<MatzipReviewListDTO> matzipReviewDtoList = matzipService.mergeMatzipAndReviews(matzipDtoList, reviewDtoList);
             return ResponseEntity.ok(matzipReviewDtoList);
@@ -78,11 +78,4 @@ public class MatzipController {
         }
     }
 
-//    @GetMapping("/api/mylist")
-//    @ResponseBody
-//    public ResponseEntity<List<MatzipListDTO>> searchMine(Authentication authentication) {
-//        List<MatzipListDTO> matzipList = matzipService.showAll(rq.getMember(authentication).getId());
-//
-//        return ResponseEntity.ok();
-//    }
 }

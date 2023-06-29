@@ -103,10 +103,6 @@ public class MatzipService {
                 .build();
     }
 
-    public List<Matzip> findAllWithRecommendations() {
-        return matzipRepository.findAllWithRecommendations();
-    }
-
     public List<Matzip> findAll() {
         return matzipRepository.findAll();
     }
@@ -120,8 +116,8 @@ public class MatzipService {
         return matzipRepository.findAllByAuthorId(authorId);
     }
 
-    //모든 맛집 정보와 리뷰 리스트 표시 위한 메서드, 사용자 정보 넣어주고 사용자 후기 없는 곳까지 표시함
-    public List<MatzipListDTO> showAllDTO(Long authorId) {
+    //모든 맛집 정보와 리뷰 리스트 표시 위한 메서드, 사용자 정보 넣어주고 사용자 후기 없는 곳까지 표시함, dto로 변환까지 해서 반환
+    public List<MatzipListDTO> findAndConvertAll(Long authorId) {
         return convertToListDTO(findAll(), authorId);
     }
 

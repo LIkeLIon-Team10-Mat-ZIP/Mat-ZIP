@@ -45,8 +45,16 @@
         }
 
         #reviewList {
-            margin-top: 16px;
-            border-top: 1px solid #ddd;
+            position: absolute;
+            top: calc(50% + 20px);
+            right: 10px;
+            width: 300px;
+            overflow-y: auto; /* 필요시에만 스크롤 표시 */
+            background-color: #fff;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+            z-index: 2;
         }
 
         #reviewList h3 {
@@ -194,18 +202,18 @@
                     if (reviews.length > 0) {
                         noReview.style.display = 'none';
                         reviewListContainer.style.display = 'block';
-
+                        //리뷰 반복문 (review x: revies) 랑 같은거
                         reviews.forEach((review) => {
                             const reviewItem = document.createElement('li');
-                            const author = document.createElement('p');
+                            const authorNickname = document.createElement('p');
                             const rating = document.createElement('p');
                             const content = document.createElement('p');
 
-                            author.innerText = '작성자: ' + review.author;
+                            authorNickname.innerText = '작성자: ' + review.authorNickname;
                             rating.innerText = '평점: ' + review.rating;
                             content.innerText = '내용: ' + review.content;
 
-                            reviewItem.appendChild(author);
+                            reviewItem.appendChild(authorNickname);
                             reviewItem.appendChild(rating);
                             reviewItem.appendChild(content);
                             reviewListContainer.appendChild(reviewItem);

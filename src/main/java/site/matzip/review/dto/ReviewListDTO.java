@@ -7,7 +7,7 @@ import lombok.Data;
 @Builder
 public class ReviewListDTO {
     private Long matzipId;
-    private String authorNickName;
+    private String authorNickname;
     private double rating;
     private String content;
 }

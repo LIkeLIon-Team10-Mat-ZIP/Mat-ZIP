@@ -39,7 +39,7 @@ public class ReviewService {
     private ReviewListDTO convertToReviewDTO(Review review) {
         return ReviewListDTO.builder()
                 .matzipId(review.getMatzip().getId())
-                .authorNickName(review.getAuthor().getNickname())
+                .authorNickname(review.getAuthor().getNickname())
                 .content(review.getContent())
                 .rating(review.getRating())
                 .build();
