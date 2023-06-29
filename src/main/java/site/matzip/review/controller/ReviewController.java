@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import site.matzip.matzip.dto.MatzipReviewDTO;
 import site.matzip.review.domain.Review;
-import site.matzip.review.dto.ReviewCreationDTO;
 import site.matzip.review.service.ReviewService;
 
 import java.util.List;
@@ -25,9 +25,9 @@ public class ReviewController {
     @GetMapping("/create")
     public String create(Model model) {
 
-        model.addAttribute("reviewCreationDTO", new ReviewCreationDTO());
+        model.addAttribute("matzipReviewDTO", new MatzipReviewDTO());
 
-        return "/review/create";
+        return "/review/createDev";
     }
 
     @GetMapping("/api/{matzipId}")
