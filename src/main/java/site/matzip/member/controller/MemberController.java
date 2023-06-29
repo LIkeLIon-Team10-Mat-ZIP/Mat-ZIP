@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,6 +17,7 @@ import site.matzip.base.rq.Rq;
 import site.matzip.base.rsData.RsData;
 import site.matzip.config.auth.PrincipalDetails;
 import site.matzip.member.domain.Member;
+import site.matzip.member.dto.MemberInfoDTO;
 import site.matzip.member.dto.NicknameUpdateDTO;
 import site.matzip.member.service.MemberService;
 
@@ -52,7 +54,15 @@ public class MemberController {
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/myPage")
-    public String showMyPage() {
+    public String showMyPage(Model model, @AuthenticationPrincipal PrincipalDetails principalDetails) {
+        Member member = principalDetails.getMember();
+
+        MemberInfoDTO memberInfoDTO = MemberInfoDTO.builder()
+                .nickname(member.getNickname())
+                .email(member.getEmail())
+                .build();
+
+        model.addAttribute("memberInfoDTO", memberInfoDTO);
         return "usr/member/myPage";
     }
 
