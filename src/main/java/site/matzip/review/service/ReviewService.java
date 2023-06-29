@@ -7,6 +7,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import site.matzip.review.domain.Review;
 import site.matzip.review.dto.ReviewListDTO;
+import site.matzip.matzip.domain.Matzip;
+import site.matzip.member.domain.Member;
+
 import site.matzip.review.repository.ReviewRepository;
 
 import java.util.List;
@@ -17,12 +20,22 @@ import java.util.stream.Collectors;
 public class ReviewService {
     private final ReviewRepository reviewRepository;
 
-    public void remove(Long reviewId) {
-        Review findReview = findReview(reviewId);
-        reviewRepository.delete(findReview);
+    public void create(ReviewCreationDTO reviewCreationDTO, Member author, Matzip matzip) {
+        Review review = Review.builder()
+                .author(author)
+                .matzip(matzip)
+                .rating(reviewCreationDTO.getRating())
+                .content(reviewCreationDTO.getContent())
+                .build();
+
+        reviewRepository.save(review);
     }
 
-    private Review findReview(Long reviewId) {
+    public void remove(Review review) {
+        reviewRepository.delete(review);
+    }
+
+    public Review findReview(Long reviewId) {
         return reviewRepository.findById(reviewId).orElseThrow(() -> new EntityNotFoundException("Review not Found"));
     }
 

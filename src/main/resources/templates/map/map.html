@@ -528,6 +528,9 @@
                         .then(response => {
                             if (response.ok) {
                                 alert('맛집으로 등록되었습니다!');
+                                // 맛집 리스트로 이동합니다
+                                var matzipListURL = '/matzip/list';
+                                window.location.href = matzipListURL;
                             } else {
                                 alert('맛집 등록에 실패했습니다.');
                             }

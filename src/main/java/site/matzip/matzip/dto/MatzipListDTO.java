@@ -9,6 +9,7 @@ import site.matzip.matzip.domain.MatzipType;
 @Data
 @Builder
 public class MatzipListDTO {
+    private Long matzipId;
     private String matzipName;
     private String description;
     private String address;

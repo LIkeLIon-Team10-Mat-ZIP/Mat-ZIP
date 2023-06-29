@@ -10,6 +10,8 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import site.matzip.base.rq.Rq;
+import site.matzip.base.rsData.RsData;
+import site.matzip.config.auth.PrincipalDetails;
 import site.matzip.matzip.domain.Matzip;
 import site.matzip.matzip.dto.MatzipCreationDTO;
 import site.matzip.matzip.dto.MatzipListDTO;
@@ -46,6 +48,7 @@ public class MatzipController {
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/createWithReview")
     public ResponseEntity createWithReview(@RequestBody MatzipReviewDTO matzipReviewDTO, BindingResult result, Authentication authentication) {
+
         if (result.hasErrors()) {
             return ResponseEntity.badRequest().body(result.getAllErrors());
         }
@@ -66,6 +69,7 @@ public class MatzipController {
 
     @GetMapping("/api/list")
     @ResponseBody
+
     public ResponseEntity<List<MatzipReviewListDTO>> searchAllWithReviews(Authentication authentication) {
         try {
             List<MatzipListDTO> matzipDtoList = matzipService.findAndConvertAll(rq.getMember(authentication).getId());
@@ -76,6 +80,7 @@ public class MatzipController {
             // 예외 발생 시 처리
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
+
     }
 
 }

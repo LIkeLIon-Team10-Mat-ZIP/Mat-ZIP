@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html layout:decorate="~{common/layout/defaultLayout.html}">
+
+<head>
+    <title>닉네임 변경</title>
+</head>
+
+<body>
+
+<main layout:fragment="Content">
+    <script>
+        function ModifyNicknameForm__submit(form) {
+            // nickname 이(가) 올바른지 체크
+            form.nickname.value = form.nickname.value.trim();
+
+            if (form.nickname.value.length === 0) {
+                form.nickname.focus();
+                toastWarning('닉네임을 입력해주세요.');
+                return;
+            }
+
+            if (form.nickname.value.length < 2) {
+                toastWarning('닉네임을 2자 이상 입력해주세요.');
+                form.nickname.focus();
+                return;
+            }
+
+            if (form.nickname.value.length > 15) {
+                toastWarning('닉네임을 15자 이하로 입력해주세요.');
+                form.nickname.focus();
+                return;
+            }
+
+            form.submit(); // 폼 발송
+        }
+    </script>
+
+    <div class="flex justify-center mx-auto max-w-5xl mt-20">
+        <div class="flex flex-col w-full">
+            <div class="p-3 border-b border-gray-400">
+                <span class="font-bold text-xl">
+                    <i class="fa-solid fa-user-pen mr-1"></i>닉네임 변경
+                </span>
+            </div>
+            <div class="card bg-base-100 shadow-xl flex-grow mt-2">
+                <div class="card-body">
+                    <form th:action method="POST" class="flex flex-col" th:object="${NicknameUpdateDTO}"
+                          onsubmit="ModifyNicknameForm__submit(this); return false;">
+                        <div class="flex justify-center">
+                            <div class="flex flex-col mt-5">
+                                <p class="mb-3 text-lg"><i class="fa-regular fa-face-smile"></i> 변경하실 닉네임을 입력해 주세요.</p>
+                                <div class="flex items-center space-x-4">
+                                    <input type="text" name="nickname" placeholder="닉네임" autocomplete="off"
+                                           class="bg-pink-100 h-10 p-4 w-80"/>
+                                </div>
+                                <div class="flex justify-end mt-5">
+                                    <a href="/usr/member/myPage"
+                                       class="btn btn-sm bg-pink-200 h-10 w-16 mr-2 text-sm flex items-center justify-center hover:bg-pink-100">취소</a>
+                                    <button class="btn btn-sm bg-pink-200 h-10 w-16 text-sm flex items-center justify-center hover:bg-pink-100"
+                                            type="submit">
+                                        <span class="text-center">변경</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</main>
+
+</body>
+
+</html>
