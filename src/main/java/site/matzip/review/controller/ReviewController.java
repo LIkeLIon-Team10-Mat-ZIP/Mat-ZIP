@@ -41,7 +41,7 @@ public class ReviewController {
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/create/{matzipId}")
     public String create(Model model, @PathVariable Long matzipId, ReviewCreationDTO reviewCreationDTO) {
-        Matzip matzip = matzipService.findMatzip(matzipId);
+        Matzip matzip = matzipService.findById(matzipId);
         MatzipInfoDTO matzipInfoDTO = new MatzipInfoDTO(matzip);
 
         model.addAttribute("matzipInfoDTO", matzipInfoDTO);
@@ -57,7 +57,7 @@ public class ReviewController {
             return "/review/add";
         }
 
-        Matzip matzip = matzipService.findMatzip(matzipId);
+        Matzip matzip = matzipService.findById(matzipId);
         Member author = principalDetails.getMember();
 
         reviewService.create(reviewCreationDTO, author, matzip);
