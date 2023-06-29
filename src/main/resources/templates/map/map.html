@@ -223,12 +223,12 @@
         </div>
         -->
         <div class="map_wrap h-[80vh] w-[70vw] mt-5">
-            <div id="map" class="w-full h-full"></div>
-            <div id="menu_wrap" class="bg_white">
+            <div class="w-full h-full" id="map"></div>
+            <div class="bg_white" id="menu_wrap">
                 <div class="option">
                     <div>
                         <form onsubmit="searchPlaces(); return false;">
-                            키워드 : <input type="text" value="이태원 맛집" id="keyword" size="15">
+                            키워드 : <input id="keyword" size="15" type="text" value="이태원 맛집">
                             <button type="submit">검색하기</button>
                         </form>
                     </div>
@@ -237,17 +237,17 @@
                 <ul id="placesList"></ul>
                 <div id="pagination"></div>
             </div>
-            <div id="placeInfo" class="bg-white p-4 rounded-md shadow-md">
+            <div class="bg-white p-4 rounded-md shadow-md" id="placeInfo">
                 <h2 id="placeName"></h2>
                 <p id="placeAddress"></p>
                 <p id="placePhone"></p>
             </div>
         </div>
     </div>
-    <div id="isLogin" sec:authorize="isAuthenticated()" th:text="true" style="display: none;"></div>
-    <div id="isLogin" sec:authorize="isAnonymous()" th:text="false" style="display: none;"></div>
-    <script type="text/javascript"
-            src="//dapi.kakao.com/v2/maps/sdk.js?appkey=868d9aa6d8d0e67bad6c59729809c3fa&libraries=services,clusterer"></script>
+    <div id="isLogin" sec:authorize="isAuthenticated()" style="display: none;" th:text="true"></div>
+    <div id="isLogin" sec:authorize="isAnonymous()" style="display: none;" th:text="false"></div>
+    <script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=868d9aa6d8d0e67bad6c59729809c3fa&libraries=services,clusterer"
+            type="text/javascript"></script>
     <script>
         // 마커를 담을 배열입니다
         var markers = [];
@@ -279,8 +279,15 @@
             var target = event.target;
             var mapContainer = document.getElementById('map');
             var placeInfo = document.getElementById('placeInfo');
-            if (target !== mapContainer && !mapContainer.contains(target) && target !== placeInfo && !placeInfo.contains(target)) {
-                placeInfo.style.display = 'none'; // Hide place info
+            var placesList = document.getElementById('placesList');
+
+            // 검색 결과 목록이나 페이지네이션이 클릭된 경우 placeInfo를 보이게 설정
+            if (target === placesList || placesList.contains(target)) {
+                placeInfo.style.display = 'block';
+            }
+            // 그 외의 경우(지도 또는 검색 결과 목록 및 페이지네이션 외의 영역)에만 placeInfo를 숨김
+            else if (!mapContainer.contains(target) && !placeInfo.contains(target)) {
+                placeInfo.style.display = 'none';
             }
         });
 
@@ -315,12 +322,12 @@
             } else if (status === kakao.maps.services.Status.ZERO_RESULT) {
 
                 alert('검색 결과가 존재하지 않습니다.');
-                return;
+
 
             } else if (status === kakao.maps.services.Status.ERROR) {
 
                 alert('검색 결과 중 오류가 발생했습니다.');
-                return;
+
 
             }
         }
@@ -352,7 +359,7 @@
                 // LatLngBounds 객체에 좌표를 추가합니다
                 bounds.extend(placePosition);
 
-                // 마커와 검색결과 항목에 mouseover 했을때
+                // 마커와 검색결과 항목에 click 했을때
                 // 해당 장소에 인포윈도우에 장소명을 표시합니다
                 // mouseout 했을 때는 인포윈도우를 닫습니다
                 (function (marker, title, place) {
@@ -361,11 +368,11 @@
                         showPlaceInfo(place);
                     });
 
-                    itemEl.onclick = function () {
+                    itemEl.addEventListener('click', function () {
                         displayInfowindow(marker, title);
                         showPlaceInfo(place);
                         map.setCenter(marker.getPosition()); // 마커 위치로 중앙 이동
-                    };
+                    });
                 })(marker, places[i].place_name, places[i]);
 
                 fragment.appendChild(itemEl);
@@ -521,6 +528,9 @@
                         .then(response => {
                             if (response.ok) {
                                 alert('맛집으로 등록되었습니다!');
+                                // 맛집 리스트로 이동합니다
+                                var matzipListURL = '/matzip/list';
+                                window.location.href = matzipListURL;
                             } else {
                                 alert('맛집 등록에 실패했습니다.');
                             }
@@ -663,7 +673,6 @@
         // 검색결과 목록 또는 마커를 클릭했을 때 호출되는 함수입니다
         // 인포윈도우에 장소명을 표시합니다
         function displayInfowindow(marker, title) {
-            var content;
             if (title.length > 9) {
                 content = '<div style="padding:5px;z-index:1;font-size:0.9em;">' + title + '</div>';
             } else {
@@ -674,27 +683,6 @@
             infowindow.open(map, marker);
         }
 
-        //리뷰 리스트 출력합니다
-        function displayReviews(matzipId) {
-            fetch(`/reviews/api/${matzipId}`)
-                .then(response => response.json())
-                .then(reviews => {
-                    // reviews 배열을 순회하며 HTML 요소를 동적으로 생성합니다.
-                    reviews.forEach(review => {
-                        const reviewElement = document.createElement('div');
-                        reviewElement.innerHTML = `
-                        <p>${review.author.name}</p>
-                        <p>${review.rating}</p>
-                        <p>${review.content}</p>
-                    `;
-                        // 생성한 요소를 문서에 추가합니다.
-                        document.body.appendChild(reviewElement);
-                    });
-                });
-        }
-
-        // 페이지 로드 시 리뷰를 로드합니다.
-        window.addEventListener('load', () => displayReviews(matzipId));
 
         // 검색결과 목록의 자식 Element를 제거하는 함수입니다
         function removeAllChildNods(el) {

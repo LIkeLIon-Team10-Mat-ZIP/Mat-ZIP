@@ -20,6 +20,7 @@ public class Member {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String username;
+    private String kakao_nickname;
     private String nickname;
     private String email;
     @Enumerated(EnumType.STRING)
@@ -33,17 +34,17 @@ public class Member {
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
     private final List<Comment> comments = new ArrayList<>();
 
-
     //    @Builder
-//    public Member(String username, String nickname, String email) {
+//    public Member(String username, String kakao_nickname, String email) {
 //        this.username = username;
-//        this.nickname = nickname;
+//        this.kakao_nickname = kakao_nickname;
 //        this.email = email;
 //        role = MemberRole.ROLE_MEMBER;
 //    }
     @Builder
-    public Member(String username, String nickname, String password, String email) {
+    public Member(String username, String kakao_nickname, String nickname, String password, String email) {
         this.username = username;
+        this.kakao_nickname = kakao_nickname;
         this.nickname = nickname;
         this.email = email;
         this.password = password;
@@ -59,5 +60,9 @@ public class Member {
 
     public void updateEmail(String email) {
         this.email = email;
+    }
+
+    public void updateNickname(String nickname) {
+        this.nickname = nickname;
     }
 }

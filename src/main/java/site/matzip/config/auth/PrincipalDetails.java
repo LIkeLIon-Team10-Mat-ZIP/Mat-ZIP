@@ -15,7 +15,6 @@ import java.util.Map;
 
 @Getter
 public class PrincipalDetails implements OAuth2User {
-
     private final Member member;
     private final OAuth2UserInfo oAuth2UserInfo;
 

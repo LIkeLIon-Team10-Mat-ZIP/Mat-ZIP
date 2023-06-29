@@ -2,6 +2,7 @@ package site.matzip.review.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import net.minidev.json.annotate.JsonIgnore;
 import site.matzip.base.domain.BaseEntity;
 import site.matzip.comment.domain.Comment;
 import site.matzip.image.domain.ReviewImage;
@@ -24,9 +25,11 @@ public class Review extends BaseEntity {
     private String content;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "matzip_id")
+    @JsonIgnore
     private Matzip matzip;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
+    @JsonIgnore
     private Member author;
     @OneToMany(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true)
     private final List<ReviewImage> reviewImages = new ArrayList<>();

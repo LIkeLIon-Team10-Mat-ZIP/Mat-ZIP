@@ -20,4 +20,5 @@ public class MatzipListDTO {
     private double x;
     private double y;
     private double rating;
+    private Long id;
 }

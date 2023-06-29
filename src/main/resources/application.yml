@@ -7,7 +7,10 @@ spring:
       enabled: true
     restart:
       enabled: true
-
+  mvc:
+    hiddenmethod: # @DeleteMapping 사용 위해
+      filter:
+        enabled: true
   servlet:
     multipart:
       max-file-size: 2MB
@@ -15,7 +18,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     properties:
       hibernate:
       #  show_sql: true
