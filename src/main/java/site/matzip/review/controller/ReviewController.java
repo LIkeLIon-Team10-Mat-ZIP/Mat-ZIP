@@ -16,7 +16,6 @@ import site.matzip.matzip.domain.Matzip;
 import site.matzip.matzip.dto.MatzipInfoDTO;
 import site.matzip.matzip.service.MatzipService;
 import site.matzip.member.domain.Member;
-
 import site.matzip.review.domain.Review;
 import site.matzip.review.dto.ReviewCreationDTO;
 import site.matzip.review.service.ReviewService;
@@ -41,7 +40,7 @@ public class ReviewController {
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/create/{matzipId}")
     public String create(Model model, @PathVariable Long matzipId, ReviewCreationDTO reviewCreationDTO) {
-        Matzip matzip = matzipService.findMatzip(matzipId);
+        Matzip matzip = matzipService.findById(matzipId);
         MatzipInfoDTO matzipInfoDTO = new MatzipInfoDTO(matzip);
 
         model.addAttribute("matzipInfoDTO", matzipInfoDTO);
@@ -57,7 +56,7 @@ public class ReviewController {
             return "/review/add";
         }
 
-        Matzip matzip = matzipService.findMatzip(matzipId);
+        Matzip matzip = matzipService.findById(matzipId);
         Member author = principalDetails.getMember();
 
         reviewService.create(reviewCreationDTO, author, matzip);
