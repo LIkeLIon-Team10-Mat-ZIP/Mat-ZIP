@@ -35,7 +35,7 @@ public class ReviewController {
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/create")
     public String create() {
-        return "/review/create";
+        return "/review/createDev";
     }
 
     @PreAuthorize("isAuthenticated()")

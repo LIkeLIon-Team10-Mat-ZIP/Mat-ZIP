@@ -47,7 +47,7 @@ public class MatzipController {
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/createWithReview")
-    public ResponseEntity createWithReview(@RequestBody MatzipReviewDTO matzipReviewDTO, BindingResult result, Authentication authentication) {
+    public ResponseEntity createWithReview(@ModelAttribute MatzipReviewDTO matzipReviewDTO, BindingResult result, Authentication authentication) {
 
         if (result.hasErrors()) {
             return ResponseEntity.badRequest().body(result.getAllErrors());
