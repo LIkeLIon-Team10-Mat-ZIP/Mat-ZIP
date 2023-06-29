@@ -88,11 +88,15 @@
         <a class="inline-block w-full py-1 px-4 rounded-3xl text-center bg-gray-100 shadow mb-2" id="detailLink"
            target="_blank">상세정보</a>
         <br>
-        <a id="reviewButton" class="inline-block w-full py-1 px-4 rounded-3xl text-center bg-gray-100 shadow mb-1">리뷰 등록</a>
+        <a id="reviewButton" class="inline-block w-full py-1 px-4 rounded-3xl text-center bg-gray-100 shadow mb-1">리뷰
+            등록</a>
     </div>
 
     <div id="reviewList">
-        <h3>리뷰 목록</h3>
+        <div class="flex justify-between">
+            <h3>리뷰 목록</h3>
+            <a href="" id="matzipDetail"><span class="text-sm">더 보기</span></a>
+        </div>
         <div id="noReview" style="display: block;">리뷰가 없습니다.</div>
         <ul id="reviewListContainer" style="display: none;"></ul>
     </div>
@@ -145,6 +149,8 @@
             data.forEach(matzipReviewDto => {
                 const matzip = matzipReviewDto.matzipListDTO;
                 const reviews = matzipReviewDto.reviewListDTOs;
+                var reviewLink = document.getElementById('matzipDetail');
+
                 console.log(matzip, reviews);
 
                 // 해당 위치에 마커를 생성합니다
@@ -191,7 +197,7 @@
                     detailLink.href = matzip.matzipUrl;
                     detailLink.innerText = '상세정보';
                     placeInfo.style.display = 'block'; // Show place info
-
+                    reviewLink.href = "/matzip/reviewList/" + matzip.id;
                     currentReviews = reviews.filter(review => review.matzipId === marker.matzipId);
                     // 리뷰 목록을 업데이트합니다.
                     const reviewListContainer = document.getElementById('reviewListContainer');
