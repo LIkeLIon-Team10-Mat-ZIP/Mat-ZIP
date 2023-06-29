@@ -11,6 +11,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import site.matzip.config.auth.PrincipalDetails;
 import site.matzip.matzip.domain.Matzip;
+import site.matzip.matzip.dto.MatzipInfoDTO;
 import site.matzip.matzip.service.MatzipService;
 import site.matzip.member.domain.Member;
 import site.matzip.review.domain.Review;
@@ -35,23 +36,25 @@ public class ReviewController {
     }
 
     @PreAuthorize("isAuthenticated()")
-    @GetMapping("/create/{id}")
-    public String create(Model model, @PathVariable Long id, ReviewCreationDTO reviewCreationDTO) {
-        Matzip matzip = matzipService.findMatzip(id);
-        model.addAttribute("matzip", matzip);
+    @GetMapping("/create/{matzipId}")
+    public String create(Model model, @PathVariable Long matzipId, ReviewCreationDTO reviewCreationDTO) {
+        Matzip matzip = matzipService.findMatzip(matzipId);
+        MatzipInfoDTO matzipInfoDTO = new MatzipInfoDTO(matzip);
+
+        model.addAttribute("matzipInfoDTO", matzipInfoDTO);
         model.addAttribute("reviewCreationDTO", reviewCreationDTO);
         return "/review/add";
     }
 
     @PreAuthorize("isAuthenticated()")
-    @PostMapping("/create/{id}")
-    public String create(@PathVariable Long id, ReviewCreationDTO reviewCreationDTO,
+    @PostMapping("/create/{matzipId}")
+    public String create(@PathVariable Long matzipId, ReviewCreationDTO reviewCreationDTO,
                          BindingResult result, @AuthenticationPrincipal PrincipalDetails principalDetails) {
         if (result.hasErrors()) {
             return "/review/add";
         }
 
-        Matzip matzip = matzipService.findMatzip(id);
+        Matzip matzip = matzipService.findMatzip(matzipId);
         Member author = principalDetails.getMember();
 
         reviewService.create(reviewCreationDTO, author, matzip);
