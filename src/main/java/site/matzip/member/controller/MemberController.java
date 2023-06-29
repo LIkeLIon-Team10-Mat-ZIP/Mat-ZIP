@@ -87,4 +87,11 @@ public class MemberController {
 
         return rq.redirectWithMsg("/usr/member/myPage", member);
     }
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/myPage/modifyProfileImage")
+    public String showModifyProfileImage() {
+        return "usr/member/myPage/modifyProfileImage";
+    }
+
 }
