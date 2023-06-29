@@ -223,12 +223,12 @@
         </div>
         -->
         <div class="map_wrap h-[80vh] w-[70vw] mt-5">
-            <div id="map" class="w-full h-full"></div>
-            <div id="menu_wrap" class="bg_white">
+            <div class="w-full h-full" id="map"></div>
+            <div class="bg_white" id="menu_wrap">
                 <div class="option">
                     <div>
                         <form onsubmit="searchPlaces(); return false;">
-                            키워드 : <input type="text" value="이태원 맛집" id="keyword" size="15">
+                            키워드 : <input id="keyword" size="15" type="text" value="이태원 맛집">
                             <button type="submit">검색하기</button>
                         </form>
                     </div>
@@ -237,17 +237,17 @@
                 <ul id="placesList"></ul>
                 <div id="pagination"></div>
             </div>
-            <div id="placeInfo" class="bg-white p-4 rounded-md shadow-md">
+            <div class="bg-white p-4 rounded-md shadow-md" id="placeInfo">
                 <h2 id="placeName"></h2>
                 <p id="placeAddress"></p>
                 <p id="placePhone"></p>
             </div>
         </div>
     </div>
-    <div id="isLogin" sec:authorize="isAuthenticated()" th:text="true" style="display: none;"></div>
-    <div id="isLogin" sec:authorize="isAnonymous()" th:text="false" style="display: none;"></div>
-    <script type="text/javascript"
-            src="//dapi.kakao.com/v2/maps/sdk.js?appkey=868d9aa6d8d0e67bad6c59729809c3fa&libraries=services,clusterer"></script>
+    <div id="isLogin" sec:authorize="isAuthenticated()" style="display: none;" th:text="true"></div>
+    <div id="isLogin" sec:authorize="isAnonymous()" style="display: none;" th:text="false"></div>
+    <script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=868d9aa6d8d0e67bad6c59729809c3fa&libraries=services,clusterer"
+            type="text/javascript"></script>
     <script>
         // 마커를 담을 배열입니다
         var markers = [];
@@ -280,10 +280,9 @@
             var mapContainer = document.getElementById('map');
             var placeInfo = document.getElementById('placeInfo');
             var placesList = document.getElementById('placesList');
-            var pagination = document.getElementById('pagination');
 
             // 검색 결과 목록이나 페이지네이션이 클릭된 경우 placeInfo를 보이게 설정
-            if (target === placesList || placesList.contains(target)){
+            if (target === placesList || placesList.contains(target)) {
                 placeInfo.style.display = 'block';
             }
             // 그 외의 경우(지도 또는 검색 결과 목록 및 페이지네이션 외의 영역)에만 placeInfo를 숨김
@@ -323,12 +322,12 @@
             } else if (status === kakao.maps.services.Status.ZERO_RESULT) {
 
                 alert('검색 결과가 존재하지 않습니다.');
-                return;
+
 
             } else if (status === kakao.maps.services.Status.ERROR) {
 
                 alert('검색 결과 중 오류가 발생했습니다.');
-                return;
+
 
             }
         }

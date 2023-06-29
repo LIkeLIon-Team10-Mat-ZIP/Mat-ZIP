@@ -9,4 +9,7 @@ import java.util.List;
 
 public interface ReviewRepository extends JpaRepository<Review, Long> {
     Page<Review> findByMatzipId(Long matzipId, Pageable pageble);
+
+    List<Review> findByMatzipId(Long matzipId);
+
 }
