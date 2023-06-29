@@ -2,7 +2,7 @@
 <html layout:decorate="~{common/layout/defaultLayout.html}">
 
 <head>
-    <title>닉네임 변경</title>
+    <title>프로필 이미지 변경</title>
 </head>
 
 <body>
@@ -29,7 +29,7 @@
                                     </div>
                                 </div>
                                 <div class="flex justify-center mt-5">
-                                    <button id="custom-img-button" class="btn btn-sm bg-pink-200 h-10 w-32 text-sm flex items-center justify-center hover:bg-pink-100 cursor-pointer">
+                                    <button id="img-select-btn" class="btn btn-sm bg-pink-200 h-10 w-32 text-sm flex items-center justify-center hover:bg-pink-100 cursor-pointer">
                                         <span class="text-center">이미지 선택</span>
                                     </button>
                                 </div>
@@ -51,7 +51,7 @@
 
     <script>
         // 이미지 선택 버튼 클릭 이벤트
-        document.getElementById("custom-img-button").addEventListener("click", function (event) {
+        document.getElementById("img-select-btn").addEventListener("click", function (event) {
             // 기본 이벤트(폼 제출 등) 방지
             event.preventDefault();
             document.getElementById("profile-file").click();
