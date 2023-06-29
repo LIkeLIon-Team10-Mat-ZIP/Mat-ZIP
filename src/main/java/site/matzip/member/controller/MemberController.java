@@ -51,6 +51,12 @@ public class MemberController {
     }
 
     @PreAuthorize("isAuthenticated()")
+    @GetMapping("/myPage")
+    public String showMyPage() {
+        return "usr/member/myPage";
+    }
+
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/myPage/modifyNickname")
     public String showModifyNickName() {
         return "usr/member/myPage/modifyNickname";

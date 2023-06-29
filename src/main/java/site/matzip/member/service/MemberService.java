@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import site.matzip.base.rsData.RsData;
@@ -128,12 +129,15 @@ public class MemberService {
         return memberRepository.findByUsername(username);
     }
 
+    @Transactional
     public RsData<Member> modifyNickname(Member member, NicknameUpdateDTO nicknameUpdateDTO) {
         if (isNicknameTaken(nicknameUpdateDTO.getNickname())) {
             return RsData.of("F-1", "이미 사용중인 닉네임 입니다.");
         }
 
         member.updateNickname(nicknameUpdateDTO.getNickname());
+
+        memberRepository.save(member); // 변경사항 저장
 
         return RsData.of("S-1", "닉네임이 변경되었습니다.");
     }
