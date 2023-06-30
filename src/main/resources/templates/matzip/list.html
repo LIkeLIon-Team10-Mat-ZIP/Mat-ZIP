@@ -1,11 +1,14 @@
 <!DOCTYPE html>
 <html layout:decorate="~{common/layout/defaultLayout.html}">
-<html>
 <head>
     <meta charset="utf-8">
     <!-- 테일윈드 불러오기 -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <title>전체 맛집 리스트 (임시)</title>
+
+    <!-- 데이지 UI 불러오기 -->
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@2.51.5/dist/full.css" rel="stylesheet" type="text/css"/>
+    <title>Matzip</title>
+
     <style>
         body {
             margin: 0;
@@ -46,6 +49,7 @@
         }
 
         #reviewList {
+            display: none;
             position: absolute;
             top: calc(50% + 20px);
             right: 10px;
@@ -120,6 +124,7 @@
         var currentInfoWindow = null;
 
         var placeInfo = document.getElementById('placeInfo');
+        var reviewList = document.getElementById('reviewList')
         var placeName = document.getElementById('placeName');
         var placeAddress = document.getElementById('placeAddress');
         var placePhone = document.getElementById('placePhone');
@@ -136,8 +141,12 @@
             var target = event.target;
             var mapContainer = document.getElementById('map');
             var placeInfo = document.getElementById('placeInfo');
+
+            var reviewList = document.getElementById('reviewList');
             if (target !== mapContainer && !mapContainer.contains(target) && target !== placeInfo && !placeInfo.contains(target)) {
                 placeInfo.style.display = 'none'; // Hide place info
+                reviewList.style.display = 'none';
+
             }
         });
 
@@ -194,6 +203,8 @@
                         detailLink.href = matzip.matzipUrl;
                         detailLink.innerText = '상세정보';
                         placeInfo.style.display = 'block'; // Show place info
+
+                        reviewList.style.display = 'block'
 
                         currentReviews = reviews.filter(review => review.matzipId === marker.matzipId);
                         // 리뷰 목록을 업데이트합니다.
