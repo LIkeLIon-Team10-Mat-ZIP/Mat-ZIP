@@ -36,7 +36,7 @@ public class ReviewService {
         reviewRepository.delete(review);
     }
 
-    public Review findReview(Long reviewId) {
+    public Review findByID(Long reviewId) {
         return reviewRepository.findById(reviewId).orElseThrow(() -> new EntityNotFoundException("Review not Found"));
     }
 
@@ -53,6 +53,7 @@ public class ReviewService {
     private ReviewListDTO convertToReviewDTO(Review review) {
         return ReviewListDTO.builder()
                 .matzipId(review.getMatzip().getId())
+                .reviewId(review.getId())
                 .authorNickname(review.getAuthor().getNickname())
                 .content(review.getContent())
                 .rating(review.getRating())

@@ -18,6 +18,7 @@ import site.matzip.matzip.service.MatzipService;
 import site.matzip.member.domain.Member;
 import site.matzip.review.domain.Review;
 import site.matzip.review.dto.ReviewCreationDTO;
+import site.matzip.review.dto.ReviewDetailDTO;
 import site.matzip.review.service.ReviewService;
 
 import java.util.List;
@@ -74,7 +75,7 @@ public class ReviewController {
     @PreAuthorize("isAuthenticated()")
     @DeleteMapping("/{id}")
     public String delete(@PathVariable Long id, @AuthenticationPrincipal PrincipalDetails principalDetail) {
-        Review review = reviewService.findReview(id);
+        Review review = reviewService.findByID(id);
 
         if (!Objects.equals(review.getAuthor().getId(), principalDetail.getMember().getId())) {
             throw new AccessDeniedException("You do not have permission to delete.");
@@ -82,5 +83,16 @@ public class ReviewController {
 
         reviewService.remove(review);
         return "redirect:/matzip/list";
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/detail/{id}")
+    public String detail(Model model, @PathVariable Long id) {
+        Review review = reviewService.findByID(id);
+        Matzip matzip = review.getMatzip();
+
+        ReviewDetailDTO reviewDetailDTO = new ReviewDetailDTO(review, matzip);
+        model.addAttribute("reviewDetailDTO", reviewDetailDTO);
+        return "/review/detail";
     }
 }
