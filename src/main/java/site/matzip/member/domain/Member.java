@@ -2,6 +2,9 @@ package site.matzip.member.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import site.matzip.image.domain.ProfileImage;
 import site.matzip.matzip.domain.MatzipRecommendation;
 import site.matzip.review.domain.Review;
 
@@ -28,6 +31,9 @@ public class Member {
     //TODO:이 부분도 oAuth만 이용시 필요없음. 삭제예정
     private String password;
 
+    @OneToOne(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    private ProfileImage profileImage;
+
     @Builder
     public Member(String username, String kakao_nickname, String nickname, String password, String email) {
         this.username = username;
@@ -51,5 +57,9 @@ public class Member {
 
     public void updateNickname(String nickname) {
         this.nickname = nickname;
+    }
+
+    public void setProfileImage(ProfileImage profileImage) {
+        this.profileImage = profileImage;
     }
 }
