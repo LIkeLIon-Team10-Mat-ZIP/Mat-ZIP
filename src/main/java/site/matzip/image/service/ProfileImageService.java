@@ -13,6 +13,7 @@ import site.matzip.image.repository.ProfileImageRepository;
 import site.matzip.member.domain.Member;
 
 import java.io.IOException;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -39,9 +40,9 @@ public class ProfileImageService {
         amazonS3.putObject(bucket, "profileImages/" + filename, multipartFile.getInputStream(), metadata);
         String imageUrl = amazonS3.getUrl(bucket, "profileImages/" + filename).toString();
 
-        ProfileImage existingProfileImage = profileImageRepository.findByMember(member);
+        Optional<ProfileImage> optionalProfileImage = profileImageRepository.findByMember(member);
 
-        if (existingProfileImage == null) {
+        if (optionalProfileImage.isEmpty()) {
             // 이미지가 없으면, 새로운 엔티티 생성하고 저장
             ProfileImage profileImage = ProfileImage.builder()
                     .imageUrl(imageUrl)
@@ -53,6 +54,7 @@ public class ProfileImageService {
             profileImageRepository.save(profileImage);
         } else {
             // 이미지가 이미 있으면, 'imageUrl'과 'originalImageName' 업데이트
+            ProfileImage existingProfileImage = optionalProfileImage.get();
             existingProfileImage.modifyImageUrlAndOriginalName(imageUrl, multipartFile.getOriginalFilename());
         }
 
