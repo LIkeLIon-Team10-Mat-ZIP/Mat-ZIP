@@ -203,9 +203,10 @@
                                 flexItemsCenter.appendChild(img);
 
                                 const flexFlexCol = document.createElement('div');
-                                flexFlexCol.classList.add('flex', 'flex-col');
+                                flexFlexCol.classList.add('flex', 'flex-col', 'flex-grow');
 
                                 const nameDateWrapper = document.createElement('div');
+                                nameDateWrapper.classList.add('flex', 'justify-between', 'items-center');
                                 flexFlexCol.appendChild(nameDateWrapper);
                                 // 작성자 닉네임
                                 // TODO
