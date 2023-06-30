@@ -38,6 +38,11 @@ public class MatzipController {
     private final ReviewImageService reviewImageService;
     private final Rq rq;
 
+    @GetMapping("create")
+    public String create() {
+        return "/matzip/create";
+    }
+
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/create")
     public ResponseEntity create(@RequestBody MatzipCreationDTO matzipCreationDTO, BindingResult result, Authentication authentication) {
@@ -82,7 +87,6 @@ public class MatzipController {
 
     @GetMapping("/api/list")
     @ResponseBody
-
     public ResponseEntity<List<MatzipReviewListDTO>> searchAllWithReviews(Authentication authentication) {
         try {
             List<MatzipListDTO> matzipDtoList = matzipService.findAndConvertAll(rq.getMember(authentication).getId());
@@ -94,7 +98,19 @@ public class MatzipController {
             // 예외 발생 시 처리
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
-
     }
 
+    @GetMapping("/api/mylist")
+    @ResponseBody
+    public ResponseEntity<List<MatzipReviewListDTO>> searchMineWithReviews(Authentication authentication) {
+        try {
+            List<MatzipListDTO> matzipDtoList = matzipService.findAndConvertAll(rq.getMember(authentication).getId());
+            List<ReviewListDTO> reviewDtoList = reviewService.findAll();
+            List<MatzipReviewListDTO> matzipReviewDtoList = matzipService.mergeMatzipAndReviews(matzipDtoList, reviewDtoList);
+            return ResponseEntity.ok(matzipReviewDtoList);
+        } catch (Exception e) {
+            // 예외 발생 시 처리
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
 }

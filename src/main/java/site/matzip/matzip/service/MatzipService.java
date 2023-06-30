@@ -4,6 +4,13 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import site.matzip.matzip.domain.Matzip;
+
+package site.matzip.matzip.service;
+
+import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import site.matzip.matzip.domain.Matzip;
 import site.matzip.matzip.domain.MatzipRecommendation;
 import site.matzip.matzip.dto.MatzipCreationDTO;
 import site.matzip.matzip.dto.MatzipListDTO;
@@ -149,6 +156,7 @@ public class MatzipService {
 
             matzipReviewList.add(matzipReviewListDTO);
         }
+
         return matzipReviewList;
     }
 }
