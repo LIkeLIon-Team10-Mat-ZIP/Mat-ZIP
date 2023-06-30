@@ -269,7 +269,7 @@
 
         // 마커 클러스터러를 생성합니다
         var clusterer = new kakao.maps.MarkerClusterer({
-            map: create, // 마커들을 클러스터로 관리하고 표시할 지도 객체
+            map: map, // 마커들을 클러스터로 관리하고 표시할 지도 객체
             averageCenter: true, // 클러스터에 포함된 마커들의 평균 위치를 클러스터 마커 위치로 설정
             minLevel: 7 // 클러스터 할 최소 지도 레벨
         });
@@ -371,7 +371,7 @@
                     itemEl.addEventListener('click', function () {
                         displayInfowindow(marker, title);
                         showPlaceInfo(place);
-                        create.setCenter(marker.getPosition()); // 마커 위치로 중앙 이동
+                        map.setCenter(marker.getPosition()); // 마커 위치로 중앙 이동
                     });
                 })(marker, places[i].place_name, places[i]);
 
@@ -390,7 +390,7 @@
             menuEl.scrollTop = 0;
 
             // 검색된 장소 위치를 기준으로 지도 범위를 재설정합니다
-            create.setBounds(bounds);
+            map.setBounds(bounds);
         }
 
 
@@ -526,6 +526,8 @@
                         .then(response => {
                             if (response.ok) {
                                 alert('맛집으로 등록되었습니다!');
+                                sessionStorage.setItem("x", matzipCreationDTO.x);
+                                sessionStorage.setItem("y", matzipCreationDTO.y);
                                 // 맛집 리스트로 이동합니다
                                 var matzipListURL = '/matzip/list';
                                 window.location.href = matzipListURL;
@@ -622,7 +624,7 @@
                 image: new kakao.maps.MarkerImage(imageSrc, imageSize)
             });
 
-            marker.setMap(create); // 지도 위에 마커를 표출합니다
+            marker.setMap(map); // 지도 위에 마커를 표출합니다
             marker.place = place; // 마커 객체에 장소 데이터 저장
             markers.push(marker);  // 배열에 생성된 마커를
 
@@ -678,7 +680,7 @@
             }
 
             infowindow.setContent(content);
-            infowindow.open(create, marker);
+            infowindow.open(map, marker);
         }
 
 

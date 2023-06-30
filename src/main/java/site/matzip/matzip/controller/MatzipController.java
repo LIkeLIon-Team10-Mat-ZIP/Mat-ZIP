@@ -32,6 +32,11 @@ public class MatzipController {
     private final ReviewService reviewService;
     private final Rq rq;
 
+    @GetMapping("create")
+    public String create() {
+        return "/matzip/create";
+    }
+
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/create")
     public ResponseEntity create(@RequestBody MatzipCreationDTO matzipCreationDTO, BindingResult result, Authentication authentication) {

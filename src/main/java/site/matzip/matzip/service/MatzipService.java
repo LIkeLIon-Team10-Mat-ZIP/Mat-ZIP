@@ -172,11 +172,5 @@ public class MatzipService {
         }
         return matzipReviewList;
     }
-
-    //맛집 id와 멤버 id로 멤버가 이미 등록한 맛집인지 확인 하기 위해서 작성, 아직 기능은 미구현
-    public MatzipMember findByMatzipIdAndMemberId(Long matzipId, Long memberId) {
-        return matzipMemberRepository.findByMatzipIdAndMemberId(matzipId, memberId)
-                .orElseThrow(() -> new EntityNotFoundException("matzipMember Not Found"));
-    }
 }
 
