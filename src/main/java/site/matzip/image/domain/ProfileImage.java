@@ -35,8 +35,6 @@ public class ProfileImage {
 
     public void setMember(Member member) {
         this.member = member;
-        if (member.getProfileImage() != this) {
-            member.setProfileImage(this);
-        }
+        member.setProfileImage(this);
     }
 }

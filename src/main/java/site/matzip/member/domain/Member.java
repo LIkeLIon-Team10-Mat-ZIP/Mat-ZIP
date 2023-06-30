@@ -70,9 +70,6 @@ public class Member {
 
     public void setProfileImage(ProfileImage profileImage) {
         this.profileImage = profileImage;
-        if (profileImage.getMember() != this) {
-            profileImage.setMember(this);
-        }
     }
 
 }
