@@ -5,21 +5,24 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import site.matzip.base.rq.Rq;
 import site.matzip.base.rsData.RsData;
 import site.matzip.config.auth.PrincipalDetails;
+import site.matzip.image.service.ProfileImageService;
 import site.matzip.member.domain.Member;
 import site.matzip.member.dto.MemberInfoDTO;
 import site.matzip.member.dto.NicknameUpdateDTO;
 import site.matzip.member.service.MemberService;
+
+import java.io.IOException;
 
 @Controller
 @RequiredArgsConstructor
@@ -27,6 +30,7 @@ import site.matzip.member.service.MemberService;
 public class MemberController {
 
     private final MemberService memberService;
+    private final ProfileImageService profileImageService;
     private final Rq rq;
 
     @GetMapping("/login")
@@ -57,9 +61,15 @@ public class MemberController {
     public String showMyPage(Model model, @AuthenticationPrincipal PrincipalDetails principalDetails) {
         Member member = principalDetails.getMember();
 
+        String profileImageUrl = "https://grooveobucket.s3.ap-northeast-2.amazonaws.com/albumCover/free-icon-user-5264565.png";
+        if (member.getProfileImage() != null && member.getProfileImage().getImageUrl() != null) {
+            profileImageUrl = member.getProfileImage().getImageUrl();
+        }
+
         MemberInfoDTO memberInfoDTO = MemberInfoDTO.builder()
                 .nickname(member.getNickname())
                 .email(member.getEmail())
+                .profileImageUrl(profileImageUrl)
                 .build();
 
         model.addAttribute("memberInfoDTO", memberInfoDTO);
@@ -92,6 +102,15 @@ public class MemberController {
     @GetMapping("/myPage/modifyProfileImage")
     public String showModifyProfileImage() {
         return "usr/member/myPage/modifyProfileImage";
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping("/myPage/modifyProfileImage")
+    public String modifyProfileImage(@RequestParam("profileImage") MultipartFile profileImage,
+                                     @AuthenticationPrincipal PrincipalDetails principalDetails) throws IOException {
+        profileImageService.saveProfileImage(profileImage, principalDetails.getMember());
+
+        return "redirect:/usr/member/myPage";
     }
 
 }

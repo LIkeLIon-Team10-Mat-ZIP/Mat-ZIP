@@ -67,4 +67,12 @@ public class Member {
     public void updateNickname(String nickname) {
         this.nickname = nickname;
     }
+
+    public void setProfileImage(ProfileImage profileImage) {
+        this.profileImage = profileImage;
+        if (profileImage.getMember() != this) {
+            profileImage.setMember(this);
+        }
+    }
+
 }

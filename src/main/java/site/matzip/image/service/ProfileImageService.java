@@ -13,7 +13,6 @@ import site.matzip.image.repository.ProfileImageRepository;
 import site.matzip.member.domain.Member;
 
 import java.io.IOException;
-import java.util.UUID;
 
 @Service
 @Slf4j
@@ -29,26 +28,36 @@ public class ProfileImageService {
     public void saveProfileImage(MultipartFile multipartFile, Member member) throws IOException {
         if (multipartFile.isEmpty()) {
             log.info("Can't save ProfileImage (no image)");
+            return;
         }
 
-        String originalFilename = UUID.randomUUID() + "_" + multipartFile.getOriginalFilename();
-
+        String filename = "userId_" + member.getId();
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentLength(multipartFile.getSize());
         metadata.setContentType(multipartFile.getContentType());
 
-        amazonS3.putObject(bucket, originalFilename, multipartFile.getInputStream(), metadata);
+        amazonS3.putObject(bucket, "profileImages/" + filename, multipartFile.getInputStream(), metadata);
+        String imageUrl = amazonS3.getUrl(bucket, "profileImages/" + filename).toString();
 
-        ProfileImage uploadImage = ProfileImage.builder()
-                .imageUrl(amazonS3.getUrl(bucket, originalFilename).toString())
-                .originalImageName(multipartFile.getOriginalFilename())
-                .build();
-        /**
-         * 연관관계 편의 메서드 실행
-         */
-        profileImageRepository.save(uploadImage);
+        ProfileImage existingProfileImage = profileImageRepository.findByMember(member);
+
+        if (existingProfileImage == null) {
+            // 이미지가 없으면, 새로운 엔티티 생성하고 저장
+            ProfileImage profileImage = ProfileImage.builder()
+                    .imageUrl(imageUrl)
+                    .originalImageName(multipartFile.getOriginalFilename())
+                    .build();
+
+            profileImage.setMember(member);
+
+            profileImageRepository.save(profileImage);
+        } else {
+            // 이미지가 이미 있으면, 'imageUrl'과 'originalImageName' 업데이트
+            existingProfileImage.modifyImageUrlAndOriginalName(imageUrl, multipartFile.getOriginalFilename());
+        }
 
         log.info("Complete ProfileImage");
+
     }
 
     @Transactional
