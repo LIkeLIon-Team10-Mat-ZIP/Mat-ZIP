@@ -170,8 +170,6 @@ public class MatzipService {
 
             matzipReviewList.add(matzipReviewListDTO);
         }
-
         return matzipReviewList;
     }
 }
-
