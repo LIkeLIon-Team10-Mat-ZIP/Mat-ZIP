@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html layout:decorate="~{common/layout/defaultLayout.html}">
+
+<head>
+    <title>프로필 이미지 변경</title>
+</head>
+
+<body>
+
+<main layout:fragment="Content">
+    <script>
+        function ProfileForm__submit(form) {
+            const selectedImage = document.getElementById("profile-file").files[0];
+            if (!selectedImage) {
+                toastWarning('변경할 프로필 이미지를 선택해주세요');
+                return;
+            }
+
+            form.submit(); // 폼 발송
+        }
+    </script>
+
+    <div class="flex justify-center mx-auto max-w-5xl mt-20">
+        <div class="flex flex-col w-full">
+            <div class="p-3 border-b border-gray-400">
+                <span class="font-bold text-xl">
+                    <i class="fa-regular fa-image mr-1"></i>프로필 이미지 변경
+                </span>
+            </div>
+            <div class="card bg-base-100 shadow-xl flex-grow mt-2">
+                <div class="card-body">
+                    <form th:action method="POST" id="image-form" class="flex flex-col" enctype="multipart/form-data"
+                          onsubmit="ProfileForm__submit(this); return false;">
+                        <div class="flex justify-center">
+                            <!-- 프로필 사진 등록 -->
+                            <div>
+                                <div class="w-80 h-80 border border-black border-opacity-10 flex items-end justify-center">
+                                    <div class="file-upload-container flex items-center">
+                                        <input type="file" name="profileImage" id="profile-file" accept="image/*"
+                                               style="display:none;">
+                                    </div>
+                                </div>
+                                <div class="flex justify-center mt-5">
+                                    <button id="img-select-btn" class="btn btn-sm bg-pink-200 h-10 w-32 text-sm flex items-center justify-center hover:bg-pink-100 cursor-pointer">
+                                        <span class="text-centher">이미지 선택</span>
+                                    </button>
+                                </div>
+                                <div class="flex justify-end mt-5">
+                                    <a href="/usr/member/myPage"
+                                       class="btn btn-sm bg-pink-200 h-10 w-16 mr-2 text-sm flex items-center justify-center hover:bg-pink-100">취소</a>
+                                    <button class="btn btn-sm bg-pink-200 h-10 w-16 text-sm flex items-center justify-center hover:bg-pink-100"
+                                            type="submit">
+                                        <span class="text-center">변경</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 이미지 선택 버튼 클릭 이벤트
+        document.getElementById("img-select-btn").addEventListener("click", function (event) {
+            // 기본 이벤트(폼 제출 등) 방지
+            event.preventDefault();
+            document.getElementById("profile-file").click();
+        });
+
+        // 프로필 선택 이미지 미리보기
+        document.getElementById("profile-file").addEventListener("change", function () {
+            var fileInput = this;
+            var file = fileInput.files[0];
+            if (file) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    var imageContainer = document.createElement("img");
+                    imageContainer.src = e.target.result;
+                    imageContainer.style.width = "100%";
+                    imageContainer.style.height = "100%";
+
+                    var container = document.querySelector(".w-80");
+                    var existingImage = container.querySelector("img");
+                    if (existingImage) {
+                        existingImage.remove();
+                    }
+                    container.appendChild(imageContainer);
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // function ProfileForm__submit(form) {
+        //     var selectedImage = document.getElementById("profile-file").files[0];
+        //     if (!selectedImage) {
+        //         return false;
+        //     }
+        //
+        //     var formData = new FormData(form);
+        //     formData.append("profileImage", selectedImage);
+        //
+        //     fetch(form.action, {
+        //         method: "POST",
+        //         body: formData
+        //     })
+        //         .then(response => {
+        //             if (response.ok) {
+        //                 console.log("이미지 업로드 성공");
+        //                 window.location.href = "/usr/member/myPage"; // myPage로 이동
+        //             } else {
+        //                 console.error("이미지 업로드 실패");
+        //             }
+        //         })
+        //         .catch(error => {
+        //             console.error("이미지 업로드 실패", error);
+        //         });
+        // }
+    </script>
+
+</main>
+
+</body>
+
+</html>

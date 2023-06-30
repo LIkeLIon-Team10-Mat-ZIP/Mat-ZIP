@@ -28,7 +28,7 @@ public class ReviewImageService {
     private String bucket;
 
     @Transactional
-    public void saveReviewImages(List<MultipartFile> multipartFiles, Review review) throws IOException {
+    public void create(List<MultipartFile> multipartFiles, Review review) throws IOException {
         if (multipartFiles.size() == 0) {
             log.info("Can't save Review Images (no image)");
         }
@@ -52,9 +52,7 @@ public class ReviewImageService {
                 .imageUrl(amazonS3.getUrl(bucket, originalFilename).toString())
                 .originalImageName(multipartFile.getOriginalFilename())
                 .build();
-        /**
-         * 연관관계 편의 메서드 실행
-         */
+        uploadImage.setReview(review);
         reviewImageRepository.save(uploadImage);
     }
 

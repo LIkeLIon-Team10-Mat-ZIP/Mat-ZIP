@@ -20,7 +20,11 @@
                 <span class="font-bold text-xl"><i class="fa-regular fa-user"></i> 마이 페이지</span>
             </div>
             <div class="card card-side bg-base-100 shadow-xl h-80 mt-5">
-                <figure><img src="https://search.pstatic.net/common/?src=https%3A%2F%2Fldb-phinf.pstatic.net%2F20230315_55%2F1678864965197X3zz0_JPEG%2FIMG_6113.JPEG" class="w-80 h-80 object-cover" /></figure>
+                <figure>
+                    <div class="w-80 flex justify-center items-center">
+                        <img th:src="${memberInfoDTO.profileImageUrl}" class="w-72 h-72 object-contain"/>
+                    </div>
+                </figure>
                 <div class="card-body">
                     <div class="flex items-center">
                         <span class="mr-3 text-xl font-bold" th:text="${memberInfoDTO.nickname}"></span>
@@ -36,6 +40,11 @@
                                 <li>
                                     <a href="/usr/member/myPage/modifyNickname">
                                         <i class="fa-solid fa-user-pen"></i>닉네임 변경
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/usr/member/myPage/modifyProfileImage">
+                                        <i class="fa-regular fa-image"></i>프로필 이미지 변경
                                     </a>
                                 </li>
                             </ul>
@@ -108,7 +117,6 @@
             </div>
         </div>
     </div>
-
 
 </main>
 

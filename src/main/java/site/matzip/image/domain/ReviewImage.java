@@ -25,4 +25,12 @@ public class ReviewImage {
         this.imageUrl = imageUrl;
         this.originalImageName = originalImageName;
     }
+
+    public void setReview(Review review) {
+        if (this.review != null) {
+            this.review.getReviewImages().remove(this);
+        }
+        this.review = review;
+        review.getReviewImages().add(this);
+    }
 }

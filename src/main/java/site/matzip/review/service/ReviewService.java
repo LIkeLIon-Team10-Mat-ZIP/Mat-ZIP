@@ -20,15 +20,16 @@ import java.util.stream.Collectors;
 public class ReviewService {
     private final ReviewRepository reviewRepository;
 
-    public void create(ReviewCreationDTO reviewCreationDTO, Member author, Matzip matzip) {
-        Review review = Review.builder()
-                .author(author)
-                .matzip(matzip)
+    public Review create(ReviewCreationDTO reviewCreationDTO, Member author, Matzip matzip) {
+        Review createdReview = Review.builder()
                 .rating(reviewCreationDTO.getRating())
                 .content(reviewCreationDTO.getContent())
                 .build();
+        createdReview.setMatzip(matzip);
+        createdReview.setAuthor(author);
+        reviewRepository.save(createdReview);
 
-        reviewRepository.save(review);
+        return createdReview;
     }
 
     public void remove(Review review) {
@@ -55,6 +56,7 @@ public class ReviewService {
                 .authorNickname(review.getAuthor().getNickname())
                 .content(review.getContent())
                 .rating(review.getRating())
+                .createDate(review.getCreateDate())
                 .build();
     }
 }
