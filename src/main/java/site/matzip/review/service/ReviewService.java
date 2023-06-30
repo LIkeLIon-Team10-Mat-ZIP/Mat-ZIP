@@ -55,6 +55,7 @@ public class ReviewService {
                 .authorNickname(review.getAuthor().getNickname())
                 .content(review.getContent())
                 .rating(review.getRating())
+                .createDate(review.getCreateDate())
                 .build();
     }
 }
