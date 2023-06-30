@@ -1,10 +1,11 @@
 package site.matzip.member.domain;
 
 import jakarta.persistence.*;
-import lombok.*;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import site.matzip.matzip.domain.MatzipRecommendation;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import site.matzip.matzip.domain.MatzipMember;
 import site.matzip.review.domain.Review;
 
 import java.util.ArrayList;
@@ -16,7 +17,7 @@ import java.util.List;
 public class Member {
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
 
-    private final List<MatzipRecommendation> matzipRecommendations = new ArrayList<>();
+    private final List<MatzipMember> matzipMembers = new ArrayList<>();
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
     private final List<Review> reviews = new ArrayList<>();
     @Id
@@ -32,7 +33,7 @@ public class Member {
     private String password;
 
 
-//    @Builder
+    //    @Builder
 //    public Member(String username, String kakao_nickname, String email) {
 //        this.username = username;
 //        this.kakao_nickname = kakao_nickname;

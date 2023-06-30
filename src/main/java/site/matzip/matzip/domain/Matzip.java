@@ -26,7 +26,7 @@ public class Matzip {
     private MatzipType matzipType;
     @OneToMany(mappedBy = "matzip", cascade = CascadeType.ALL)
 
-    private List<MatzipRecommendation> recommendations;
+    private List<MatzipMember> recommendations;
     private double x;
     private double y;
     @OneToMany(mappedBy = "matzip", cascade = {CascadeType.ALL})
