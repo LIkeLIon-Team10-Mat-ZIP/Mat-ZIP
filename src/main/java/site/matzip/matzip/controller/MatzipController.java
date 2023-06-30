@@ -58,13 +58,13 @@ public class MatzipController {
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/createWithReview")
     public ResponseEntity createWithReview(@ModelAttribute MatzipReviewDTO matzipReviewDTO,
-                                           BindingResult result, 
+                                           BindingResult result,
                                            @AuthenticationPrincipal PrincipalDetails principalDetails) throws IOException {
 
         if (result.hasErrors()) {
             return ResponseEntity.badRequest().body(result.getAllErrors());
         }
-        
+
         MatzipCreationDTO matzipCreationDTO = matzipReviewDTO.getMatzipCreationDTO();
         ReviewCreationDTO reviewCreationDTO = matzipReviewDTO.getReviewCreationDTO();
         Member author = principalDetails.getMember();

@@ -1,12 +1,15 @@
 package site.matzip.review.domain;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import net.minidev.json.annotate.JsonIgnore;
 import site.matzip.base.domain.BaseEntity;
+import site.matzip.image.domain.ReviewImage;
 import site.matzip.matzip.domain.Matzip;
 import site.matzip.member.domain.Member;
-import site.matzip.image.domain.ReviewImage;
 
 import java.util.ArrayList;
 import java.util.List;

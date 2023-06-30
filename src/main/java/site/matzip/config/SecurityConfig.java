@@ -48,6 +48,7 @@ public class SecurityConfig {
     AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
+
     //TODO: 임시 로그인 기능 없어지면 삭제 예정
     @Bean
     PasswordEncoder passwordEncoder() {

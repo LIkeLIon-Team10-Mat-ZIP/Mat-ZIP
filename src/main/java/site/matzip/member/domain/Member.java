@@ -5,13 +5,8 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import site.matzip.matzip.domain.MatzipMember;
-import lombok.*;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import site.matzip.image.domain.ProfileImage;
-import site.matzip.matzip.domain.MatzipRecommendation;
-
+import site.matzip.matzip.domain.MatzipMember;
 import site.matzip.review.domain.Review;
 
 import java.util.ArrayList;
