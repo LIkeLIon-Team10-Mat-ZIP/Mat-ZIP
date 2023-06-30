@@ -5,9 +5,8 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import site.matzip.matzip.domain.MatzipMember;
 import site.matzip.image.domain.ProfileImage;
-
+import site.matzip.matzip.domain.MatzipMember;
 import site.matzip.review.domain.Review;
 
 import java.util.ArrayList;
