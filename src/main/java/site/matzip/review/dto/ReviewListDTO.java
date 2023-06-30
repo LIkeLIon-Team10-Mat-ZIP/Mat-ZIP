@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 @Builder
 public class ReviewListDTO {
     private Long matzipId;
+    private Long reviewId;
     private String authorNickname;
     private double rating;
     private String content;
