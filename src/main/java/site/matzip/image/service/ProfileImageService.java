@@ -62,7 +62,6 @@ public class ProfileImageService {
 
     @Transactional
     public void deleteImage(String originalFilename) {
-
         amazonS3.deleteObject(bucket, originalFilename);
     }
 }

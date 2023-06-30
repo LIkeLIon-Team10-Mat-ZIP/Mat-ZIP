@@ -13,6 +13,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import site.matzip.base.appConfig.AppConfig;
 import site.matzip.base.rq.Rq;
 import site.matzip.base.rsData.RsData;
 import site.matzip.config.auth.PrincipalDetails;
@@ -61,7 +62,7 @@ public class MemberController {
     public String showMyPage(Model model, @AuthenticationPrincipal PrincipalDetails principalDetails) {
         Member member = principalDetails.getMember();
 
-        String profileImageUrl = "https://grooveobucket.s3.ap-northeast-2.amazonaws.com/albumCover/free-icon-user-5264565.png";
+        String profileImageUrl = AppConfig.getDefaultProfileImageUrl();
         if (member.getProfileImage() != null && member.getProfileImage().getImageUrl() != null) {
             profileImageUrl = member.getProfileImage().getImageUrl();
         }
