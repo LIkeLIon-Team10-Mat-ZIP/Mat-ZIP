@@ -28,7 +28,7 @@ public class CommentController {
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/create/{id}")
     public String create(@PathVariable Long id, String content, @AuthenticationPrincipal PrincipalDetails principalDetails) {
-        Review review = reviewService.findReview(id);
+        Review review = reviewService.findByID(id);
         Member author = principalDetails.getMember();
 
         commentService.create(review, author, content);
@@ -38,7 +38,7 @@ public class CommentController {
     @PreAuthorize("isAuthenticated()")
     @DeleteMapping("{id}")
     public String delete(@PathVariable Long id, @AuthenticationPrincipal PrincipalDetails principalDetails) {
-        Comment comment = commentService.findComment(id);
+        Comment comment = commentService.findById(id);
 
         if (!Objects.equals(comment.getAuthor().getId(), principalDetails.getMember().getId())) {
             throw new AccessDeniedException("You do not have permission to delete.");
