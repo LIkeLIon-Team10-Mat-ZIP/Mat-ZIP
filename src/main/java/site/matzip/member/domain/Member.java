@@ -16,7 +16,6 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Member {
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
-
     private final List<MatzipRecommendation> matzipRecommendations = new ArrayList<>();
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
     private final List<Review> reviews = new ArrayList<>();
@@ -35,14 +34,6 @@ public class Member {
     @OneToOne(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private ProfileImage profileImage;
 
-
-//    @Builder
-//    public Member(String username, String kakao_nickname, String email) {
-//        this.username = username;
-//        this.kakao_nickname = kakao_nickname;
-//        this.email = email;
-//        role = MemberRole.ROLE_MEMBER;
-//    }
     @Builder
     public Member(String username, String kakao_nickname, String nickname, String password, String email) {
         this.username = username;
@@ -71,5 +62,4 @@ public class Member {
     public void setProfileImage(ProfileImage profileImage) {
         this.profileImage = profileImage;
     }
-
 }
