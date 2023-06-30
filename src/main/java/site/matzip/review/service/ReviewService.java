@@ -45,8 +45,13 @@ public class ReviewService {
         return reviewPage.getContent();
     }
 
-    public List<ReviewListDTO> findAll() {
+    public List<ReviewListDTO> findAllDto() {
         List<Review> reviews = reviewRepository.findAll();
+        return reviews.stream().map(this::convertToReviewDTO).collect(Collectors.toList());
+    }
+
+    public List<ReviewListDTO> findByAuthorId(Long authorId) {
+        List<Review> reviews = reviewRepository.findByAuthorId(authorId);
         return reviews.stream().map(this::convertToReviewDTO).collect(Collectors.toList());
     }
 

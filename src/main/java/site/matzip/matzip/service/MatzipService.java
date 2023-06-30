@@ -101,12 +101,16 @@ public class MatzipService {
         return convertToListDTO(findAll(), authorId);
     }
 
+    public List<MatzipListDTO> findAndConvertMine(Long authorId) {
+        return convertToListDTO(findAllByAuthorId(authorId), authorId);
+    }
+
     //후기와 맛집 정보를 하나로 묶어서 MatzipListDTO로 변환
     private List<MatzipListDTO> convertToListDTO(List<Matzip> matzipList, Long authorId) {
         return matzipList.stream().map(matzip -> {
-            List<MatzipMember> recommendations = matzip.getRecommendations();
+            List<MatzipMember> matzipMemberList = matzip.getMatzipMemberList();
 
-            Optional<MatzipMember> authorRecommendation = recommendations.stream()
+            Optional<MatzipMember> authorRecommendation = matzipMemberList.stream()
                     .filter(recommendation -> recommendation.getAuthor().getId().equals(authorId))
                     .findFirst();
 
@@ -152,4 +156,19 @@ public class MatzipService {
 
         return matzipReviewList;
     }
+
+//    public List<Matzip> findMyMatzipsAndReviews(Long authorId) {
+//        List<Object[]> results = matzipMemberRepository.findMyMatzipsAndReviews(authorId);
+//        List<MatzipReviewListDTO> matzipReviewList = new ArrayList<>();
+//
+//        for (Object[] result : results) {
+//            Matzip matzip = (Matzip) result[0];
+//            Review review = (Review) result[1];
+//
+//            MatzipReviewListDTO matzipReviewDTO = new MatzipReviewListDTO(matzip, review);
+//            matzipReviewList.add(matzipReviewDTO);
+//        }
+//
+//        return matzipReviewList;
+//    }
 }

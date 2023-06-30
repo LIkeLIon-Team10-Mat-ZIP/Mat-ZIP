@@ -29,7 +29,7 @@ public class Matzip {
     @OneToMany(mappedBy = "matzip", cascade = {CascadeType.ALL}, orphanRemoval = true)
     private List<Review> reviews = new ArrayList<>();
     @OneToMany(mappedBy = "matzip", cascade = CascadeType.ALL)
-    private List<MatzipMember> recommendations;
+    private List<MatzipMember> matzipMemberList;
 
     @Builder
     public Matzip(String matzipName, String address, String phoneNumber,

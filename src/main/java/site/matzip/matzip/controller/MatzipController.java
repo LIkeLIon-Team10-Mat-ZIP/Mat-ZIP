@@ -27,7 +27,6 @@ import site.matzip.review.service.ReviewService;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/matzip")
@@ -78,10 +77,6 @@ public class MatzipController {
 
     @GetMapping("/list")
     public String list(Model model) {
-        List<Matzip> matzipList = matzipService.findAll();
-        List<MatzipListDTO> matzipDtoList = matzipList.stream().map(matzip -> MatzipListDTO.builder().matzipName(matzip.getMatzipName()).address(matzip.getAddress()).phoneNumber(matzip.getPhoneNumber()).matzipType(matzip.getMatzipType()).build()).collect(Collectors.toList());
-        model.addAttribute("matzipList", matzipDtoList);
-
         return "/matzip/list";
     }
 
@@ -90,7 +85,7 @@ public class MatzipController {
     public ResponseEntity<List<MatzipReviewListDTO>> searchAllWithReviews(Authentication authentication) {
         try {
             List<MatzipListDTO> matzipDtoList = matzipService.findAndConvertAll(rq.getMember(authentication).getId());
-            List<ReviewListDTO> reviewDtoList = reviewService.findAll();
+            List<ReviewListDTO> reviewDtoList = reviewService.findAllDto();
             List<MatzipReviewListDTO> matzipReviewDtoList = matzipService.mergeMatzipAndReviews(matzipDtoList, reviewDtoList);
 
             return ResponseEntity.ok(matzipReviewDtoList);
@@ -100,12 +95,17 @@ public class MatzipController {
         }
     }
 
+    @GetMapping("/mylist")
+    public String showMyList(Model model) {
+        return "/matzip/mylist";
+    }
+
     @GetMapping("/api/mylist")
     @ResponseBody
     public ResponseEntity<List<MatzipReviewListDTO>> searchMineWithReviews(Authentication authentication) {
         try {
-            List<MatzipListDTO> matzipDtoList = matzipService.findAndConvertAll(rq.getMember(authentication).getId());
-            List<ReviewListDTO> reviewDtoList = reviewService.findAll();
+            List<MatzipListDTO> matzipDtoList = matzipService.findAndConvertMine(rq.getMember(authentication).getId());
+            List<ReviewListDTO> reviewDtoList = reviewService.findByAuthorId(rq.getMember(authentication).getId());
             List<MatzipReviewListDTO> matzipReviewDtoList = matzipService.mergeMatzipAndReviews(matzipDtoList, reviewDtoList);
             return ResponseEntity.ok(matzipReviewDtoList);
         } catch (Exception e) {
