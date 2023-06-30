@@ -27,7 +27,3 @@ spring:
 
 logging.level:
   org.hibernate.SQL: debug
-
-custom:
-  profileImage:
-    defaultUrl: "https://matzip-img.s3.ap-northeast-2.amazonaws.com/profileImages/defaultProfile.png"
