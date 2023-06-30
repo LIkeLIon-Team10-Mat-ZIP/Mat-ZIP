@@ -81,79 +81,47 @@
                 <div class="mb-3 flex">
                     <div>
                         <div class="flex items-center">
-                            <span class="font-bold text-xl mr-3">부산삼겹살 하단본점</span>
+                            <span class="font-bold text-xl mr-3" th:text="${reviewDetailDTO.matzipName}"></span>
                             <button class="btn btn-outline btn-xs" type="submit">상세보기</button>
                         </div>
 
-                        <p>돼지고기구이</p>
+                        <span th:text="${reviewDetailDTO.matzipType}"></span>
                     </div>
                     <div class="flex-grow">
                     </div>
                     <div class="align-center">
                         <span>평점 : </span>
-                        <div class="rating rating-md rating-half">
+                        <div class="rating rating-md rating-half" th:attr="data-rating=${reviewDetailDTO.rating}">
                             <input type="radio" name="rating" value="0.5"
-                                   class="bg-yellow-500 mask mask-star-2 mask-half-1" checked/>
+                                   class="bg-yellow-500 mask mask-star-2 mask-half-1" disabled/>
                             <input type="radio" name="rating" value="1.0"
-                                   class="bg-yellow-500 mask mask-star-2 mask-half-2"/>
+                                   class="bg-yellow-500 mask mask-star-2 mask-half-2" disabled/>
                             <input type="radio" name="rating" value="1.5"
-                                   class="bg-yellow-500 mask mask-star-2 mask-half-1"/>
+                                   class="bg-yellow-500 mask mask-star-2 mask-half-1" disabled/>
                             <input type="radio" name="rating" value="2.0"
-                                   class="bg-yellow-500 mask mask-star-2 mask-half-2"/>
+                                   class="bg-yellow-500 mask mask-star-2 mask-half-2" disabled/>
                             <input type="radio" name="rating" value="2.5"
-                                   class="bg-yellow-500 mask mask-star-2 mask-half-1"/>
+                                   class="bg-yellow-500 mask mask-star-2 mask-half-1" disabled/>
                             <input type="radio" name="rating" value="3.0"
-                                   class="bg-yellow-500 mask mask-star-2 mask-half-2"/>
+                                   class="bg-yellow-500 mask mask-star-2 mask-half-2" disabled/>
                             <input type="radio" name="rating" value="3.5"
-                                   class="bg-yellow-500 mask mask-star-2 mask-half-1"/>
+                                   class="bg-yellow-500 mask mask-star-2 mask-half-1" disabled/>
                             <input type="radio" name="rating" value="4.0"
-                                   class="bg-yellow-500 mask mask-star-2 mask-half-2"/>
+                                   class="bg-yellow-500 mask mask-star-2 mask-half-2" disabled/>
                             <input type="radio" name="rating" value="4.5"
-                                   class="bg-yellow-500 mask mask-star-2 mask-half-1"/>
+                                   class="bg-yellow-500 mask mask-star-2 mask-half-1" disabled/>
                             <input type="radio" name="rating" value="5.0"
-                                   class="bg-yellow-500 mask mask-star-2 mask-half-2"/>
+                                   class="bg-yellow-500 mask mask-star-2 mask-half-2" disabled/>
                         </div>
-
                     </div>
                 </div>
                 <div class="flex">
                     <img src="https://search.pstatic.net/common/?src=https%3A%2F%2Fldb-phinf.pstatic.net%2F20230315_55%2F1678864965197X3zz0_JPEG%2FIMG_6113.JPEG"
                          class="w-40 h-40 object-cover mr-3"/>
-                    <img src="https://search.pstatic.net/common/?src=https%3A%2F%2Fldb-phinf.pstatic.net%2F20230315_55%2F1678864965197X3zz0_JPEG%2FIMG_6113.JPEG"
-                         class="w-40 h-40 object-cover mr-3"/>
-                    <img src="https://search.pstatic.net/common/?src=https%3A%2F%2Fldb-phinf.pstatic.net%2F20230315_55%2F1678864965197X3zz0_JPEG%2FIMG_6113.JPEG"
-                         class="w-40 h-40 object-cover mr-3"/>
-                    <img src="https://search.pstatic.net/common/?src=https%3A%2F%2Fldb-phinf.pstatic.net%2F20230315_55%2F1678864965197X3zz0_JPEG%2FIMG_6113.JPEG"
-                         class="w-40 h-40 object-cover mr-3"/>
-                    <img src="https://search.pstatic.net/common/?src=https%3A%2F%2Fldb-phinf.pstatic.net%2F20230315_55%2F1678864965197X3zz0_JPEG%2FIMG_6113.JPEG"
-                         class="w-40 h-40 object-cover mr-3"/>
+
                 </div>
-                <div class="mt-5 text-content" id="text-content">
-                    400그람부터 주문가능한 곳이예용!!!<br/><br/>
-                    근데 저희는 2명이서 600그람 먹었어요
-                    고기가 너무 맛있어서 더 먹게 되더라구요😂😂<br/> 다이어트는 대 실패🥺🥺<br/><br/>
-                    반찬들도 다양하고 맛있어서 쌈싸먹는 재미가 있습니다
-                    고기 질도 괜찮고 부드럽고 맛있었어요<br/>
-                    식기도 깨끗하고 정리 잘 되어있어서 좋았습니다<br/>
-                    맵싹한거 먹고 싶어서 칼비빔면을 시켰는데 음식 나오는데 시간은 많이걸렸지만 생각보다 너무 맛이 괜찮아서 기분좋게 잘 먹었어요😊😊😊<br/><br/>
-                    다음에 하단오면 또 여기서 먹고 싶어요!
-                    400그람부터 주문가능한 곳이예용!!!<br/><br/>
-                    근데 저희는 2명이서 600그람 먹었어요
-                    고기가 너무 맛있어서 더 먹게 되더라구요😂😂<br/> 다이어트는 대 실패🥺🥺<br/><br/>
-                    반찬들도 다양하고 맛있어서 쌈싸먹는 재미가 있습니다
-                    고기 질도 괜찮고 부드럽고 맛있었어요<br/>
-                    식기도 깨끗하고 정리 잘 되어있어서 좋았습니다<br/>
-                    맵싹한거 먹고 싶어서 칼비빔면을 시켰는데 음식 나오는데 시간은 많이걸렸지만 생각보다 너무 맛이 괜찮아서 기분좋게 잘 먹었어요😊😊😊<br/><br/>
-                    다음에 하단오면 또 여기서 먹고 싶어요!
-                    400그람부터 주문가능한 곳이예용!!!<br/><br/>
-                    근데 저희는 2명이서 600그람 먹었어요
-                    고기가 너무 맛있어서 더 먹게 되더라구요😂😂<br/> 다이어트는 대 실패🥺🥺<br/><br/>
-                    반찬들도 다양하고 맛있어서 쌈싸먹는 재미가 있습니다
-                    고기 질도 괜찮고 부드럽고 맛있었어요<br/>
-                    식기도 깨끗하고 정리 잘 되어있어서 좋았습니다<br/>
-                    맵싹한거 먹고 싶어서 칼비빔면을 시켰는데 음식 나오는데 시간은 많이걸렸지만 생각보다 너무 맛이 괜찮아서 기분좋게 잘 먹었어요😊😊😊<br/><br/>
-                    다음에 하단오면 또 여기서 먹고 싶어요!
-                </div>
+                <span class="mt-5 inline-block max-h-[600px] overflow-hidden break-all" id="text-content" th:text="${reviewDetailDTO.content}">
+                </span>
                 <div class="fade-out" id="fade-out"></div>
                 <div class="button-container">
                     <button class="read-more text-xs text-gray-500 hover:underline" onclick="readMore()">더보기
@@ -265,6 +233,20 @@
 
         </div>
     </div>
+    <script>
+        // 리뷰에 등록되어 있던 별점을 표시하는 script
+        document.addEventListener('DOMContentLoaded', function () {
+            const ratingElem = document.querySelector('.rating');
+            const ratingValue = parseFloat(ratingElem.dataset.rating);
+            const inputElems = ratingElem.querySelectorAll('input');
+
+            inputElems.forEach(function (inputElem) {
+                if (parseFloat(inputElem.value) === ratingValue) {
+                    inputElem.setAttribute('checked', '');
+                }
+            });
+        });
+    </script>
 </main>
 
 </body>

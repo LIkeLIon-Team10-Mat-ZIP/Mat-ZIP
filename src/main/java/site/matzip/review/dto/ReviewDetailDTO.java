@@ -16,6 +16,7 @@ public class ReviewDetailDTO {
     private String content;
     //private Long views;
     private String matzipName;
+    private double rating;
     private MatzipType matzipType;
     private String address;
     private String phoneNumber;
@@ -28,6 +29,8 @@ public class ReviewDetailDTO {
         this.matzipName = matzip.getMatzipName();
         this.createDate = review.getCreateDate();
         this.address = matzip.getAddress();
+        this.rating = review.getRating();
+        this.matzipType = matzip.getMatzipType();
         this.phoneNumber = matzip.getPhoneNumber();
         //this.리뷰이미지
         this.content = review.getContent();
