@@ -8,6 +8,6 @@ public class MapController {
 
     @GetMapping("/")
     public String showMain() {
-        return "map/map";
+        return "matzip/list";
     }
 }

@@ -1,10 +1,11 @@
 <!DOCTYPE html>
+<html layout:decorate="~{common/layout/defaultLayout.html}">
 <html>
 <head>
     <meta charset="utf-8">
     <!-- 테일윈드 불러오기 -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <title>다음 지도 API</title>
+    <title>나의 맛집 리스트</title>
     <style>
         body {
             margin: 0;
@@ -43,6 +44,32 @@
         #placeInfo p {
             margin: 5px 0;
         }
+
+        #reviewList {
+            position: absolute;
+            top: calc(50% + 20px);
+            right: 10px;
+            width: 300px;
+            overflow-y: auto; /* 필요시에만 스크롤 표시 */
+            background-color: #fff;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+            z-index: 2;
+        }
+
+        #reviewList h3 {
+            font-size: 1.2em;
+            margin-bottom: 8px;
+        }
+
+        #reviewList ul {
+            padding-left: 20px;
+        }
+
+        #reviewList li {
+            margin-bottom: 8px;
+        }
     </style>
 </head>
 <body>
@@ -62,132 +89,160 @@
         <a class="inline-block w-full py-1 px-4 rounded-3xl text-center bg-gray-100 shadow mb-2" id="detailLink"
            target="_blank">상세정보</a>
         <br>
-        <a class="inline-block w-full py-1 px-4 rounded-3xl text-center bg-gray-100 shadow mb-1" id="reviewButton"
-           target="_blank">리뷰 등록</a>
+        <a id="reviewButton" class="inline-block w-full py-1 px-4 rounded-3xl text-center bg-gray-100 shadow mb-1">리뷰
+            등록</a>
     </div>
 
-    <div id="reviews">
-        <p id="content">
+    <div id="reviewList">
+        <h3>리뷰 목록</h3>
+        <div id="noReview" style="display: block;">리뷰가 없습니다.</div>
+        <ul id="reviewListContainer" style="display: none;"></ul>
     </div>
 
-    <script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=868d9aa6d8d0e67bad6c59729809c3fa"></script>
-    <script>
-        var mapContainer = document.getElementById('map'),
-            mapOption = {
-                center: new kakao.maps.LatLng(37.56682, 126.97865),
-                level: 3,
-                mapTypeId: kakao.maps.MapTypeId.ROADMAP
-            };
+</div>
 
-        var map = new kakao.maps.Map(mapContainer, mapOption);
+<script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=868d9aa6d8d0e67bad6c59729809c3fa"></script>
+<script>
+    var storedX = sessionStorage.getItem("x");
+    var storedY = sessionStorage.getItem("y");
+    var centerLocation;
 
-        var imageSrc = "https://ifh.cc/g/64zAsK.png";
-        var imageSize = new kakao.maps.Size(36, 37);
-        var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize);
-        var currentInfoWindow = null;
+    if (storedX && storedY) {
+        // 세션 스토리지에 좌표가 있는 경우 해당 좌표를 사용합니다
+        centerLocation = new kakao.maps.LatLng(storedY, storedX);
+    } else {
+        // 좌표가 없는 경우 기본 위치를 사용합니다
+        centerLocation = new kakao.maps.LatLng(37.56682, 126.97865);
+    }
 
+    var mapContainer = document.getElementById('map'),
+        mapOption = {
+            center: centerLocation,
+            level: 3,
+            mapTypeId: kakao.maps.MapTypeId.ROADMAP
+        };
+
+    var map = new kakao.maps.Map(mapContainer, mapOption);
+
+    var imageSrc = "https://ifh.cc/g/64zAsK.png";
+    var imageSize = new kakao.maps.Size(36, 37);
+    var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize);
+    var currentInfoWindow = null;
+
+    var placeInfo = document.getElementById('placeInfo');
+    var placeName = document.getElementById('placeName');
+    var placeAddress = document.getElementById('placeAddress');
+    var placePhone = document.getElementById('placePhone');
+    var placeDescription = document.getElementById('placeDescription');
+    var placeRating = document.getElementById('placeRating')
+    var mapLink = document.getElementById('mapLink');
+    var routeLink = document.getElementById('routeLink');
+    var detailLink = document.getElementById('detailLink');
+    var reviewButton = document.getElementById('reviewButton');
+
+
+    //지도 영역 외의 다른 부분을 클릭했을 때 placeInfo를 숨깁니다.
+    document.addEventListener('click', function (event) {
+        var target = event.target;
+        var mapContainer = document.getElementById('map');
         var placeInfo = document.getElementById('placeInfo');
-        var placeName = document.getElementById('placeName');
-        var placeAddress = document.getElementById('placeAddress');
-        var placePhone = document.getElementById('placePhone');
-        var placeDescription = document.getElementById('placeDescription');
-        var placeRating = document.getElementById('placeRating')
-        var mapLink = document.getElementById('mapLink');
-        var routeLink = document.getElementById('routeLink');
-        var detailLink = document.getElementById('detailLink');
-
-        //지도 영역 외의 다른 부분을 클릭했을 때 placeInfo를 숨깁니다.
-        document.addEventListener('click', function (event) {
-            var target = event.target;
-            var mapContainer = document.getElementById('map');
-            var placeInfo = document.getElementById('placeInfo');
-            if (target !== mapContainer && !mapContainer.contains(target) && target !== placeInfo && !placeInfo.contains(target)) {
-                placeInfo.style.display = 'none'; // Hide place info
-            }
-        });
-
-        // 서버에 matzip 정보를 요청합니다
-        fetch('/matzip/api/mylist')
-            .then(response => response.json())
-            .then(data => {
-                // 각 맛집 정보에 대해서 반복 처리를 합니다
-                data.forEach(place => {
-                    console.log(data)
-                    // 해당 위치에 마커를 생성합니다
-                    var marker = new kakao.maps.Marker({
-                        map: map,
-                        position: new kakao.maps.LatLng(place.y, place.x),
-                        title: place.matzipName,
-                        image: markerImage,
-                    });
-                    console.log(marker);
-                    marker.placeId = place.id;
-                    console.log(marker);
-                    // 정보창에 표시할 내용을 설정합니다
-                    var iwContent;
-                    if (place.matzipName.length > 9) { // 예시로 50자를 기준으로 하였습니다. 원하는 기준으로 변경하세요.
-                        iwContent = '<div style="padding:5px; overflow-wrap: break-word; font-size:0.8em;">' + place.matzipName + '</div>';
-                    } else {
-                        iwContent = '<div style="padding:5px; overflow-wrap: break-word;">' + place.matzipName + '</div>';
-                    }
-
-                    // 정보창을 생성합니다
-                    var infowindow = new kakao.maps.InfoWindow({
-                        content: iwContent
-                    });
-
-                    // 마커에 클릭 이벤트를 등록합니다
-                    kakao.maps.event.addListener(marker, 'click', function () {
-                        if (currentInfoWindow) {
-                            currentInfoWindow.close();
-                        }
-                        infowindow.open(map, marker);
-                        currentInfoWindow = infowindow;
-
-                        updateReviews(place.reviews);
-
-                        // 장소 정보를 업데이트합니다.
-                        placeName.innerText = place.matzipName;
-                        placeAddress.innerText = '주소: ' + place.address;
-                        placePhone.innerText = '전화번호: ' + place.phoneNumber;
-                        placeDescription.innerText = '설명: ' + place.description;
-                        placeRating.innerText = '내 평점: ' + place.rating;
-                        mapLink.href = 'https://map.kakao.com/link/map/' + place.matzipName + ',' + place.y + ',' + place.x;
-                        mapLink.innerText = '큰지도보기';
-                        routeLink.href = 'https://map.kakao.com/link/to/' + place.matzipName + ',' + place.y + ',' + place.x;
-                        routeLink.innerText = '길찾기';
-                        detailLink.href = place.matzipUrl;
-                        detailLink.innerText = '상세정보';
-                        placeInfo.style.display = 'block'; // Show place info
-
-                        fetchReviews(marker.placeId);//마커 표시 맛집에 대한 리뷰 호출
-
-                    });
-                });
-            })
-            .catch((error) => {
-                console.error('Error:', error);
-            });
-
-        function updateReviews(reviews) {
-            let reviewListElem = document.getElementById("reviewList");
-            reviewListElem.innerHTML = ""; // 기존 목록을 지웁니다.
-
-            if (reviews.length > 0) {
-                reviews.forEach((review) => {
-                    let reviewElem = document.createElement("div");
-                    reviewElem.classList.add("review-item");
-                    reviewElem.innerHTML = `
-        <p><strong>Author:</strong> ${review.author}</p>
-        <p><strong>Rating:</strong> ${review.rating}</p>
-        <p><strong>Content:</strong> ${review.content}</p>
-      `;
-                    reviewListElem.appendChild(reviewElem);
-                });
-            } else {
-                reviewListElem.innerHTML = "<p>No reviews found</p>"; // 리뷰가 없는 경우 메시지를 표시합니다.
-            }
+        if (target !== mapContainer && !mapContainer.contains(target) && target !== placeInfo && !placeInfo.contains(target)) {
+            placeInfo.style.display = 'none'; // Hide place info
         }
-    </script>
+    });
+
+    // 서버에 matzip 정보를 요청합니다
+    fetch('/matzip/api/list')
+        .then(response => response.json())
+        .then(data => {
+            // 각 맛집 정보에 대해서 반복 처리를 합니다
+            data.forEach(matzipReviewDto => {
+                const matzip = matzipReviewDto.matzipListDTO;
+                const reviews = matzipReviewDto.reviewListDTOs;
+                console.log(matzip, reviews);
+
+                // 해당 위치에 마커를 생성합니다
+                var marker = new kakao.maps.Marker({
+                    map: map,
+                    position: new kakao.maps.LatLng(matzip.y, matzip.x),
+                    title: matzip.matzipName,
+                    image: markerImage,
+                });
+                marker.matzipId = matzip.id;
+
+                // 정보창에 표시할 내용을 설정합니다
+                var iwContent;
+                if (matzip.matzipName.length > 9) {
+                    iwContent = '<div style="padding:5px; overflow-wrap: break-word; font-size:0.8em;">' + matzip.matzipName + '</div>';
+                } else {
+                    iwContent = '<div style="padding:5px; overflow-wrap: break-word;">' + matzip.matzipName + '</div>';
+                }
+
+                // 정보창을 생성합니다
+                var infowindow = new kakao.maps.InfoWindow({
+                    content: iwContent
+                });
+
+                let currentReviews = [];
+
+                // 마커에 클릭 이벤트를 등록합니다
+                kakao.maps.event.addListener(marker, 'click', function () {
+                    if (currentInfoWindow) {
+                        currentInfoWindow.close();
+                    }
+                    infowindow.open(map, marker);
+                    currentInfoWindow = infowindow;
+                    // 장소 정보를 업데이트합니다.
+                    placeName.innerText = matzip.matzipName;
+                    placeAddress.innerText = '주소: ' + matzip.address;
+                    placePhone.innerText = '전화번호: ' + matzip.phoneNumber;
+                    placeDescription.innerText = '설명: ' + matzip.description;
+                    placeRating.innerText = '내 평점: ' + matzip.rating;
+                    mapLink.href = 'https://map.kakao.com/link/map/' + matzip.matzipName + ',' + matzip.y + ',' + matzip.x;
+                    mapLink.innerText = '큰지도보기';
+                    routeLink.href = 'https://map.kakao.com/link/to/' + matzip.matzipName + ',' + matzip.y + ',' + matzip.x;
+                    routeLink.innerText = '길찾기';
+                    detailLink.href = matzip.matzipUrl;
+                    detailLink.innerText = '상세정보';
+                    placeInfo.style.display = 'block'; // Show place info
+
+                    currentReviews = reviews.filter(review => review.matzipId === marker.matzipId);
+                    // 리뷰 목록을 업데이트합니다.
+                    const reviewListContainer = document.getElementById('reviewListContainer');
+                    const noReview = document.getElementById('noReview');
+
+                    reviewListContainer.innerHTML = ''; // 이전에 표시된 리뷰 목록 초기화
+
+                    if (reviews.length > 0) {
+                        noReview.style.display = 'none';
+                        reviewListContainer.style.display = 'block';
+                        //리뷰 반복문 (review x: revies) 랑 같은거
+                        reviews.forEach((review) => {
+                            const reviewItem = document.createElement('li');
+                            const authorNickname = document.createElement('p');
+                            const rating = document.createElement('p');
+                            const content = document.createElement('p');
+
+                            authorNickname.innerText = '작성자: ' + review.authorNickname;
+                            rating.innerText = '평점: ' + review.rating;
+                            content.innerText = '내용: ' + review.content;
+
+                            reviewItem.appendChild(authorNickname);
+                            reviewItem.appendChild(rating);
+                            reviewItem.appendChild(content);
+                            reviewListContainer.appendChild(reviewItem);
+                        });
+                    } else {
+                        noReview.style.display = 'block';
+                        reviewListContainer.style.display = 'none';
+                    }
+                    reviewButton.href = `/review/create/${place.matzipId}`;
+                });
+            });
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+</script>
 </body>
 </html>

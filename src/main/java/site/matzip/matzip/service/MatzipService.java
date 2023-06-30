@@ -3,19 +3,17 @@ package site.matzip.matzip.service;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import site.matzip.base.rsData.RsData;
 import site.matzip.matzip.domain.Matzip;
-import site.matzip.matzip.domain.MatzipRecommendation;
+import site.matzip.matzip.domain.MatzipMember;
 import site.matzip.matzip.dto.MatzipCreationDTO;
 import site.matzip.matzip.dto.MatzipListDTO;
 import site.matzip.matzip.dto.MatzipReviewListDTO;
-import site.matzip.matzip.repository.MatzipRecommendationRepository;
+import site.matzip.matzip.repository.MatzipMemberRepository;
 import site.matzip.matzip.repository.MatzipRepository;
 import site.matzip.member.domain.Member;
 import site.matzip.review.domain.Review;
 import site.matzip.review.dto.ReviewCreationDTO;
 import site.matzip.review.dto.ReviewListDTO;
-import site.matzip.review.repository.ReviewRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,47 +25,26 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class MatzipService {
     private final MatzipRepository matzipRepository;
-    private final MatzipRecommendationRepository matzipRecommendationRepository;
-    private final ReviewRepository reviewRepository;
+    private final MatzipMemberRepository matzipMemberRepository;
 
-    //맛집 생성 메서드
-    public RsData<Matzip> create(MatzipCreationDTO creationDTO, Member author) {
+    public Matzip create(MatzipCreationDTO creationDTO, Member author) {
         Optional<Matzip> optionalExistingMatzip = matzipRepository.findByKakaoId(creationDTO.getKakaoId());
+
         if (optionalExistingMatzip.isPresent()) {
             Matzip existingMatzip = optionalExistingMatzip.get();
-            MatzipRecommendation matzipRecommendation = createMatzipRecommendationEntity(creationDTO, existingMatzip, author);
-            matzipRecommendationRepository.save(matzipRecommendation);
-            return RsData.of("S-1", "맛집 추천 정보가 등록되었습니다.", existingMatzip);
+            MatzipMember matzipRecommendation = createMatzipRecommendationEntity(creationDTO, existingMatzip, author);
+            matzipMemberRepository.save(matzipRecommendation);
+
+            return existingMatzip;
         } else {
             Matzip matzip = createMatzipEntity(creationDTO);
             Matzip savedMatzip = matzipRepository.save(matzip);
-            MatzipRecommendation matzipRecommendation = createMatzipRecommendationEntity(creationDTO, savedMatzip, author);
-            matzipRecommendationRepository.save(matzipRecommendation);
-            return RsData.of("S-1", "맛집이 등록되었습니다.", savedMatzip);
+            MatzipMember matzipRecommendation = createMatzipRecommendationEntity(creationDTO, savedMatzip, author);
+            matzipMemberRepository.save(matzipRecommendation);
+
+            return savedMatzip;
         }
     }
-
-    //오버로딩: 리뷰 같이 등록시에 리뷰 DTO까지 매개변수로 포함
-    public RsData<Matzip> create(MatzipCreationDTO creationDTO, ReviewCreationDTO reviewCreationDTO, Member author) {
-        Optional<Matzip> optionalExistingMatzip = matzipRepository.findByKakaoId(creationDTO.getKakaoId());
-        if (optionalExistingMatzip.isPresent()) {
-            Matzip existingMatzip = optionalExistingMatzip.get();
-            MatzipRecommendation matzipRecommendation = createMatzipRecommendationEntity(creationDTO, existingMatzip, author);
-            matzipRecommendationRepository.save(matzipRecommendation);
-            Review review = createReviewEntity(existingMatzip, reviewCreationDTO, author);
-            reviewRepository.save(review);
-            return RsData.of("S-1", "맛집과 리뷰가 등록되었습니다.", existingMatzip);
-        } else {
-            Matzip matzip = createMatzipEntity(creationDTO);
-            Matzip savedMatzip = matzipRepository.save(matzip);
-            MatzipRecommendation matzipRecommendation = createMatzipRecommendationEntity(creationDTO, savedMatzip, author);
-            matzipRecommendationRepository.save(matzipRecommendation);
-            Review review = createReviewEntity(savedMatzip, reviewCreationDTO, author);
-            reviewRepository.save(review);
-            return RsData.of("S-1", "맛집과 리뷰가 등록되었습니다.", savedMatzip);
-        }
-    }
-
 
     //맛집 엔티티 생성 메서드
     private Matzip createMatzipEntity(MatzipCreationDTO creationDTO) {
@@ -84,8 +61,8 @@ public class MatzipService {
     }
 
     //개인의 맛집 추천(후기) 엔티티 생성
-    private MatzipRecommendation createMatzipRecommendationEntity(MatzipCreationDTO creationDTO, Matzip savedMatzip, Member author) {
-        return MatzipRecommendation.builder()
+    private MatzipMember createMatzipRecommendationEntity(MatzipCreationDTO creationDTO, Matzip savedMatzip, Member author) {
+        return MatzipMember.builder()
                 .rating(creationDTO.getRating())
                 .description(creationDTO.getDescription())
                 .matzip(savedMatzip)
@@ -94,13 +71,15 @@ public class MatzipService {
     }
 
     //리뷰 엔티티 만드는 메서드
-    private Review createReviewEntity(Matzip savedMatzip, ReviewCreationDTO reviewCreationDTO, Member author) {
-        return Review.builder()
-                .matzip(savedMatzip)
+    private Review createReviewEntity(Matzip matzip, ReviewCreationDTO reviewCreationDTO, Member author) {
+        Review createdReview = Review.builder()
                 .content(reviewCreationDTO.getContent())
                 .rating(reviewCreationDTO.getRating())
-                .author(author)
                 .build();
+        createdReview.setMatzip(matzip);
+        createdReview.setAuthor(author);
+
+        return createdReview;
     }
 
     public List<Matzip> findAll() {
@@ -125,9 +104,9 @@ public class MatzipService {
     //후기와 맛집 정보를 하나로 묶어서 MatzipListDTO로 변환
     private List<MatzipListDTO> convertToListDTO(List<Matzip> matzipList, Long authorId) {
         return matzipList.stream().map(matzip -> {
-            List<MatzipRecommendation> recommendations = matzip.getRecommendations();
+            List<MatzipMember> recommendations = matzip.getRecommendations();
 
-            Optional<MatzipRecommendation> authorRecommendation = recommendations.stream()
+            Optional<MatzipMember> authorRecommendation = recommendations.stream()
                     .filter(recommendation -> recommendation.getAuthor().getId().equals(authorId))
                     .findFirst();
 
@@ -174,4 +153,3 @@ public class MatzipService {
         return matzipReviewList;
     }
 }
-

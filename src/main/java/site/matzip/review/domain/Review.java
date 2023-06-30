@@ -1,10 +1,12 @@
 package site.matzip.review.domain;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import net.minidev.json.annotate.JsonIgnore;
 import site.matzip.base.domain.BaseEntity;
-import site.matzip.comment.domain.Comment;
 import site.matzip.image.domain.ReviewImage;
 import site.matzip.matzip.domain.Matzip;
 import site.matzip.member.domain.Member;
@@ -15,8 +17,6 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
-@Builder
 public class Review extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,15 +32,27 @@ public class Review extends BaseEntity {
     @JsonIgnore
     private Member author;
     @OneToMany(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true)
-    private final List<ReviewImage> reviewImages = new ArrayList<>();
-    @OneToMany(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true)
-    private final List<Comment> comments = new ArrayList<>();
+    private List<ReviewImage> reviewImages = new ArrayList<>();
 
     @Builder
-    public Review(Matzip matzip, Member author, Long rating, String content) {
-        this.matzip = matzip;
-        this.author = author;
+    public Review(double rating, String content) {
         this.rating = rating;
         this.content = content;
+    }
+
+    public void setMatzip(Matzip matzip) {
+        if (this.matzip != null) {
+            this.matzip.getReviews().remove(this);
+        }
+        this.matzip = matzip;
+        matzip.getReviews().add(this);
+    }
+
+    public void setAuthor(Member author) {
+        if (this.author != null) {
+            this.author.getReviews().remove(this);
+        }
+        this.author = author;
+        author.getReviews().add(this);
     }
 }

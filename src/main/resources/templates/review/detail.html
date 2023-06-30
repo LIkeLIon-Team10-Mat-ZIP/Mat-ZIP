@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html layout:decorate="~{common/layout/defaultLayout.html}">
+<head>
+    <title>리뷰 상세페이지</title>
+    <style>
+        .text-content {
+            max-height: 600px;
+            overflow: hidden;
+        }
+
+        .fade-out {
+            height: 20px;
+            background-image: linear-gradient(
+                    to bottom,
+                    rgba(255, 255, 255, 0),
+                    rgba(255, 255, 255, 1)
+            );
+            position: relative;
+            bottom: 20px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .button-container {
+            display: none;
+        }
+
+        .button-container.show {
+            display: flex;
+        }
+
+        .button-container.show .read-more {
+            display: inline-block;
+        }
+
+        .button-container.show .read-less {
+            display: none;
+        }
+
+        .fade-out.show {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+
+<main layout:fragment="Content">
+    <div class="flex justify-center mx-auto max-w-5xl mt-20">
+        <div>
+            <!-- 작성자 부분 -->
+            <div class="flex justify-between border-b border-gray-400">
+                <div class="flex justify-start items-center">
+                    <img src="https://drive.google.com/uc?id=1Eu_ibwNeAbHi7n5nu0zGQK9ylyoKpset" alt=""
+                         class="w-14 h-14 object-cover m-3 rounded-full">
+                    <div>
+                        <div class="flex items-center mb-1">
+                            <div class="text-xl font-bold" th:text="${reviewDetailDTO.authorNickname}"></div>
+                            <div class="flex mx-2">
+                                <img src="https://drive.google.com/uc?id=1Eu_ibwNeAbHi7n5nu0zGQK9ylyoKpset"
+                                     class="w-5 h-5 rounded-full mr-1">
+                                <img src="https://drive.google.com/uc?id=1Eu_ibwNeAbHi7n5nu0zGQK9ylyoKpset"
+                                     class="w-5 h-5 rounded-full mr-1">
+                                <img src="https://drive.google.com/uc?id=1Eu_ibwNeAbHi7n5nu0zGQK9ylyoKpset"
+                                     class="w-5 h-5 rounded-full mr-1">
+                            </div>
+                        </div>
+
+                        <div class="flex">
+                            <div class="text-sm mr-2" th:text="${reviewDetailDTO.formattedCreateDate}"></div>
+                            <!-- TODO -->
+                            <div class="text-sm mr-1">조회수</div>
+                            <div class="text-sm">535</div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- 게시글 내용 -->
+            <div class="m-4">
+                <div class="mb-3 flex">
+                    <div>
+                        <div class="flex items-center">
+                            <span class="font-bold text-xl mr-3" th:text="${reviewDetailDTO.matzipName}"></span>
+                            <button class="btn btn-outline btn-xs" type="submit">상세보기</button>
+                        </div>
+
+                        <span th:text="${reviewDetailDTO.matzipType}"></span>
+                    </div>
+                    <div class="flex-grow">
+                    </div>
+                    <div class="align-center">
+                        <span>평점 : </span>
+                        <div class="rating rating-md rating-half" th:attr="data-rating=${reviewDetailDTO.rating}">
+                            <input type="radio" name="rating" value="0.5"
+                                   class="bg-yellow-500 mask mask-star-2 mask-half-1" disabled/>
+                            <input type="radio" name="rating" value="1.0"
+                                   class="bg-yellow-500 mask mask-star-2 mask-half-2" disabled/>
+                            <input type="radio" name="rating" value="1.5"
+                                   class="bg-yellow-500 mask mask-star-2 mask-half-1" disabled/>
+                            <input type="radio" name="rating" value="2.0"
+                                   class="bg-yellow-500 mask mask-star-2 mask-half-2" disabled/>
+                            <input type="radio" name="rating" value="2.5"
+                                   class="bg-yellow-500 mask mask-star-2 mask-half-1" disabled/>
+                            <input type="radio" name="rating" value="3.0"
+                                   class="bg-yellow-500 mask mask-star-2 mask-half-2" disabled/>
+                            <input type="radio" name="rating" value="3.5"
+                                   class="bg-yellow-500 mask mask-star-2 mask-half-1" disabled/>
+                            <input type="radio" name="rating" value="4.0"
+                                   class="bg-yellow-500 mask mask-star-2 mask-half-2" disabled/>
+                            <input type="radio" name="rating" value="4.5"
+                                   class="bg-yellow-500 mask mask-star-2 mask-half-1" disabled/>
+                            <input type="radio" name="rating" value="5.0"
+                                   class="bg-yellow-500 mask mask-star-2 mask-half-2" disabled/>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex">
+                    <img src="https://search.pstatic.net/common/?src=https%3A%2F%2Fldb-phinf.pstatic.net%2F20230315_55%2F1678864965197X3zz0_JPEG%2FIMG_6113.JPEG"
+                         class="w-40 h-40 object-cover mr-3"/>
+
+                </div>
+                <span class="mt-5 inline-block max-h-[600px] overflow-hidden break-all" id="text-content" th:text="${reviewDetailDTO.content}">
+                </span>
+                <div class="fade-out" id="fade-out"></div>
+                <div class="button-container">
+                    <button class="read-more text-xs text-gray-500 hover:underline" onclick="readMore()">더보기
+                    </button>
+                    <button class="read-less text-xs text-gray-500 hover:underline" onclick="readLess()">줄이기
+                    </button>
+                </div>
+            </div>
+
+            <!-- 수정/삭제 버튼 -->
+            <div class="flex justify-end mt-6">
+                <button class="btn btn-neutral btn-sm mx-2">수정</button>
+                <button class="btn btn-neutral btn-sm mr-5">삭제</button>
+            </div>
+
+            <div class="">
+                <!-- 코멘트 제목 -->
+                <div class="border-b border-gray-400 pb-2 flex items-center">
+                    <i class="fa-regular fa-comments"></i>
+                    <div class="text-gray-600 ml-2">
+                        COMMENT
+                    </div>
+                    <div class="text-gray-600 ml-3"></div>
+                </div>
+
+                <!-- 댓글 카드 1개 (1) -->
+                <div class="m-3 border-b border-gray-300">
+                    <!-- 댓글 작성자 -->
+                    <div class="flex mt-7 justify-between ">
+                        <div class="flex justify-start items-center">
+                            <img src="https://drive.google.com/uc?id=1Eu_ibwNeAbHi7n5nu0zGQK9ylyoKpset" alt=""
+                                 class="w-10 h-10 object-cover m-3 rounded-full">
+                            <div>
+                                <div class="flex items-center mb-1">
+                                    <div class="">댓글 작성자</div>
+                                </div>
+
+                                <div class="flex">
+                                    <div class="text-xs mr-2">2023-06-26 16:50</div>
+
+                                    <a href="#" class="text-xs mr-1 hover:underline">
+                                        삭제
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- 댓글 내용 -->
+                    <div class="flex  mb-2 ml-3 mr-3">
+                        <div>
+                            고기 질이 좋고 밑반찬들에 퀄리티가 엄청나요. 순대도 진짜 맛있고 소라숙회? 같은게 기본찬이었는데 순삭입니다. 매장분위기가 은은해서 데이트로 또 갈것 같아욯ㅎㅎ
+                            짬뽕전골 해산물이 많이 들어가서 국물이 찐으로 시원했어요
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- 댓글 카드 1개 (2) -->
+            <div class="m-3 border-b border-gray-300">
+                <!-- 댓글 작성자 -->
+                <div class="flex mt-7 justify-between ">
+                    <div class="flex justify-start items-center">
+                        <img src="https://drive.google.com/uc?id=1Eu_ibwNeAbHi7n5nu0zGQK9ylyoKpset" alt=""
+                             class="w-10 h-10 object-cover m-3 rounded-full">
+                        <div>
+                            <div class="flex items-center mb-1">
+                                <div class="">댓글 작성자</div>
+                            </div>
+
+                            <div class="flex">
+                                <div class="text-xs mr-2">2023-06-26 16:50</div>
+
+                                <a href="#" class="text-xs mr-1 hover:underline">
+                                    삭제
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- 댓글 내용 -->
+                <div class="flex  mb-2 ml-3 mr-3">
+                    <div>
+                        프리미엄급 생삼겹살을 저렴하게 먹을 수 있는 가성비 좋은 고기집이었어요.
+                        양념소스가 진짜 맛있더라구요.
+                        남편은 고기 전 짬뽕이 먹고싶어서 고민했는데 부산 삼겹살에서 모든게 끝~
+                        짬뽕전골의
+                        해산물이 장난 아니랍니다. 무조건드세요~
+                    </div>
+                </div>
+                <!-- 댓글 입력칸 -->
+                <div class="flex m-4 justify-center">
+                    <form class="w-full">
+                        <div class="flex items-center">
+                            <textarea rows="2" placeholder="댓글을 남겨보세요" class="border border-gray-300 resize-none p-4"
+                                      style="width: 100%;"></textarea>
+
+                        </div>
+                        <div class="flex justify-end mt-2">
+                            <button class="btn btn-neutral btn-sm" type="submit">등록</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <script>
+        // 리뷰에 등록되어 있던 별점을 표시하는 script
+        document.addEventListener('DOMContentLoaded', function () {
+            const ratingElem = document.querySelector('.rating');
+            const ratingValue = parseFloat(ratingElem.dataset.rating);
+            const inputElems = ratingElem.querySelectorAll('input');
+
+            inputElems.forEach(function (inputElem) {
+                if (parseFloat(inputElem.value) === ratingValue) {
+                    inputElem.setAttribute('checked', '');
+                }
+            });
+        });
+    </script>
+</main>
+
+</body>
+
+</html>

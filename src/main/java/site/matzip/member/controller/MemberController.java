@@ -13,13 +13,19 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
+import site.matzip.base.appConfig.AppConfig;
 import site.matzip.base.rq.Rq;
 import site.matzip.base.rsData.RsData;
 import site.matzip.config.auth.PrincipalDetails;
+import site.matzip.image.service.ProfileImageService;
 import site.matzip.member.domain.Member;
 import site.matzip.member.dto.MemberInfoDTO;
 import site.matzip.member.dto.NicknameUpdateDTO;
 import site.matzip.member.service.MemberService;
+
+import java.io.IOException;
 
 @Controller
 @RequiredArgsConstructor
@@ -27,6 +33,7 @@ import site.matzip.member.service.MemberService;
 public class MemberController {
 
     private final MemberService memberService;
+    private final ProfileImageService profileImageService;
     private final Rq rq;
 
     @GetMapping("/login")
@@ -57,9 +64,15 @@ public class MemberController {
     public String showMyPage(Model model, @AuthenticationPrincipal PrincipalDetails principalDetails) {
         Member member = principalDetails.getMember();
 
+        String profileImageUrl = AppConfig.getDefaultProfileImageUrl();
+        if (member.getProfileImage() != null && member.getProfileImage().getImageUrl() != null) {
+            profileImageUrl = member.getProfileImage().getImageUrl();
+        }
+
         MemberInfoDTO memberInfoDTO = MemberInfoDTO.builder()
                 .nickname(member.getNickname())
                 .email(member.getEmail())
+                .profileImageUrl(profileImageUrl)
                 .build();
 
         model.addAttribute("memberInfoDTO", memberInfoDTO);
@@ -87,4 +100,20 @@ public class MemberController {
 
         return rq.redirectWithMsg("/usr/member/myPage", member);
     }
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/myPage/modifyProfileImage")
+    public String showModifyProfileImage() {
+        return "usr/member/myPage/modifyProfileImage";
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping("/myPage/modifyProfileImage")
+    public String modifyProfileImage(@RequestParam("profileImage") MultipartFile profileImage,
+                                     @AuthenticationPrincipal PrincipalDetails principalDetails) throws IOException {
+        profileImageService.saveProfileImage(profileImage, principalDetails.getMember());
+
+        return "redirect:/usr/member/myPage";
+    }
+
 }

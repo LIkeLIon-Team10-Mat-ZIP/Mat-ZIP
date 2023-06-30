@@ -5,8 +5,8 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import site.matzip.comment.domain.Comment;
-import site.matzip.matzip.domain.MatzipRecommendation;
+import site.matzip.image.domain.ProfileImage;
+import site.matzip.matzip.domain.MatzipMember;
 import site.matzip.review.domain.Review;
 
 import java.util.ArrayList;
@@ -16,6 +16,13 @@ import java.util.List;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Member {
+    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
+
+
+    private final List<MatzipMember> matzipMembers = new ArrayList<>();
+
+    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
+    private final List<Review> reviews = new ArrayList<>();
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -27,20 +34,10 @@ public class Member {
     private MemberRole role;
     //TODO:이 부분도 oAuth만 이용시 필요없음. 삭제예정
     private String password;
-    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
-    private final List<MatzipRecommendation> matzipRecommendations = new ArrayList<>();
-    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
-    private final List<Review> reviews = new ArrayList<>();
-    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
-    private final List<Comment> comments = new ArrayList<>();
 
-    //    @Builder
-//    public Member(String username, String kakao_nickname, String email) {
-//        this.username = username;
-//        this.kakao_nickname = kakao_nickname;
-//        this.email = email;
-//        role = MemberRole.ROLE_MEMBER;
-//    }
+    @OneToOne(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    private ProfileImage profileImage;
+
     @Builder
     public Member(String username, String kakao_nickname, String nickname, String password, String email) {
         this.username = username;
@@ -64,5 +61,9 @@ public class Member {
 
     public void updateNickname(String nickname) {
         this.nickname = nickname;
+    }
+
+    public void setProfileImage(ProfileImage profileImage) {
+        this.profileImage = profileImage;
     }
 }
