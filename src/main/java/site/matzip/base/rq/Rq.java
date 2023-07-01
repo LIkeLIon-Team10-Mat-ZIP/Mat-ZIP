@@ -105,11 +105,13 @@ public class Rq {
         Object principal = authentication.getPrincipal();
         Member author = null;
 
-        if (principal instanceof PrincipalDetails principalDetails) {
+        if (principal instanceof PrincipalDetails) {
             // 주어진 PrincipalDetails 객체 사용
+            PrincipalDetails principalDetails = (PrincipalDetails) principal;
             author = principalDetails.getMember();
-        } else if (principal instanceof UserDetails userDetails) {
+        } else if (principal instanceof UserDetails) {
             // 주어진 Authentication 객체를 사용하고 UserDetails 중에서 member 찾기
+            UserDetails userDetails = (UserDetails) principal;
             String username = userDetails.getUsername();
             author = memberService.findByUsername(username)
                     .orElseThrow(() -> new UsernameNotFoundException("username(%s) not found".formatted(username)));
