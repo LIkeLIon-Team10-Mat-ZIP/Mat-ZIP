@@ -182,43 +182,10 @@
                 </div>
             </div>
 
-            <!-- 댓글 카드 1개 (2) -->
+            <!-- 댓글 입력칸 -->
             <div class="m-3 border-b border-gray-300">
-                <!-- 댓글 작성자 -->
-                <div class="flex mt-7 justify-between ">
-                    <div class="flex justify-start items-center">
-                        <img src="https://drive.google.com/uc?id=1Eu_ibwNeAbHi7n5nu0zGQK9ylyoKpset" alt=""
-                             class="w-10 h-10 object-cover m-3 rounded-full">
-                        <div>
-                            <div class="flex items-center mb-1">
-                                <div class="">댓글 작성자</div>
-                            </div>
-
-                            <div class="flex">
-                                <div class="text-xs mr-2">2023-06-26 16:50</div>
-
-                                <a href="#" class="text-xs mr-1 hover:underline">
-                                    삭제
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-
-                <!-- 댓글 내용 -->
-                <div class="flex  mb-2 ml-3 mr-3">
-                    <div>
-                        프리미엄급 생삼겹살을 저렴하게 먹을 수 있는 가성비 좋은 고기집이었어요.
-                        양념소스가 진짜 맛있더라구요.
-                        남편은 고기 전 짬뽕이 먹고싶어서 고민했는데 부산 삼겹살에서 모든게 끝~
-                        짬뽕전골의
-                        해산물이 장난 아니랍니다. 무조건드세요~
-                    </div>
-                </div>
-                <!-- 댓글 입력칸 -->
                 <div class="flex m-4 justify-center">
-                    <form class="w-full">
+                    <form class="w-full" th:action="@{|/comment/create/${reviewDetailDTO.reviewId}|}" method="POST">
                         <div class="flex items-center">
                             <textarea rows="2" placeholder="댓글을 남겨보세요" class="border border-gray-300 resize-none p-4"
                                       style="width: 100%;"></textarea>

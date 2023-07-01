@@ -11,6 +11,7 @@ import java.time.format.DateTimeFormatter;
 @Data
 public class ReviewDetailDTO {
     private String profileImageUrl;
+    private Long reviewId;
     private String authorNickname;
     private LocalDateTime createDate;
     private String content;
@@ -26,6 +27,7 @@ public class ReviewDetailDTO {
 //        this.profileImageUrl = review.getAuthor().getProfileImage().getImageUrl();
         this.authorNickname = review.getAuthor().getNickname();
         //this.views =
+        this.reviewId = review.getId();
         this.matzipName = matzip.getMatzipName();
         this.createDate = review.getCreateDate();
         this.address = matzip.getAddress();
