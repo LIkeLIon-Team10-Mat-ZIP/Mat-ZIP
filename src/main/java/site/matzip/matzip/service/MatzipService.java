@@ -132,7 +132,7 @@ public class MatzipService {
                     .y(matzip.getY())
                     .rating(rating)
                     .description(description)
-                    .id(matzip.getId())
+                    .matzipId(matzip.getId())
                     .build();
         }).collect(Collectors.toList());
     }
@@ -143,7 +143,7 @@ public class MatzipService {
 
         for (MatzipListDTO matzipListDTO : matzipDtoList) {
             List<ReviewListDTO> matchedReviews = reviewDtoList.stream()
-                    .filter(review -> Objects.equals(review.getMatzipId(), matzipListDTO.getId()))
+                    .filter(review -> Objects.equals(review.getMatzipId(), matzipListDTO.getMatzipId()))
                     .collect(Collectors.toList());
 
             MatzipReviewListDTO matzipReviewListDTO = MatzipReviewListDTO.builder()
