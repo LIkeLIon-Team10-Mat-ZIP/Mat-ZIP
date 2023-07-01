@@ -32,19 +32,20 @@ public class CommentController {
         Member author = principalDetails.getMember();
 
         commentService.create(review, author, content);
-        return "redirect:/review/detail/{%d}".formatted(id);
+        return "redirect:/review/detail/%d".formatted(id);
     }
 
     @PreAuthorize("isAuthenticated()")
     @DeleteMapping("{id}")
     public String delete(@PathVariable Long id, @AuthenticationPrincipal PrincipalDetails principalDetails) {
         Comment comment = commentService.findById(id);
+        Long reviewId = comment.getReview().getId();
 
         if (!Objects.equals(comment.getAuthor().getId(), principalDetails.getMember().getId())) {
             throw new AccessDeniedException("You do not have permission to delete.");
         }
 
         commentService.remove(comment);
-        return "redirect:/review/detail/{%d}".formatted(id);
+        return "redirect:/review/detail/%d".formatted(reviewId);
     }
 }

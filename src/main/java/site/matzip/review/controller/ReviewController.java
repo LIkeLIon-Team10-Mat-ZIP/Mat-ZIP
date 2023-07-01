@@ -89,7 +89,7 @@ public class ReviewController {
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/detail/{id}")
-    public String detail(Model model, @PathVariable Long id) {
+    public String detail(Model model, @PathVariable Long id, @AuthenticationPrincipal PrincipalDetails principalDetails) {
         Review review = reviewService.findByID(id);
         Matzip matzip = review.getMatzip();
         // Comment
@@ -97,6 +97,9 @@ public class ReviewController {
         List<CommentInfoDTO> commentInfoDTOS = comments.stream()
                 .map(
                         comment -> CommentInfoDTO.builder()
+                                .id(comment.getId())
+                                .loginId(principalDetails.getMember().getId())
+                                .authorId(comment.getAuthor().getId())
                                 .authorNickname(comment.getAuthor().getNickname())
                                 .createDate(comment.getCreateDate())
                                 .content(comment.getContent())

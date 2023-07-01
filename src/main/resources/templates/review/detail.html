@@ -160,10 +160,14 @@
 
                                 <div class="flex">
                                     <div class="text-xs mr-2" th:text="${comment.formattedCreateDate}"></div>
-
-                                    <a href="#" class="text-xs mr-1 hover:underline">
+                                    <a href="javascript:void(0);" class="text-xs mr-1 hover:underline"
+                                       th:if="${comment.authorId != null and comment.loginId == comment.authorId}"
+                                       onclick="if ( confirm('정말로 삭제하시겠습니까?') ) $(this).next().submit();">
                                         삭제
                                     </a>
+                                    <form hidden th:action="@{|/comment/${comment.id}|}" method="POST">
+                                        <input type="hidden" name="_method" value="delete">
+                                    </form>
                                 </div>
                             </div>
                         </div>

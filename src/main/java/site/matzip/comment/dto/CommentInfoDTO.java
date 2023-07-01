@@ -10,6 +10,9 @@ import java.time.format.DateTimeFormatter;
 @Builder
 public class CommentInfoDTO {
     //private 프로필 이미지
+    private Long id;
+    private Long authorId;
+    private Long loginId;
     private String authorNickname;
     private LocalDateTime createDate;
     private String content;
