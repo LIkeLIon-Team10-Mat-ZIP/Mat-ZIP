@@ -147,9 +147,9 @@
                 </div>
 
                 <!-- 댓글 -->
-                <div class="m-3 border-b border-gray-300" th:each="comment : ${commentInfoDTOS}">
+                <div class="m-2 border-b border-gray-300" th:each="comment : ${commentInfoDTOS}">
                     <!-- 댓글 작성자 -->
-                    <div class="flex mt-7 justify-between">
+                    <div class="flex justify-between">
                         <div class="flex justify-start items-center">
                             <img src="https://drive.google.com/uc?id=1Eu_ibwNeAbHi7n5nu0zGQK9ylyoKpset" alt=""
                                  class="w-10 h-10 object-cover m-3 rounded-full">
@@ -171,16 +171,13 @@
                                 </div>
                             </div>
                         </div>
-
                     </div>
-
                     <!-- 댓글 내용 -->
-                    <div class="flex  mb-2 ml-3 mr-3">
+                    <div class="flex mb-4 ml-3 mr-3">
                         <div class="inline-block max-h-[600px] overflow-hidden break-all" th:text="${comment.content}"></div>
                     </div>
                 </div>
             </div>
-
             <!-- 댓글 입력칸 -->
             <div class="m-3 border-b border-gray-300">
                 <div class="flex m-4 justify-center">
