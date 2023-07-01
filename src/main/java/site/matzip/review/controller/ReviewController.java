@@ -11,6 +11,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import site.matzip.comment.domain.Comment;
+import site.matzip.comment.dto.CommentInfoDTO;
 import site.matzip.config.auth.PrincipalDetails;
 import site.matzip.matzip.domain.Matzip;
 import site.matzip.matzip.dto.MatzipInfoDTO;
@@ -23,6 +25,7 @@ import site.matzip.review.service.ReviewService;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/review")
@@ -89,9 +92,20 @@ public class ReviewController {
     public String detail(Model model, @PathVariable Long id) {
         Review review = reviewService.findByID(id);
         Matzip matzip = review.getMatzip();
+        // Comment
+        List<Comment> comments = review.getComments();
+        List<CommentInfoDTO> commentInfoDTOS = comments.stream()
+                .map(
+                        comment -> CommentInfoDTO.builder()
+                                .authorNickname(comment.getAuthor().getNickname())
+                                .createDate(comment.getCreateDate())
+                                .content(comment.getContent())
+                                .build())
+                .collect(Collectors.toList());
 
         ReviewDetailDTO reviewDetailDTO = new ReviewDetailDTO(review, matzip);
         model.addAttribute("reviewDetailDTO", reviewDetailDTO);
+        model.addAttribute("commentInfoDTOS", commentInfoDTOS);
         return "/review/detail";
     }
 }
