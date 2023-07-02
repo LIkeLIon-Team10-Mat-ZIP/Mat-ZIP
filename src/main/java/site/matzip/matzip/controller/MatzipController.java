@@ -44,14 +44,11 @@ public class MatzipController {
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/create")
-    public ResponseEntity create(@RequestBody MatzipCreationDTO matzipCreationDTO, BindingResult result, Authentication authentication) {
-        if (result.hasErrors()) {
-            return ResponseEntity.badRequest().body(result.getAllErrors());
-        }
+    public String create(@RequestBody MatzipCreationDTO matzipCreationDTO, BindingResult result, Authentication authentication) {
         Member author = rq.getMember(authentication);
         matzipService.create(matzipCreationDTO, author);
 
-        return ResponseEntity.ok("Matzip created successfully");
+        return "redirect:/matzip/mylist";
     }
 
     @PreAuthorize("isAuthenticated()")
@@ -68,7 +65,7 @@ public class MatzipController {
         Review createdReview = reviewService.create(reviewCreationDTO, author, createdMatzip);
         reviewImageService.create(reviewCreationDTO.getImageFiles(), createdReview);
 
-        return rq.redirectWithMsg("/matzip/mylist", "맛집과 리뷰가 등록되었습니다");
+        return "redirect:/matzip/mylist";
     }
 
     @GetMapping("/list")
