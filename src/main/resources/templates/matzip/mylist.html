@@ -1,10 +1,8 @@
 <!DOCTYPE html>
 <html layout:decorate="~{common/layout/defaultLayout.html}">
-<html>
 <head>
     <meta charset="utf-8">
-    <!-- 테일윈드 불러오기 -->
-    <script src="https://cdn.tailwindcss.com"></script>
+
     <title>나의 맛집 리스트</title>
     <style>
         body {
@@ -74,6 +72,11 @@
 </head>
 <body>
 <main layout:fragment="Content">
+
+    <div>
+        <button onclick="loadlist()">All</button>
+        <button onclick="loadMyList()">Private</button>
+    </div>
     <div id="map">
         <div id="placeInfo">
             <h2 id="placeName">맛집 이름</h2>
