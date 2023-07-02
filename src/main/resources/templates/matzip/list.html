@@ -182,8 +182,16 @@
                         placeName.innerText = matzip.matzipName;
                         placeAddress.innerText = '주소: ' + matzip.address;
                         placePhone.innerText = '전화번호: ' + matzip.phoneNumber;
-                        placeDescription.innerText = '설명: ' + matzip.description;
-                        placeRating.innerText = '내 평점: ' + matzip.rating;
+                        // 설명이나 평점이 없는 경우, 해당 요소를 숨깁니다
+                        if (matzip.description === "" && matzip.rating === 0) {
+                            placeDescription.style.display = 'none';
+                            placeRating.style.display = 'none';
+                        } else {
+                            placeDescription.style.display = 'block';
+                            placeDescription.innerText = '설명: ' + matzip.description;
+                            placeRating.style.display = 'block';
+                            placeRating.innerText = '내 평점: ' + matzip.rating;
+                        }
                         mapLink.href = 'https://map.kakao.com/link/map/' + matzip.matzipName + ',' + matzip.y + ',' + matzip.x;
                         mapLink.innerText = '큰지도보기';
                         routeLink.href = 'https://map.kakao.com/link/to/' + matzip.matzipName + ',' + matzip.y + ',' + matzip.x;
@@ -191,7 +199,6 @@
                         detailLink.href = matzip.matzipUrl;
                         detailLink.innerText = '상세정보';
                         placeInfo.style.display = 'block'; // Show place info
-
                         reviewList.style.display = 'block'
 
                         currentReviews = reviews.filter(review => review.matzipId === marker.matzipId);

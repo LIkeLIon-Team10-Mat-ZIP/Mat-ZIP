@@ -56,13 +56,9 @@ public class MatzipController {
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/createWithReview")
-    public ResponseEntity createWithReview(@ModelAttribute MatzipReviewDTO matzipReviewDTO,
-                                           BindingResult result,
-                                           @AuthenticationPrincipal PrincipalDetails principalDetails) throws IOException {
-
-        if (result.hasErrors()) {
-            return ResponseEntity.badRequest().body(result.getAllErrors());
-        }
+    public String createWithReview(@ModelAttribute MatzipReviewDTO matzipReviewDTO,
+                                   BindingResult result,
+                                   @AuthenticationPrincipal PrincipalDetails principalDetails) throws IOException {
 
         MatzipCreationDTO matzipCreationDTO = matzipReviewDTO.getMatzipCreationDTO();
         ReviewCreationDTO reviewCreationDTO = matzipReviewDTO.getReviewCreationDTO();
@@ -72,7 +68,7 @@ public class MatzipController {
         Review createdReview = reviewService.create(reviewCreationDTO, author, createdMatzip);
         reviewImageService.create(reviewCreationDTO.getImageFiles(), createdReview);
 
-        return ResponseEntity.ok("맛집과 리뷰가 생성되었습니다.");
+        return rq.redirectWithMsg("/matzip/mylist", "맛집과 리뷰가 등록되었습니다");
     }
 
     @GetMapping("/list")
