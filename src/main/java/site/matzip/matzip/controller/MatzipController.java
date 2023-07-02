@@ -89,7 +89,7 @@ public class MatzipController {
     }
 
     @GetMapping("/mylist")
-    public String showMyList(Model model) {
+    public String showMyList() {
         return "/matzip/mylist";
     }
 

@@ -156,19 +156,4 @@ public class MatzipService {
 
         return matzipReviewList;
     }
-
-//    public List<Matzip> findMyMatzipsAndReviews(Long authorId) {
-//        List<Object[]> results = matzipMemberRepository.findMyMatzipsAndReviews(authorId);
-//        List<MatzipReviewListDTO> matzipReviewList = new ArrayList<>();
-//
-//        for (Object[] result : results) {
-//            Matzip matzip = (Matzip) result[0];
-//            Review review = (Review) result[1];
-//
-//            MatzipReviewListDTO matzipReviewDTO = new MatzipReviewListDTO(matzip, review);
-//            matzipReviewList.add(matzipReviewDTO);
-//        }
-//
-//        return matzipReviewList;
-//    }
 }

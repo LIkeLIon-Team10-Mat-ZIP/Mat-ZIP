@@ -48,10 +48,15 @@
 <body>
 <main layout:fragment="Content">
     <div>
-        <button onclick="loadAllList()">All</button>
-        <button onclick="loadMyList()">Private</button>
+        <button id="allListBtn" class="btn btn-info" onclick="loadAllList()">
+            All<span id="allSpinner" style="display: none;" class="loading loading-spinner-sm"></span>
+        </button>
+        <button id="myListBtn" class="btn btn-info" onclick="loadMyList()">
+            Private<span id="mySpinner" style="display: none;" class="loading loading-spinner-sm"></span>
+        </button>
     </div>
-    <div id="map">
+
+    <div id="map" class="mt-3">
         <div id="placeInfo">
             <h2 id="placeName">맛집 이름</h2>
             <p id="placeAddress">주소</p>
@@ -78,7 +83,8 @@
         </div>
     </div>
 
-    <script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=868d9aa6d8d0e67bad6c59729809c3fa"></script>
+    <script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=868d9aa6d8d0e67bad6c59729809c3fa&libraries=services,clusterer"
+            type="text/javascript"></script>
     <script>
         //세션에서 x,y 좌표 가져오기
         var storedX = sessionStorage.getItem("x");
@@ -125,8 +131,15 @@
         var detailLink = document.getElementById('detailLink');
         var reviewButton = document.getElementById('reviewButton');
 
+        // 마커 클러스터러를 생성합니다 (마커 여러개 하나로 묶어서 표시해줌)
+        var clusterer = new kakao.maps.MarkerClusterer({
+            map: map, // 마커들을 클러스터로 관리하고 표시할 지도 객체
+            averageCenter: true, // 클러스터에 포함된 마커들의 평균 위치를 클러스터 마커 위치로 설정
+            minLevel: 7 // 클러스터 할 최소 지도 레벨
+        });
 
-        //지도 영역 외의 다른 부분을 클릭했을 때 placeInfo를 숨깁니다.
+
+        //지도 영역 외의 다른 부분을 클릭했을 때 placeInfo, reviewList, infoWindow를 숨깁니다.
         document.addEventListener('click', function (event) {
             var target = event.target;
             var mapContainer = document.getElementById('map');
@@ -136,7 +149,7 @@
             if (target !== mapContainer && !mapContainer.contains(target) && target !== placeInfo && !placeInfo.contains(target)) {
                 placeInfo.style.display = 'none'; // Hide place info
                 reviewList.style.display = 'none';
-
+                currentInfoWindow.close();
             }
         });
 
@@ -150,10 +163,13 @@
             }
         }
 
+        // 페이지 로드 될 때 전체 리스트 불러옴
         loadAllList();
 
-        function loadMatzipList(apiUrl) {
+        //맛집 리스트 로드 함수. (apiUrl에 따라 다른 리스트 불러옴, 맨 아래에 있음)
+        function loadMatzipList(apiUrl, callback) {
             removeMarker();
+            clusterer.clear();
             // 서버에 matzip 정보를 요청합니다
             fetch(apiUrl)
                 .then(response => response.json())
@@ -172,6 +188,7 @@
                         });
                         marker.matzipId = matzip.matzipId;
                         markers.push(marker);
+
                         // 정보창에 표시할 내용을 설정합니다
                         var iwContent;
                         if (matzip.matzipName.length > 9) {
@@ -325,18 +342,38 @@
                             reviewButton.href = `/review/create/${matzip.matzipId}`;
                         });
                     });
+                    clusterer.addMarkers(markers);
+                    if (callback) callback();
                 })
                 .catch((error) => {
                     console.error('Error:', error);
+                    if (callback) callback();
                 });
         }
 
+        //전체 리스트 가져오는 함수, All 버튼 누르면 실행
         function loadAllList() {
-            loadMatzipList('/matzip/api/list');
+            // All 버튼 스피너 표시
+            document.getElementById("allSpinner").style.display = "inline-block";
+
+            const apiUrl = "/matzip/api/list";
+            loadMatzipList(apiUrl, () => {
+                // All 버튼 스피너를 숨깁니다
+                document.getElementById("allSpinner").style.display = "none";
+            });
         }
 
+
+        //나의 리스트 호출하는 함수, private 버튼 누르면 실행
         function loadMyList() {
-            loadMatzipList('/matzip/api/mylist');
+            // Private 버튼 스피너 표시
+            document.getElementById("mySpinner").style.display = "inline-block";
+
+            const apiUrl = "/matzip/api/mylist";
+            loadMatzipList(apiUrl, () => {
+                // Private 버튼 스피너를 숨깁니다
+                document.getElementById("mySpinner").style.display = "none";
+            });
         }
 
 
