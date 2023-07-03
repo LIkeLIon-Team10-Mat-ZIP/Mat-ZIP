@@ -59,13 +59,14 @@ public class MatzipController {
 
         MatzipCreationDTO matzipCreationDTO = matzipReviewDTO.getMatzipCreationDTO();
         ReviewCreationDTO reviewCreationDTO = matzipReviewDTO.getReviewCreationDTO();
+        Long authorId = principalDetails.getMember().getId();
         Member author = principalDetails.getMember();
 
         Matzip createdMatzip = matzipService.create(matzipCreationDTO, author);
-        Review createdReview = reviewService.create(reviewCreationDTO, author, createdMatzip);
+        Review createdReview = reviewService.create(reviewCreationDTO, authorId, createdMatzip);
         reviewImageService.create(reviewCreationDTO.getImageFiles(), createdReview);
 
-        return "redirect:/matzip/mylist";
+        return rq.redirectWithMsg("/", "맛집과 리뷰가 등록되었습니다.");
     }
 
     @GetMapping("/list")

@@ -25,8 +25,8 @@
             display: none;
             position: absolute;
             width: 350px;
-            top: 40px;
-            right: 40px;
+            top: 10px;
+            right: 10px;
             padding: 10px;
             background-color: #fff;
             border-radius: 5px;
@@ -130,8 +130,7 @@
         map.addControl(zoomControl, kakao.maps.ControlPosition.LEFT);
 
         //map 설정이 끝났으니 세션에 담겨있던거 삭제
-        sessionStorage.removeItem('x');
-        sessionStorage.removeItem('y');
+        sessionStorage.clear();
 
         var imageSrc = "https://ifh.cc/g/64zAsK.png";
         var imageSize = new kakao.maps.Size(36, 37);
