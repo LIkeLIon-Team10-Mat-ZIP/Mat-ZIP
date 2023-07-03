@@ -96,7 +96,8 @@ public class ReviewController {
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/detail/{id}")
-    public String detail(Model model, @PathVariable Long id, @AuthenticationPrincipal PrincipalDetails principalDetails) {
+    public String detail(Model model, @PathVariable Long id, @AuthenticationPrincipal PrincipalDetails principalDetails,
+                         HttpServletRequest request, HttpServletResponse response) {
         Review review = reviewService.findById(id);
         Matzip matzip = review.getMatzip();
         ReviewDetailDTO reviewDetailDTO = new ReviewDetailDTO(review, matzip);
@@ -107,6 +108,8 @@ public class ReviewController {
 
         model.addAttribute("reviewDetailDTO", reviewDetailDTO);
         model.addAttribute("commentInfoDTOS", commentInfoDTOS);
+
+        updateViewCountWithCookie(review, request, response);
 
         return "/review/detail";
     }

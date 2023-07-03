@@ -12,6 +12,7 @@ import java.time.format.DateTimeFormatter;
 public class ReviewDetailDTO {
     private String profileImageUrl;
     private Long reviewId;
+    private Long views;
     private String authorNickname;
     private LocalDateTime createDate;
     private String content;
@@ -32,6 +33,7 @@ public class ReviewDetailDTO {
         this.createDate = review.getCreateDate();
         this.address = matzip.getAddress();
         this.rating = review.getRating();
+        this.views = review.getViews();
         this.matzipType = matzip.getMatzipType();
         this.phoneNumber = matzip.getPhoneNumber();
         //this.리뷰이미지
