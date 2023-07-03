@@ -101,12 +101,16 @@ public class MatzipService {
         return convertToListDTO(findAll(), authorId);
     }
 
+    public List<MatzipListDTO> findAndConvertMine(Long authorId) {
+        return convertToListDTO(findAllByAuthorId(authorId), authorId);
+    }
+
     //후기와 맛집 정보를 하나로 묶어서 MatzipListDTO로 변환
     private List<MatzipListDTO> convertToListDTO(List<Matzip> matzipList, Long authorId) {
         return matzipList.stream().map(matzip -> {
-            List<MatzipMember> recommendations = matzip.getRecommendations();
+            List<MatzipMember> matzipMemberList = matzip.getMatzipMemberList();
 
-            Optional<MatzipMember> authorRecommendation = recommendations.stream()
+            Optional<MatzipMember> authorRecommendation = matzipMemberList.stream()
                     .filter(recommendation -> recommendation.getAuthor().getId().equals(authorId))
                     .findFirst();
 
@@ -128,7 +132,7 @@ public class MatzipService {
                     .y(matzip.getY())
                     .rating(rating)
                     .description(description)
-                    .id(matzip.getId())
+                    .matzipId(matzip.getId())
                     .build();
         }).collect(Collectors.toList());
     }
@@ -139,7 +143,7 @@ public class MatzipService {
 
         for (MatzipListDTO matzipListDTO : matzipDtoList) {
             List<ReviewListDTO> matchedReviews = reviewDtoList.stream()
-                    .filter(review -> Objects.equals(review.getMatzipId(), matzipListDTO.getId()))
+                    .filter(review -> Objects.equals(review.getMatzipId(), matzipListDTO.getMatzipId()))
                     .collect(Collectors.toList());
 
             MatzipReviewListDTO matzipReviewListDTO = MatzipReviewListDTO.builder()

@@ -2,11 +2,7 @@
 <html layout:decorate="~{common/layout/defaultLayout.html}">
 <head>
     <meta charset="utf-8">
-    <!-- 테일윈드 불러오기 -->
-    <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- 데이지 UI 불러오기 -->
-    <link href="https://cdn.jsdelivr.net/npm/daisyui@2.51.5/dist/full.css" rel="stylesheet" type="text/css"/>
     <title>Matzip</title>
 
     <style>
@@ -47,12 +43,27 @@
         #placeInfo p {
             margin: 5px 0;
         }
+
+        #matzipCreationButton {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            z-index: 2;
+        }
     </style>
 </head>
 <body>
 <main layout:fragment="Content">
+    <div>
+        <button class="btn btn-info" id="allListBtn" onclick="loadAllList()">
+            All<span class="loading loading-spinner-sm" id="allSpinner" style="display: none;"></span>
+        </button>
+        <button class="btn btn-info" id="myListBtn" onclick="loadMyList()">
+            Private<span class="loading loading-spinner-sm" id="mySpinner" style="display: none;"></span>
+        </button>
+    </div>
 
-    <div id="map">
+    <div class="mt-3" id="map">
         <div id="placeInfo">
             <h2 id="placeName">맛집 이름</h2>
             <p id="placeAddress">주소</p>
@@ -68,18 +79,20 @@
             <a class="inline-block w-full py-1 px-4 rounded-3xl text-center bg-gray-100 shadow mb-2" id="detailLink"
                target="_blank">상세정보</a>
             <br>
-            <a class="mb-4 inline-block w-full py-1 px-4 rounded-3xl text-center bg-gray-100 shadow mb-1" id="reviewButton">리뷰
-                등록</a>
+            <a class="mb-4 inline-block w-full py-1 px-4 rounded-3xl text-center bg-gray-100 shadow mb-1"
+               id="reviewButton">리뷰 등록</a>
             <hr>
-            <div id="reviewList" class="mt-3">
+            <div class="mt-3" id="reviewList">
                 <span class="text-lg"><i class="fa-solid fa-magnifying-glass"></i> 리뷰</span>
                 <div id="noReview" style="display: block;">리뷰가 없습니다.</div>
                 <ul id="reviewListContainer" style="display: none;"></ul>
             </div>
         </div>
+        <button class="btn btn-info" id="matzipCreationButton" onclick="goToMatzipCreationPage()">맛집 등록</button>
     </div>
 
-    <script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=868d9aa6d8d0e67bad6c59729809c3fa"></script>
+    <script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=868d9aa6d8d0e67bad6c59729809c3fa&libraries=services,clusterer"
+            type="text/javascript"></script>
     <script>
         //세션에서 x,y 좌표 가져오기
         var storedX = sessionStorage.getItem("x");
@@ -89,27 +102,41 @@
         if (storedX && storedY) {
             // 세션 스토리지에 좌표가 있는 경우 해당 좌표를 사용합니다
             centerLocation = new kakao.maps.LatLng(storedY, storedX);
+            mapLevel = 3;
         } else {
             // 좌표가 없는 경우 기본 위치를 사용합니다
             centerLocation = new kakao.maps.LatLng(37.56682, 126.97865);
+            mapLevel = 7;
         }
 
         var mapContainer = document.getElementById('map'),
             mapOption = {
                 center: centerLocation,
-                level: 3,
+                level: mapLevel,
                 mapTypeId: kakao.maps.MapTypeId.ROADMAP
             };
 
         var map = new kakao.maps.Map(mapContainer, mapOption);
+
+        // 일반 지도와 스카이뷰로 지도 타입을 전환할 수 있는 지도타입 컨트롤을 생성합니다
+        var mapTypeControl = new kakao.maps.MapTypeControl();
+
+        // 지도에 컨트롤을 추가해야 지도위에 표시됩니다
+        // kakao.maps.ControlPosition은 컨트롤이 표시될 위치를 정의하는데 TOPLEFT는 왼쪽 위를 의미합니다
+        map.addControl(mapTypeControl, kakao.maps.ControlPosition.TOPLEFT);
+
+        // 지도 확대 축소를 제어할 수 있는  줌 컨트롤을 생성합니다
+        var zoomControl = new kakao.maps.ZoomControl();
+        map.addControl(zoomControl, kakao.maps.ControlPosition.LEFT);
+
         //map 설정이 끝났으니 세션에 담겨있던거 삭제
-        sessionStorage.removeItem('x');
-        sessionStorage.removeItem('y');
+        sessionStorage.clear();
 
         var imageSrc = "https://ifh.cc/g/64zAsK.png";
         var imageSize = new kakao.maps.Size(36, 37);
         var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize);
         var currentInfoWindow = null;
+        var markers = [];
 
         var placeInfo = document.getElementById('placeInfo');
         var reviewList = document.getElementById('reviewList')
@@ -123,8 +150,15 @@
         var detailLink = document.getElementById('detailLink');
         var reviewButton = document.getElementById('reviewButton');
 
+        // 마커 클러스터러를 생성합니다 (마커 여러개 하나로 묶어서 표시해줌)
+        var clusterer = new kakao.maps.MarkerClusterer({
+            map: map, // 마커들을 클러스터로 관리하고 표시할 지도 객체
+            averageCenter: true, // 클러스터에 포함된 마커들의 평균 위치를 클러스터 마커 위치로 설정
+            minLevel: 7 // 클러스터 할 최소 지도 레벨
+        });
 
-        //지도 영역 외의 다른 부분을 클릭했을 때 placeInfo를 숨깁니다.
+
+        //지도 영역 외의 다른 부분을 클릭했을 때 placeInfo, reviewList, infoWindow를 숨깁니다.
         document.addEventListener('click', function (event) {
             var target = event.target;
             var mapContainer = document.getElementById('map');
@@ -134,179 +168,238 @@
             if (target !== mapContainer && !mapContainer.contains(target) && target !== placeInfo && !placeInfo.contains(target)) {
                 placeInfo.style.display = 'none'; // Hide place info
                 reviewList.style.display = 'none';
-
+                currentInfoWindow.close();
             }
         });
 
-        // 서버에 matzip 정보를 요청합니다
-        fetch('/matzip/api/list')
-            .then(response => response.json())
-            .then(data => {
-                // 각 맛집 정보에 대해서 반복 처리를 합니다
-                data.forEach(matzipReviewDto => {
-                    const matzip = matzipReviewDto.matzipListDTO;
-                    const reviews = matzipReviewDto.reviewListDTOs;
+        // 지도 위에 표시되고 있는 마커를 모두 제거합니다
+        function removeMarker() {
+            if (markers.length > 0) {
+                for (var i = 0; i < markers.length; i++) {
+                    markers[i].setMap(null);
+                }
+                markers = [];
+            }
+        }
 
-                    // 해당 위치에 마커를 생성합니다
-                    var marker = new kakao.maps.Marker({
-                        map: map,
-                        position: new kakao.maps.LatLng(matzip.y, matzip.x),
-                        title: matzip.matzipName,
-                        image: markerImage,
-                    });
-                    marker.matzipId = matzip.id;
+        // 페이지 로드 될 때 나의 맛집 리스트 불러옴
+        loadAllList();
 
-                    // 정보창에 표시할 내용을 설정합니다
-                    var iwContent;
-                    if (matzip.matzipName.length > 9) {
-                        iwContent = '<div style="padding:5px; overflow-wrap: break-word; font-size:0.8em;">' + matzip.matzipName + '</div>';
-                    } else {
-                        iwContent = '<div style="padding:5px; overflow-wrap: break-word;">' + matzip.matzipName + '</div>';
-                    }
+        //맛집 리스트 로드 함수. (apiUrl에 따라 다른 리스트 불러옴, 맨 아래에 있음)
+        function loadMatzipList(apiUrl, callback) {
+            removeMarker();
+            clusterer.clear();
+            // 서버에 matzip 정보를 요청합니다
+            fetch(apiUrl)
+                .then(response => response.json())
+                .then(data => {
+                    // 각 맛집 정보에 대해서 반복 처리를 합니다
+                    data.forEach(matzipReviewDto => {
+                        const matzip = matzipReviewDto.matzipListDTO;
+                        const reviews = matzipReviewDto.reviewListDTOs;
 
-                    // 정보창을 생성합니다
-                    var infowindow = new kakao.maps.InfoWindow({
-                        content: iwContent
-                    });
+                        // 해당 위치에 마커를 생성합니다
+                        var marker = new kakao.maps.Marker({
+                            map: map,
+                            position: new kakao.maps.LatLng(matzip.y, matzip.x),
+                            title: matzip.matzipName,
+                            image: markerImage,
+                        });
+                        marker.matzipId = matzip.matzipId;
+                        markers.push(marker);
 
-                    let currentReviews = [];
-
-                    // 마커에 클릭 이벤트를 등록합니다
-                    kakao.maps.event.addListener(marker, 'click', function () {
-                        if (currentInfoWindow) {
-                            currentInfoWindow.close();
-                        }
-                        infowindow.open(map, marker);
-                        currentInfoWindow = infowindow;
-                        // 장소 정보를 업데이트합니다.
-                        placeName.innerText = matzip.matzipName;
-                        placeAddress.innerText = '주소: ' + matzip.address;
-                        placePhone.innerText = '전화번호: ' + matzip.phoneNumber;
-                        placeDescription.innerText = '설명: ' + matzip.description;
-                        placeRating.innerText = '내 평점: ' + matzip.rating;
-                        mapLink.href = 'https://map.kakao.com/link/map/' + matzip.matzipName + ',' + matzip.y + ',' + matzip.x;
-                        mapLink.innerText = '큰지도보기';
-                        routeLink.href = 'https://map.kakao.com/link/to/' + matzip.matzipName + ',' + matzip.y + ',' + matzip.x;
-                        routeLink.innerText = '길찾기';
-                        detailLink.href = matzip.matzipUrl;
-                        detailLink.innerText = '상세정보';
-                        placeInfo.style.display = 'block'; // Show place info
-
-                        reviewList.style.display = 'block'
-
-                        currentReviews = reviews.filter(review => review.matzipId === marker.matzipId);
-                        // 리뷰 목록을 업데이트합니다.
-                        const reviewListContainer = document.getElementById('reviewListContainer');
-                        const noReview = document.getElementById('noReview');
-
-                        reviewListContainer.innerHTML = ''; // 이전에 표시된 리뷰 목록 초기화
-
-                        if (reviews.length > 0) {
-                            noReview.style.display = 'none';
-                            reviewListContainer.style.display = 'block';
-                            //리뷰 반복문 (review x: reviews) 랑 같은거
-                            reviews.forEach((review) => {
-                                // 1. 전체 리뷰 컨테이너 생성
-                                const reviewContainer = document.createElement('div');
-                                reviewContainer.classList.add('mt-3');
-
-                                // 2. 사용자 프로필 이미지와 정보 컨테이너 생성
-                                const userProfileWrapper = document.createElement('div');
-                                userProfileWrapper.classList.add('flex', 'items-center', 'gap-2');
-                                // 사용자 프로필 이미지 추가
-                                const profileImg = document.createElement('img');
-                                profileImg.src = 'https://placekitten.com/408/287';
-                                profileImg.classList.add('w-14', 'h-14', 'rounded-full', 'border', 'border-gray-100');
-                                userProfileWrapper.appendChild(profileImg);
-
-                                // 사용자 정보를 포함할 컨테이너 생성
-                                const userInfoContainer = document.createElement('div');
-                                userInfoContainer.classList.add('flex', 'flex-col', 'flex-grow');
-
-                                // 3. 사용자 정보(닉네임, 작성 시간 등) 생성 및 추가
-                                const nameDateWrapper = document.createElement('div');
-                                nameDateWrapper.classList.add('flex', 'justify-between', 'items-center');
-                                userInfoContainer.appendChild(nameDateWrapper);
-
-                                const userDateDiv = document.createElement('div');
-                                userDateDiv.classList.add('flex', 'space-x-1');
-                                nameDateWrapper.appendChild(userDateDiv);
-
-                                // 사용자 닉네임 추가
-                                const userNickname = document.createElement('span');
-                                userNickname.classList.add('text-md');
-                                userNickname.innerText = review.authorNickname;
-                                userDateDiv.appendChild(userNickname);
-
-                                // 글 작성 시간 추가
-                                const createDate = new Date(review.createDate);
-                                const dateFormatOptions = { month: 'numeric', day: 'numeric', weekday: 'short' };
-                                const formattedDate = new Intl.DateTimeFormat('ko-KR', dateFormatOptions).format(createDate);
-
-                                const createDateSpan = document.createElement('span');
-                                createDateSpan.classList.add('text-xs', 'flex', 'items-end');
-                                createDateSpan.innerText = formattedDate;
-                                userDateDiv.appendChild(createDateSpan);
-
-                                // 4. 친구 추가 버튼 생성 및 추가
-                                // TODO
-                                const friendAddButton = document.createElement('button');
-                                friendAddButton.classList.add('mx-3', 'btn', 'btn-xs', 'btn-info');
-                                friendAddButton.innerHTML = '<i class="fa-solid fa-plus"></i>친구';
-                                nameDateWrapper.appendChild(friendAddButton);
-
-                                // 5. 사용자 추가 정보(등록 맛집, 작성 리뷰, 친구 수) 생성 및 추가
-                                // TODO
-                                const userAdditionalInfo = document.createElement('div');
-                                userInfoContainer.appendChild(userAdditionalInfo);
-
-                                const registeredRestaurants = document.createElement('span');
-                                registeredRestaurants.classList.add('text-xs');
-                                registeredRestaurants.innerText = '맛집 7';
-                                userAdditionalInfo.appendChild(registeredRestaurants);
-
-                                const writtenReviews = document.createElement('span');
-                                writtenReviews.classList.add('text-xs');
-                                writtenReviews.innerText = '리뷰 8';
-                                userAdditionalInfo.appendChild(writtenReviews);
-
-                                const friendCount = document.createElement('span');
-                                friendCount.classList.add('text-xs');
-                                friendCount.innerText = '친구 119';
-                                userAdditionalInfo.appendChild(friendCount);
-
-                                // 사용자 정보 컨테이너를 프로필 이미지 컨테이너에 추가
-                                userProfileWrapper.appendChild(userInfoContainer);
-                                // 사용자 정보와 프로필 이미지 컨테이너를 전체 리뷰 컨테이너에 추가
-                                reviewContainer.appendChild(userProfileWrapper)
-
-                                // 6. 리뷰 내용 생성 및 추가
-                                const reviewContentWrapper = document.createElement('div');
-                                reviewContentWrapper.classList.add('mt-3');
-                                reviewContainer.appendChild(reviewContentWrapper);
-
-                                const reviewContent = document.createElement('a');
-                                reviewContent.setAttribute('href', 'review/detail/' + review.reviewId);
-                                reviewContent.classList.add('break-words');
-                                reviewContent.innerText = review.content;
-                                reviewContentWrapper.appendChild(reviewContent);
-
-                                // 7. 리뷰 리스트 컨테이너에 전체 리뷰 컨테이너 추가
-                                const hr = document.createElement('hr')
-                                reviewContainer.appendChild(hr);
-                                reviewListContainer.appendChild(reviewContainer);
-                            });
+                        // 정보창에 표시할 내용을 설정합니다
+                        var iwContent;
+                        if (matzip.matzipName.length > 9) {
+                            iwContent = '<div style="padding:5px; overflow-wrap: break-word; font-size:0.8em;">' + matzip.matzipName + '</div>';
                         } else {
-                            noReview.style.display = 'block';
-                            reviewListContainer.style.display = 'none';
+                            iwContent = '<div style="padding:5px; overflow-wrap: break-word;">' + matzip.matzipName + '</div>';
                         }
-                        reviewButton.href = `/review/create/${place.matzipId}`;
+
+                        // 정보창을 생성합니다
+                        var infowindow = new kakao.maps.InfoWindow({
+                            content: iwContent
+                        });
+
+                        let currentReviews = [];
+
+                        // 마커에 클릭 이벤트를 등록합니다
+                        kakao.maps.event.addListener(marker, 'click', function () {
+                            if (currentInfoWindow) {
+                                currentInfoWindow.close();
+                            }
+                            infowindow.open(map, marker);
+                            currentInfoWindow = infowindow;
+                            // 장소 정보를 업데이트합니다.
+                            placeName.innerText = matzip.matzipName;
+                            placeAddress.innerText = '주소: ' + matzip.address;
+                            placePhone.innerText = '전화번호: ' + matzip.phoneNumber;
+                            // 설명이나 평점이 없는 경우, 해당 요소를 숨깁니다
+                            if (matzip.description === "" && matzip.rating === 0) {
+                                placeDescription.style.display = 'none';
+                                placeRating.style.display = 'none';
+                            } else {
+                                placeDescription.style.display = 'block';
+                                placeDescription.innerText = '설명: ' + matzip.description;
+                                placeRating.style.display = 'block';
+                                placeRating.innerText = '내 평점: ' + matzip.rating;
+                            }
+                            mapLink.href = 'https://map.kakao.com/link/map/' + matzip.matzipName + ',' + matzip.y + ',' + matzip.x;
+                            mapLink.innerText = '큰지도보기';
+                            routeLink.href = 'https://map.kakao.com/link/to/' + matzip.matzipName + ',' + matzip.y + ',' + matzip.x;
+                            routeLink.innerText = '길찾기';
+                            detailLink.href = matzip.matzipUrl;
+                            detailLink.innerText = '상세정보';
+                            placeInfo.style.display = 'block'; // Show place info
+                            reviewList.style.display = 'block'
+
+                            currentReviews = reviews.filter(review => review.matzipId === marker.matzipId);
+                            // 리뷰 목록을 업데이트합니다.
+                            const reviewListContainer = document.getElementById('reviewListContainer');
+                            const noReview = document.getElementById('noReview');
+
+                            reviewListContainer.innerHTML = ''; // 이전에 표시된 리뷰 목록 초기화
+
+                            if (reviews.length > 0) {
+                                noReview.style.display = 'none';
+                                reviewListContainer.style.display = 'block';
+                                //리뷰 반복문 (review x: reviews) 랑 같은거
+                                reviews.forEach((review) => {
+                                    // 1. 전체 리뷰 컨테이너 생성
+                                    const reviewContainer = document.createElement('div');
+                                    reviewContainer.classList.add('mt-3');
+
+                                    // 2. 사용자 프로필 이미지와 정보 컨테이너 생성
+                                    const userProfileWrapper = document.createElement('div');
+                                    userProfileWrapper.classList.add('flex', 'items-center', 'gap-2');
+                                    // 사용자 프로필 이미지 추가
+                                    const profileImg = document.createElement('img');
+                                    profileImg.src = 'https://placekitten.com/408/287';
+                                    profileImg.classList.add('w-14', 'h-14', 'rounded-full', 'border', 'border-gray-100');
+                                    userProfileWrapper.appendChild(profileImg);
+
+                                    // 사용자 정보를 포함할 컨테이너 생성
+                                    const userInfoContainer = document.createElement('div');
+                                    userInfoContainer.classList.add('flex', 'flex-col', 'flex-grow');
+
+                                    // 3. 사용자 정보(닉네임, 작성 시간 등) 생성 및 추가
+                                    const nameDateWrapper = document.createElement('div');
+                                    nameDateWrapper.classList.add('flex', 'justify-between', 'items-center');
+                                    userInfoContainer.appendChild(nameDateWrapper);
+
+                                    const userDateDiv = document.createElement('div');
+                                    userDateDiv.classList.add('flex', 'space-x-1');
+                                    nameDateWrapper.appendChild(userDateDiv);
+
+                                    // 사용자 닉네임 추가
+                                    const userNickname = document.createElement('span');
+                                    userNickname.classList.add('text-md');
+                                    userNickname.innerText = review.authorNickname;
+                                    userDateDiv.appendChild(userNickname);
+
+                                    // 글 작성 시간 추가
+                                    const createDate = new Date(review.createDate);
+                                    const dateFormatOptions = {month: 'numeric', day: 'numeric', weekday: 'short'};
+                                    const formattedDate = new Intl.DateTimeFormat('ko-KR', dateFormatOptions).format(createDate);
+
+                                    const createDateSpan = document.createElement('span');
+                                    createDateSpan.classList.add('text-xs', 'flex', 'items-end');
+                                    createDateSpan.innerText = formattedDate;
+                                    userDateDiv.appendChild(createDateSpan);
+
+                                    // 4. 친구 추가 버튼 생성 및 추가
+                                    // TODO
+                                    const friendAddButton = document.createElement('button');
+                                    friendAddButton.classList.add('mx-3', 'btn', 'btn-xs', 'btn-info');
+                                    friendAddButton.innerHTML = '<i class="fa-solid fa-plus"></i>친구';
+                                    nameDateWrapper.appendChild(friendAddButton);
+
+                                    // 5. 사용자 추가 정보(등록 맛집, 작성 리뷰, 친구 수) 생성 및 추가
+                                    // TODO
+                                    const userAdditionalInfo = document.createElement('div');
+                                    userInfoContainer.appendChild(userAdditionalInfo);
+
+                                    const registeredRestaurants = document.createElement('span');
+                                    registeredRestaurants.classList.add('text-xs');
+                                    registeredRestaurants.innerText = '맛집 7';
+                                    userAdditionalInfo.appendChild(registeredRestaurants);
+
+                                    const writtenReviews = document.createElement('span');
+                                    writtenReviews.classList.add('text-xs');
+                                    writtenReviews.innerText = '리뷰 8';
+                                    userAdditionalInfo.appendChild(writtenReviews);
+
+                                    const friendCount = document.createElement('span');
+                                    friendCount.classList.add('text-xs');
+                                    friendCount.innerText = '친구 119';
+                                    userAdditionalInfo.appendChild(friendCount);
+
+                                    // 사용자 정보 컨테이너를 프로필 이미지 컨테이너에 추가
+                                    userProfileWrapper.appendChild(userInfoContainer);
+                                    // 사용자 정보와 프로필 이미지 컨테이너를 전체 리뷰 컨테이너에 추가
+                                    reviewContainer.appendChild(userProfileWrapper)
+
+                                    // 6. 리뷰 내용 생성 및 추가
+                                    const reviewContentWrapper = document.createElement('div');
+                                    reviewContentWrapper.classList.add('mt-3');
+                                    reviewContainer.appendChild(reviewContentWrapper);
+
+                                    const reviewContent = document.createElement('span');
+                                    reviewContent.classList.add('break-words');
+                                    reviewContent.innerText = review.content;
+                                    reviewContentWrapper.appendChild(reviewContent);
+
+                                    // 7. 리뷰 리스트 컨테이너에 전체 리뷰 컨테이너 추가
+                                    const hr = document.createElement('hr')
+                                    reviewContainer.appendChild(hr);
+                                    reviewListContainer.appendChild(reviewContainer);
+                                });
+                            } else {
+                                noReview.style.display = 'block';
+                                reviewListContainer.style.display = 'none';
+                            }
+                            reviewButton.href = `/review/create/${matzip.matzipId}`;
+                        });
                     });
+                    clusterer.addMarkers(markers);
+                    if (callback) callback();
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                    if (callback) callback();
                 });
-            })
-            .catch((error) => {
-                console.error('Error:', error);
+        }
+
+        //전체 리스트 가져오는 함수, All 버튼 누르면 실행
+        function loadAllList() {
+            // All 버튼 스피너 표시
+            document.getElementById("allSpinner").style.display = "inline-block";
+
+            const apiUrl = "/matzip/api/list";
+            loadMatzipList(apiUrl, () => {
+                // All 버튼 스피너를 숨깁니다
+                document.getElementById("allSpinner").style.display = "none";
             });
+        }
+
+
+        //나의 리스트 호출하는 함수, private 버튼 누르면 실행
+        function loadMyList() {
+            // Private 버튼 스피너 표시
+            document.getElementById("mySpinner").style.display = "inline-block";
+
+            const apiUrl = "/matzip/api/mylist";
+            loadMatzipList(apiUrl, () => {
+                // Private 버튼 스피너를 숨깁니다
+                document.getElementById("mySpinner").style.display = "none";
+            });
+        }
+
+        function goToMatzipCreationPage() {
+            window.location.href = '/matzip/create';
+        };
+
+
     </script>
 </main>
 </body>

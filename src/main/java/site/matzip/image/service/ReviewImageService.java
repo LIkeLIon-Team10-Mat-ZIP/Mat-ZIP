@@ -14,7 +14,6 @@ import site.matzip.review.domain.Review;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 @Slf4j
@@ -32,24 +31,24 @@ public class ReviewImageService {
         if (multipartFiles.size() == 0) {
             log.info("Can't save Review Images (no image)");
         }
-        for (MultipartFile multipartFile : multipartFiles) {
-            saveReviewImage(multipartFile, review);
+        for (int index = 0; index < multipartFiles.size(); index++) {
+            saveReviewImage(multipartFiles.get(index), review, index);
         }
 
         log.info("Complete Review Images");
     }
 
-    private void saveReviewImage(MultipartFile multipartFile, Review review) throws IOException {
-        String originalFilename = UUID.randomUUID() + "_" + multipartFile.getOriginalFilename();
+    private void saveReviewImage(MultipartFile multipartFile, Review review, int index) throws IOException {
 
+        String filename = "reviewId_" + review.getId() + "_" + (index + 1);
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentLength(multipartFile.getSize());
         metadata.setContentType(multipartFile.getContentType());
 
-        amazonS3.putObject(bucket, originalFilename, multipartFile.getInputStream(), metadata);
+        amazonS3.putObject(bucket, "reviewImages/" + filename, multipartFile.getInputStream(), metadata);
 
         ReviewImage uploadImage = ReviewImage.builder()
-                .imageUrl(amazonS3.getUrl(bucket, originalFilename).toString())
+                .imageUrl(amazonS3.getUrl(bucket, "reviewImages/" + filename).toString())
                 .originalImageName(multipartFile.getOriginalFilename())
                 .build();
         uploadImage.setReview(review);
