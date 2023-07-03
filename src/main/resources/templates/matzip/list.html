@@ -137,6 +137,7 @@
         var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize);
         var currentInfoWindow = null;
         var markers = [];
+        var allData;
 
         var placeInfo = document.getElementById('placeInfo');
         var reviewList = document.getElementById('reviewList')
@@ -193,6 +194,8 @@
             fetch(apiUrl)
                 .then(response => response.json())
                 .then(data => {
+                    //전역 변수에 넘어온 모든 데이터 할당
+                    allData = data;
                     // 각 맛집 정보에 대해서 반복 처리를 합니다
                     data.forEach(matzipReviewDto => {
                         const matzip = matzipReviewDto.matzipListDTO;
