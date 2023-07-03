@@ -33,9 +33,9 @@ public class Review extends BaseEntity {
     @JsonIgnore
     private Member author;
     @OneToMany(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true)
-    private final List<ReviewImage> reviewImages = new ArrayList<>();
+    private List<ReviewImage> reviewImages = new ArrayList<>();
     @OneToMany(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true)
-    private final List<Comment> comments = new ArrayList<>();
+    private List<Comment> comments = new ArrayList<>();
 
     @Builder
     public Review(double rating, String content) {

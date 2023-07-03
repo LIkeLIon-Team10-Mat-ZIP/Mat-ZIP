@@ -32,11 +32,11 @@ public class Member {
     @OneToOne(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private ProfileImage profileImage;
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
-    private final List<MatzipMember> matzipMembers = new ArrayList<>();
+    private List<MatzipMember> matzipMembers = new ArrayList<>();
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
-    private final List<Review> reviews = new ArrayList<>();
+    private List<Review> reviews = new ArrayList<>();
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
-    private final List<Comment> comments = new ArrayList<>();
+    private List<Comment> comments = new ArrayList<>();
 
     @Builder
     public Member(String username, String kakao_nickname, String nickname, String password, String email) {
