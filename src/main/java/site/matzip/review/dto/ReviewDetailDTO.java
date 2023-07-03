@@ -12,7 +12,7 @@ import java.time.format.DateTimeFormatter;
 public class ReviewDetailDTO {
     private String profileImageUrl;
     private Long reviewId;
-    private Long views;
+    private int views;
     private String authorNickname;
     private LocalDateTime createDate;
     private String content;

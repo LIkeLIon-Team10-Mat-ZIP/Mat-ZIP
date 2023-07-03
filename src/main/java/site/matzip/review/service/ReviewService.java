@@ -72,4 +72,9 @@ public class ReviewService {
                 .createDate(review.getCreateDate())
                 .build();
     }
+
+    public void incrementViewCount(Review review) {
+        review.incrementViewCount();
+        reviewRepository.save(review);
+    }
 }

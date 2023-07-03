@@ -16,7 +16,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import site.matzip.comment.domain.Comment;
 import site.matzip.comment.dto.CommentInfoDTO;
-import site.matzip.comment.service.CommentService;
 import site.matzip.config.auth.PrincipalDetails;
 import site.matzip.matzip.domain.Matzip;
 import site.matzip.matzip.dto.MatzipInfoDTO;
@@ -37,7 +36,6 @@ import java.util.stream.Collectors;
 public class ReviewController {
     private final ReviewService reviewService;
     private final MatzipService matzipService;
-    private final CommentService commentService;
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/create")
@@ -122,8 +120,8 @@ public class ReviewController {
         for (int i = 0; cookies != null & i < cookies.length; i++) {
             if (cookies[i].getName().equals("reviewView")) {
                 cookie = cookies[i];
-                if (!cookie.getValue().equals("[" + review.getId() + "]")) {
-                    review.addViewCount();
+                if (!cookie.getValue().contains("[" + review.getId() + "]")) {
+                    reviewService.incrementViewCount(review);
                     cookie.setValue(cookie.getValue() + "[" + review.getId() + "]");
                 }
                 isCookie = true;
@@ -133,7 +131,7 @@ public class ReviewController {
 
         // request에 쿠기가 없을 때
         if (!isCookie) {
-            review.addViewCount();
+            reviewService.incrementViewCount(review);
             cookie = new Cookie("reviewView", "[" + review.getId() + "]");
         }
 
@@ -141,6 +139,7 @@ public class ReviewController {
         ZoneId kstZoneId = ZoneId.of("Asia/Seoul");
         long todayMidnightSecond = LocalDate.now(kstZoneId).atTime(LocalTime.MAX).toEpochSecond(ZoneOffset.UTC) - 9 * 3600; // UTC == KST + 9h
         long currentSecond = LocalDateTime.now(kstZoneId).toEpochSecond(ZoneOffset.UTC) - 9 * 3600;
+
         cookie.setPath("/");
         cookie.setMaxAge((int) (todayMidnightSecond - currentSecond));
         response.addCookie(cookie);
