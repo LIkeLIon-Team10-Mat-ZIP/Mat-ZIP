@@ -25,8 +25,7 @@ public class Comment extends BaseEntity {
     private String content;
 
     @Builder
-    public Comment(Member author, String content) {
-        this.author = author;
+    public Comment(String content) {
         this.content = content;
     }
 
@@ -36,5 +35,13 @@ public class Comment extends BaseEntity {
         }
         this.review = review;
         this.review.getComments().add(this);
+    }
+
+    public void setAuthor(Member author) {
+        if (this.author != null) {
+            this.author.getComments().remove(this);
+        }
+        this.author = author;
+        this.author.getComments().add(this);
     }
 }
