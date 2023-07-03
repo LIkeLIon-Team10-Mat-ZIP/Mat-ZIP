@@ -73,6 +73,11 @@ public class MatzipController {
         return "/matzip/list";
     }
 
+    @GetMapping("/mylist")
+    public String showMyList() {
+        return "/matzip/mylist";
+    }
+
     @GetMapping("/api/list")
     @ResponseBody
     public ResponseEntity<List<MatzipReviewListDTO>> searchAllWithReviews(Authentication authentication) {
@@ -86,11 +91,6 @@ public class MatzipController {
             // 예외 발생 시 처리
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
-    }
-
-    @GetMapping("/mylist")
-    public String showMyList() {
-        return "/matzip/mylist";
     }
 
     @GetMapping("/api/mylist")
