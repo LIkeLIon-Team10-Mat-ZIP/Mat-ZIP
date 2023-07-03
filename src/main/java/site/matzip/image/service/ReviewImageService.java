@@ -40,7 +40,7 @@ public class ReviewImageService {
 
     private void saveReviewImage(MultipartFile multipartFile, Review review, int index) throws IOException {
 
-        String filename = "reviewId_" + review.getId() + "_" + index;
+        String filename = "reviewId_" + review.getId() + "_" + (index + 1);
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentLength(multipartFile.getSize());
         metadata.setContentType(multipartFile.getContentType());
