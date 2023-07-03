@@ -1,6 +1,5 @@
 package site.matzip.comment.dto;
 
-import lombok.Builder;
 import lombok.Data;
 import site.matzip.comment.domain.Comment;
 
@@ -8,7 +7,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 @Data
-@Builder
 public class CommentInfoDTO {
     //private 프로필 이미지
     private Long id;
