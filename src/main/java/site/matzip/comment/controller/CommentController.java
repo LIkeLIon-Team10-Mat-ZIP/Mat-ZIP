@@ -28,7 +28,7 @@ public class CommentController {
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/create/{id}")
     public String create(@PathVariable Long id, String content, @AuthenticationPrincipal PrincipalDetails principalDetails) {
-        Review review = reviewService.findbyid(id);
+        Review review = reviewService.findById(id);
         Member author = principalDetails.getMember();
 
         commentService.create(review, author, content);

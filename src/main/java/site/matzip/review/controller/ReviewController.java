@@ -77,7 +77,7 @@ public class ReviewController {
     @PreAuthorize("isAuthenticated()")
     @DeleteMapping("/{id}")
     public String delete(@PathVariable Long id, @AuthenticationPrincipal PrincipalDetails principalDetail) {
-        Review review = reviewService.findbyid(id);
+        Review review = reviewService.findById(id);
 
         if (!Objects.equals(review.getAuthor().getId(), principalDetail.getMember().getId())) {
             throw new AccessDeniedException("You do not have permission to delete.");
@@ -90,7 +90,7 @@ public class ReviewController {
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/detail/{id}")
     public String detail(Model model, @PathVariable Long id, @AuthenticationPrincipal PrincipalDetails principalDetails) {
-        Review review = reviewService.findbyid(id);
+        Review review = reviewService.findById(id);
         Matzip matzip = review.getMatzip();
         // Comment
         List<Comment> comments = review.getComments();
