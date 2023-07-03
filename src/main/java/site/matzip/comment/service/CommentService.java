@@ -15,13 +15,14 @@ public class CommentService {
 
     public void create(Review review, Member author, String content) {
         Comment comment = Comment.builder()
-                .review(review)
                 .author(author)
                 .content(content)
                 .build();
 
+        comment.setReview(review);
         commentRepository.save(comment);
     }
+
 
     public void remove(Comment comment) {
         commentRepository.delete(comment);

@@ -25,9 +25,16 @@ public class Comment extends BaseEntity {
     private String content;
 
     @Builder
-    public Comment(Review review, Member author, String content) {
-        this.review = review;
+    public Comment(Member author, String content) {
         this.author = author;
         this.content = content;
+    }
+
+    public void setReview(Review review) {
+        if (this.review != null) {
+            this.review.getComments().remove(this);
+        }
+        this.review = review;
+        this.review.getComments().add(this);
     }
 }
