@@ -1,5 +1,8 @@
 package site.matzip.review.controller;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -23,6 +26,7 @@ import site.matzip.review.dto.ReviewCreationDTO;
 import site.matzip.review.dto.ReviewDetailDTO;
 import site.matzip.review.service.ReviewService;
 
+import java.time.*;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -105,5 +109,37 @@ public class ReviewController {
         model.addAttribute("commentInfoDTOS", commentInfoDTOS);
 
         return "/review/detail";
+    }
+
+    private void updateViewCountWithCookie(Review review, HttpServletRequest request, HttpServletResponse response) {
+        Cookie[] cookies = request.getCookies();
+        Cookie cookie = null;
+        boolean isCookie = false;
+        // request에 쿠키가 있을 때
+        for (int i = 0; cookies != null & i < cookies.length; i++) {
+            if (cookies[i].getName().equals("reviewView")) {
+                cookie = cookies[i];
+                if (!cookie.getValue().equals("[" + review.getId() + "]")) {
+                    review.addViewCount();
+                    cookie.setValue(cookie.getValue() + "[" + review.getId() + "]");
+                }
+                isCookie = true;
+                break;
+            }
+        }
+
+        // request에 쿠기가 없을 때
+        if (!isCookie) {
+            review.addViewCount();
+            cookie = new Cookie("reviewView", "[" + review.getId() + "]");
+        }
+
+        // Cookie 유지시간 = 당일 자정까지로 설정
+        ZoneId kstZoneId = ZoneId.of("Asia/Seoul");
+        long todayMidnightSecond = LocalDate.now(kstZoneId).atTime(LocalTime.MAX).toEpochSecond(ZoneOffset.UTC) - 9 * 3600; // UTC == KST + 9h
+        long currentSecond = LocalDateTime.now(kstZoneId).toEpochSecond(ZoneOffset.UTC) - 9 * 3600;
+        cookie.setPath("/");
+        cookie.setMaxAge((int) (todayMidnightSecond - currentSecond));
+        response.addCookie(cookie);
     }
 }
