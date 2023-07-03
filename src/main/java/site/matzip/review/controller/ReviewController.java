@@ -13,6 +13,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import site.matzip.comment.domain.Comment;
 import site.matzip.comment.dto.CommentInfoDTO;
+import site.matzip.comment.service.CommentService;
 import site.matzip.config.auth.PrincipalDetails;
 import site.matzip.matzip.domain.Matzip;
 import site.matzip.matzip.dto.MatzipInfoDTO;
@@ -33,6 +34,7 @@ import java.util.stream.Collectors;
 public class ReviewController {
     private final ReviewService reviewService;
     private final MatzipService matzipService;
+    private final CommentService commentService;
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/create")
@@ -48,6 +50,7 @@ public class ReviewController {
 
         model.addAttribute("matzipInfoDTO", matzipInfoDTO);
         model.addAttribute("reviewCreationDTO", reviewCreationDTO);
+
         return "/review/add";
     }
 
@@ -63,6 +66,7 @@ public class ReviewController {
         Member author = principalDetails.getMember();
 
         reviewService.create(reviewCreationDTO, author, matzip);
+
         return "redirect:/matzip/list";
     }
 
@@ -71,6 +75,7 @@ public class ReviewController {
     public ResponseEntity<List<Review>> getReviewsByMatzipId(@PathVariable Long matzipId, @RequestParam int pageSize, @RequestParam int pageNumber) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
         List<Review> reviews = reviewService.findByMatzipId(matzipId, pageable);
+
         return ResponseEntity.ok(reviews);
     }
 
@@ -82,8 +87,8 @@ public class ReviewController {
         if (!Objects.equals(review.getAuthor().getId(), principalDetail.getMember().getId())) {
             throw new AccessDeniedException("You do not have permission to delete.");
         }
-
         reviewService.remove(review);
+
         return "redirect:/matzip/list";
     }
 
@@ -92,23 +97,15 @@ public class ReviewController {
     public String detail(Model model, @PathVariable Long id, @AuthenticationPrincipal PrincipalDetails principalDetails) {
         Review review = reviewService.findById(id);
         Matzip matzip = review.getMatzip();
-        // Comment
+        ReviewDetailDTO reviewDetailDTO = new ReviewDetailDTO(review, matzip);
         List<Comment> comments = review.getComments();
         List<CommentInfoDTO> commentInfoDTOS = comments.stream()
-                .map(
-                        comment -> CommentInfoDTO.builder()
-                                .id(comment.getId())
-                                .loginId(principalDetails.getMember().getId())
-                                .authorId(comment.getAuthor().getId())
-                                .authorNickname(comment.getAuthor().getNickname())
-                                .createDate(comment.getCreateDate())
-                                .content(comment.getContent())
-                                .build())
+                .map(comment -> new CommentInfoDTO(comment, principalDetails.getMember().getId()))
                 .collect(Collectors.toList());
 
-        ReviewDetailDTO reviewDetailDTO = new ReviewDetailDTO(review, matzip);
         model.addAttribute("reviewDetailDTO", reviewDetailDTO);
         model.addAttribute("commentInfoDTOS", commentInfoDTOS);
+
         return "/review/detail";
     }
 }
