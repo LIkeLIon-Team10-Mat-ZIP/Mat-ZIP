@@ -169,4 +169,5 @@ public class ReviewService {
     public int getViewCount(Long reviewId) {
         Review review = findById(reviewId);
         return review.getViews();
+    }
 }
