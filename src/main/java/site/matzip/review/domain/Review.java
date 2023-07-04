@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import net.minidev.json.annotate.JsonIgnore;
 import site.matzip.base.domain.BaseEntity;
+import site.matzip.comment.domain.Comment;
 import site.matzip.image.domain.ReviewImage;
 import site.matzip.matzip.domain.Matzip;
 import site.matzip.member.domain.Member;
@@ -23,6 +24,8 @@ public class Review extends BaseEntity {
     private Long id;
     private double rating;
     private String content;
+    @Column(columnDefinition = "integer default 0", nullable = false)
+    private int views;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "matzip_id")
     @JsonIgnore
@@ -33,6 +36,8 @@ public class Review extends BaseEntity {
     private Member author;
     @OneToMany(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ReviewImage> reviewImages = new ArrayList<>();
+    @OneToMany(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comment> comments = new ArrayList<>();
 
     @Builder
     public Review(double rating, String content) {
@@ -54,5 +59,9 @@ public class Review extends BaseEntity {
         }
         this.author = author;
         author.getReviews().add(this);
+    }
+
+    public void incrementViewCount() {
+        this.views++;
     }
 }
