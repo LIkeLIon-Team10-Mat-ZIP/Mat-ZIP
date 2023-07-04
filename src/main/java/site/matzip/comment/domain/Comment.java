@@ -45,4 +45,8 @@ public class Comment extends BaseEntity {
         this.author = author;
         this.author.getComments().add(this);
     }
+
+    public void updatePointsRewarded() {
+        this.pointsRewarded = true;
+    }
 }
