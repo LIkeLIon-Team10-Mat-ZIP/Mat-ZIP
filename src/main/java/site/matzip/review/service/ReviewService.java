@@ -11,6 +11,7 @@ import site.matzip.member.domain.Member;
 import site.matzip.member.repository.MemberRepository;
 import site.matzip.review.domain.Review;
 import site.matzip.review.dto.ReviewCreationDTO;
+import site.matzip.review.dto.ReviewDetailDTO;
 import site.matzip.review.dto.ReviewListDTO;
 import site.matzip.review.repository.ReviewRepository;
 
@@ -78,6 +79,29 @@ public class ReviewService {
                 .content(review.getContent())
                 .rating(review.getRating())
                 .createDate(review.getCreateDate())
+                .build();
+    }
+
+    public ReviewDetailDTO createReviewDetailDTO(Long id) {
+        Review review = reviewRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Review not Found"));
+        Matzip matzip = review.getMatzip();
+
+        String profileImageUrl = AppConfig.getDefaultProfileImageUrl();
+        if (review.getAuthor().getProfileImage() != null && review.getAuthor().getProfileImage().getImageUrl() != null) {
+            profileImageUrl = review.getAuthor().getProfileImage().getImageUrl();
+        }
+
+        return ReviewDetailDTO.builder()
+                .profileImageUrl(profileImageUrl)
+                .authorNickname(review.getAuthor().getNickname())
+                .reviewId(review.getId())
+                .matzipName(matzip.getMatzipName())
+                .createDate(review.getCreateDate())
+                .address(matzip.getAddress())
+                .rating(review.getRating())
+                .matzipType(matzip.getMatzipType())
+                .phoneNumber(matzip.getPhoneNumber())
+                .content(review.getContent())
                 .build();
     }
 }

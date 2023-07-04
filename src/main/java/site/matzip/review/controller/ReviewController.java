@@ -94,8 +94,9 @@ public class ReviewController {
     @GetMapping("/detail/{id}")
     public String detail(Model model, @PathVariable Long id, @AuthenticationPrincipal PrincipalDetails principalDetails) {
         Review review = reviewService.findById(id);
-        Matzip matzip = review.getMatzip();
-        ReviewDetailDTO reviewDetailDTO = new ReviewDetailDTO(review, matzip);
+
+        ReviewDetailDTO reviewDetailDTO = reviewService.createReviewDetailDTO(id);
+
         List<Comment> comments = review.getComments();
         List<CommentInfoDTO> commentInfoDTOS = comments.stream()
                 .map(comment -> new CommentInfoDTO(comment, principalDetails.getMember().getId()))
