@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html layout:decorate="~{common/layout/defaultLayout.html}">
+
+<head>
+    <title>알림 리스트</title>
+</head>
+
+<body>
+
+<main layout:fragment="Content">
+    <div class="flex justify-center mx-auto max-w-5xl">
+        <div class="flex flex-col w-full">
+            <div class="p-3 border-b border-gray-400">
+                <span class="font-bold text-xl"><i class="fa-regular fa-bell"></i> 알림</span>
+            </div>
+            <div class="text-center mt-2 mx-2" th:if="${#lists.isEmpty(notifications)}">
+                <i class="fa-regular fa-bell-slash"></i> 최근에 받은 알림이 없습니다.
+            </div>
+        </div>
+    </div>
+
+</main>
+
+</body>
+
+</html>
