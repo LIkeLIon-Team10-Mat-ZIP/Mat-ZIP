@@ -4,21 +4,22 @@ import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
+@Getter
 @Configuration
 public class AppConfig {
-    @Getter
-    private static String defaultProfileImageUrl;
-    @Getter
-    private static Long pointRewardReferenceTime;
+    private final String defaultProfileImageUrl;
+    private final Long pointRewardReferenceTime;
+    private final Long pointRewardReview;
+    private final Long pointRewardComment;
 
-    @Value("${custom.profileImage.defaultUrl}")
-    public void setDefaultProfileImageUrl(String defaultProfileImageUrl) {
-        AppConfig.defaultProfileImageUrl = defaultProfileImageUrl;
+    public AppConfig(
+            @Value("${custom.profileImage.defaultUrl}") String defaultProfileImageUrl,
+            @Value("${custom.pointReward.referenceTime}") Long pointRewardReferenceTime,
+            @Value("${custom.pointReward.review}") Long pointRewardReview,
+            @Value("${custom.pointReward.comment}") Long pointRewardComment) {
+        this.defaultProfileImageUrl = defaultProfileImageUrl;
+        this.pointRewardReferenceTime = pointRewardReferenceTime;
+        this.pointRewardReview = pointRewardReview;
+        this.pointRewardComment = pointRewardComment;
     }
-
-    @Value("${custom.pointReward.referenceTime}")
-    public void setPointRewardReferenceTime(Long pointRewardReferenceTime) {
-        AppConfig.pointRewardReferenceTime = pointRewardReferenceTime;
-    }
-
 }
