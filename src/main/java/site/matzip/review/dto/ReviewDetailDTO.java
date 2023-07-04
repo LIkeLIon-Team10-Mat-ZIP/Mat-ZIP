@@ -24,7 +24,7 @@ public class ReviewDetailDTO {
     //private 리뷰이미지
 
     public ReviewDetailDTO(Review review, Matzip matzip) {
-//        this.profileImageUrl = review.getAuthor().getProfileImage().getImageUrl();
+        this.profileImageUrl = review.getAuthor().getProfileImage().getImageUrl();
         this.authorNickname = review.getAuthor().getNickname();
         //this.views =
         this.reviewId = review.getId();

@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import site.matzip.base.appConfig.AppConfig;
 import site.matzip.matzip.domain.Matzip;
 import site.matzip.member.domain.Member;
 import site.matzip.member.repository.MemberRepository;
@@ -63,10 +64,17 @@ public class ReviewService {
     }
 
     private ReviewListDTO convertToReviewDTO(Review review) {
+
+        String profileImageUrl = AppConfig.getDefaultProfileImageUrl();
+        if (review.getAuthor().getProfileImage() != null && review.getAuthor().getProfileImage().getImageUrl() != null) {
+            profileImageUrl = review.getAuthor().getProfileImage().getImageUrl();
+        }
+
         return ReviewListDTO.builder()
                 .matzipId(review.getMatzip().getId())
                 .reviewId(review.getId())
                 .authorNickname(review.getAuthor().getNickname())
+                .profileImageUrl(profileImageUrl)
                 .content(review.getContent())
                 .rating(review.getRating())
                 .createDate(review.getCreateDate())
