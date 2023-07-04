@@ -1,6 +1,7 @@
 package site.matzip.notification.entity;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -27,6 +28,16 @@ public class Notification extends BaseEntity {
     private Member toMember; // 알림을 받는 멤버
     @ManyToOne
     private Member fromMember; // 알림을 보낸 멤버
+
+    @Builder
+    public static Notification create(String typeCode, Member toMember, Member fromMember) {
+        Notification notification = new Notification();
+        notification.typeCode = typeCode;
+        notification.toMember = toMember;
+        notification.fromMember = fromMember;
+
+        return notification;
+    }
 
     public String getAfterCreateNotification() {
         long diff = ChronoUnit.SECONDS.between(getCreateDate(), LocalDateTime.now());
