@@ -45,7 +45,7 @@
             document.getElementById("reviewContent").value = editorContent; // 숨겨진 <textarea>에 복사합니다.
         }
     </script>
-    <div class="flex justify-center mx-auto max-w-5xl mt-20 contact-form">
+    <div class="flex justify-center mx-auto max-w-5xl contact-form">
         <div class="w-full">
             <form id="reviewForm" th:action="@{/matzip/createWithReview}" th:object="${matzipReviewDTO}" method="POST"
                   enctype="multipart/form-data"

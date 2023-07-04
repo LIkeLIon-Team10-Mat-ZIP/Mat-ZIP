@@ -18,7 +18,7 @@
             document.getElementById("content").value = editorContent; // 숨겨진 <textarea>에 복사합니다.
         }
     </script>
-    <div class="flex justify-center mx-auto max-w-5xl mt-20">
+    <div class="flex justify-center mx-auto max-w-5xl">
         <div class="w-full">
             <form id="reviewForm" th:action="@{|/review/create/${matzipInfoDTO.matzipId}|}" th:object="${reviewCreationDTO}"
                   method="POST" onsubmit="copyEditorContentToTextarea();">
