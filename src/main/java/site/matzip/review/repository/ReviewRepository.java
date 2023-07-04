@@ -18,6 +18,13 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
 
     List<Review> findByAuthorId(Long authorId);
 
+    /*
+       @EntityGraph(attributePaths = {"author"})
+       설명 첨부 : https://www.notion.so/Error-463876d369544503b8457bd4f6363c64
+       --------------------------------------------------------------------------------------
+       @ManyToOne(fetch = FetchType.LAZY) -> FetchType.EAGER "author" 연관 필드를 즉시 로딩으로 처리"
+       private Member author;             -> Review 와 연관된 Member 엔티티가 함께 로드
+     */
     @EntityGraph(attributePaths = {"author"})
     @Query("SELECT r from Review r WHERE r.createDate < :olderThanTime")
     List<Review> findReviewsOlderThan(@Param("olderThanTime") LocalDateTime olderThanTime);
