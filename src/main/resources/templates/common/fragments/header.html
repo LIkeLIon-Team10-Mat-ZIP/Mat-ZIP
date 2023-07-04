@@ -1,12 +1,12 @@
 <header class="bg-red-100 bg-opacity-90 fixed top-0 left-0 right-0 z-50" th:fragment="HeaderFragment" style="border-bottom: 3px solid pink;">
-    <div class="con mx-auto pr-4 h-full flex">
+    <div class="con mx-auto px-4 h-full flex items-center">
         <a href="/" class="logo text-lg font-bold flex items-center">
-            <img src="https://i.ibb.co/S7H2pL2/2023-06-29-3-45-06.png" alt="logo" border="0" style="height: 65px;width: 150px"/>
+            <img src="/img/logo.png" class="p-2" alt="logo" style="height: 55px; width: 150px"/>
         </a>
         <div class="flex-grow"></div>
         <!-- Navbar / Hamburger-Bar 둘다 값을 넣어주세요.-->
         <!-- Navbar -->
-        <div class="flex h-full items-center justify-center hidden sm:block mt-2">
+        <div class="flex h-full items-center justify-center hidden sm:block">
             <!--class="btn btn-ghost rounded-btn bg-transparent text-gray-800 dark:bg-transparent dark:text-gray-800" 다크모드일 경우 똑같은 값을 출력 -->
             <a sec:authorize="isAnonymous()" class="btn btn-ghost rounded-btn bg-transparent text-gray-800 dark:bg-transparent dark:text-gray-800" href="/oauth2/authorization/kakao">로그인</a>
             <a sec:authorize="isAuthenticated()" class="btn btn-ghost rounded-btn bg-transparent text-gray-800 dark:bg-transparent dark:text-gray-800" href="/usr/member/myPage">마이 페이지</a>
