@@ -84,7 +84,7 @@ public class ReviewService {
                 .build();
     }
 
-    public ReviewDetailDTO createReviewDetailDTO(Long id) {
+    public ReviewDetailDTO convertToReviewDetailDTO(Long id) {
         Review review = reviewRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Review not Found"));
         Matzip matzip = review.getMatzip();
 
@@ -107,7 +107,7 @@ public class ReviewService {
                 .build();
     }
 
-    public List<CommentInfoDTO> createCommentInfoDTOS(List<Comment> comments, Long authorId) {
+    public List<CommentInfoDTO> convertToCommentInfoDTOS(List<Comment> comments, Long authorId) {
 
         String profileImageUrl = AppConfig.getDefaultProfileImageUrl();
 

@@ -95,10 +95,10 @@ public class ReviewController {
     public String detail(Model model, @PathVariable Long id, @AuthenticationPrincipal PrincipalDetails principalDetails) {
         Review review = reviewService.findById(id);
 
-        ReviewDetailDTO reviewDetailDTO = reviewService.createReviewDetailDTO(id);
+        ReviewDetailDTO reviewDetailDTO = reviewService.convertToReviewDetailDTO(id);
 
         List<Comment> comments = review.getComments();
-        List<CommentInfoDTO> commentInfoDTOS = reviewService.createCommentInfoDTOS(comments, principalDetails.getMember().getId());
+        List<CommentInfoDTO> commentInfoDTOS = reviewService.convertToCommentInfoDTOS(comments, principalDetails.getMember().getId());
 
         model.addAttribute("reviewDetailDTO", reviewDetailDTO);
         model.addAttribute("commentInfoDTOS", commentInfoDTOS);
