@@ -30,6 +30,7 @@ import java.util.stream.Collectors;
 public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final MemberRepository memberRepository;
+    private final AppConfig appConfig;
 
     public Review create(ReviewCreationDTO reviewCreationDTO, Long authorId, Matzip matzip) {
 
@@ -72,7 +73,7 @@ public class ReviewService {
 
     private ReviewListDTO convertToReviewDTO(Review review) {
 
-        String profileImageUrl = AppConfig.getDefaultProfileImageUrl();
+        String profileImageUrl = appConfig.getDefaultProfileImageUrl();
         if (review.getAuthor().getProfileImage() != null && review.getAuthor().getProfileImage().getImageUrl() != null) {
             profileImageUrl = review.getAuthor().getProfileImage().getImageUrl();
         }
@@ -87,12 +88,12 @@ public class ReviewService {
                 .createDate(review.getCreateDate())
                 .build();
     }
-  
+
     public ReviewDetailDTO convertToReviewDetailDTO(Long id) {
         Review review = reviewRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Review not Found"));
         Matzip matzip = review.getMatzip();
 
-        String profileImageUrl = AppConfig.getDefaultProfileImageUrl();
+        String profileImageUrl = appConfig.getDefaultProfileImageUrl();
         if (review.getAuthor().getProfileImage() != null && review.getAuthor().getProfileImage().getImageUrl() != null) {
             profileImageUrl = review.getAuthor().getProfileImage().getImageUrl();
         }
@@ -113,7 +114,7 @@ public class ReviewService {
 
     public List<CommentInfoDTO> convertToCommentInfoDTOS(List<Comment> comments, Long authorId) {
 
-        String profileImageUrl = AppConfig.getDefaultProfileImageUrl();
+        String profileImageUrl = appConfig.getDefaultProfileImageUrl();
 
         return comments.stream()
                 .map(comment -> CommentInfoDTO.builder()
