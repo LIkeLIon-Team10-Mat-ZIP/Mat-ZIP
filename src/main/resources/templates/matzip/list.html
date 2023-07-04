@@ -55,11 +55,11 @@
 <body>
 <main layout:fragment="Content">
     <div class="flex justify-end space-x-4">
-        <input id="searchInput"
-               class="input input-bordered w-full max-w-xs"
+        <input class="input input-bordered w-full max-w-xs"
+               id="searchInput"
                placeholder="맛집 이름, 주소로 검색" type="text">
-        <select id="matzipTypeSelect"
-                class="rounded-md py-1 px-3 border-2 border-gray-400 focus:ring-2 focus:ring-blue-600">
+        <select class="rounded-md py-1 px-3 border-2 border-gray-400 focus:ring-2 focus:ring-blue-600"
+                id="matzipTypeSelect">
             <option value="ALL">전체</option>
             <option value="KOREAN">한식</option>
             <option value="JAPANESE">회/일식</option>
@@ -73,13 +73,14 @@
             검색
         </button>
         <div>
-            <button class="btn btn-info bg-blue-600 rounded-md py-1 px-4 text-white space-x-2 mr-2" id="allListBtn"
-                    onclick="loadAllList()">
-                All<span class="loading loading-spinner-sm inline" id="allSpinner" style="display: none;"></span>
-            </button>
-            <button class="btn btn-info bg-blue-600 rounded-md py-1 px-4 text-white space-x-2" id="myListBtn"
-                    onclick="loadMyList()">
-                Private<span class="loading loading-spinner-sm inline" id="mySpinner" style="display: none;"></span>
+            <button
+                    class="btn btn-info rounded-md py-1 px-4 text-white space-x-2 mr-2"
+                    id="listBtn"
+                    onclick="toggleList()"
+                    data-list-type="all"
+            >
+                All
+                <span class="loading loading-spinner-sm inline" id="listSpinner" style="display: none;"></span>
             </button>
         </div>
     </div>
@@ -158,6 +159,8 @@
         var currentInfoWindow = null;
         var markers = [];
         var nonFilteredData;
+        let currentListType = "all";
+
 
         var placeInfo = document.getElementById('placeInfo');
         var reviewList = document.getElementById('reviewList')
@@ -203,8 +206,8 @@
             }
         }
 
-        // 페이지 로드 될 때 나의 맛집 리스트 불러옴
-        loadAllList();
+
+        loadMatzipList("/matzip/api/list");
 
         //맛집 리스트 로드 함수. (apiUrl에 따라 다른 리스트 불러옴, 맨 아래에 있음)
         function loadMatzipList(apiUrl, callback) {
@@ -393,29 +396,51 @@
                 });
         }
 
-        //전체 리스트 가져오는 함수, All 버튼 누르면 실행
-        function loadAllList() {
-            // All 버튼 스피너 표시
-            document.getElementById("allSpinner").style.display = "inline-block";
+        // 리스트 타입 토글 함수
+        function toggleList() {
+            const listBtn = document.getElementById("listBtn");
+            const listType = listBtn.getAttribute("data-list-type");
 
-            const apiUrl = "/matzip/api/list";
-            loadMatzipList(apiUrl, () => {
-                // All 버튼 스피너를 숨깁니다
-                document.getElementById("allSpinner").style.display = "none";
-            });
-        }
+            // 리스트 버튼 스피너 표시
+            document.getElementById("listSpinner").style.display = "inline-block";
 
+            if (listType === "all") {
+                // 나의 리스트 불러오기
+                loadMatzipList("/matzip/api/mylist", () => {
+                    // 리스트 버튼 스피너를 숨깁니다
+                    document.getElementById("listSpinner").style.display = "none";
+                    // 리스트 타입을 "my"로 변경
+                    listBtn.setAttribute("data-list-type", "my");
+                    listBtn.classList.remove("btn-info");
+                    listBtn.classList.add("btn-primary");
 
-        //나의 리스트 호출하는 함수, private 버튼 누르면 실행
-        function loadMyList() {
-            // Private 버튼 스피너 표시
-            document.getElementById("mySpinner").style.display = "inline-block";
+                    // 버튼 텍스트 변경
+                    listBtn.innerHTML = `
+                All
+                <span class="loading loading-spinner-sm inline" id="listSpinner" style="display: none;"></span>
+            `;
 
-            const apiUrl = "/matzip/api/mylist";
-            loadMatzipList(apiUrl, () => {
-                // Private 버튼 스피너를 숨깁니다
-                document.getElementById("mySpinner").style.display = "none";
-            });
+                    currentListType = "my"; // 현재 리스트 타입 업데이트
+                });
+            } else {
+                // 전체 리스트 불러오기
+                loadMatzipList("/matzip/api/list", () => {
+                    // 리스트 버튼 스피너를 숨깁니다
+                    document.getElementById("listSpinner").style.display = "none";
+                    // 리스트 타입을 "all"로 변경
+                    listBtn.setAttribute("data-list-type", "all");
+                    listBtn.classList.remove("btn-primary");
+                    listBtn.classList.add("btn-info");
+
+                    // 버튼 텍스트 변경
+                    listBtn.innerHTML = `
+                Private
+                <span class="loading loading-spinner-sm inline" id="listSpinner" style="display: none;"></span>
+            `;
+
+                    currentListType = "all"; // 현재 리스트 타입 업데이트
+                });
+            }
         }
 
         function goToMatzipCreationPage() {

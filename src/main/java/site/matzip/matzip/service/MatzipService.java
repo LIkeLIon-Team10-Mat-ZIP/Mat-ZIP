@@ -116,7 +116,7 @@ public class MatzipService {
 
             double rating = 0;
             String description = "";
-            //사용자 후기 존재하는 곳이면 유저 후기 없으면 0, 빈칸
+            //사용자 후기 존재하는 곳이면 유저 후기, 없으면 0, 빈칸
             if (authorRecommendation.isPresent()) {
                 rating = authorRecommendation.get().getRating();
                 description = authorRecommendation.get().getDescription();
