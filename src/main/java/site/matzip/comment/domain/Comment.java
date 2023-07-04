@@ -23,6 +23,7 @@ public class Comment extends BaseEntity {
     @JoinColumn(name = "member_id")
     private Member author;
     private String content;
+    private boolean pointsRewarded;
 
     @Builder
     public Comment(String content) {
