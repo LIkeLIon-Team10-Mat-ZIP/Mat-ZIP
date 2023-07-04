@@ -65,4 +65,8 @@ public class Review extends BaseEntity {
     public void incrementViewCount() {
         this.views++;
     }
+
+    public void updatePointsRewarded() {
+        this.pointsRewarded = true;
+    }
 }
