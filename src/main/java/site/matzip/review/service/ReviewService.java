@@ -6,6 +6,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import site.matzip.base.appConfig.AppConfig;
+import site.matzip.comment.domain.Comment;
+import site.matzip.comment.dto.CommentInfoDTO;
 import site.matzip.matzip.domain.Matzip;
 import site.matzip.member.domain.Member;
 import site.matzip.member.repository.MemberRepository;
@@ -103,5 +105,22 @@ public class ReviewService {
                 .phoneNumber(matzip.getPhoneNumber())
                 .content(review.getContent())
                 .build();
+    }
+
+    public List<CommentInfoDTO> createCommentInfoDTOS(List<Comment> comments, Long authorId) {
+
+        String profileImageUrl = AppConfig.getDefaultProfileImageUrl();
+
+        return comments.stream()
+                .map(comment -> CommentInfoDTO.builder()
+                        .profileImageUrl(comment.getAuthor().getProfileImage() != null ? comment.getAuthor().getProfileImage().getImageUrl() : profileImageUrl)
+                        .id(comment.getId())
+                        .loginId(authorId)
+                        .authorId(comment.getAuthor().getId())
+                        .authorNickname(comment.getAuthor().getNickname())
+                        .createDate(comment.getCreateDate())
+                        .content(comment.getContent())
+                        .build())
+                .collect(Collectors.toList());
     }
 }

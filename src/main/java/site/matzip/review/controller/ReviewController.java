@@ -98,9 +98,7 @@ public class ReviewController {
         ReviewDetailDTO reviewDetailDTO = reviewService.createReviewDetailDTO(id);
 
         List<Comment> comments = review.getComments();
-        List<CommentInfoDTO> commentInfoDTOS = comments.stream()
-                .map(comment -> new CommentInfoDTO(comment, principalDetails.getMember().getId()))
-                .collect(Collectors.toList());
+        List<CommentInfoDTO> commentInfoDTOS = reviewService.createCommentInfoDTOS(comments, principalDetails.getMember().getId());
 
         model.addAttribute("reviewDetailDTO", reviewDetailDTO);
         model.addAttribute("commentInfoDTOS", commentInfoDTOS);
