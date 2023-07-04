@@ -45,12 +45,12 @@
 <body>
 
 <main layout:fragment="Content">
-    <div class="flex justify-center mx-auto max-w-5xl mt-20">
-        <div>
+    <div class="flex justify-center mx-auto max-w-5xl">
+        <div class="w-full">
             <!-- 작성자 부분 -->
             <div class="flex justify-between border-b border-gray-400">
                 <div class="flex justify-start items-center">
-                    <img src="https://drive.google.com/uc?id=1Eu_ibwNeAbHi7n5nu0zGQK9ylyoKpset" alt=""
+                    <img th:src="${reviewDetailDTO.profileImageUrl}" alt=""
                          class="w-14 h-14 object-cover m-3 rounded-full">
                     <div>
                         <div class="flex items-center mb-1">
@@ -151,7 +151,7 @@
                     <!-- 댓글 작성자 -->
                     <div class="flex justify-between">
                         <div class="flex justify-start items-center">
-                            <img src="https://drive.google.com/uc?id=1Eu_ibwNeAbHi7n5nu0zGQK9ylyoKpset" alt=""
+                            <img th:src="${comment.profileImageUrl}" alt=""
                                  class="w-10 h-10 object-cover m-3 rounded-full">
                             <div>
                                 <div class="flex items-center mb-1">
