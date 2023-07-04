@@ -67,4 +67,8 @@ public class Member {
     public void setProfileImage(ProfileImage profileImage) {
         this.profileImage = profileImage;
     }
+
+    public void addPoints(long point) {
+        this.point += point;
+    }
 }
