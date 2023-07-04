@@ -2,6 +2,7 @@ package site.matzip.matzip.service;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import site.matzip.matzip.domain.Matzip;
 import site.matzip.matzip.domain.MatzipMember;
@@ -34,14 +35,16 @@ public class MatzipService {
             Matzip existingMatzip = optionalExistingMatzip.get();
             MatzipMember matzipRecommendation = createMatzipRecommendationEntity(creationDTO, existingMatzip, author);
             matzipMemberRepository.save(matzipRecommendation);
-
+            evictMatzipListCache();
+            evictMyMatzipListCache();
             return existingMatzip;
         } else {
             Matzip matzip = createMatzipEntity(creationDTO);
             Matzip savedMatzip = matzipRepository.save(matzip);
             MatzipMember matzipRecommendation = createMatzipRecommendationEntity(creationDTO, savedMatzip, author);
             matzipMemberRepository.save(matzipRecommendation);
-
+            evictMatzipListCache();
+            evictMyMatzipListCache();
             return savedMatzip;
         }
     }
@@ -101,6 +104,7 @@ public class MatzipService {
         return convertToListDTO(findAll(), authorId);
     }
 
+    //내가 등록한 맛집 정보 검색
     public List<MatzipListDTO> findAndConvertMine(Long authorId) {
         return convertToListDTO(findAllByAuthorId(authorId), authorId);
     }
@@ -155,5 +159,13 @@ public class MatzipService {
         }
 
         return matzipReviewList;
+    }
+
+    @CacheEvict(value = "matzipListCache", allEntries = true)
+    public void evictMatzipListCache() {
+    }
+
+    @CacheEvict(value = "myMatzipListCache", allEntries = true)
+    public void evictMyMatzipListCache() {
     }
 }

@@ -1,6 +1,7 @@
 package site.matzip.matzip.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -81,6 +82,7 @@ public class MatzipController {
 
     @GetMapping("/api/list")
     @ResponseBody
+    @Cacheable(value = "MatzipListCache", key = "#authentication")
     public ResponseEntity<List<MatzipReviewListDTO>> searchAllWithReviews(Authentication authentication) {
         try {
             List<MatzipListDTO> matzipDtoList = matzipService.findAndConvertAll(rq.getMember(authentication).getId());
@@ -96,6 +98,7 @@ public class MatzipController {
 
     @GetMapping("/api/mylist")
     @ResponseBody
+    @Cacheable(value = "myMatzipListCache", key = "#authentication")
     public ResponseEntity<List<MatzipReviewListDTO>> searchMineWithReviews(Authentication authentication) {
         try {
             List<MatzipListDTO> matzipDtoList = matzipService.findAndConvertMine(rq.getMember(authentication).getId());
