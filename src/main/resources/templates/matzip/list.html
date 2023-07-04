@@ -344,7 +344,8 @@
                                     reviewContentWrapper.classList.add('mt-3');
                                     reviewContainer.appendChild(reviewContentWrapper);
 
-                                    const reviewContent = document.createElement('span');
+                                    const reviewContent = document.createElement('a');
+                                    reviewContent.setAttribute('href', 'review/detail/' + review.reviewId);
                                     reviewContent.classList.add('break-words');
                                     reviewContent.innerText = review.content;
                                     reviewContentWrapper.appendChild(reviewContent);

@@ -1,5 +1,7 @@
 package site.matzip.review.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -13,7 +15,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import site.matzip.comment.domain.Comment;
 import site.matzip.comment.dto.CommentInfoDTO;
-import site.matzip.comment.service.CommentService;
 import site.matzip.config.auth.PrincipalDetails;
 import site.matzip.matzip.domain.Matzip;
 import site.matzip.matzip.dto.MatzipInfoDTO;
@@ -33,7 +34,6 @@ import java.util.stream.Collectors;
 public class ReviewController {
     private final ReviewService reviewService;
     private final MatzipService matzipService;
-    private final CommentService commentService;
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/create")
@@ -92,7 +92,8 @@ public class ReviewController {
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/detail/{id}")
-    public String detail(Model model, @PathVariable Long id, @AuthenticationPrincipal PrincipalDetails principalDetails) {
+    public String detail(Model model, @PathVariable Long id, @AuthenticationPrincipal PrincipalDetails principalDetails,
+                         HttpServletRequest request, HttpServletResponse response) {
         Review review = reviewService.findById(id);
 
         ReviewDetailDTO reviewDetailDTO = reviewService.convertToReviewDetailDTO(id);
@@ -103,6 +104,15 @@ public class ReviewController {
         model.addAttribute("reviewDetailDTO", reviewDetailDTO);
         model.addAttribute("commentInfoDTOS", commentInfoDTOS);
 
+        reviewService.updateViewCountWithCookie(review, request, response);
+
         return "/review/detail";
+    }
+
+    @GetMapping("/getViewCount")
+    @ResponseBody
+    public String getViewCount(@RequestParam Long reviewId) {
+        System.out.println(reviewId);
+        return String.valueOf(reviewService.getViewCount(reviewId));
     }
 }

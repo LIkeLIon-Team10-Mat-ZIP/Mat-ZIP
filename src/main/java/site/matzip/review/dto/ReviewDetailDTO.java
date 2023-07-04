@@ -14,6 +14,7 @@ import java.time.format.DateTimeFormatter;
 public class ReviewDetailDTO {
     private String profileImageUrl;
     private Long reviewId;
+    private int views;
     private String authorNickname;
     private LocalDateTime createDate;
     private String content;
