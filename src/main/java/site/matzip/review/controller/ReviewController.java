@@ -109,4 +109,11 @@ public class ReviewController {
 
         return "/review/detail";
     }
+
+    @GetMapping("/getViewCount")
+    @ResponseBody
+    public String getViewCount(@RequestParam Long reviewId) {
+        System.out.println(reviewId);
+        return String.valueOf(reviewService.getViewCount(reviewId));
+    }
 }

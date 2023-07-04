@@ -114,4 +114,9 @@ public class ReviewService {
         cookie.setMaxAge((int) (todayMidnightSecond - currentSecond));
         response.addCookie(cookie);
     }
+
+    public int getViewCount(Long reviewId) {
+        Review review = findById(reviewId);
+        return review.getViews();
+    }
 }
