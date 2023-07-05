@@ -14,14 +14,18 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+import site.matzip.base.appConfig.AppConfig;
 import site.matzip.base.rsData.RsData;
 import site.matzip.member.domain.Member;
 import site.matzip.member.domain.MemberToken;
+import site.matzip.member.dto.MemberRankDto;
 import site.matzip.member.dto.NicknameUpdateDTO;
 import site.matzip.member.repository.MemberRepository;
 import site.matzip.member.repository.MemberTokenRepository;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -30,6 +34,7 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final MemberTokenRepository memberTokenRepository;
     private final PasswordEncoder passwordEncoder;
+    private final AppConfig appConfig;
 
     @Value("${token.content-type}")
     private String contentType;
@@ -146,5 +151,24 @@ public class MemberService {
         Optional<Member> member = memberRepository.findByNickname(nickname);
 
         return member.isPresent();
+    }
+
+    public List<MemberRankDto> findAndConvertTopTenMember() {
+        List<Member> members = memberRepository.findTop10ByOrderByPointDesc();
+        return members.stream().map(this::convertToMemberDTO).collect(Collectors.toList());
+    }
+
+    private MemberRankDto convertToMemberDTO(Member member) {
+        String profileImageUrl = appConfig.getDefaultProfileImageUrl();
+        if (member.getProfileImage() != null && member.getProfileImage().getImageUrl() != null) {
+            profileImageUrl = member.getProfileImage().getImageUrl();
+        }
+
+        return MemberRankDto.builder()
+                .profileImageUrl(profileImageUrl)
+                .username(member.getUsername())
+                //.badge(member.getMemberBadges())
+                .point(member.getPoint())
+                .build();
     }
 }
