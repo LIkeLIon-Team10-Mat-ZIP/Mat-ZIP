@@ -34,6 +34,7 @@ public class MemberController {
 
     private final MemberService memberService;
     private final ProfileImageService profileImageService;
+    private final AppConfig appConfig;
     private final Rq rq;
 
     @GetMapping("/login")
@@ -64,7 +65,7 @@ public class MemberController {
     public String showMyPage(Model model, @AuthenticationPrincipal PrincipalDetails principalDetails) {
         Member member = principalDetails.getMember();
 
-        String profileImageUrl = AppConfig.getDefaultProfileImageUrl();
+        String profileImageUrl = appConfig.getDefaultProfileImageUrl();
         if (member.getProfileImage() != null && member.getProfileImage().getImageUrl() != null) {
             profileImageUrl = member.getProfileImage().getImageUrl();
         }

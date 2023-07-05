@@ -29,7 +29,8 @@ public class Member {
     private MemberRole role;
     //TODO:이 부분도 oAuth만 이용시 필요없음. 삭제예정
     private String password;
-
+    @Column(columnDefinition = "bigint default 0")
+    private long point;
     @OneToOne(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private ProfileImage profileImage;
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -68,5 +69,9 @@ public class Member {
 
     public void setProfileImage(ProfileImage profileImage) {
         this.profileImage = profileImage;
+    }
+
+    public void addPoints(long point) {
+        this.point += point;
     }
 }

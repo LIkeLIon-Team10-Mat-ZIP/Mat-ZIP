@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import site.matzip.base.appConfig.AppConfig;
 import site.matzip.comment.domain.Comment;
@@ -29,6 +30,7 @@ import java.util.stream.Collectors;
 public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final MemberRepository memberRepository;
+    private final AppConfig appConfig;
 
     public Review create(ReviewCreationDTO reviewCreationDTO, Long authorId, Matzip matzip) {
 
@@ -70,7 +72,7 @@ public class ReviewService {
 
     private ReviewListDTO convertToReviewDTO(Review review) {
 
-        String profileImageUrl = AppConfig.getDefaultProfileImageUrl();
+        String profileImageUrl = appConfig.getDefaultProfileImageUrl();
         if (review.getAuthor().getProfileImage() != null && review.getAuthor().getProfileImage().getImageUrl() != null) {
             profileImageUrl = review.getAuthor().getProfileImage().getImageUrl();
         }
@@ -90,7 +92,7 @@ public class ReviewService {
         Review review = reviewRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Review not Found"));
         Matzip matzip = review.getMatzip();
 
-        String profileImageUrl = AppConfig.getDefaultProfileImageUrl();
+        String profileImageUrl = appConfig.getDefaultProfileImageUrl();
         if (review.getAuthor().getProfileImage() != null && review.getAuthor().getProfileImage().getImageUrl() != null) {
             profileImageUrl = review.getAuthor().getProfileImage().getImageUrl();
         }
@@ -111,7 +113,7 @@ public class ReviewService {
 
     public List<CommentInfoDTO> convertToCommentInfoDTOS(List<Comment> comments, Long authorId) {
 
-        String profileImageUrl = AppConfig.getDefaultProfileImageUrl();
+        String profileImageUrl = appConfig.getDefaultProfileImageUrl();
 
         return comments.stream()
                 .map(comment -> CommentInfoDTO.builder()
@@ -167,5 +169,21 @@ public class ReviewService {
     public int getViewCount(Long reviewId) {
         Review review = findById(reviewId);
         return review.getViews();
+    }
+
+    @Scheduled(fixedRate = 10 * 60 * 1000) // 주기 10분
+    public void rewardPointsForReviews() {
+        LocalDateTime referenceTime = LocalDateTime.now().minusHours(appConfig.getPointRewardReferenceTime());
+        List<Review> validReviews = reviewRepository.findReviewsOlderThan(referenceTime);
+
+        for (Review review : validReviews) {
+            if (!review.isPointsRewarded()) {
+                Member author = review.getAuthor();
+                author.addPoints(appConfig.getPointRewardReview());
+                memberRepository.save(author); // 포인트 업데이트
+                review.updatePointsRewarded(); // 포인트 지급 여부 업데이트
+                reviewRepository.save(review); // 댓글 업데이트
+            }
+        }
     }
 }
