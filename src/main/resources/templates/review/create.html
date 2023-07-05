@@ -86,9 +86,7 @@
                         <div class="flex-grow">
                             <div class="flex items-center">
                                 <span class="font-bold text-xl mr-3" id="matzipName"></span>
-                                <a target="_blank" th:href="${matzipInfoDTO.matzipUrl}">
-                                    <button class="btn btn-outline btn-xs" type="button">상세보기</button>
-                                </a>
+                                <a href="#" id="detailBtn" class="btn btn-outline btn-xs" target="_blank">상세보기</a>
                             </div>
                             <div class="flex flex-col">
                                 <span id="matzipType"></span>
@@ -172,6 +170,10 @@
         var newRating = ratingContainer.value;
         console.log("newRating = " + newRating);
 
+        var matzipUrl = matzipCreationDTO.matzipUrl;
+        document.getElementById('detailBtn').href = matzipUrl;
+
+
         // 맛집 정보를 히든 필드에 설정합니다
         document.getElementById('matzipNameInput').value = matzipCreationDTO.matzipName;
         document.getElementById('addressInput').value = matzipCreationDTO.address;
@@ -246,6 +248,7 @@
             const selectedImagesDiv = document.getElementById("selectedImages");
             selectedImagesDiv.innerHTML = "";
         }
+
 
     </script>
 </main>
