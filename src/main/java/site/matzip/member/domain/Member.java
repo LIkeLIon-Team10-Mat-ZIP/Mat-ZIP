@@ -5,6 +5,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import site.matzip.badge.domain.MemberBadge;
 import site.matzip.comment.domain.Comment;
 import site.matzip.image.domain.ProfileImage;
 import site.matzip.matzip.domain.MatzipMember;
@@ -28,7 +29,8 @@ public class Member {
     private MemberRole role;
     //TODO:이 부분도 oAuth만 이용시 필요없음. 삭제예정
     private String password;
-
+    @Column(columnDefinition = "bigint default 0")
+    private long point;
     @OneToOne(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private ProfileImage profileImage;
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -37,6 +39,8 @@ public class Member {
     private List<Review> reviews = new ArrayList<>();
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<MemberBadge> memberBadges = new ArrayList<>();
 
     @Builder
     public Member(String username, String kakao_nickname, String nickname, String password, String email) {
@@ -65,5 +69,9 @@ public class Member {
 
     public void setProfileImage(ProfileImage profileImage) {
         this.profileImage = profileImage;
+    }
+
+    public void addPoints(long point) {
+        this.point += point;
     }
 }

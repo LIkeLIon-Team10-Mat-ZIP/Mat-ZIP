@@ -23,6 +23,7 @@ public class Comment extends BaseEntity {
     @JoinColumn(name = "member_id")
     private Member author;
     private String content;
+    private boolean pointsRewarded;
 
     @Builder
     public Comment(String content) {
@@ -43,5 +44,9 @@ public class Comment extends BaseEntity {
         }
         this.author = author;
         this.author.getComments().add(this);
+    }
+
+    public void updatePointsRewarded() {
+        this.pointsRewarded = true;
     }
 }
