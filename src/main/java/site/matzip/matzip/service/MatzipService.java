@@ -62,12 +62,14 @@ public class MatzipService {
 
     //개인의 맛집 추천(후기) 엔티티 생성
     private MatzipMember createMatzipRecommendationEntity(MatzipCreationDTO creationDTO, Matzip savedMatzip, Member author) {
-        return MatzipMember.builder()
+        MatzipMember createdMatzipMember = MatzipMember.builder()
                 .rating(creationDTO.getRating())
                 .description(creationDTO.getDescription())
-                .matzip(savedMatzip)
-                .author(author)
                 .build();
+        createdMatzipMember.setAuthor(author);
+        createdMatzipMember.setMatzip(savedMatzip);
+
+        return createdMatzipMember;
     }
 
     //리뷰 엔티티 만드는 메서드
