@@ -29,8 +29,9 @@
                     <div class="flex items-center">
                         <span class="mr-3 text-xl font-bold" th:text="${memberInfoDTO.nickname}"></span>
                         <div class="flex flex-grow">
-                            <img src="https://drive.google.com/uc?id=1Eu_ibwNeAbHi7n5nu0zGQK9ylyoKpset" class="w-7 h-7 rounded-full mr-1">
-                            <img src="https://drive.google.com/uc?id=1Eu_ibwNeAbHi7n5nu0zGQK9ylyoKpset" class="w-7 h-7 rounded-full mr-1">
+                            <div th:each="badge : ${memberInfoDTO.badgeImage}">
+                                <img th:src="${badge.key}" class="w-7 h-7 rounded-full mr-1" th:title="${badge.value}">
+                            </div>
                         </div>
                         <div class="dropdown dropdown-left">
                             <label tabindex="0" class="btn btn-xs bg-pink-200 hover:bg-pink-300 m-1">
