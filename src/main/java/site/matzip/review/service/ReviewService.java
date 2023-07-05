@@ -87,7 +87,7 @@ public class ReviewService {
                 .createDate(review.getCreateDate())
                 .build();
     }
-  
+
     public ReviewDetailDTO convertToReviewDetailDTO(Long id) {
         Review review = reviewRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Review not Found"));
         Matzip matzip = review.getMatzip();
@@ -169,4 +169,5 @@ public class ReviewService {
     public int getViewCount(Long reviewId) {
         Review review = findById(reviewId);
         return review.getViews();
+    }
 }
