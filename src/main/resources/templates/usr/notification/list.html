@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html layout:decorate="~{common/layout/defaultLayout.html}">
+
+<head>
+    <title>알림 리스트</title>
+</head>
+
+<body>
+
+<main layout:fragment="Content">
+    <div class="flex justify-center mx-auto max-w-5xl">
+        <div class="flex flex-col w-full">
+            <div class="p-3 border-b border-gray-400">
+                <span class="font-bold text-xl"><i class="fa-regular fa-bell"></i> 알림</span>
+            </div>
+            <div class="text-center mt-2 mx-2" th:if="${#lists.isEmpty(notificationDTOS)}">
+                <i class="fa-regular fa-bell-slash"></i> 최근에 받은 알림이 없습니다.
+            </div>
+            <ul class="flex flex-col gap-1" th:if="${!#lists.isEmpty(notificationDTOS)}">
+                <div class="flex justify-end">
+                    <a id="readAllDelete" style="cursor: pointer" th:data-id="1" class="text-sm mr-5 hover:underline"
+                       onclick="if ( confirm('정말로 읽은 알림들을 전부 삭제하시겠습니까?') ) AllDelete(this);">
+                        읽은 알림 삭제
+                    </a>
+                    <a id="allDelete" style="cursor: pointer" th:data-id="2" class="text-sm mr-1 hover:underline"
+                       onclick="if ( confirm('정말로 알림들을 전부 삭제하시겠습니까?') ) AllDelete(this);">
+                        알림 모두 삭제
+                    </a>
+                </div>
+
+                <li th:each="notificationDTO, iterationStat: ${notificationDTOS}">
+                    <div class="card bg-base-100 shadow-2xl">
+                        <div class="card-body">
+                            <div class="flex flex-col gap-2">
+                                <div class="flex items-center">
+                                    <i class="fa-solid fa-bell mr-2"></i>
+                                    <span>알림&nbsp;</span><span class="mr-4 text-blue-500"
+                                                               th:text="|#${#lists.size(notificationDTOS) - iterationStat.count + 1}|"></span>
+                                    <span class="badge badge-primary"
+                                          th:text="|${#temporals.format(notificationDTO.createDate, 'yy.MM.dd HH:mm')}, ${notificationDTO.afterCreateNotification} 전|"></span>
+                                    <i th:if="${notificationDTO.afterCreateNotification.endsWith('초') or notificationDTO.afterCreateNotification.endsWith('분')}"
+                                       class="fa-solid fa-fire text-red-500 ml-2"></i>
+                                    <div class="flex flex-grow justify-end">
+                                        <!-- 클릭 시 알림 읽음 처리(눈 아이콘) -->
+                                        <a style="cursor: pointer" class="flex items-center mr-3" th:if="${notificationDTO.readDate == null}" th:data-id="${notificationDTO.id}" onclick="EyeIconClick(this)">
+                                            <i class="fa-solid fa-eye"></i>
+                                        </a>
+                                        <a style="cursor: pointer" class="flex items-center mr-3" th:if="${notificationDTO.readDate != null}" th:data-id="${notificationDTO.id}" onclick="EyeIconClick(this)">
+                                            <i class="fa-regular fa-eye-slash"></i>
+                                        </a>
+                                    </div>
+                                    <div>
+                                        <a style="cursor: pointer" class="flex items-center" th:data-id="${notificationDTO.id}"
+                                           onclick="if ( confirm('정말로 삭제하시겠습니까?') ) TrashCanIconClick(this);">
+                                            <i class="fa-solid fa-trash-can"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mt-1 flex flex-col gap-2">
+                                <div class="flex items-center">
+                                    <div th:if="${notificationDTO.typeCode.equals('comment')}">
+                                    <span class="badge badge-primary"
+                                          th:text="${notificationDTO.fromMemberNickname}"></span> 님이 당신의 리뷰에 댓글을 달았습니다.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+</main>
+
+</body>
+
+</html>
