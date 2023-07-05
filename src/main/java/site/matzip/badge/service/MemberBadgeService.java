@@ -18,7 +18,9 @@ import site.matzip.member.repository.MemberRepository;
 import site.matzip.review.domain.Review;
 import site.matzip.review.repository.ReviewRepository;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -30,6 +32,21 @@ public class MemberBadgeService {
     private final MatzipMemberRepository matzipMemberRepository;
     private final ReviewRepository reviewRepository;
     private final CommentRepository commentRepository;
+
+    public Map<String, String> showMemberBadge(Member member) {
+        List<MemberBadge> memberBadges = memberBadgeRepository.findByMember(member);
+        Map<String, String> badgeMap = new HashMap<>();
+
+        for (MemberBadge memberBadge : memberBadges) {
+            Badge badge = memberBadge.getBadge();
+            String imageUrl = badge.getImageUrl();
+            String badgeTypeLabel = badge.getBadgeType().label();
+
+            badgeMap.put(imageUrl, badgeTypeLabel);
+        }
+
+        return badgeMap;
+    }
 
     @Scheduled(cron = "*/15 * * * * *")
     @Transactional
