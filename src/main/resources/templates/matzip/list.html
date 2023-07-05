@@ -75,9 +75,9 @@
         <div>
             <button
                     class="btn btn-info rounded-md py-1 px-4 text-white space-x-2 mr-2"
+                    data-list-type="all"
                     id="listBtn"
                     onclick="toggleList()"
-                    data-list-type="all"
             >
                 All
                 <span class="loading loading-spinner-sm inline" id="listSpinner" style="display: none;"></span>
@@ -192,7 +192,9 @@
             if (target !== mapContainer && !mapContainer.contains(target) && target !== placeInfo && !placeInfo.contains(target)) {
                 placeInfo.style.display = 'none'; // Hide place info
                 reviewList.style.display = 'none';
-                currentInfoWindow.close();
+                if (currentInfoWindow) {
+                    currentInfoWindow.close();
+                }
             }
         });
 
@@ -416,7 +418,7 @@
 
                     // 버튼 텍스트 변경
                     listBtn.innerHTML = `
-                All
+                PRIVATE
                 <span class="loading loading-spinner-sm inline" id="listSpinner" style="display: none;"></span>
             `;
 
@@ -434,7 +436,7 @@
 
                     // 버튼 텍스트 변경
                     listBtn.innerHTML = `
-                Private
+                ALL
                 <span class="loading loading-spinner-sm inline" id="listSpinner" style="display: none;"></span>
             `;
 
@@ -624,7 +626,7 @@
                             reviewContentWrapper.classList.add('mt-3');
                             reviewContainer.appendChild(reviewContentWrapper);
                             const reviewContent = document.createElement('a');
-                            reviewContent.setAttribute('href', 'review/detail/' + review.reviewId);
+                            reviewContent.setAttribute('href', '/review/detail/' + review.reviewId);
                             reviewContent.classList.add('break-words');
                             reviewContent.innerText = review.content;
                             reviewContentWrapper.appendChild(reviewContent);

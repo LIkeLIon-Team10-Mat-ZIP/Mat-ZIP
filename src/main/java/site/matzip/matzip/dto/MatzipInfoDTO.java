@@ -11,6 +11,7 @@ public class MatzipInfoDTO {
     private MatzipType matzipType;
     private String address;
     private String phoneNumber;
+    private String matzipUrl;
 
     public MatzipInfoDTO(Matzip matzip) {
         this.matzipId = matzip.getId();
@@ -18,5 +19,6 @@ public class MatzipInfoDTO {
         this.matzipType = matzip.getMatzipType();
         this.address = matzip.getAddress();
         this.phoneNumber = matzip.getPhoneNumber();
+        this.matzipUrl = matzip.getMatzipUrl();
     }
 }
