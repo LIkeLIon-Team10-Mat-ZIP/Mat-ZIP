@@ -26,4 +26,20 @@ public class MatzipMember {
         this.rating = rating;
         this.description = description;
     }
+
+    public void setAuthor(Member author) {
+        if (this.author != null) {
+            this.author.getMatzipMembers().remove(this);
+        }
+        this.author = author;
+        author.getMatzipMembers().add(this);
+    }
+
+    public void setMatzip(Matzip matzip) {
+        if (this.matzip != null) {
+            this.matzip.getMatzipMemberList().remove(this);
+        }
+        this.matzip = matzip;
+        author.getMatzipMembers().add(this);
+    }
 }
