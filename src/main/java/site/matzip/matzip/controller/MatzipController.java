@@ -113,8 +113,4 @@ public class MatzipController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-
-    public String getCacheKey(Authentication authentication) {
-        return rq.getMember(authentication).getUsername();
-    }
 }

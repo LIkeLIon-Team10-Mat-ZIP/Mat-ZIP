@@ -2,26 +2,44 @@
 <html layout:decorate="~{common/layout/defaultLayout.html}">
 <head>
     <title>리뷰 등록</title>
+    <style>
+        #selectedImages {
+            display: flex;
+            justify-content: flex-start;
+            flex-wrap: wrap;
+            gap: 10px; /* 여백을 조절할 값 */
+        }
 
-    <!-- 토스트 UI 에디터 불러오기 시작 -->
-    <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
-    <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css"/>
-    <!-- 토스트 UI 에디터 불러오기 끝 -->
+        .selectedImageContainer {
+            width: 120px;
+            height: 120px;
+            border: 2px solid #CCC;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        textarea {
+            border: 3px solid #CCC;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .selectedImage {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+    </style>
 </head>
 <body>
 
 <main layout:fragment="Content">
-
-    <script>
-        function copyEditorContentToTextarea() {
-            const editorContent = editor1.getHTML(); // 에디터의 내용을 가져옵니다.
-            document.getElementById("content").value = editorContent; // 숨겨진 <textarea>에 복사합니다.
-        }
-    </script>
     <div class="flex justify-center mx-auto max-w-5xl">
         <div class="w-full">
-            <form id="reviewForm" th:action="@{|/review/create/${matzipInfoDTO.matzipId}|}" th:object="${reviewCreationDTO}"
-                  method="POST" onsubmit="copyEditorContentToTextarea();">
+            <form id="reviewForm" method="POST"
+                  th:action="@{|/review/create/${matzipInfoDTO.matzipId}|}" th:object="${reviewCreationDTO}"
+                  enctype="multipart/form-data">
+
                 <div class="flex flex-col">
                     <span class="font-bold text-xl p-3 border-b border-gray-400"><i
                             class="fa-regular fa-pen-to-square"></i> 리뷰 작성</span>
@@ -29,7 +47,10 @@
                         <div class="flex-grow">
                             <div class="flex items-center">
                                 <span class="font-bold text-xl mr-3" th:text="${matzipInfoDTO.matzipName}"></span>
-                                <button class="btn btn-outline btn-xs" type="submit">상세보기</button>
+                                <button class="btn btn-outline btn-xs"
+                                        onclick="openMatzipUrl('${matzipInfoDTO.matzipUrl}')"
+                                        target="_blank">상세보기
+                                </button>
                             </div>
                             <div class="flex flex-col">
                                 <span th:text="${matzipInfoDTO.matzipType}"></span>
@@ -40,48 +61,54 @@
                         <div class="flex flex-col">
                             <span class="mb-2 text-lg">별점</span>
                             <div class="rating rating-md rating-half" id="rating">
-                                <input id="rating-0.5" type="radio" name="rating" value="0.5"
-                                       class="bg-yellow-500 mask mask-star-2 mask-half-1"/>
-                                <input id="rating-1.0" type="radio" name="rating" value="1.0"
-                                       class="bg-yellow-500 mask mask-star-2 mask-half-2"/>
-                                <input id="rating-1.5" type="radio" name="rating" value="1.5"
-                                       class="bg-yellow-500 mask mask-star-2 mask-half-1"/>
-                                <input id="rating-2.0" type="radio" name="rating" value="2.0"
-                                       class="bg-yellow-500 mask mask-star-2 mask-half-2"/>
-                                <input id="rating-2.5" type="radio" name="rating" value="2.5"
-                                       class="bg-yellow-500 mask mask-star-2 mask-half-1"/>
-                                <input id="rating-3.0" type="radio" name="rating" value="3.0"
-                                       class="bg-yellow-500 mask mask-star-2 mask-half-2" checked/>
-                                <input id="rating-3.5" type="radio" name="rating" value="3.5"
-                                       class="bg-yellow-500 mask mask-star-2 mask-half-1"/>
-                                <input id="rating-4.0" type="radio" name="rating" value="4.0"
-                                       class="bg-yellow-500 mask mask-star-2 mask-half-2"/>
-                                <input id="rating-4.5" type="radio" name="rating" value="4.5"
-                                       class="bg-yellow-500 mask mask-star-2 mask-half-1"/>
-                                <input id="rating-5.0" type="radio" name="rating" value="5.0"
-                                       class="bg-yellow-500 mask mask-star-2 mask-half-2"/>
+                                <input class="bg-yellow-500 mask mask-star-2 mask-half-1" id="rating-0.5" name="rating"
+                                       type="radio"
+                                       value="0.5"/>
+                                <input class="bg-yellow-500 mask mask-star-2 mask-half-2" id="rating-1.0" name="rating"
+                                       type="radio"
+                                       value="1.0"/>
+                                <input class="bg-yellow-500 mask mask-star-2 mask-half-1" id="rating-1.5" name="rating"
+                                       type="radio"
+                                       value="1.5"/>
+                                <input class="bg-yellow-500 mask mask-star-2 mask-half-2" id="rating-2.0" name="rating"
+                                       type="radio"
+                                       value="2.0"/>
+                                <input class="bg-yellow-500 mask mask-star-2 mask-half-1" id="rating-2.5" name="rating"
+                                       type="radio"
+                                       value="2.5"/>
+                                <input checked class="bg-yellow-500 mask mask-star-2 mask-half-2" id="rating-3.0"
+                                       name="rating"
+                                       type="radio" value="3.0"/>
+                                <input class="bg-yellow-500 mask mask-star-2 mask-half-1" id="rating-3.5" name="rating"
+                                       type="radio"
+                                       value="3.5"/>
+                                <input class="bg-yellow-500 mask mask-star-2 mask-half-2" id="rating-4.0" name="rating"
+                                       type="radio"
+                                       value="4.0"/>
+                                <input class="bg-yellow-500 mask mask-star-2 mask-half-1" id="rating-4.5" name="rating"
+                                       type="radio"
+                                       value="4.5"/>
+                                <input class="bg-yellow-500 mask mask-star-2 mask-half-2" id="rating-5.0" name="rating"
+                                       type="radio"
+                                       value="5.0"/>
                             </div>
                         </div>
                     </div>
                     <div class="flex flex-col p-3">
-                        <input type="file" class="file-input file-input-bordered w-full"/>
-                        <div class="flex justify-between my-2">
-                            <img src="https://search.pstatic.net/common/?src=https%3A%2F%2Fldb-phinf.pstatic.net%2F20230315_55%2F1678864965197X3zz0_JPEG%2FIMG_6113.JPEG"
-                                 class="w-40 h-40 object-cover"/>
+                        <div class="form-group">
+                            <input type="file" id="imageFiles" name="imageFiles" multiple
+                                   class="file-input file-input-bordered w-full"
+                                   onchange="checkFileCount(event)" accept="image/*"/>
                         </div>
-                        <div>
-                            <div>
-                                <div class="mt-2 flex justify-center">
-                                    <!-- 에디터 시작 -->
-                                    <div id="editor-1" class="editor-ui w-full break-all"></div>
-                                    <!-- 에디터 끝 -->
-                                    <input id="content" type="hidden" name="content">
-                                </div>
+                        <div class="flex justify-start my-2" id="selectedImages"></div>
+                        <div class="form-group w-full">
+                            <div class="mt-2 flex justify-center">
+                                <textarea class="w-full" id="content" name="content"
+                                          style="height: 500px;"></textarea>
                             </div>
-
-                            <div class="mt-2 flex justify-end">
-                                <button class="btn btn-neutral btn-sm" type="submit">등록하기</button>
-                            </div>
+                        </div>
+                        <div class="mt-2 flex justify-end">
+                            <button class="btn btn-neutral btn-sm" type="submit">등록하기</button>
                         </div>
                     </div>
                 </div>
@@ -90,16 +117,68 @@
     </div>
 
     <script>
-        // 에디터 클래스를 사용하기 쉽도록 변경(여기서 `쉽다`는 뜻은 `짧게 쓸 수 있다`라는 뜻)
-        const Editor = toastui.Editor;
-        const editor1 = new Editor({
-            el: document.querySelector("#editor-1"),
-            initialEditType: 'wysiwyg',
-            initialValue: "",
-            height: "50vh",
-            previewStyle: "vertical",
-            placeholder: "리뷰 내용을 입력해주세요"
-        });
+        function checkFileCount(event) {
+            const fileInput = event.target;
+            const files = fileInput.files;
+
+            // 파일 개수가 5개를 초과하는 경우
+            if (files.length > 5) {
+                fileInput.value = null; // 파일 선택을 초기화합니다.
+                alert("최대 5개까지 선택할 수 있습니다.");
+                clearSelectedImages(); // 미리보기 이미지를 모두 삭제합니다.
+            } else {
+                showSelectedImages(event); // 파일 개수가 5개 이하인 경우, 이미지를 표시합니다.
+            }
+        }
+
+        function showSelectedImages(event) {
+            const fileInput = event.target;
+            const selectedImagesDiv = document.getElementById("selectedImages");
+
+            // 선택한 파일들의 정보를 얻습니다.
+            const files = fileInput.files;
+
+            // 기존에 표시된 이미지들을 모두 제거합니다.
+            selectedImagesDiv.innerHTML = "";
+
+            // 선택한 각 이미지 파일마다 반복합니다.
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+
+                // FileReader를 사용하여 이미지 파일을 읽습니다.
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const imageURL = e.target.result;
+
+                    // 이미지 컨테이너를 생성합니다.
+                    const imageContainer = document.createElement("div");
+                    imageContainer.classList.add("selectedImageContainer");
+
+                    // 이미지를 표시하기 위한 HTML 요소를 동적으로 생성합니다.
+                    const imgElement = document.createElement("img");
+                    imgElement.src = imageURL;
+                    imgElement.classList.add("selectedImage");
+
+                    // 이미지를 컨테이너에 추가합니다.
+                    imageContainer.appendChild(imgElement);
+
+                    // 컨테이너를 추가합니다.
+                    selectedImagesDiv.appendChild(imageContainer);
+                };
+
+                // FileReader를 사용하여 이미지 파일을 읽습니다.
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function clearSelectedImages() {
+            const selectedImagesDiv = document.getElementById("selectedImages");
+            selectedImagesDiv.innerHTML = "";
+        }
+
+        function openMatzipUrl(matzipUrl) {
+            window.open(matzipUrl, '_blank');
+        }
     </script>
 </main>
 
