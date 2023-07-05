@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import site.matzip.config.auth.PrincipalDetails;
+import site.matzip.friend.service.FriendService;
 import site.matzip.friendRequest.dto.FriendRequestDTO;
 import site.matzip.friendRequest.entity.FriendRequest;
 import site.matzip.friendRequest.service.FriendRequestService;
@@ -25,6 +26,7 @@ import java.util.List;
 public class FriendRequestController {
     private final MemberService memberService;
     private final FriendRequestService friendRequestService;
+    private final FriendService friendService;
 
     @GetMapping("/list")
     @PreAuthorize("isAuthenticated()")
@@ -56,13 +58,12 @@ public class FriendRequestController {
     @PostMapping("/accept")
     public String acceptFriendRequest(@RequestParam("friendRequestId") Long friendRequestId) {
         FriendRequest friendRequest = friendRequestService.getFriendRequest(friendRequestId)
-                .orElseThrow(() -> new EntityNotFoundException("Friend request not found."));
+                .orElseThrow(() -> new EntityNotFoundException("FriendRequest not found."));
 
         Member member1 = friendRequest.getToMember();
         Member member2 = friendRequest.getFromMember();
 
-//        Friend newFriend = new Friend(member1, member2);
-//        friendService.addFriend(newFriend);
+        friendService.addFriend(member1, member2);
 
         friendRequestService.deleteRequest(friendRequestId);
 
