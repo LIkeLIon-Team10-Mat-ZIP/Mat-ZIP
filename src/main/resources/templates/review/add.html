@@ -36,9 +36,9 @@
 <main layout:fragment="Content">
     <div class="flex justify-center mx-auto max-w-5xl">
         <div class="w-full">
-            <form id="reviewForm" method="POST"
-                  th:action="@{|/review/create/${matzipInfoDTO.matzipId}|}" th:object="${reviewCreationDTO}"
-                  enctype="multipart/form-data">
+            <form enctype="multipart/form-data" id="reviewForm"
+                  method="POST" th:action="@{|/review/create/${matzipInfoDTO.matzipId}|}"
+                  th:object="${reviewCreationDTO}">
 
                 <div class="flex flex-col">
                     <span class="font-bold text-xl p-3 border-b border-gray-400"><i
@@ -47,10 +47,9 @@
                         <div class="flex-grow">
                             <div class="flex items-center">
                                 <span class="font-bold text-xl mr-3" th:text="${matzipInfoDTO.matzipName}"></span>
-                                <button class="btn btn-outline btn-xs"
-                                        onclick="openMatzipUrl('${matzipInfoDTO.matzipUrl}')"
-                                        target="_blank">상세보기
-                                </button>
+                                <a th:href="${matzipInfoDTO.matzipUrl}" target="_blank">
+                                    <button class="btn btn-outline btn-xs" type="button">상세보기</button>
+                                </a>
                             </div>
                             <div class="flex flex-col">
                                 <span th:text="${matzipInfoDTO.matzipType}"></span>
@@ -96,9 +95,10 @@
                     </div>
                     <div class="flex flex-col p-3">
                         <div class="form-group">
-                            <input type="file" id="imageFiles" name="imageFiles" multiple
-                                   class="file-input file-input-bordered w-full"
-                                   onchange="checkFileCount(event)" accept="image/*"/>
+                            <input accept="image/*" class="file-input file-input-bordered w-full" id="imageFiles"
+                                   multiple
+                                   name="imageFiles"
+                                   onchange="checkFileCount(event)" type="file"/>
                         </div>
                         <div class="flex justify-start my-2" id="selectedImages"></div>
                         <div class="form-group w-full">
@@ -174,10 +174,6 @@
         function clearSelectedImages() {
             const selectedImagesDiv = document.getElementById("selectedImages");
             selectedImagesDiv.innerHTML = "";
-        }
-
-        function openMatzipUrl(matzipUrl) {
-            window.open(matzipUrl, '_blank');
         }
     </script>
 </main>

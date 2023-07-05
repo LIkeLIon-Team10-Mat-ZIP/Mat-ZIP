@@ -41,41 +41,41 @@
 
     <div class="flex justify-center mx-auto max-w-5xl contact-form">
         <div class="w-full">
-            <form id="reviewForm" th:action="@{/matzip/createWithReview}" th:object="${matzipReviewDTO}" method="POST"
-                  enctype="multipart/form-data">
+            <form enctype="multipart/form-data" id="reviewForm" method="POST" th:action="@{/matzip/createWithReview}"
+                  th:object="${matzipReviewDTO}">
                 <!-- 히든 필드 바인딩 -->
                 <div class="form-group">
-                    <input type="hidden" name="matzipCreationDTO.matzipName" id="matzipNameInput">
+                    <input id="matzipNameInput" name="matzipCreationDTO.matzipName" type="hidden">
                 </div>
                 <div class="form-group">
-                    <input type="hidden" name="matzipCreationDTO.address" id="addressInput">
+                    <input id="addressInput" name="matzipCreationDTO.address" type="hidden">
                 </div>
                 <div class="form-group">
-                    <input type="hidden" name="matzipCreationDTO.phoneNumber" id="phoneNumberInput">
+                    <input id="phoneNumberInput" name="matzipCreationDTO.phoneNumber" type="hidden">
                 </div>
                 <div class="form-group">
-                    <input type="hidden" name="matzipCreationDTO.matzipUrl" id="matzipUrlInput">
+                    <input id="matzipUrlInput" name="matzipCreationDTO.matzipUrl" type="hidden">
                 </div>
                 <div class="form-group">
-                    <input type="hidden" name="matzipCreationDTO.kakaoId" id="kakaoIdInput">
+                    <input id="kakaoIdInput" name="matzipCreationDTO.kakaoId" type="hidden">
                 </div>
                 <div class="form-group">
-                    <input type="hidden" name="matzipCreationDTO.description" id="descriptionInput">
+                    <input id="descriptionInput" name="matzipCreationDTO.description" type="hidden">
                 </div>
                 <div class="form-group">
-                    <input type="hidden" name="matzipCreationDTO.x" id="xInput">
+                    <input id="xInput" name="matzipCreationDTO.x" type="hidden">
                 </div>
                 <div class="form-group">
-                    <input type="hidden" name="matzipCreationDTO.y" id="yInput">
+                    <input id="yInput" name="matzipCreationDTO.y" type="hidden">
                 </div>
                 <div class="form-group">
-                    <input type="hidden" name="matzipCreationDTO.rating" id="matzip_ratingInput">
+                    <input id="matzip_ratingInput" name="matzipCreationDTO.rating" type="hidden">
                 </div>
                 <div class="form-group">
-                    <input type="hidden" name="reviewCreationDTO.rating" id="review_ratingInput">
+                    <input id="review_ratingInput" name="reviewCreationDTO.rating" type="hidden">
                 </div>
                 <div class="form-group">
-                    <input type="hidden" name="matzipCreationDTO.matzipType" id="matzipTypeInput">
+                    <input id="matzipTypeInput" name="matzipCreationDTO.matzipType" type="hidden">
                 </div>
 
                 <div class="flex flex-col">
@@ -86,11 +86,9 @@
                         <div class="flex-grow">
                             <div class="flex items-center">
                                 <span class="font-bold text-xl mr-3" id="matzipName"></span>
-                                <button class="btn btn-outline btn-xs"
-                                        onclick="openMatzipUrl('${matzipInfoDTO.matzipUrl}')"
-                                        target="_blank">상세보기
-                                </button>
-
+                                <a target="_blank" th:href="${matzipInfoDTO.matzipUrl}">
+                                    <button class="btn btn-outline btn-xs" type="button">상세보기</button>
+                                </a>
                             </div>
                             <div class="flex flex-col">
                                 <span id="matzipType"></span>
@@ -101,39 +99,50 @@
                         <div class="flex flex-col">
                             <span class="mb-2 text-lg">별점</span>
                             <div class="rating rating-md rating-half" id="rating">
-                                <input id="rating-0.5" type="radio" name="rating" value="0.5"
-                                       class="bg-yellow-500 mask mask-star-2 mask-half-1" disabled/>
-                                <input id="rating-1.0" type="radio" name="rating" value="1.0"
-                                       class="bg-yellow-500 mask mask-star-2 mask-half-2" disabled/>
-                                <input id="rating-1.5" type="radio" name="rating" value="1.5"
-                                       class="bg-yellow-500 mask mask-star-2 mask-half-1" disabled/>
-                                <input id="rating-2.0" type="radio" name="rating" value="2.0"
-                                       class="bg-yellow-500 mask mask-star-2 mask-half-2" disabled/>
-                                <input id="rating-2.5" type="radio" name="rating" value="2.5"
-                                       class="bg-yellow-500 mask mask-star-2 mask-half-1" disabled/>
-                                <input id="rating-3.0" type="radio" name="rating" value="3.0"
-                                       class="bg-yellow-500 mask mask-star-2 mask-half-2" disabled/>
-                                <input id="rating-3.5" type="radio" name="rating" value="3.5"
-                                       class="bg-yellow-500 mask mask-star-2 mask-half-1" disabled/>
-                                <input id="rating-4.0" type="radio" name="rating" value="4.0"
-                                       class="bg-yellow-500 mask mask-star-2 mask-half-2" disabled/>
-                                <input id="rating-4.5" type="radio" name="rating" value="4.5"
-                                       class="bg-yellow-500 mask mask-star-2 mask-half-1" disabled/>
-                                <input id="rating-5.0" type="radio" name="rating" value="5.0"
-                                       class="bg-yellow-500 mask mask-star-2 mask-half-2" disabled/>
+                                <input class="bg-yellow-500 mask mask-star-2 mask-half-1" disabled id="rating-0.5"
+                                       name="rating"
+                                       type="radio" value="0.5"/>
+                                <input class="bg-yellow-500 mask mask-star-2 mask-half-2" disabled id="rating-1.0"
+                                       name="rating"
+                                       type="radio" value="1.0"/>
+                                <input class="bg-yellow-500 mask mask-star-2 mask-half-1" disabled id="rating-1.5"
+                                       name="rating"
+                                       type="radio" value="1.5"/>
+                                <input class="bg-yellow-500 mask mask-star-2 mask-half-2" disabled id="rating-2.0"
+                                       name="rating"
+                                       type="radio" value="2.0"/>
+                                <input class="bg-yellow-500 mask mask-star-2 mask-half-1" disabled id="rating-2.5"
+                                       name="rating"
+                                       type="radio" value="2.5"/>
+                                <input class="bg-yellow-500 mask mask-star-2 mask-half-2" disabled id="rating-3.0"
+                                       name="rating"
+                                       type="radio" value="3.0"/>
+                                <input class="bg-yellow-500 mask mask-star-2 mask-half-1" disabled id="rating-3.5"
+                                       name="rating"
+                                       type="radio" value="3.5"/>
+                                <input class="bg-yellow-500 mask mask-star-2 mask-half-2" disabled id="rating-4.0"
+                                       name="rating"
+                                       type="radio" value="4.0"/>
+                                <input class="bg-yellow-500 mask mask-star-2 mask-half-1" disabled id="rating-4.5"
+                                       name="rating"
+                                       type="radio" value="4.5"/>
+                                <input class="bg-yellow-500 mask mask-star-2 mask-half-2" disabled id="rating-5.0"
+                                       name="rating"
+                                       type="radio" value="5.0"/>
                             </div>
                         </div>
                     </div>
                     <div class="flex flex-col p-3">
                         <div class="form-group">
-                            <input type="file" id="imageFiles" name="reviewCreationDTO.imageFiles" multiple
-                                   class="file-input file-input-bordered w-full"
-                                   onchange="checkFileCount(event)" accept="image/*"/>
+                            <input accept="image/*" class="file-input file-input-bordered w-full" id="imageFiles"
+                                   multiple
+                                   name="reviewCreationDTO.imageFiles"
+                                   onchange="checkFileCount(event)" type="file"/>
                         </div>
-                        <div id="selectedImages" class="flex justify-start my-2"></div>
+                        <div class="flex justify-start my-2" id="selectedImages"></div>
                         <div class="form-group w-full">
                             <div class="mt-2 flex justify-center">
-                                <textarea id="content" name="reviewCreationDTO.content" class="w-full"
+                                <textarea class="w-full" id="content" name="reviewCreationDTO.content"
                                           style="height: 500px;"></textarea>
                             </div>
                         </div>
@@ -238,9 +247,6 @@
             selectedImagesDiv.innerHTML = "";
         }
 
-        function openMatzipUrl(matzipUrl) {
-            window.open(matzipUrl, '_blank');
-        }
     </script>
 </main>
 </body>
