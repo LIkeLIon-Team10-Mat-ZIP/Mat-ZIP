@@ -5,6 +5,8 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -30,6 +32,7 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final MemberRepository memberRepository;
 
+    @CacheEvict(value = {"reviewListCache", "myReviewListCache"}, allEntries = true)
     public Review create(ReviewCreationDTO reviewCreationDTO, Long authorId, Matzip matzip) {
 
         Review createdReview = Review.builder()
@@ -58,12 +61,14 @@ public class ReviewService {
         return reviewPage.getContent();
     }
 
-    public List<ReviewListDTO> findAllDto() {
+    @Cacheable(value = "reviewListCache")
+    public List<ReviewListDTO> findAndConvertAll() {
         List<Review> reviews = reviewRepository.findAll();
         return reviews.stream().map(this::convertToReviewDTO).collect(Collectors.toList());
     }
 
-    public List<ReviewListDTO> findByAuthorId(Long authorId) {
+    @Cacheable(value = "myReviewListCache")
+    public List<ReviewListDTO> findAndConvertMine(Long authorId) {
         List<Review> reviews = reviewRepository.findByAuthorId(authorId);
         return reviews.stream().map(this::convertToReviewDTO).collect(Collectors.toList());
     }
@@ -85,7 +90,7 @@ public class ReviewService {
                 .createDate(review.getCreateDate())
                 .build();
     }
-  
+
     public ReviewDetailDTO convertToReviewDetailDTO(Long id) {
         Review review = reviewRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Review not Found"));
         Matzip matzip = review.getMatzip();

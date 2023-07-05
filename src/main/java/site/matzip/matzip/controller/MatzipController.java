@@ -1,8 +1,6 @@
 package site.matzip.matzip.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -46,7 +44,6 @@ public class MatzipController {
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/create")
-    @CacheEvict(value = {"listCache", "myListCache"}, allEntries = true)
     public String create(@RequestBody MatzipCreationDTO matzipCreationDTO, BindingResult result, Authentication authentication) {
         Member author = rq.getMember(authentication);
         matzipService.create(matzipCreationDTO, author);
@@ -56,7 +53,6 @@ public class MatzipController {
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/createWithReview")
-    @CacheEvict(value = {"listCache", "myListCache"}, allEntries = true)
     public String createWithReview(@ModelAttribute MatzipReviewDTO matzipReviewDTO,
                                    BindingResult result,
                                    @AuthenticationPrincipal PrincipalDetails principalDetails) throws IOException {
@@ -85,11 +81,10 @@ public class MatzipController {
 
     @GetMapping("/api/list")
     @ResponseBody
-    @Cacheable(value = "listCache")
     public ResponseEntity<List<MatzipReviewListDTO>> searchAllWithReviews(Authentication authentication) {
         try {
             List<MatzipListDTO> matzipDtoList = matzipService.findAndConvertAll(rq.getMember(authentication).getId());
-            List<ReviewListDTO> reviewDtoList = reviewService.findAllDto();
+            List<ReviewListDTO> reviewDtoList = reviewService.findAndConvertAll();
             List<MatzipReviewListDTO> matzipReviewDtoList = matzipService.mergeMatzipAndReviews(matzipDtoList, reviewDtoList);
 
             return ResponseEntity.ok(matzipReviewDtoList);
@@ -101,11 +96,10 @@ public class MatzipController {
 
     @GetMapping("/api/mylist")
     @ResponseBody
-    @Cacheable(value = "myListCache")
     public ResponseEntity<List<MatzipReviewListDTO>> searchMineWithReviews(Authentication authentication) {
         try {
             List<MatzipListDTO> matzipDtoList = matzipService.findAndConvertMine(rq.getMember(authentication).getId());
-            List<ReviewListDTO> reviewDtoList = reviewService.findByAuthorId(rq.getMember(authentication).getId());
+            List<ReviewListDTO> reviewDtoList = reviewService.findAndConvertMine(rq.getMember(authentication).getId());
             List<MatzipReviewListDTO> matzipReviewDtoList = matzipService.mergeMatzipAndReviews(matzipDtoList, reviewDtoList);
             return ResponseEntity.ok(matzipReviewDtoList);
         } catch (Exception e) {
