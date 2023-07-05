@@ -13,7 +13,6 @@ import java.time.LocalDateTime;
 import static jakarta.persistence.GenerationType.IDENTITY;
 
 @NoArgsConstructor
-@EntityListeners(AuditingEntityListener.class)
 @Entity
 @Getter
 public class Notification extends BaseEntity {
