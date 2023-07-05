@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import site.matzip.config.auth.PrincipalDetails;
+import site.matzip.friendRequest.dto.FriendRequestDTO;
 import site.matzip.friendRequest.entity.FriendRequest;
 import site.matzip.friendRequest.service.FriendRequestService;
 import site.matzip.member.domain.Member;
@@ -30,9 +31,9 @@ public class FriendRequestController {
     public String showList(Model model, @AuthenticationPrincipal PrincipalDetails principalDetails) {
         Member member = memberService.findByUsername("user1").orElseThrow();
 
-        List<FriendRequest> friendRequests = friendRequestService.getFriendRequests(member);
+        List<FriendRequestDTO> friendRequestDTOS = friendRequestService.convertToFriendRequestDTOS(member);
 
-        model.addAttribute("friendRequests", friendRequests);
+        model.addAttribute("friendRequestDTOS", friendRequestDTOS);
 
         return "usr/friend/requestList";
     }

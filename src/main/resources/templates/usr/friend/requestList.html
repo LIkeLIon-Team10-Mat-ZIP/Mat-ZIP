@@ -13,25 +13,25 @@
             <div class="p-3 border-b border-gray-400">
                 <span class="font-bold text-xl"><i class="fa-regular fa-bell"></i> 친구 요청</span>
             </div>
-            <div class="text-center mt-2 mx-2" th:if="${#lists.isEmpty(friendRequests)}">
+            <div class="text-center mt-2 mx-2" th:if="${#lists.isEmpty(friendRequestDTOS)}">
                 <i class="fa-regular fa-bell-slash"></i> 최근에 받은 친구 요청이 없습니다.
             </div>
-            <ul class="flex flex-col gap-1" th:if="${!#lists.isEmpty(friendRequests)}">
-                <li th:each="friendRequest, iterationStat: ${friendRequests}">
+            <ul class="flex flex-col gap-1" th:if="${!#lists.isEmpty(friendRequestDTOS)}">
+                <li th:each="friendRequestDTO, iterationStat: ${friendRequestDTOS}">
                     <div class="card bg-base-100 shadow-2xl">
                         <div class="card-body">
                             <div class="mt-1 flex flex-col gap-2">
                                 <div class="flex items-center">
                                     <span class="badge badge-primary"
-                                          th:text="${friendRequest.fromMember.nickname}"></span> 님이 친구 요청을 보냈습니다.
+                                          th:text="${friendRequestDTO.fromMemberNickname}"></span> 님이 친구 요청을 보냈습니다.
                                 </div>
                                 <div class="flex">
                                     <form th:action="@{/friends/accept}" method="post">
-                                        <input type="hidden" name="friendRequestId" th:value="${friendRequest.id}">
+                                        <input type="hidden" name="friendRequestId" th:value="${friendRequestDTO.id}">
                                         <button class="btn btn-primary btn-sm mr-2" type="submit">수락</button>
                                     </form>
                                     <form th:action="@{/friends/reject}" method="post">
-                                        <input type="hidden" name="friendRequestId" th:value="${friendRequest.id}">
+                                        <input type="hidden" name="friendRequestId" th:value="${friendRequestDTO.id}">
                                         <button class="btn btn-primary btn-sm" type="submit">거절</button>
                                     </form>
                                 </div>
