@@ -5,8 +5,11 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import site.matzip.base.appConfig.AppConfig;
 import site.matzip.comment.domain.Comment;
@@ -22,7 +25,6 @@ import site.matzip.review.repository.ReviewRepository;
 
 import java.time.*;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,7 +32,9 @@ import java.util.stream.Collectors;
 public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final MemberRepository memberRepository;
+    private final AppConfig appConfig;
 
+    @CacheEvict(value = {"reviewListCache", "myReviewListCache"}, allEntries = true)
     public Review create(ReviewCreationDTO reviewCreationDTO, Long authorId, Matzip matzip) {
 
         Review createdReview = Review.builder()
@@ -38,8 +42,7 @@ public class ReviewService {
                 .content(reviewCreationDTO.getContent())
                 .build();
 
-        Optional<Member> authorOptional = memberRepository.findById(authorId);
-        Member author = authorOptional.orElseThrow(() -> new EntityNotFoundException("Member Not Found"));
+        Member author = memberRepository.findById(authorId).orElseThrow(() -> new EntityNotFoundException("Member not Found"));
         createdReview.setMatzip(matzip);
         createdReview.setAuthor(author);
         reviewRepository.save(createdReview);
@@ -60,19 +63,21 @@ public class ReviewService {
         return reviewPage.getContent();
     }
 
-    public List<ReviewListDTO> findAllDto() {
+    @Cacheable(value = "reviewListCache")
+    public List<ReviewListDTO> findAndConvertAll() {
         List<Review> reviews = reviewRepository.findAll();
         return reviews.stream().map(this::convertToReviewDTO).collect(Collectors.toList());
     }
 
-    public List<ReviewListDTO> findByAuthorId(Long authorId) {
+    @Cacheable(value = "myReviewListCache")
+    public List<ReviewListDTO> findAndConvertMine(Long authorId) {
         List<Review> reviews = reviewRepository.findByAuthorId(authorId);
         return reviews.stream().map(this::convertToReviewDTO).collect(Collectors.toList());
     }
 
     private ReviewListDTO convertToReviewDTO(Review review) {
 
-        String profileImageUrl = AppConfig.getDefaultProfileImageUrl();
+        String profileImageUrl = appConfig.getDefaultProfileImageUrl();
         if (review.getAuthor().getProfileImage() != null && review.getAuthor().getProfileImage().getImageUrl() != null) {
             profileImageUrl = review.getAuthor().getProfileImage().getImageUrl();
         }
@@ -87,12 +92,12 @@ public class ReviewService {
                 .createDate(review.getCreateDate())
                 .build();
     }
-  
+
     public ReviewDetailDTO convertToReviewDetailDTO(Long id) {
         Review review = reviewRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Review not Found"));
         Matzip matzip = review.getMatzip();
 
-        String profileImageUrl = AppConfig.getDefaultProfileImageUrl();
+        String profileImageUrl = appConfig.getDefaultProfileImageUrl();
         if (review.getAuthor().getProfileImage() != null && review.getAuthor().getProfileImage().getImageUrl() != null) {
             profileImageUrl = review.getAuthor().getProfileImage().getImageUrl();
         }
@@ -113,7 +118,7 @@ public class ReviewService {
 
     public List<CommentInfoDTO> convertToCommentInfoDTOS(List<Comment> comments, Long authorId) {
 
-        String profileImageUrl = AppConfig.getDefaultProfileImageUrl();
+        String profileImageUrl = appConfig.getDefaultProfileImageUrl();
 
         return comments.stream()
                 .map(comment -> CommentInfoDTO.builder()
@@ -169,5 +174,21 @@ public class ReviewService {
     public int getViewCount(Long reviewId) {
         Review review = findById(reviewId);
         return review.getViews();
+    }
+
+    @Scheduled(fixedRate = 10 * 60 * 1000) // 주기 10분
+    public void rewardPointsForReviews() {
+        LocalDateTime referenceTime = LocalDateTime.now().minusHours(appConfig.getPointRewardReferenceTime());
+        List<Review> validReviews = reviewRepository.findReviewsOlderThan(referenceTime);
+
+        for (Review review : validReviews) {
+            if (!review.isPointsRewarded()) {
+                Member author = review.getAuthor();
+                author.addPoints(appConfig.getPointRewardReview());
+                memberRepository.save(author); // 포인트 업데이트
+                review.updatePointsRewarded(); // 포인트 지급 여부 업데이트
+                reviewRepository.save(review); // 댓글 업데이트
+            }
+        }
     }
 }

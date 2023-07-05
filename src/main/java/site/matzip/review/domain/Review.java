@@ -26,6 +26,7 @@ public class Review extends BaseEntity {
     private String content;
     @Column(columnDefinition = "integer default 0", nullable = false)
     private int views;
+    private boolean pointsRewarded;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "matzip_id")
     @JsonIgnore
@@ -63,5 +64,9 @@ public class Review extends BaseEntity {
 
     public void incrementViewCount() {
         this.views++;
+    }
+
+    public void updatePointsRewarded() {
+        this.pointsRewarded = true;
     }
 }

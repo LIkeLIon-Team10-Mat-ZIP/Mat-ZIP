@@ -2,6 +2,8 @@ package site.matzip.matzip.service;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import site.matzip.matzip.domain.Matzip;
 import site.matzip.matzip.domain.MatzipMember;
@@ -27,6 +29,7 @@ public class MatzipService {
     private final MatzipRepository matzipRepository;
     private final MatzipMemberRepository matzipMemberRepository;
 
+    @CacheEvict(value = {"matzipListCache", "myMatzipListCache"}, allEntries = true)
     public Matzip create(MatzipCreationDTO creationDTO, Member author) {
         Optional<Matzip> optionalExistingMatzip = matzipRepository.findByKakaoId(creationDTO.getKakaoId());
 
@@ -34,14 +37,12 @@ public class MatzipService {
             Matzip existingMatzip = optionalExistingMatzip.get();
             MatzipMember matzipRecommendation = createMatzipRecommendationEntity(creationDTO, existingMatzip, author);
             matzipMemberRepository.save(matzipRecommendation);
-
             return existingMatzip;
         } else {
             Matzip matzip = createMatzipEntity(creationDTO);
             Matzip savedMatzip = matzipRepository.save(matzip);
             MatzipMember matzipRecommendation = createMatzipRecommendationEntity(creationDTO, savedMatzip, author);
             matzipMemberRepository.save(matzipRecommendation);
-
             return savedMatzip;
         }
     }
@@ -62,12 +63,14 @@ public class MatzipService {
 
     //개인의 맛집 추천(후기) 엔티티 생성
     private MatzipMember createMatzipRecommendationEntity(MatzipCreationDTO creationDTO, Matzip savedMatzip, Member author) {
-        return MatzipMember.builder()
+        MatzipMember createdMatzipMember = MatzipMember.builder()
                 .rating(creationDTO.getRating())
                 .description(creationDTO.getDescription())
-                .matzip(savedMatzip)
-                .author(author)
                 .build();
+        createdMatzipMember.setAuthor(author);
+        createdMatzipMember.setMatzip(savedMatzip);
+
+        return createdMatzipMember;
     }
 
     //리뷰 엔티티 만드는 메서드
@@ -97,10 +100,13 @@ public class MatzipService {
     }
 
     //모든 맛집 정보와 리뷰 리스트 표시 위한 메서드, 사용자 정보 넣어주고 사용자 후기 없는 곳까지 표시함, dto로 변환까지 해서 반환
+    @Cacheable(value = "matzipListCache")
     public List<MatzipListDTO> findAndConvertAll(Long authorId) {
         return convertToListDTO(findAll(), authorId);
     }
 
+    //내가 등록한 맛집 정보 검색
+    @Cacheable(value = "myMatzipListCache")
     public List<MatzipListDTO> findAndConvertMine(Long authorId) {
         return convertToListDTO(findAllByAuthorId(authorId), authorId);
     }
@@ -116,7 +122,7 @@ public class MatzipService {
 
             double rating = 0;
             String description = "";
-            //사용자 후기 존재하는 곳이면 유저 후기 없으면 0, 빈칸
+            //사용자 후기 존재하는 곳이면 유저 후기, 없으면 0, 빈칸
             if (authorRecommendation.isPresent()) {
                 rating = authorRecommendation.get().getRating();
                 description = authorRecommendation.get().getDescription();

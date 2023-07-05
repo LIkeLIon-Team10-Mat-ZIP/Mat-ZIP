@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import site.matzip.comment.domain.Comment;
 import site.matzip.comment.dto.CommentInfoDTO;
 import site.matzip.config.auth.PrincipalDetails;
+import site.matzip.image.service.ReviewImageService;
 import site.matzip.matzip.domain.Matzip;
 import site.matzip.matzip.dto.MatzipInfoDTO;
 import site.matzip.matzip.service.MatzipService;
@@ -24,29 +25,30 @@ import site.matzip.review.dto.ReviewCreationDTO;
 import site.matzip.review.dto.ReviewDetailDTO;
 import site.matzip.review.service.ReviewService;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/review")
 @RequiredArgsConstructor
 public class ReviewController {
     private final ReviewService reviewService;
+    private final ReviewImageService reviewImageService;
     private final MatzipService matzipService;
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/create")
     public String create() {
-        return "/review/createDev";
+        return "/review/create";
     }
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/create/{matzipId}")
-    public String create(Model model, @PathVariable Long matzipId, ReviewCreationDTO reviewCreationDTO) {
+    public String create(Model model, @PathVariable Long matzipId) {
         Matzip matzip = matzipService.findById(matzipId);
         MatzipInfoDTO matzipInfoDTO = new MatzipInfoDTO(matzip);
-
+        ReviewCreationDTO reviewCreationDTO = new ReviewCreationDTO();
         model.addAttribute("matzipInfoDTO", matzipInfoDTO);
         model.addAttribute("reviewCreationDTO", reviewCreationDTO);
 
@@ -55,17 +57,19 @@ public class ReviewController {
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/create/{matzipId}")
-    public String create(@PathVariable Long matzipId, ReviewCreationDTO reviewCreationDTO,
-                         BindingResult result, @AuthenticationPrincipal PrincipalDetails principalDetails) {
+    public String create(@PathVariable Long matzipId,
+                         @ModelAttribute ReviewCreationDTO reviewCreationDTO,
+                         BindingResult result,
+                         @AuthenticationPrincipal PrincipalDetails principalDetails) throws IOException {
         if (result.hasErrors()) {
             return "/review/add";
         }
         Matzip matzip = matzipService.findById(matzipId);
         Long authorId = principalDetails.getMember().getId();
 
-        reviewService.create(reviewCreationDTO, authorId, matzip);
-
-        return "redirect:/matzip/list";
+        Review createdReview = reviewService.create(reviewCreationDTO, authorId, matzip);
+        reviewImageService.create(reviewCreationDTO.getImageFiles(), createdReview);
+        return "redirect:/";
     }
 
     @GetMapping("/api/{matzipId}")
