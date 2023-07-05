@@ -5,11 +5,16 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import site.matzip.comment.domain.Comment;
+import site.matzip.member.domain.Member;
+
+import java.util.List;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 public interface CommentRepository extends JpaRepository<Comment, Long> {
+
+    List<Comment> findByAuthor(Member author);
 
     /*
       @EntityGraph(attributePaths = {"author"})
