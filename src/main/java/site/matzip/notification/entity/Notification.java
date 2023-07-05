@@ -31,12 +31,9 @@ public class Notification extends BaseEntity {
     private Member fromMember; // 알림을 보낸 멤버
 
     @Builder
-    public static Notification create(String typeCode, Member toMember, Member fromMember) {
-        Notification notification = new Notification();
-        notification.typeCode = typeCode;
-        notification.toMember = toMember;
-        notification.fromMember = fromMember;
-
-        return notification;
+    public Notification(String typeCode, Member toMember, Member fromMember) {
+        this.typeCode = typeCode;
+        this.toMember = toMember;
+        this.fromMember = fromMember;
     }
 }
