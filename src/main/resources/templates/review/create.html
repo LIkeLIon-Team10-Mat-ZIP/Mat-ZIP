@@ -6,11 +6,6 @@
     <meta name="_csrf" th:content="${_csrf.token}"/>
     <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
 
-    <!-- 토스트 UI 에디터 불러오기 시작 -->
-    <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
-    <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css"/>
-    <!-- 토스트 UI 에디터 불러오기 끝 -->
-
     <style>
         #selectedImages {
             display: flex;
@@ -27,6 +22,12 @@
             overflow: hidden;
         }
 
+        textarea {
+            border: 3px solid #CCC;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
         .selectedImage {
             width: 100%;
             height: 100%;
@@ -38,29 +39,54 @@
 
 <main layout:fragment="Content">
 
-    <script>
-        function copyEditorContentToTextarea() {
-            const editorContent = editor1.getHTML(); // 에디터의 내용을 가져옵니다.
-            document.getElementById("reviewContent").value = editorContent; // 숨겨진 <textarea>에 복사합니다.
-        }
-    </script>
-    <div class="flex justify-center mx-auto max-w-5xl">
+    <div class="flex justify-center mx-auto max-w-5xl contact-form">
         <div class="w-full">
-            <form id="reviewForm" action="/matzip/createWithReview" method="POST" enctype="multipart/form-data"
-                  onsubmit="copyEditorContentToTextarea();">
-                <input type="hidden" name="matzipName" id="matzipNameInput">
-                <input type="hidden" name="address" id="addressInput">
-                <input type="hidden" name="phoneNumber" id="phoneNumberInput">
-                <input type="hidden" name="rating" id="ratingInput">
-                <input type="hidden" name="matzipType" id="matzipTypeInput">
+            <form enctype="multipart/form-data" id="reviewForm" method="POST" th:action="@{/matzip/createWithReview}"
+                  th:object="${matzipReviewDTO}">
+                <!-- 히든 필드 바인딩 -->
+                <div class="form-group">
+                    <input id="matzipNameInput" name="matzipCreationDTO.matzipName" type="hidden">
+                </div>
+                <div class="form-group">
+                    <input id="addressInput" name="matzipCreationDTO.address" type="hidden">
+                </div>
+                <div class="form-group">
+                    <input id="phoneNumberInput" name="matzipCreationDTO.phoneNumber" type="hidden">
+                </div>
+                <div class="form-group">
+                    <input id="matzipUrlInput" name="matzipCreationDTO.matzipUrl" type="hidden">
+                </div>
+                <div class="form-group">
+                    <input id="kakaoIdInput" name="matzipCreationDTO.kakaoId" type="hidden">
+                </div>
+                <div class="form-group">
+                    <input id="descriptionInput" name="matzipCreationDTO.description" type="hidden">
+                </div>
+                <div class="form-group">
+                    <input id="xInput" name="matzipCreationDTO.x" type="hidden">
+                </div>
+                <div class="form-group">
+                    <input id="yInput" name="matzipCreationDTO.y" type="hidden">
+                </div>
+                <div class="form-group">
+                    <input id="matzip_ratingInput" name="matzipCreationDTO.rating" type="hidden">
+                </div>
+                <div class="form-group">
+                    <input id="review_ratingInput" name="reviewCreationDTO.rating" type="hidden">
+                </div>
+                <div class="form-group">
+                    <input id="matzipTypeInput" name="matzipCreationDTO.matzipType" type="hidden">
+                </div>
+
                 <div class="flex flex-col">
                     <span class="font-bold text-xl p-3 border-b border-gray-400"><i
                             class="fa-regular fa-pen-to-square"></i> 리뷰 작성</span>
+
                     <div class="flex p-3">
                         <div class="flex-grow">
                             <div class="flex items-center">
                                 <span class="font-bold text-xl mr-3" id="matzipName"></span>
-                                <button class="btn btn-outline btn-xs" type="submit">상세보기</button>
+                                <a href="#" id="detailBtn" class="btn btn-outline btn-xs" target="_blank">상세보기</a>
                             </div>
                             <div class="flex flex-col">
                                 <span id="matzipType"></span>
@@ -71,47 +97,55 @@
                         <div class="flex flex-col">
                             <span class="mb-2 text-lg">별점</span>
                             <div class="rating rating-md rating-half" id="rating">
-                                <input id="rating-0.5" type="radio" name="rating" value="0.5"
-                                       class="bg-yellow-500 mask mask-star-2 mask-half-1" disabled/>
-                                <input id="rating-1.0" type="radio" name="rating" value="1.0"
-                                       class="bg-yellow-500 mask mask-star-2 mask-half-2" disabled/>
-                                <input id="rating-1.5" type="radio" name="rating" value="1.5"
-                                       class="bg-yellow-500 mask mask-star-2 mask-half-1" disabled/>
-                                <input id="rating-2.0" type="radio" name="rating" value="2.0"
-                                       class="bg-yellow-500 mask mask-star-2 mask-half-2" disabled/>
-                                <input id="rating-2.5" type="radio" name="rating" value="2.5"
-                                       class="bg-yellow-500 mask mask-star-2 mask-half-1" disabled/>
-                                <input id="rating-3.0" type="radio" name="rating" value="3.0"
-                                       class="bg-yellow-500 mask mask-star-2 mask-half-2" disabled/>
-                                <input id="rating-3.5" type="radio" name="rating" value="3.5"
-                                       class="bg-yellow-500 mask mask-star-2 mask-half-1" disabled/>
-                                <input id="rating-4.0" type="radio" name="rating" value="4.0"
-                                       class="bg-yellow-500 mask mask-star-2 mask-half-2" disabled/>
-                                <input id="rating-4.5" type="radio" name="rating" value="4.5"
-                                       class="bg-yellow-500 mask mask-star-2 mask-half-1" disabled/>
-                                <input id="rating-5.0" type="radio" name="rating" value="5.0"
-                                       class="bg-yellow-500 mask mask-star-2 mask-half-2" disabled/>
+                                <input class="bg-yellow-500 mask mask-star-2 mask-half-1" disabled id="rating-0.5"
+                                       name="rating"
+                                       type="radio" value="0.5"/>
+                                <input class="bg-yellow-500 mask mask-star-2 mask-half-2" disabled id="rating-1.0"
+                                       name="rating"
+                                       type="radio" value="1.0"/>
+                                <input class="bg-yellow-500 mask mask-star-2 mask-half-1" disabled id="rating-1.5"
+                                       name="rating"
+                                       type="radio" value="1.5"/>
+                                <input class="bg-yellow-500 mask mask-star-2 mask-half-2" disabled id="rating-2.0"
+                                       name="rating"
+                                       type="radio" value="2.0"/>
+                                <input class="bg-yellow-500 mask mask-star-2 mask-half-1" disabled id="rating-2.5"
+                                       name="rating"
+                                       type="radio" value="2.5"/>
+                                <input class="bg-yellow-500 mask mask-star-2 mask-half-2" disabled id="rating-3.0"
+                                       name="rating"
+                                       type="radio" value="3.0"/>
+                                <input class="bg-yellow-500 mask mask-star-2 mask-half-1" disabled id="rating-3.5"
+                                       name="rating"
+                                       type="radio" value="3.5"/>
+                                <input class="bg-yellow-500 mask mask-star-2 mask-half-2" disabled id="rating-4.0"
+                                       name="rating"
+                                       type="radio" value="4.0"/>
+                                <input class="bg-yellow-500 mask mask-star-2 mask-half-1" disabled id="rating-4.5"
+                                       name="rating"
+                                       type="radio" value="4.5"/>
+                                <input class="bg-yellow-500 mask mask-star-2 mask-half-2" disabled id="rating-5.0"
+                                       name="rating"
+                                       type="radio" value="5.0"/>
                             </div>
                         </div>
                     </div>
                     <div class="flex flex-col p-3">
-
-                        <input type="file" id="imageInput" multiple class="file-input file-input-bordered w-full"
-                               onchange="checkFileCount(event)" accept="image/*"/>
-                        <div id="selectedImages" class="flex justify-start my-2"></div>
-                        <div>
-                            <div>
-                                <div class="mt-2 flex justify-center">
-                                    <!-- 에디터 시작 -->
-                                    <div id="editor-1" class="editor-ui w-full break-all"></div>
-                                    <!-- 에디터 끝 -->
-                                    <input id="reviewContent" type="hidden" name="reviewContent">
-                                </div>
+                        <div class="form-group">
+                            <input accept="image/*" class="file-input file-input-bordered w-full" id="imageFiles"
+                                   multiple
+                                   name="reviewCreationDTO.imageFiles"
+                                   onchange="checkFileCount(event)" type="file"/>
+                        </div>
+                        <div class="flex justify-start my-2" id="selectedImages"></div>
+                        <div class="form-group w-full">
+                            <div class="mt-2 flex justify-center">
+                                <textarea class="w-full" id="content" name="reviewCreationDTO.content"
+                                          style="height: 500px;"></textarea>
                             </div>
-
-                            <div class="mt-2 flex justify-end">
-                                <button class="btn btn-neutral btn-sm" type="submit">등록하기</button>
-                            </div>
+                        </div>
+                        <div class="mt-2 flex justify-end">
+                            <button class="btn btn-neutral btn-sm" type="submit">등록하기</button>
                         </div>
                     </div>
                 </div>
@@ -120,23 +154,6 @@
     </div>
 
     <script>
-        // 에디터 클래스를 사용하기 쉽도록 변경(여기서 `쉽다`는 뜻은 `짧게 쓸 수 있다`라는 뜻)
-        const Editor = toastui.Editor;
-        const editor1 = new Editor({
-            el: document.querySelector("#editor-1"),
-            initialEditType: 'wysiwyg',
-            initialValue: "",
-            height: "50vh",
-            previewStyle: "vertical",
-            placeholder: "리뷰 내용을 입력해주세요"
-        });
-        document.addEventListener("DOMContentLoaded", function () {
-            const content = document.getElementById("reviewContent"); // 게시글 수정 시 기존 데이터 토스트 에디터 편집창에 출력
-            if (content.value) {
-                editor1.setHTML(content.value);
-            }
-        });
-
         // 세션 스토리지에서 저장된 맛집 정보를 가져옵니다
         var matzipCreationDTOString = sessionStorage.getItem('matzipCreationDTO');
         var matzipCreationDTO = JSON.parse(matzipCreationDTOString);
@@ -153,50 +170,25 @@
         var newRating = ratingContainer.value;
         console.log("newRating = " + newRating);
 
+        var matzipUrl = matzipCreationDTO.matzipUrl;
+        document.getElementById('detailBtn').href = matzipUrl;
+
+
         // 맛집 정보를 히든 필드에 설정합니다
         document.getElementById('matzipNameInput').value = matzipCreationDTO.matzipName;
         document.getElementById('addressInput').value = matzipCreationDTO.address;
         document.getElementById('phoneNumberInput').value = matzipCreationDTO.phoneNumber;
-        document.getElementById('ratingInput').value = ratingContainer.value;
+        document.getElementById('matzipUrlInput').value = matzipCreationDTO.matzipUrl;
+        document.getElementById('matzip_ratingInput').value = ratingContainer.value;
+        document.getElementById('review_ratingInput').value = ratingContainer.value;
         document.getElementById('matzipTypeInput').value = matzipCreationDTO.matzipType;
+        document.getElementById('kakaoIdInput').value = matzipCreationDTO.kakaoId;
+        document.getElementById('descriptionInput').value = matzipCreationDTO.description;
+        document.getElementById('xInput').value = matzipCreationDTO.x;
+        document.getElementById('yInput').value = matzipCreationDTO.y;
 
-        // 리뷰 작성 폼 제출 시 처리할 함수
-        document.getElementById('reviewForm').addEventListener('submit', function (event) {
-            event.preventDefault(); // 기본 동작인 폼 제출을 막습니다
-            // 서버로 맛집 정보를 전송합니다
-            // CSRF 토큰을 가져옵니다
-            var csrfToken = document.querySelector('meta[name=_csrf]').getAttribute('content');
-            var csrfHeader = document.querySelector('meta[name=_csrf_header]').getAttribute('content');
-
-
-            // 서버로 리뷰 작성 폼을 제출합니다
-            fetch('/matzip/createWithReview', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    [csrfHeader]: csrfToken // CSRF 토큰을 헤더에 포함합니다
-                },
-                body: JSON.stringify({
-                    matzipCreationDTO: matzipCreationDTO,
-                    reviewCreationDTO: {
-                        content: document.getElementById('reviewContent').value,
-                        rating: document.querySelector('input[name="rating"]:checked')?.value ?? 0
-                    }
-                })
-            })
-                .then(response => {
-                    if (response.ok) {
-                        alert('맛집 등록과 리뷰가 작성되었습니다!');
-                        window.location.href = '/matzip/list';
-                    } else {
-                        alert('리뷰 작성에 실패했습니다.');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('리뷰 작성에 실패했습니다.');
-                });
-        });
+        sessionStorage.setItem('x', matzipCreationDTO.x);
+        sessionStorage.setItem('y', matzipCreationDTO.y);
 
         function checkFileCount(event) {
             const fileInput = event.target;
@@ -256,9 +248,9 @@
             const selectedImagesDiv = document.getElementById("selectedImages");
             selectedImagesDiv.innerHTML = "";
         }
+
+
     </script>
 </main>
-
 </body>
-
 </html>

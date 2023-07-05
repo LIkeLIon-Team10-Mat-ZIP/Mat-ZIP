@@ -1,15 +1,13 @@
 package site.matzip.badge.domain;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import site.matzip.base.domain.BaseEntity;
 import site.matzip.member.domain.Member;
 
 @Entity
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MemberBadge extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,4 +18,23 @@ public class MemberBadge extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "badge_id")
     private Badge badge;
+
+    @Builder
+    public MemberBadge() {}
+
+    public void setMember(Member member) {
+        if (this.member != null) {
+            this.member.getMemberBadges().remove(this);
+        }
+        this.member = member;
+        this.member.getMemberBadges().add(this);
+    }
+
+    public void setBadge(Badge badge) {
+        if (this.badge != null) {
+            this.badge.getMemberBadges().remove(this);
+        }
+        this.badge = badge;
+        this.badge.getMemberBadges().add(this);
+    }
 }

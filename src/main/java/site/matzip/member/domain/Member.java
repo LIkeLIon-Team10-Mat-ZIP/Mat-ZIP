@@ -5,6 +5,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import site.matzip.badge.domain.MemberBadge;
 import site.matzip.comment.domain.Comment;
 import site.matzip.friend.entity.Friend;
 import site.matzip.image.domain.ProfileImage;
@@ -43,6 +44,8 @@ public class Member {
     private List<Friend> friends1 = new ArrayList<>();
     @OneToMany(mappedBy = "member2", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Friend> friends2 = new ArrayList<>();
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<MemberBadge> memberBadges = new ArrayList<>();
 
     @Builder
     public Member(String username, String kakao_nickname, String nickname, String password, String email) {

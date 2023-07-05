@@ -4,6 +4,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import site.matzip.member.domain.Member;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import site.matzip.review.domain.Review;
@@ -17,6 +18,8 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     List<Review> findByMatzipId(Long matzipId);
 
     List<Review> findByAuthorId(Long authorId);
+
+    List<Review> findByAuthor(Member author);
 
     /*
        @EntityGraph(attributePaths = {"author"})
