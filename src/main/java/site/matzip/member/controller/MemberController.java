@@ -23,7 +23,7 @@ import site.matzip.config.auth.PrincipalDetails;
 import site.matzip.image.service.ProfileImageService;
 import site.matzip.member.domain.Member;
 import site.matzip.member.dto.MemberInfoDTO;
-import site.matzip.member.dto.MemberRankDto;
+import site.matzip.member.dto.MemberRankDTO;
 import site.matzip.member.dto.NicknameUpdateDTO;
 import site.matzip.member.service.MemberService;
 
@@ -125,7 +125,7 @@ public class MemberController {
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/ranking")
     public String showRanking(Model model) {
-        List<MemberRankDto> memberRankDtoList = memberService.findAndConvertTopTenMember();
+        List<MemberRankDTO> memberRankDtoList = memberService.findAndConvertTopTenMember();
         model.addAttribute("memberRankDtoList", memberRankDtoList);
         return "/usr/member/ranking";
     }

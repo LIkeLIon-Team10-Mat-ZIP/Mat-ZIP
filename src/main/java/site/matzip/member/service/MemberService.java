@@ -18,7 +18,7 @@ import site.matzip.base.appConfig.AppConfig;
 import site.matzip.base.rsData.RsData;
 import site.matzip.member.domain.Member;
 import site.matzip.member.domain.MemberToken;
-import site.matzip.member.dto.MemberRankDto;
+import site.matzip.member.dto.MemberRankDTO;
 import site.matzip.member.dto.NicknameUpdateDTO;
 import site.matzip.member.repository.MemberRepository;
 import site.matzip.member.repository.MemberTokenRepository;
@@ -153,18 +153,18 @@ public class MemberService {
         return member.isPresent();
     }
 
-    public List<MemberRankDto> findAndConvertTopTenMember() {
+    public List<MemberRankDTO> findAndConvertTopTenMember() {
         List<Member> members = memberRepository.findTop10ByOrderByPointDesc();
         return members.stream().map(this::convertToMemberDTO).collect(Collectors.toList());
     }
 
-    private MemberRankDto convertToMemberDTO(Member member) {
+    private MemberRankDTO convertToMemberDTO(Member member) {
         String profileImageUrl = appConfig.getDefaultProfileImageUrl();
         if (member.getProfileImage() != null && member.getProfileImage().getImageUrl() != null) {
             profileImageUrl = member.getProfileImage().getImageUrl();
         }
 
-        return MemberRankDto.builder()
+        return MemberRankDTO.builder()
                 .profileImageUrl(profileImageUrl)
                 .username(member.getUsername())
                 //.badge(member.getMemberBadges())
