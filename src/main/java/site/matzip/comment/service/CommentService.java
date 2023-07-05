@@ -2,8 +2,12 @@ package site.matzip.comment.service;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.stereotype.Service;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+
+import site.matzip.base.event.EventAfterComment;
 import site.matzip.base.appConfig.AppConfig;
 import site.matzip.comment.domain.Comment;
 import site.matzip.comment.repository.CommentRepository;
@@ -18,6 +22,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CommentService {
     private final CommentRepository commentRepository;
+    private final ApplicationEventPublisher publisher;
     private final MemberRepository memberRepository;
     private final AppConfig appConfig;
 
@@ -29,6 +34,11 @@ public class CommentService {
         comment.setReview(review);
         comment.setAuthor(author);
         commentRepository.save(comment);
+
+        if (!review.getAuthor().getNickname().equals(author.getNickname())) {
+            // 본인 리뷰에 본인이 댓글을 단 경우를 제외하고 이벤트 발행
+            publisher.publishEvent(new EventAfterComment(this, review.getAuthor(), author));
+        }
     }
 
     public void remove(Comment comment) {
