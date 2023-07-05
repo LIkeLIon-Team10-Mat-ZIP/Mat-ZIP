@@ -116,4 +116,9 @@ public class MemberController {
         return "redirect:/usr/member/myPage";
     }
 
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/ranking")
+    public String showRanking() {
+        return "/usr/member/ranking";
+    }
 }
