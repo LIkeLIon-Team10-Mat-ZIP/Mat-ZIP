@@ -3,12 +3,13 @@ package site.matzip.friend.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import site.matzip.base.domain.BaseEntity;
 import site.matzip.member.domain.Member;
 
 @Entity
 @NoArgsConstructor
 @Getter
-public class Friend {
+public class Friend extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

@@ -1,10 +1,53 @@
 <!DOCTYPE html>
-<html lang="en">
+<html layout:decorate="~{common/layout/defaultLayout.html}">
+
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <title>친구 목록</title>
 </head>
+
 <body>
 
+<main layout:fragment="Content">
+    <div class="flex justify-center mx-auto max-w-5xl">
+        <div class="flex flex-col w-full">
+            <div class="p-3 border-b border-gray-400">
+                <span class="font-bold text-xl"><i class="fa-solid fa-users"></i> 친구 목록</span>
+            </div>
+            <div class="text-center mt-2 mx-2" th:if="${#lists.isEmpty(friendDTOS)}">
+                <i class="fa-solid fa-users-slash"></i> 현재 친구 목록이 비어 있습니다. 지금 바로 친구를 추가하고 친구와 맛지도를 공유해보세요!
+            </div>
+            <ul class="flex flex-col gap-1" th:if="${!#lists.isEmpty(friendDTOS)}">
+                <li th:each="friendDTO, iterationStat: ${friendDTOS}">
+                    <div class="card bg-base-100 shadow-2xl">
+                        <div class="card-body">
+                            <div class="mt-1 flex flex-col gap-2">
+                                <img th:src="${friendDTO.profileImageUrl}" alt=""
+                                     class="w-14 h-14 object-cover m-3 rounded-full">
+                                <div>
+                                    <div class="flex items-center mb-1">
+                                        <div class="text-xl font-bold" th:text="${friendDTO.friendNickname}"></div>
+                                    </div>
+                                </div>
+                                <div class="flex">
+                                    <form th:action method="post">
+                                        <input type="hidden" name="friendRequestId" th:value="${friendDTO.id}">
+                                        <button class="btn btn-primary btn-sm mr-2" type="submit">맛지도 보기</button>
+                                    </form>
+                                    <form th:action method="post">
+                                        <input type="hidden" name="friendRequestId" th:value="${friendDTO.id}">
+                                        <button class="btn btn-primary btn-sm" type="submit">삭제</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+</main>
+
 </body>
+
 </html>
