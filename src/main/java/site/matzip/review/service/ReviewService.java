@@ -22,7 +22,6 @@ import site.matzip.review.repository.ReviewRepository;
 
 import java.time.*;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -38,8 +37,7 @@ public class ReviewService {
                 .content(reviewCreationDTO.getContent())
                 .build();
 
-        Optional<Member> authorOptional = memberRepository.findById(authorId);
-        Member author = authorOptional.orElseThrow(() -> new EntityNotFoundException("Member Not Found"));
+        Member author = memberRepository.findById(authorId).orElseThrow(() -> new EntityNotFoundException("Member not Found"));
         createdReview.setMatzip(matzip);
         createdReview.setAuthor(author);
         reviewRepository.save(createdReview);
