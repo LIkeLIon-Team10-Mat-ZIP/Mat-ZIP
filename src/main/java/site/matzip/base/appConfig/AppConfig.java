@@ -7,19 +7,12 @@ import org.springframework.context.annotation.Configuration;
 @Getter
 @Configuration
 public class AppConfig {
-    private final String defaultProfileImageUrl;
-    private final Long pointRewardReferenceTime;
-    private final Long pointRewardReview;
-    private final Long pointRewardComment;
-
-    public AppConfig(
-            @Value("${custom.profileImage.defaultUrl}") String defaultProfileImageUrl,
-            @Value("${custom.pointReward.referenceTime}") Long pointRewardReferenceTime,
-            @Value("${custom.pointReward.review}") Long pointRewardReview,
-            @Value("${custom.pointReward.comment}") Long pointRewardComment) {
-        this.defaultProfileImageUrl = defaultProfileImageUrl;
-        this.pointRewardReferenceTime = pointRewardReferenceTime;
-        this.pointRewardReview = pointRewardReview;
-        this.pointRewardComment = pointRewardComment;
-    }
+    @Value("${custom.profileImage.defaultUrl}")
+    private String defaultProfileImageUrl;
+    @Value("${custom.pointReward.referenceTime}")
+    private Long pointRewardReferenceTime;
+    @Value("${custom.pointReward.review}")
+    private Long pointRewardReview;
+    @Value("${custom.pointReward.comment}")
+    private Long pointRewardComment;
 }
