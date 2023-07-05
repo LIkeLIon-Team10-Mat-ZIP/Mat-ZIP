@@ -3,6 +3,7 @@ package site.matzip.badge.domain;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -25,4 +26,11 @@ public class Badge {
 
     @OneToMany(mappedBy = "badge", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MemberBadge> memberBadges;
+
+    @Builder
+    public Badge(String imageUrl, String originalImageName, BadgeType badgeType) {
+        this.imageUrl = imageUrl;
+        this.originalImageName = originalImageName;
+        this.badgeType = badgeType;
+    }
 }

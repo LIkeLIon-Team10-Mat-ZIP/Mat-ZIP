@@ -58,7 +58,7 @@ public class MemberBadgeService {
     @Scheduled(cron = "*/15 * * * * *")
     @Transactional
     public void calculateReviewBadge() {
-        List<Member> members = memberRepository.findAllWithComments();
+        List<Member> members = memberRepository.findAllWithReviews();
         Badge checkBadge = badgeRepository.findByBadgeType(BadgeType.COMMENTER);
 
         for (Member member : members) {
@@ -102,12 +102,4 @@ public class MemberBadgeService {
             memberBadgeRepository.save(createdMemberBadge);
         }
     }
-
-//    @Scheduled(cron = "*/15 * * * * *")
-//    @Transactional
-//    public void koreanMatzipCountBadge() {
-//
-//        Badge checkBadge = badgeRepository.findByBadgeType(BadgeType.KOREAN);
-//
-//    }
 }
