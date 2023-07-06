@@ -39,7 +39,9 @@
                                     </div>
                                 </div>
                                 <div>
-                                    <div class="text-lg" th:text="${member.username}"></div>
+                                    <button id="author" onclick="profile_modal.showModal();getProfile(this.textContent)"
+                                            class="whitespace-nowrap overflow-x-hidden overflow-ellipsis"
+                                            th:text="${member.nickname}"></button>
                                 </div>
                             </div>
                         </td>

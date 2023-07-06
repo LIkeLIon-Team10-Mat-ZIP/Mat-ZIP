@@ -183,7 +183,7 @@ public class MemberService {
 
         return MemberRankDTO.builder()
                 .profileImageUrl(profileImageUrl)
-                .username(member.getUsername())
+                .nickname(member.getNickname())
                 .badgeImage(badgeMap)
                 .point(member.getPoint())
                 .build();

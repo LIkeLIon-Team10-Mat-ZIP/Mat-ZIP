@@ -11,7 +11,7 @@ import java.util.Map;
 @ToString
 public class MemberRankDTO {
     private String profileImageUrl;
-    private String username;
+    private String nickname;
     private Map<String, String> badgeImage;
     private long point;
 }
