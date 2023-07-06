@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html layout:decorate="~{common/layout/defaultLayout.html}">
+<head>
+    <title>Ranking</title>
+</head>
+
+<body>
+
+<main layout:fragment="Content">
+    <div class="flex justify-center mx-auto max-w-5xl">
+        <div class="flex flex-col w-full">
+            <div class="flex justify-center">
+                <span class="text-4xl text-gray-500"><i class="fa-solid fa-trophy"></i> Ranking</span>
+            </div>
+            <div class="mt-5">
+                <table class="table text-center">
+                    <colgroup>
+                        <col width="70">
+                        <col width="270">
+                        <col>
+                        <col width="120">
+                    </colgroup>
+                    <thead>
+                    <tr class="bg-yellow-100">
+                        <th>순위</th>
+                        <th>유저명</th>
+                        <th>보유 뱃지</th>
+                        <th>포인트</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="member, loop : ${memberRankDtoList}">
+                        <td th:text="${loop.count}"></td>
+                        <td>
+                            <div class="flex items-center space-x-3 ml-4">
+                                <div class="avatar">
+                                    <div class="mask mask-squircle w-12 h-12">
+                                        <img th:src="${member.profileImageUrl}" alt=""/>
+                                    </div>
+                                </div>
+                                <div>
+                                    <button id="author" onclick="profile_modal.showModal();getProfile(this.textContent)"
+                                            class="whitespace-nowrap overflow-x-hidden overflow-ellipsis"
+                                            th:text="${member.nickname}"></button>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="flex flex-wrap justify-center">
+                            <div th:each="badge : ${member.badgeImage}">
+                                <img th:src="${badge.key}" class="w-14 h-14 rounded-full mr-1"
+                                     th:title="${badge.value}">
+                            </div>
+                        </td>
+                        <td class="" th:text="${member.point}"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Profile_modal -->
+    <dialog id="profile_modal" class="modal">
+        <form method="dialog" class="modal-box" style="width: 400px; overflow-y: auto;">
+            <div class="flex justify-end">
+                <button class="btn btn-xs btn-outline">X</button>
+            </div>
+            <div class="flex flex-wrap gap-4">
+                <img id="modal-profile-image" src="" class="border-2 border-gray-100"
+                     style="width: 70px; height: 70px; border-radius: 50%;">
+                <section class="flex flex-col justify-center">
+                    <span class="text-lg" id="modal-userNickname"></span>
+                </section>
+            </div>
+            <br>
+            <hr>
+            <br>
+            <div class="flex flex-wrap justify-between">
+                <section class="flex flex-col">
+                    <span class="flex justify-center font-bold" id="modal-matzip-count">0</span>
+                    <span class="text-sm">맛집</span>
+                </section>
+
+                <section class="flex flex-col">
+                    <span class="flex justify-center font-bold" id="modal-review-count">0</span>
+                    <span class="text-sm">리뷰</span>
+                </section>
+
+                <section class="flex flex-col">
+                    <span class="flex justify-center font-bold" id="modal-point">0</span>
+                    <span class="text-sm">포인트</span>
+                </section>
+
+                <section class="flex flex-col">
+                    <span class="flex justify-center font-bold" id="modal-friend-count">0</span>
+                    <span class="text-sm">친구</span>
+                </section>
+            </div>
+        </form>
+    </dialog>
+
+    <script>
+        function getProfile(nickname) {
+            $.ajax({
+                type: "GET",
+                url: "/usr/member/getProfile",
+                data: {nickname: nickname},
+                success: function (response) {
+                    // 프로필 정보를 성공적으로 가져왔을 때 처리할 로직
+                    const profileImageUrl = response.profileImageUrl;
+                    const nickname = response.nickname;
+                    const createDate = response.formattedCreateDate;
+                    const matzipCount = response.matzipCount;
+                    const reviewCount = response.reviewCount;
+                    const point = response.point;
+                    //const friendCount = response.modal-friend-count;
+
+                    // 가져온 프로필 정보를 원하는 대로 처리합니다. (콜백방식)
+                    $('#modal-profile-image').attr('src', profileImageUrl);
+                    $('#modal-userNickname').text(nickname);
+                    $('#modal-createDate').text(createDate);
+                    $('#modal-matzip-count').text(matzipCount);
+                    $('#modal-review-count').text(reviewCount);
+                    $('#modal-point').text(point);
+                    //$('#modal-friend-count').text(friendCount);
+                },
+                error: function (error) {
+                    console.error('Error retrieving profile:', error);
+                }
+            });
+        }
+    </script>
+</main>
+</body>
+
+</html>
