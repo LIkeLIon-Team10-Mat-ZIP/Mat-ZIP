@@ -48,7 +48,7 @@ public class MemberBadgeService {
         return badgeMap;
     }
 
-    @Scheduled(cron = "*/15 * * * * *")
+    @Scheduled(cron = "0 * * * * *")
     @Transactional
     public void calculateMatzipCountBadge() {
         List<Member> members = memberRepository.findAllWithMatzipMembers();
@@ -72,7 +72,7 @@ public class MemberBadgeService {
         }
     }
 
-    @Scheduled(cron = "*/15 * * * * *")
+    @Scheduled(cron = "0 * * * * *")
     @Transactional
     public void calculateReviewBadge() {
         List<Member> members = memberRepository.findAllWithReviews();
@@ -96,7 +96,7 @@ public class MemberBadgeService {
         }
     }
 
-    @Scheduled(cron = "*/15 * * * * *")
+    @Scheduled(cron = "0 * * * * *")
     @Transactional
     public void calculateCommentBadge() {
         List<Member> members = memberRepository.findAllWithComments();
