@@ -126,7 +126,9 @@ public class MemberController {
     @GetMapping("/ranking")
     public String showRanking(Model model) {
         List<MemberRankDTO> memberRankDtoList = memberService.findAndConvertTopTenMember();
+
         model.addAttribute("memberRankDtoList", memberRankDtoList);
+
         return "/usr/member/ranking";
     }
 }
