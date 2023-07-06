@@ -17,12 +17,10 @@ import site.matzip.matzip.domain.Matzip;
 import site.matzip.matzip.dto.MatzipCreationDTO;
 import site.matzip.matzip.dto.MatzipListDTO;
 import site.matzip.matzip.dto.MatzipReviewDTO;
-import site.matzip.matzip.dto.MatzipReviewListDTO;
 import site.matzip.matzip.service.MatzipService;
 import site.matzip.member.domain.Member;
 import site.matzip.review.domain.Review;
 import site.matzip.review.dto.ReviewCreationDTO;
-import site.matzip.review.dto.ReviewListDTO;
 import site.matzip.review.service.ReviewService;
 
 import java.io.IOException;
@@ -47,8 +45,7 @@ public class MatzipController {
     public String create(@RequestBody MatzipCreationDTO matzipCreationDTO, BindingResult result, Authentication authentication) {
         Member author = rq.getMember(authentication);
         matzipService.create(matzipCreationDTO, author);
-
-        return "redirect:/matzip/mylist";
+        return "redirect:/";
     }
 
     @PreAuthorize("isAuthenticated()")
@@ -76,13 +73,10 @@ public class MatzipController {
 
     @GetMapping("/api/list")
     @ResponseBody
-    public ResponseEntity<List<MatzipReviewListDTO>> searchAllWithReviews(Authentication authentication) {
+    public ResponseEntity<List<MatzipListDTO>> searchAllWithReviews(Authentication authentication) {
         try {
             List<MatzipListDTO> matzipDtoList = matzipService.findAndConvertAll(rq.getMember(authentication).getId());
-            List<ReviewListDTO> reviewDtoList = reviewService.findAndConvertAll();
-            List<MatzipReviewListDTO> matzipReviewDtoList = matzipService.mergeMatzipAndReviews(matzipDtoList, reviewDtoList);
-
-            return ResponseEntity.ok(matzipReviewDtoList);
+            return ResponseEntity.ok(matzipDtoList);
         } catch (Exception e) {
             // 예외 발생 시 처리
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -91,12 +85,10 @@ public class MatzipController {
 
     @GetMapping("/api/mylist")
     @ResponseBody
-    public ResponseEntity<List<MatzipReviewListDTO>> searchMineWithReviews(Authentication authentication) {
+    public ResponseEntity<List<MatzipListDTO>> searchMineWithReviews(Authentication authentication) {
         try {
             List<MatzipListDTO> matzipDtoList = matzipService.findAndConvertMine(rq.getMember(authentication).getId());
-            List<ReviewListDTO> reviewDtoList = reviewService.findAndConvertMine(rq.getMember(authentication).getId());
-            List<MatzipReviewListDTO> matzipReviewDtoList = matzipService.mergeMatzipAndReviews(matzipDtoList, reviewDtoList);
-            return ResponseEntity.ok(matzipReviewDtoList);
+            return ResponseEntity.ok(matzipDtoList);
         } catch (Exception e) {
             // 예외 발생 시 처리
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();

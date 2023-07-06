@@ -153,6 +153,9 @@
         //map 설정이 끝났으니 세션에 담겨있던거 삭제
         sessionStorage.clear();
 
+        // 검색 결과 목록이나 마커를 클릭했을 때 장소명을 표출할 인포윈도우를 생성합니다
+        var infowindow = new kakao.maps.InfoWindow({zIndex: 1});
+
         var imageSrc = "https://ifh.cc/g/64zAsK.png";
         var imageSize = new kakao.maps.Size(36, 37);
         var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize);
@@ -208,17 +211,15 @@
             }
         }
 
-
         loadMatzipList("/matzip/api/list");
 
-        function displayInfoWindow(marker, title) {
-            if (title.length > 9) {
-                content = '<div style="padding:5px;z-index:1;font-size:0.9em;">' + title + '</div>';
+        function showInfoWindow(marker, matzip) {
+            if (matzip.matzipName.length > 9) {
+                iwContent = '<div style="padding:5px; overflow-wrap: break-word; font-size:0.8em;">' + matzip.matzipName + '</div>';
             } else {
-                content = '<div style="padding:5px;z-index:1;">' + title + '</div>';
+                iwContent = '<div style="padding:5px; overflow-wrap: break-word;">' + matzip.matzipName + '</div>';
             }
-
-            infowindow.setContent(content);
+            infowindow.setContent(iwContent);
             infowindow.open(map, marker);
         }
 
@@ -233,15 +234,10 @@
                     //전역 변수에 넘어온 모든 데이터 할당
                     nonFilteredData = data;
                     // 각 맛집 정보에 대해서 반복 처리를 합니다
-                    data.forEach(matzipReviewDto => {
-                        const matzip = matzipReviewDto.matzipListDTO;
-                        const marker = createMarker(map, matzip);
+                    data.forEach(matzip => {
+                        const marker = createMarker(map, matzip, markerImage);
+                        addMarkerClickEvent(marker, matzip);
                         markers.push(marker);
-                        // 마커에 클릭 이벤트 리스너를 추가합니다
-                        kakao.maps.event.addListener(marker, 'click', function () {
-                            showPlaceInfo(matzip);
-                            displayInfoWindow(marker, matzip);
-                        });
                     });
                     clusterer.addMarkers(markers);
                     if (callback) callback();
@@ -250,6 +246,15 @@
                     console.error('Error:', error);
                     if (callback) callback();
                 });
+        }
+
+        // 마커에 클릭 이벤트 리스너를 추가하는 함수
+        function addMarkerClickEvent(marker, matzip) {
+            kakao.maps.event.addListener(marker, 'click', function () {
+                showPlaceInfo(marker, matzip);
+                showInfoWindow(marker, matzip);
+                currentInfoWindow = infowindow;
+            });
         }
 
         function createMarker(map, matzip, markerImage) {
@@ -261,158 +266,9 @@
                 image: markerImage,
             });
             marker.matzipId = matzip.matzipId;
+            return marker;
         }
 
-        // 리스트 타입 토글 함수
-        function toggleList() {
-            const listBtn = document.getElementById("listBtn");
-            const listType = listBtn.getAttribute("data-list-type");
-
-            // 리스트 버튼 스피너 표시
-            document.getElementById("listSpinner").style.display = "inline-block";
-
-            if (listType === "all") {
-                // 나의 리스트 불러오기
-                loadMatzipList("/matzip/api/mylist", () => {
-                    // 리스트 버튼 스피너를 숨깁니다
-                    document.getElementById("listSpinner").style.display = "none";
-                    // 리스트 타입을 "my"로 변경
-                    listBtn.setAttribute("data-list-type", "my");
-                    listBtn.classList.remove("btn-info");
-                    listBtn.classList.add("btn-primary");
-
-                    // 버튼 텍스트 변경
-                    listBtn.innerHTML = `
-                PRIVATE
-                <span class="loading loading-spinner-sm inline" id="listSpinner" style="display: none;"></span>
-            `;
-
-                    currentListType = "my"; // 현재 리스트 타입 업데이트
-                });
-            } else {
-                // 전체 리스트 불러오기
-                loadMatzipList("/matzip/api/list", () => {
-                    // 리스트 버튼 스피너를 숨깁니다
-                    document.getElementById("listSpinner").style.display = "none";
-                    // 리스트 타입을 "all"로 변경
-                    listBtn.setAttribute("data-list-type", "all");
-                    listBtn.classList.remove("btn-primary");
-                    listBtn.classList.add("btn-info");
-
-                    // 버튼 텍스트 변경
-                    listBtn.innerHTML = `
-                ALL
-                <span class="loading loading-spinner-sm inline" id="listSpinner" style="display: none;"></span>
-            `;
-
-                    currentListType = "all"; // 현재 리스트 타입 업데이트
-                });
-            }
-        }
-
-        function goToMatzipCreationPage() {
-            window.location.href = '/matzip/create';
-        };
-
-        function filterByNameOrType(searchName, searchType) {
-            const filteredList = nonFilteredData.filter((matzipReviewDto) => {
-                if (!matzipReviewDto.matzipListDTO) {
-                    return false;
-                }
-
-                const {matzipName, address, matzipType} = matzipReviewDto.matzipListDTO;
-
-                let isNameMatched = searchName
-                    ? matzipName.includes(searchName) || address.includes(searchName)
-                    : true;
-                let isTypeMatched = !searchType || searchType === "ALL" || matzipType === searchType;
-
-                return isNameMatched && isTypeMatched;
-            });
-
-            loadMatzipListWithFilteredList(filteredList);
-        }
-
-        function search() {
-            const searchName = document.getElementById("searchInput").value;
-            const searchType = document.getElementById("matzipTypeSelect").value;
-            filterByNameOrType(searchName, searchType);
-        }
-
-        function loadMatzipListWithFilteredList(filteredList) {
-            removeMarker();
-            clusterer.clear();
-
-            filteredList.forEach(matzipReviewDto => {
-                const matzip = matzipReviewDto.matzipListDTO;
-                const reviews = matzipReviewDto.reviewListDTOs;
-                createMarker(map, matzip, markerImage, markers);
-                // 정보창에 표시할 내용을 설정합니다
-                var iwContent;
-                if (matzip.matzipName.length > 9) {
-                    iwContent = '<div style="padding:5px; overflow-wrap: break-word; font-size:0.8em;">' + matzip.matzipName + '</div>';
-                } else {
-                    iwContent = '<div style="padding:5px; overflow-wrap: break-word;">' + matzip.matzipName + '</div>';
-                }
-
-                // 정보창을 생성합니다
-                var infowindow = new kakao.maps.InfoWindow({
-                    content: iwContent
-                });
-
-                // 마커에 클릭 이벤트를 등록합니다
-                kakao.maps.event.addListener(marker, 'click', function () {
-                    if (currentInfoWindow) {
-                        currentInfoWindow.close();
-                    }
-                    infowindow.open(map, marker);
-                    currentInfoWindow = infowindow;
-                    // 장소 정보를 업데이트합니다.
-                    placeName.innerText = matzip.matzipName;
-                    placeAddress.innerText = '주소: ' + matzip.address;
-                    placePhone.innerText = '전화번호: ' + matzip.phoneNumber;
-                    // 설명이나 평점이 없는 경우, 해당 요소를 숨깁니다
-                    if (matzip.description === "" && matzip.rating === 0) {
-                        placeDescription.style.display = 'none';
-                        placeRating.style.display = 'none';
-                    } else {
-                        placeDescription.style.display = 'block';
-                        placeDescription.innerText = '설명: ' + matzip.description;
-                        placeRating.style.display = 'block';
-                        placeRating.innerText = '내 평점: ' + matzip.rating;
-                    }
-                    mapLink.href = 'https://map.kakao.com/link/map/' + matzip.matzipName + ',' + matzip.y + ',' + matzip.x;
-                    mapLink.innerText = '큰지도보기';
-                    routeLink.href = 'https://map.kakao.com/link/to/' + matzip.matzipName + ',' + matzip.y + ',' + matzip.x;
-                    routeLink.innerText = '길찾기';
-                    detailLink.href = matzip.matzipUrl;
-                    detailLink.innerText = '상세정보';
-                    placeInfo.style.display = 'block'; // Show place info
-                    reviewList.style.display = 'block'
-
-                    currentReviews = reviews.filter(review => review.matzipId === marker.matzipId);
-                    // 리뷰 목록을 업데이트합니다.
-                    const reviewListContainer = document.getElementById('reviewListContainer');
-                    const noReview = document.getElementById('noReview');
-
-                    reviewListContainer.innerHTML = ''; // 이전에 표시된 리뷰 목록 초기화
-
-                    if (reviews.length > 0) {
-                        noReview.style.display = 'none';
-                        reviewListContainer.style.display = 'block';
-                        //리뷰 반복문 (review x: reviews) 랑 같은거
-                        reviews.forEach((review) => {
-                            createReviewList(review)
-                        });
-                    } else {
-                        noReview.style.display = 'block';
-                        reviewListContainer.style.display = 'none';
-                    }
-                    reviewButton.href = `/review/create/${matzip.matzipId}`;
-                });
-            });
-            clusterer.addMarkers(markers);
-        }
 
         function createReviewList(review) {
             // 1. 전체 리뷰 컨테이너 생성
@@ -506,57 +362,206 @@
         }
 
         function showPlaceInfo(marker, matzip) {
-            kakao.maps.event.addListener(marker, 'click', function () {
-                if (currentInfoWindow) {
-                    currentInfoWindow.close();
-                }
-                infowindow.open(map, marker);
-                currentInfoWindow = infowindow;
-                // 장소 정보를 업데이트합니다.
-                placeName.innerText = matzip.matzipName;
-                placeAddress.innerText = '주소: ' + matzip.address;
-                placePhone.innerText = '전화번호: ' + matzip.phoneNumber;
-                // 설명이나 평점이 없는 경우, 해당 요소를 숨깁니다
-                if (matzip.description === "" && matzip.rating === 0) {
-                    placeDescription.style.display = 'none';
-                    placeRating.style.display = 'none';
-                } else {
-                    placeDescription.style.display = 'block';
-                    placeDescription.innerText = '설명: ' + matzip.description;
-                    placeRating.style.display = 'block';
-                    placeRating.innerText = '내 평점: ' + matzip.rating;
-                }
-                mapLink.href = 'https://map.kakao.com/link/map/' + matzip.matzipName + ',' + matzip.y + ',' + matzip.x;
-                mapLink.innerText = '큰지도보기';
-                routeLink.href = 'https://map.kakao.com/link/to/' + matzip.matzipName + ',' + matzip.y + ',' + matzip.x;
-                routeLink.innerText = '길찾기';
-                detailLink.href = matzip.matzipUrl;
-                detailLink.innerText = '상세정보';
-                placeInfo.style.display = 'block'; // Show place info
-                reviewList.style.display = 'block'
-
-                currentReviews = reviews.filter(review => review.matzipId === marker.matzipId);
-                // 리뷰 목록을 업데이트합니다.
-                const reviewListContainer = document.getElementById('reviewListContainer');
-                const noReview = document.getElementById('noReview');
-
-                reviewListContainer.innerHTML = ''; // 이전에 표시된 리뷰 목록 초기화
-
-                if (reviews.length > 0) {
-                    noReview.style.display = 'none';
-                    reviewListContainer.style.display = 'block';
-                    //리뷰 반복문 (review x: reviews) 랑 같은거
-                    reviews.forEach((review) => {
-                        createReviewList(review);
-                    });
-                } else {
-                    noReview.style.display = 'block';
-                    reviewListContainer.style.display = 'none';
-                }
-                reviewButton.href = `/review/create/${matzip.matzipId}`;
-            });
+            // 장소 정보를 업데이트합니다.
+            placeName.innerText = matzip.matzipName;
+            placeAddress.innerText = '주소: ' + matzip.address;
+            placePhone.innerText = '전화번호: ' + matzip.phoneNumber;
+            // 설명이나 평점이 없는 경우, 해당 요소를 숨깁니다
+            if (matzip.description === "" && matzip.rating === 0) {
+                placeDescription.style.display = 'none';
+                placeRating.style.display = 'none';
+            } else {
+                placeDescription.style.display = 'block';
+                placeDescription.innerText = '설명: ' + matzip.description;
+                placeRating.style.display = 'block';
+                placeRating.innerText = '내 평점: ' + matzip.rating;
+            }
+            mapLink.href = 'https://map.kakao.com/link/map/' + matzip.matzipName + ',' + matzip.y + ',' + matzip.x;
+            mapLink.innerText = '큰지도보기';
+            routeLink.href = 'https://map.kakao.com/link/to/' + matzip.matzipName + ',' + matzip.y + ',' + matzip.x;
+            routeLink.innerText = '길찾기';
+            detailLink.href = matzip.matzipUrl;
+            detailLink.innerText = '상세정보';
+            placeInfo.style.display = 'block'; // Show place info
         }
 
+        // 리스트 타입 토글 함수
+        function toggleList() {
+            const listBtn = document.getElementById("listBtn");
+            const listType = listBtn.getAttribute("data-list-type");
+
+            // 리스트 버튼 스피너 표시
+            document.getElementById("listSpinner").style.display = "inline-block";
+
+            if (listType === "all") {
+                // 나의 리스트 불러오기
+                loadMatzipList("/matzip/api/mylist", () => {
+                    // 리스트 버튼 스피너를 숨깁니다
+                    document.getElementById("listSpinner").style.display = "none";
+                    // 리스트 타입을 "my"로 변경
+                    listBtn.setAttribute("data-list-type", "my");
+                    listBtn.classList.remove("btn-info");
+                    listBtn.classList.add("btn-primary");
+
+                    // 버튼 텍스트 변경
+                    listBtn.innerHTML = `
+                PRIVATE
+                <span class="loading loading-spinner-sm inline" id="listSpinner" style="display: none;"></span>
+            `;
+
+                    currentListType = "my"; // 현재 리스트 타입 업데이트
+                });
+            } else {
+                // 전체 리스트 불러오기
+                loadMatzipList("/matzip/api/list", () => {
+                    // 리스트 버튼 스피너를 숨깁니다
+                    document.getElementById("listSpinner").style.display = "none";
+                    // 리스트 타입을 "all"로 변경
+                    listBtn.setAttribute("data-list-type", "all");
+                    listBtn.classList.remove("btn-primary");
+                    listBtn.classList.add("btn-info");
+
+                    // 버튼 텍스트 변경
+                    listBtn.innerHTML = `
+                ALL
+                <span class="loading loading-spinner-sm inline" id="listSpinner" style="display: none;"></span>
+            `;
+
+                    currentListType = "all"; // 현재 리스트 타입 업데이트
+                });
+            }
+        }
+
+        function goToMatzipCreationPage() {
+            window.location.href = '/matzip/create';
+        };
+
+        //조건에 맞게 검색
+        function filterByNameOrType(searchName, searchType) {
+            const filteredList = nonFilteredData.filter((matzipReviewDto) => {
+                if (!matzipReviewDto.matzipListDTO) {
+                    return false;
+                }
+
+                const {matzipName, address, matzipType} = matzipReviewDto.matzipListDTO;
+
+                let isNameMatched = searchName
+                    ? matzipName.includes(searchName) || address.includes(searchName)
+                    : true;
+                let isTypeMatched = !searchType || searchType === "ALL" || matzipType === searchType;
+
+                return isNameMatched && isTypeMatched;
+            });
+
+            loadMatzipListWithFilteredList(filteredList);
+        }
+
+        //검색 버튼 누르면 실행
+        function search() {
+            const searchName = document.getElementById("searchInput").value;
+            const searchType = document.getElementById("matzipTypeSelect").value;
+            filterByNameOrType(searchName, searchType);
+        }
+
+        //검색 결과 반환
+        function loadMatzipListWithFilteredList(filteredList) {
+            removeMarker();
+            clusterer.clear();
+
+            filteredList.forEach(matzipReviewDto => {
+                const matzip = matzipReviewDto.matzipListDTO;
+                const reviews = matzipReviewDto.reviewListDTOs;
+                createMarker(map, matzip, markerImage, markers);
+                // 정보창에 표시할 내용을 설정합니다
+                var iwContent;
+                if (matzip.matzipName.length > 9) {
+                    iwContent = '<div style="padding:5px; overflow-wrap: break-word; font-size:0.8em;">' + matzip.matzipName + '</div>';
+                } else {
+                    iwContent = '<div style="padding:5px; overflow-wrap: break-word;">' + matzip.matzipName + '</div>';
+                }
+
+                // 정보창을 생성합니다
+                var infowindow = new kakao.maps.InfoWindow({
+                    content: iwContent
+                });
+
+                // 마커에 클릭 이벤트를 등록합니다
+                kakao.maps.event.addListener(marker, 'click', function () {
+                    if (currentInfoWindow) {
+                        currentInfoWindow.close();
+                    }
+                    infowindow.open(map, marker);
+                    currentInfoWindow = infowindow;
+                    // 장소 정보를 업데이트합니다.
+                    placeName.innerText = matzip.matzipName;
+                    placeAddress.innerText = '주소: ' + matzip.address;
+                    placePhone.innerText = '전화번호: ' + matzip.phoneNumber;
+                    // 설명이나 평점이 없는 경우, 해당 요소를 숨깁니다
+                    if (matzip.description === "" && matzip.rating === 0) {
+                        placeDescription.style.display = 'none';
+                        placeRating.style.display = 'none';
+                    } else {
+                        placeDescription.style.display = 'block';
+                        placeDescription.innerText = '설명: ' + matzip.description;
+                        placeRating.style.display = 'block';
+                        placeRating.innerText = '내 평점: ' + matzip.rating;
+                    }
+                    mapLink.href = 'https://map.kakao.com/link/map/' + matzip.matzipName + ',' + matzip.y + ',' + matzip.x;
+                    mapLink.innerText = '큰지도보기';
+                    routeLink.href = 'https://map.kakao.com/link/to/' + matzip.matzipName + ',' + matzip.y + ',' + matzip.x;
+                    routeLink.innerText = '길찾기';
+                    detailLink.href = matzip.matzipUrl;
+                    detailLink.innerText = '상세정보';
+                    placeInfo.style.display = 'block'; // Show place info
+                    reviewList.style.display = 'block'
+
+                    currentReviews = reviews.filter(review => review.matzipId === marker.matzipId);
+                    // 리뷰 목록을 업데이트합니다.
+                    const reviewListContainer = document.getElementById('reviewListContainer');
+                    const noReview = document.getElementById('noReview');
+
+                    reviewListContainer.innerHTML = ''; // 이전에 표시된 리뷰 목록 초기화
+
+                    if (reviews.length > 0) {
+                        noReview.style.display = 'none';
+                        reviewListContainer.style.display = 'block';
+                        //리뷰 반복문 (review x: reviews) 랑 같은거
+                        reviews.forEach((review) => {
+                            createReviewList(review)
+                        });
+                    } else {
+                        noReview.style.display = 'block';
+                        reviewListContainer.style.display = 'none';
+                    }
+                    reviewButton.href = `/review/create/${matzip.matzipId}`;
+                });
+            });
+            clusterer.addMarkers(markers);
+        }
+
+        function showReviewList(reviews) {
+            reviewList.style.display = 'block'
+
+            currentReviews = reviews.filter(review => review.matzipId === marker.matzipId);
+            // 리뷰 목록을 업데이트합니다.
+            const reviewListContainer = document.getElementById('reviewListContainer');
+            const noReview = document.getElementById('noReview');
+
+            reviewListContainer.innerHTML = ''; // 이전에 표시된 리뷰 목록 초기화
+
+            if (reviews.length > 0) {
+                noReview.style.display = 'none';
+                reviewListContainer.style.display = 'block';
+                //리뷰 반복문 (review x: reviews) 랑 같은거
+                reviews.forEach((review) => {
+                    createReviewList(review);
+                });
+            } else {
+                noReview.style.display = 'block';
+                reviewListContainer.style.display = 'none';
+            }
+            reviewButton.href = `/review/create/${matzip.matzipId}`;
+        }
 
     </script>
 </main>

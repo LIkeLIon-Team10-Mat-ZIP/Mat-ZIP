@@ -13,8 +13,6 @@ import site.matzip.matzip.dto.MatzipReviewListDTO;
 import site.matzip.matzip.repository.MatzipMemberRepository;
 import site.matzip.matzip.repository.MatzipRepository;
 import site.matzip.member.domain.Member;
-import site.matzip.review.domain.Review;
-import site.matzip.review.dto.ReviewCreationDTO;
 import site.matzip.review.dto.ReviewListDTO;
 
 import java.util.ArrayList;
@@ -71,18 +69,6 @@ public class MatzipService {
         createdMatzipMember.setMatzip(savedMatzip);
 
         return createdMatzipMember;
-    }
-
-    //리뷰 엔티티 만드는 메서드
-    private Review createReviewEntity(Matzip matzip, ReviewCreationDTO reviewCreationDTO, Member author) {
-        Review createdReview = Review.builder()
-                .content(reviewCreationDTO.getContent())
-                .rating(reviewCreationDTO.getRating())
-                .build();
-        createdReview.setMatzip(matzip);
-        createdReview.setAuthor(author);
-
-        return createdReview;
     }
 
     public List<Matzip> findAll() {
