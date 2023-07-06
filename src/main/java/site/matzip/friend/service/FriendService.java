@@ -18,6 +18,10 @@ public class FriendService {
     private final FriendRepository friendRepository;
     private final AppConfig appConfig;
 
+    public void whenAfterFriendRequestAccept(Member member1, Member member2) {
+        addFriend(member1, member2); // 친구 요청 수락 시 친구 추가
+    }
+
     @Transactional
     public void addFriend(Member member1, Member member2) {
         Friend friend1 = new Friend(member1, member2);

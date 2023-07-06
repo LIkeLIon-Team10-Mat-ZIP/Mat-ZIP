@@ -2,6 +2,7 @@ package site.matzip.friendRequest.controller;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -10,13 +11,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import site.matzip.base.event.EventAfterComment;
 import site.matzip.config.auth.PrincipalDetails;
-import site.matzip.friend.service.FriendService;
 import site.matzip.friendRequest.dto.FriendRequestDTO;
 import site.matzip.friendRequest.entity.FriendRequest;
 import site.matzip.friendRequest.service.FriendRequestService;
 import site.matzip.member.domain.Member;
-import site.matzip.member.service.MemberService;
 
 import java.util.List;
 
@@ -24,16 +24,13 @@ import java.util.List;
 @RequestMapping("/friends")
 @RequiredArgsConstructor
 public class FriendRequestController {
-    private final MemberService memberService;
     private final FriendRequestService friendRequestService;
-    private final FriendService friendService;
+    private final ApplicationEventPublisher publisher;
 
     @GetMapping("/list")
     @PreAuthorize("isAuthenticated()")
     public String showList(Model model, @AuthenticationPrincipal PrincipalDetails principalDetails) {
-        Member member = memberService.findByUsername("user1").orElseThrow();
-
-        List<FriendRequestDTO> friendRequestDTOS = friendRequestService.convertToFriendRequestDTOS(member);
+        List<FriendRequestDTO> friendRequestDTOS = friendRequestService.convertToFriendRequestDTOS(principalDetails.getMember());
 
         model.addAttribute("friendRequestDTOS", friendRequestDTOS);
 
@@ -46,9 +43,8 @@ public class FriendRequestController {
     }
 
     @PostMapping("/add")
-    public String addFriend(String username, Member fromMember) {
-        Member toMember = memberService.findByUsername(username)
-                .orElseThrow(() -> new EntityNotFoundException("member not found"));
+    public String addFriend(@AuthenticationPrincipal PrincipalDetails principalDetails, Member fromMember) {
+        Member toMember = principalDetails.getMember();
 
         friendRequestService.addFriendRequest(toMember, fromMember);
 
@@ -63,9 +59,9 @@ public class FriendRequestController {
         Member member1 = friendRequest.getToMember();
         Member member2 = friendRequest.getFromMember();
 
-        friendService.addFriend(member1, member2);
+        publisher.publishEvent(new EventAfterComment(this, member1, member2)); // 친구 요청 수락 시 이벤트 발행
 
-        friendRequestService.deleteRequest(friendRequestId);
+        friendRequestService.deleteRequest(friendRequestId); // 요청 삭제
 
         return "redirect:/friends/list";
     }
