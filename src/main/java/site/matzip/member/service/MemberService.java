@@ -123,6 +123,11 @@ public class MemberService {
                 .orElseThrow(() -> new EntityNotFoundException("MemberToken not found"));
     }
 
+    public Member findByNickname(String nickname) {
+        return memberRepository.findByNickname(nickname)
+                .orElseThrow(() -> new EntityNotFoundException("Member not found"));
+    }
+
     public Member signUp(String username, String kakao_nickname, String password, String email) {
         password = passwordEncoder.encode(password);
         Member member = Member.builder()
