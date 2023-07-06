@@ -10,10 +10,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import site.matzip.badge.service.MemberBadgeService;
 import site.matzip.base.appConfig.AppConfig;
@@ -23,6 +20,7 @@ import site.matzip.config.auth.PrincipalDetails;
 import site.matzip.image.service.ProfileImageService;
 import site.matzip.member.domain.Member;
 import site.matzip.member.dto.MemberInfoDTO;
+import site.matzip.member.dto.MemberProfileDTO;
 import site.matzip.member.dto.MemberRankDTO;
 import site.matzip.member.dto.NicknameUpdateDTO;
 import site.matzip.member.service.MemberService;
@@ -130,5 +128,23 @@ public class MemberController {
         model.addAttribute("memberRankDtoList", memberRankDtoList);
 
         return "/usr/member/ranking";
+    }
+
+    @GetMapping("/getProfile")
+    @ResponseBody
+    public MemberProfileDTO getProfile(@RequestParam String nickname) {
+        Member member = memberService.findByNickname(nickname);
+        String profileImageUrl = appConfig.getDefaultProfileImageUrl();
+        if (member.getProfileImage() != null && member.getProfileImage().getImageUrl() != null) {
+            profileImageUrl = member.getProfileImage().getImageUrl();
+        }
+
+        return MemberProfileDTO.builder()
+                .profileImageUrl(profileImageUrl)
+                .nickname(member.getNickname())
+                .matzipCount(member.getMatzipMembers().size())
+                .reviewCount(member.getReviews().size())
+                .point(member.getPoint())
+                .build();
     }
 }
