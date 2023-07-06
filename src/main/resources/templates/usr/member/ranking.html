@@ -43,9 +43,12 @@
                                 </div>
                             </div>
                         </td>
-                        <!-- TODO : 뱃지 -->
-                        <td>111</td>
-                        <td th:text="${member.point}"></td>
+                        <td class="flex flex-wrap justify-center">
+                            <div th:each="badge : ${member.badgeImage}">
+                                <img th:src="${badge.key}" class="w-14 h-14 rounded-full mr-1" th:title="${badge.value}">
+                            </div>
+                        </td>
+                        <td class="" th:text="${member.point}"></td>
                     </tr>
                     </tbody>
                 </table>
