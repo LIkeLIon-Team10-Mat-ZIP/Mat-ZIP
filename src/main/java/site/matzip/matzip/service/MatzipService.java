@@ -94,7 +94,7 @@ public class MatzipService {
         return matzipRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Matzip not found with id: " + id));
     }
 
-    //사용자의 맛집지도 속 맛집 호출
+    //사용자의 id로 맛집과 맛집_멤버 같이 호출
     public List<Matzip> findAllByAuthorId(Long authorId) {
         return matzipRepository.findAllByAuthorId(authorId);
     }

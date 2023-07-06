@@ -74,11 +74,6 @@ public class MatzipController {
         return "/matzip/list";
     }
 
-    @GetMapping("/mylist")
-    public String showMyList() {
-        return "/matzip/mylist";
-    }
-
     @GetMapping("/api/list")
     @ResponseBody
     public ResponseEntity<List<MatzipReviewListDTO>> searchAllWithReviews(Authentication authentication) {
