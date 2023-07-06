@@ -9,6 +9,7 @@ import site.matzip.badge.domain.MemberBadge;
 import site.matzip.comment.domain.Comment;
 import site.matzip.image.domain.ProfileImage;
 import site.matzip.matzip.domain.MatzipMember;
+import site.matzip.review.domain.Heart;
 import site.matzip.review.domain.Review;
 
 import java.util.ArrayList;
@@ -41,6 +42,8 @@ public class Member {
     private List<Comment> comments = new ArrayList<>();
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MemberBadge> memberBadges = new ArrayList<>();
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Heart> hearts = new ArrayList<>();
 
     @Builder
     public Member(String username, String kakao_nickname, String nickname, String password, String email) {

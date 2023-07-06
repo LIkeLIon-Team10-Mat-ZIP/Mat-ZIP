@@ -21,6 +21,7 @@ import site.matzip.review.domain.Review;
 import site.matzip.review.dto.ReviewCreationDTO;
 import site.matzip.review.dto.ReviewDetailDTO;
 import site.matzip.review.dto.ReviewListDTO;
+import site.matzip.review.repository.HeartRepository;
 import site.matzip.review.repository.ReviewRepository;
 
 import java.time.*;
@@ -32,6 +33,7 @@ import java.util.stream.Collectors;
 public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final MemberRepository memberRepository;
+    private final HeartRepository heartRepository;
     private final AppConfig appConfig;
 
     @CacheEvict(value = {"reviewListCache", "myReviewListCache"}, allEntries = true)
@@ -96,7 +98,6 @@ public class ReviewService {
     public ReviewDetailDTO convertToReviewDetailDTO(Long id) {
         Review review = reviewRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Review not Found"));
         Matzip matzip = review.getMatzip();
-
         String profileImageUrl = appConfig.getDefaultProfileImageUrl();
         if (review.getAuthor().getProfileImage() != null && review.getAuthor().getProfileImage().getImageUrl() != null) {
             profileImageUrl = review.getAuthor().getProfileImage().getImageUrl();
@@ -113,7 +114,12 @@ public class ReviewService {
                 .matzipType(matzip.getMatzipType())
                 .phoneNumber(matzip.getPhoneNumber())
                 .content(review.getContent())
+                .heartCount(countHeart(review))
                 .build();
+    }
+
+    private int countHeart(Review review) {
+        return heartRepository.findByReview(review).size();
     }
 
     public List<CommentInfoDTO> convertToCommentInfoDTOS(List<Comment> comments, Long authorId) {
@@ -190,5 +196,9 @@ public class ReviewService {
                 reviewRepository.save(review); // 댓글 업데이트
             }
         }
+    }
+
+    public int getHeartCount(Long reviewId) {
+        return heartRepository.findByReviewId(reviewId).size();
     }
 }

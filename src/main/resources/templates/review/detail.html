@@ -66,10 +66,14 @@
                         </div>
 
                         <div class="flex">
-                            <div class="text-sm mr-2" th:text="${reviewDetailDTO.formattedCreateDate}"></div>
+                            <div class="text-sm mr-4" th:text="${reviewDetailDTO.formattedCreateDate}"></div>
                             <!-- TODO -->
                             <div class="text-sm mr-1">조회수</div>
-                            <div class="text-sm" id="viewCount"></div>
+                            <div class="text-sm mr-4" id="viewCount"></div>
+                            <button class="text-sm mr-1" id="heartButton">
+                                <i class="fa-regular fa-heart" style="color: #d70707;"></i>
+                            </button>
+                            <div class="text-sm mr-4" id="heartCount"></div>
                         </div>
                     </div>
 
@@ -120,7 +124,8 @@
                          class="w-40 h-40 object-cover mr-3"/>
 
                 </div>
-                <span class="mt-5 inline-block max-h-[600px] overflow-hidden break-all" id="text-content" th:text="${reviewDetailDTO.content}">
+                <span class="mt-5 inline-block max-h-[600px] overflow-hidden break-all" id="text-content"
+                      th:text="${reviewDetailDTO.content}">
                 </span>
                 <div class="fade-out" id="fade-out"></div>
                 <div class="button-container">
@@ -174,7 +179,8 @@
                     </div>
                     <!-- 댓글 내용 -->
                     <div class="flex mb-4 ml-3 mr-3">
-                        <div class="inline-block max-h-[600px] overflow-hidden break-all" th:text="${comment.content}"></div>
+                        <div class="inline-block max-h-[600px] overflow-hidden break-all"
+                             th:text="${comment.content}"></div>
                     </div>
                 </div>
             </div>
@@ -230,6 +236,33 @@
                 });
             }
         })
+
+        $(document).ready(function () {
+            const reviewId = /*[[${reviewDetailDTO.reviewId}]]*/ null;
+            const heartText = $('#heartCount');
+            if (reviewId) {
+                $.ajax({
+                    type: "GET",
+                    url: "/review/getHeartCount",
+                    data: {
+                        reviewId: reviewId
+                    },
+                    dataType: "text",
+                    success: function (data) {
+                        $(heartText).text(data)
+                    },
+                    error: function (error) {
+                        console.log(error);
+                    }
+                });
+            }
+        })
+
+        $(document).ready(function () {
+            $('#heartButton').click(function () {
+                $(this).find('i').toggleClass('fa-regular fa-solid');
+            });
+        });
     </script>
 </main>
 

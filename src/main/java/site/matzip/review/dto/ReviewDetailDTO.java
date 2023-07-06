@@ -24,6 +24,7 @@ public class ReviewDetailDTO {
     private MatzipType matzipType;
     private String address;
     private String phoneNumber;
+    private int heartCount;
     //private 리뷰이미지
 
     public String getFormattedCreateDate() {
