@@ -30,6 +30,8 @@ import site.matzip.member.dto.MemberRankDTO;
 import site.matzip.member.dto.NicknameUpdateDTO;
 import site.matzip.member.repository.MemberRepository;
 import site.matzip.member.repository.MemberTokenRepository;
+import site.matzip.review.domain.Review;
+import site.matzip.review.dto.MyReviewDTO;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -196,15 +198,29 @@ public class MemberService {
                 .build();
     }
 
-    public List<MatzipInfoDTO> convertToMatzipInfoDTO(Member member) {
-        List<MatzipInfoDTO> matzipInfoDTOs = new ArrayList<>();
+    public List<MatzipInfoDTO> convertToMatzipInfoDTO(Long memberId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new EntityNotFoundException("member not found"));
+        List<MatzipInfoDTO> matzipInfoDTOS = new ArrayList<>();
 
         for (MatzipMember matzipMember : member.getMatzipMembers()) {
             Matzip matzip = matzipMember.getMatzip();
             MatzipInfoDTO matzipInfoDTO = new MatzipInfoDTO(matzip);
-            matzipInfoDTOs.add(matzipInfoDTO);
+            matzipInfoDTOS.add(matzipInfoDTO);
         }
 
-        return matzipInfoDTOs;
+        return matzipInfoDTOS;
+    }
+
+    public List<MyReviewDTO> converToMyReviewDTO(Member member) {
+        List<MyReviewDTO> myReviewDTOS = new ArrayList<>();
+        System.out.println("member = " + member);
+        System.out.println("member.getReviews() = " + member.getReviews());
+        for (Review review : member.getReviews()) {
+            MyReviewDTO myReviewDTO = new MyReviewDTO(review);
+            myReviewDTOS.add(myReviewDTO);
+        }
+
+        return myReviewDTOS;
     }
 }

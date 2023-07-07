@@ -28,6 +28,8 @@ import site.matzip.member.dto.MemberProfileDTO;
 import site.matzip.member.dto.MemberRankDTO;
 import site.matzip.member.dto.NicknameUpdateDTO;
 import site.matzip.member.service.MemberService;
+import site.matzip.review.domain.Review;
+import site.matzip.review.dto.MyReviewDTO;
 
 import java.io.IOException;
 import java.util.List;
@@ -87,7 +89,7 @@ public class MemberController {
         model.addAttribute("memberInfoDTO", memberInfoDTO);
 
         if (menu == 1) {
-            List<MatzipInfoDTO> matzipInfoDTOS = memberService.convertToMatzipInfoDTO(member);
+            List<MatzipInfoDTO> matzipInfoDTOS = memberService.convertToMatzipInfoDTO(member.getId());
 
             model.addAttribute("matzipInfoDTOS", matzipInfoDTOS);
 
