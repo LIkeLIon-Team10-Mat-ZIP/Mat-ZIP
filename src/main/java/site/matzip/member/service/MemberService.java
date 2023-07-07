@@ -21,6 +21,7 @@ import site.matzip.base.appConfig.AppConfig;
 import site.matzip.base.rsData.RsData;
 import site.matzip.friendRequest.dto.FriendRequestDTO;
 import site.matzip.friendRequest.entity.FriendRequest;
+import site.matzip.matzip.domain.Matzip;
 import site.matzip.matzip.domain.MatzipMember;
 import site.matzip.matzip.dto.MatzipInfoDTO;
 import site.matzip.member.domain.Member;
@@ -30,10 +31,7 @@ import site.matzip.member.dto.NicknameUpdateDTO;
 import site.matzip.member.repository.MemberRepository;
 import site.matzip.member.repository.MemberTokenRepository;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -196,5 +194,17 @@ public class MemberService {
                 .badgeImage(badgeMap)
                 .point(member.getPoint())
                 .build();
+    }
+
+    public List<MatzipInfoDTO> convertToMatzipInfoDTO(Member member) {
+        List<MatzipInfoDTO> matzipInfoDTOs = new ArrayList<>();
+
+        for (MatzipMember matzipMember : member.getMatzipMembers()) {
+            Matzip matzip = matzipMember.getMatzip();
+            MatzipInfoDTO matzipInfoDTO = new MatzipInfoDTO(matzip);
+            matzipInfoDTOs.add(matzipInfoDTO);
+        }
+
+        return matzipInfoDTOs;
     }
 }

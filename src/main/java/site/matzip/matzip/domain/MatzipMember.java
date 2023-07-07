@@ -37,9 +37,9 @@ public class MatzipMember {
 
     public void setMatzip(Matzip matzip) {
         if (this.matzip != null) {
-            this.matzip.getMatzipMemberList().remove(this);
+            this.matzip.getMatzipMembers().remove(this);
         }
         this.matzip = matzip;
-        author.getMatzipMembers().add(this);
+        matzip.getMatzipMembers().add(this);
     }
 }

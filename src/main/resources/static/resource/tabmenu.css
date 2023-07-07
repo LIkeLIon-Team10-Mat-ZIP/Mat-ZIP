@@ -37,7 +37,7 @@ ul{list-style:none;}
     text-align:left;
     padding: 20px;
     position:absolute;
-    left:0; top:50px;
+    left:0; top:0;
     box-sizing: border-box;
     border : 5px solid #F8E0F1;
     border-radius: 1rem;

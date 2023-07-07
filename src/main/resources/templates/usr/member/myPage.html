@@ -53,40 +53,43 @@
                     </div>
                     <p th:text="${memberInfoDTO.email}"></p>
                     <div class="flex gap-10 h-full mt-10">
-                        <div class="bg-base-100 rounded-xl shadow-xl transform hover:scale-110 transition-transform duration-300 cursor-pointer">
+                        <div id="menu1" class="bg-base-100 rounded-xl shadow-xl transform hover:scale-110 transition-transform duration-300 cursor-pointer">
                             <div class="flex flex-col justify-center items-center h-full w-32">
-                                <div class="bg-pink-200 rounded-t-xl flex justify-center items-center w-full flex-grow text-3xl">
-                                    <i class="fa-solid fa-utensils"></i>
+                                <div class="bg-pink-200 rounded-t-xl flex justify-center items-center w-full font-bold flex-grow text-lg">
+                                    맛집
                                 </div>
                                 <div class="flex justify-center items-center w-full flex-grow">
                                     <h2 class="card-title">16</h2>
                                 </div>
                             </div>
                         </div>
-                        <div class="bg-base-100 rounded-xl shadow-xl transform hover:scale-110 transition-transform duration-300 cursor-pointer">
+                        <div id="menu2" class="bg-base-100 rounded-xl shadow-xl transform hover:scale-110 transition-transform duration-300 cursor-pointer">
                             <div class="flex flex-col justify-center items-center h-full w-32">
-                                <div class="bg-pink-200 rounded-t-xl flex justify-center items-center w-full flex-grow text-3xl">
-                                    <i class="fa-solid fa-pen-to-square"></i>
+                                <div class="bg-pink-200 rounded-t-xl flex justify-center items-center w-full font-bold flex-grow text-lg">
+<!--                                    <i class="fa-solid fa-pen-to-square"></i>-->
+                                    리뷰
                                 </div>
                                 <div class="flex justify-center items-center w-full flex-grow">
                                     <h2 class="card-title">20</h2>
                                 </div>
                             </div>
                         </div>
-                        <div class="bg-base-100 rounded-xl shadow-xl transform hover:scale-110 transition-transform duration-300 cursor-pointer">
+                        <div id="menu3" class="bg-base-100 rounded-xl shadow-xl transform hover:scale-110 transition-transform duration-300 cursor-pointer">
                             <div class="flex flex-col justify-center items-center h-full w-32">
-                                <div class="bg-pink-200 rounded-t-xl flex justify-center items-center w-full flex-grow text-3xl">
-                                    <i class="fa-solid fa-user-group"></i>
+                                <div class="bg-pink-200 rounded-t-xl flex justify-center items-center w-full font-bold flex-grow text-lg">
+<!--                                    <i class="fa-solid fa-user-group"></i>-->
+                                    친구
                                 </div>
                                 <div class="flex justify-center items-center w-full flex-grow">
                                     <h2 class="card-title">26</h2>
                                 </div>
                             </div>
                         </div>
-                        <div class="bg-base-100 rounded-xl shadow-xl transform hover:scale-110 transition-transform duration-300 cursor-pointer">
+                        <div id="menu4" class="bg-base-100 rounded-xl shadow-xl transform hover:scale-110 transition-transform duration-300 cursor-pointer">
                             <div class="flex flex-col justify-center items-center h-full w-32">
-                                <div class="bg-pink-200 rounded-t-xl flex justify-center items-center w-full flex-grow text-3xl">
-                                    <i class="fa-solid fa-coins"></i>
+                                <div class="bg-pink-200 rounded-t-xl flex justify-center items-center w-full font-bold flex-grow text-lg">
+<!--                                    <i class="fa-solid fa-coins"></i>-->
+                                    포인트
                                 </div>
                                 <div class="flex justify-center items-center w-full flex-grow">
                                     <h2 class="card-title">5,000</h2>
@@ -105,28 +108,24 @@
                                 <ul>
                                     <li id="tab1" class="btnCon">
                                         <input type="radio" checked name="tabmenu" id="tabmenu1">
-                                        <label for="tabmenu1">내 맛집</label>
                                         <div class="tabCon">
                                             <div layout:fragment="content" class="mt-4"></div>
                                         </div>
                                     </li>
                                     <li id="tab2" class="btnCon">
                                         <input type="radio" name="tabmenu" id="tabmenu2">
-                                        <label for="tabmenu2">내 리뷰</label>
                                         <div class="tabCon">
                                             <div layout:fragment="content" class="mt-4"></div>
                                         </div>
                                     </li>
                                     <li id="tab3" class="btnCon">
                                         <input type="radio" name="tabmenu" id="tabmenu3">
-                                        <label for="tabmenu3">친구</label>
                                         <div class="tabCon">
                                             <div layout:fragment="content" class="mt-4"></div>
                                         </div>
                                     </li>
                                     <li id="tab4" class="btnCon">
                                         <input type="radio" name="tabmenu" id="tabmenu4">
-                                        <label for="tabmenu4">포인트</label>
                                         <div class="tabCon">
                                             <div layout:fragment="content" class="mt-4"></div>
                                         </div>
@@ -141,38 +140,28 @@
     </div>
 
     <script>
-        const pathArray = window.location.pathname.split('/');
-        const tab = pathArray[pathArray.length - 1];
-        switch (tab) {
-            case "review":
-                $('#tabmenu2').prop('checked', true);
-                break;
-            case "friend":
-                $('#tabmenu3').prop('checked', true);
-                break;
-            case "point":
-                $('#tabmenu4').prop('checked', true);
-                break;
-        }
-
-        const tBtn_1 = document.getElementById('tabmenu1');
+        const tBtn_1 = document.getElementById('menu1');
         tBtn_1.addEventListener('click', () => {
-            window.location.href = '/usr/member/myPage/matzip';
+            document.getElementById('tabmenu1').checked = true;
+            window.location.href = '/usr/member/myPage?menu=1';
         });
 
-        const tBtn_2 = document.getElementById('tabmenu2');
+        const tBtn_2 = document.getElementById('menu2');
         tBtn_2.addEventListener('click', () => {
-            window.location.href = '/usr/member/myPage/review';
+            document.getElementById('tabmenu2').checked = true;
+            window.location.href = '/usr/member/myPage?menu=2';
         });
 
-        const tBtn_3 = document.getElementById('tabmenu3');
+        const tBtn_3 = document.getElementById('menu3');
         tBtn_3.addEventListener('click', () => {
-            window.location.href = '/usr/member/myPage/friend';
+            document.getElementById('tabmenu3').checked = true;
+            window.location.href = '/usr/member/myPage?menu=3';
         });
 
-        const tBtn_4 = document.getElementById('tabmenu4');
+        const tBtn_4 = document.getElementById('menu4');
         tBtn_4.addEventListener('click', () => {
-            window.location.href = '/usr/member/myPage/point';
+            document.getElementById('tabmenu4').checked = true;
+            window.location.href = '/usr/member/myPage?menu=4';
         });
     </script>
 

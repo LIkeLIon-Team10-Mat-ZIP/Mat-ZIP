@@ -114,7 +114,7 @@ public class MatzipService {
     //후기와 맛집 정보를 하나로 묶어서 MatzipListDTO로 변환
     private List<MatzipListDTO> convertToListDTO(List<Matzip> matzipList, Long authorId) {
         return matzipList.stream().map(matzip -> {
-            List<MatzipMember> matzipMemberList = matzip.getMatzipMemberList();
+            List<MatzipMember> matzipMemberList = matzip.getMatzipMembers();
 
             Optional<MatzipMember> authorRecommendation = matzipMemberList.stream()
                     .filter(recommendation -> recommendation.getAuthor().getId().equals(authorId))

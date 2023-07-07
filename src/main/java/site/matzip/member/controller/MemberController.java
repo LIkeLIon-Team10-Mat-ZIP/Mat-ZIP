@@ -68,7 +68,8 @@ public class MemberController {
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/myPage")
-    public String showMyPage(Model model, @AuthenticationPrincipal PrincipalDetails principalDetails) {
+    public String showMyPage(Model model, @RequestParam(value = "menu", defaultValue = "1") int menu,
+                             @AuthenticationPrincipal PrincipalDetails principalDetails) {
         Member member = principalDetails.getMember();
 
         String profileImageUrl = appConfig.getDefaultProfileImageUrl();
@@ -84,6 +85,15 @@ public class MemberController {
                 .build();
 
         model.addAttribute("memberInfoDTO", memberInfoDTO);
+
+        if (menu == 1) {
+            List<MatzipInfoDTO> matzipInfoDTOS = memberService.convertToMatzipInfoDTO(member);
+
+            model.addAttribute("matzipInfoDTOS", matzipInfoDTOS);
+
+            return "usr/member/myPage/matzip";
+        }
+
         return "usr/member/myPage";
     }
 
@@ -122,18 +132,6 @@ public class MemberController {
         profileImageService.saveProfileImage(profileImage, principalDetails.getMember());
 
         return "redirect:/usr/member/myPage";
-    }
-
-    @PreAuthorize("isAuthenticated()")
-    @GetMapping("/myPage/matzip")
-    public String showMyMatzip(Model model, @AuthenticationPrincipal PrincipalDetails principalDetails) {
-        Member member = principalDetails.getMember();
-
-        //List<MatzipInfoDTO> matzipInfoDTOS = memberService.convertToMatzipInfoDTO(member);
-
-        //model.addAttribute("matzipInfoDTOS", matzipInfoDTOS);
-
-        return "usr/member/myPage/matzip";
     }
 
     @PreAuthorize("isAuthenticated()")
