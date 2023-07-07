@@ -24,10 +24,7 @@ import site.matzip.image.service.ProfileImageService;
 import site.matzip.matzip.domain.MatzipMember;
 import site.matzip.matzip.dto.MatzipInfoDTO;
 import site.matzip.member.domain.Member;
-import site.matzip.member.dto.MemberInfoDTO;
-import site.matzip.member.dto.MemberProfileDTO;
-import site.matzip.member.dto.MemberRankDTO;
-import site.matzip.member.dto.NicknameUpdateDTO;
+import site.matzip.member.dto.*;
 import site.matzip.member.service.MemberService;
 import site.matzip.review.domain.Review;
 import site.matzip.review.dto.MyReviewDTO;
@@ -102,6 +99,14 @@ public class MemberController {
                 model.addAttribute("friendDetailDTOS", friendDetailDTOS);
 
                 return "usr/member/myPage/friend";
+            case 4:
+                List<MemberRankDTO> memberRankDTOS = memberService.findAndConvertTenMemberAroundMember(member.getId());
+                MemberPointDTO memberPointDTO = memberService.convertToMemberPointDTO(member.getId());
+
+                model.addAttribute("memberPointDTO", memberPointDTO);
+                model.addAttribute("memberRankDTOS", memberRankDTOS);
+
+                return "usr/member/myPage/point";
             default:
                 List<MatzipInfoDTO> matzipInfoDTOS = memberService.convertToMatzipInfoDTO(member.getId());
 

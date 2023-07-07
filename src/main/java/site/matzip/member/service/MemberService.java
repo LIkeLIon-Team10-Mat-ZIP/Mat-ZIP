@@ -8,6 +8,9 @@ import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.http.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -28,7 +31,9 @@ import site.matzip.matzip.domain.MatzipMember;
 import site.matzip.matzip.dto.MatzipInfoDTO;
 import site.matzip.member.domain.Member;
 import site.matzip.member.domain.MemberToken;
+import site.matzip.member.dto.MemberPointDTO;
 import site.matzip.member.dto.MemberRankDTO;
+import site.matzip.member.dto.MemberRankInfoDTO;
 import site.matzip.member.dto.NicknameUpdateDTO;
 import site.matzip.member.repository.MemberRepository;
 import site.matzip.member.repository.MemberTokenRepository;
@@ -175,6 +180,81 @@ public class MemberService {
         return members.stream().map(this::convertToMemberDTO).collect(Collectors.toList());
     }
 
+    public int findMemberRankByUsername(String username) {
+        List<Member> orderedMembers = memberRepository.findAllByOrderByPointDesc();
+        for (int rank = 0; rank < orderedMembers.size(); rank++) {
+            if (orderedMembers.get(rank).getUsername().equals(username)) {
+                return rank + 1;
+            }
+        }
+        return -1;
+    }
+
+    public List<MemberRankDTO> findAndConvertTenMemberAroundMember(Long memberId) {
+        List<MemberRankInfoDTO> membersWithRank = getTop10MemberAroundUserWithRank(memberId);
+        return membersWithRank.stream().map(this::convertToMemberRankDTO).collect(Collectors.toList());
+    }
+
+    private MemberRankDTO convertToMemberRankDTO(MemberRankInfoDTO memberWithRank) {
+        Member member = memberWithRank.getMember();
+
+        String profileImageUrl = appConfig.getDefaultProfileImageUrl();
+        if (member.getProfileImage() != null && member.getProfileImage().getImageUrl() != null) {
+            profileImageUrl = member.getProfileImage().getImageUrl();
+        }
+
+        List<MemberBadge> memberBadges = memberBadgeRepository.findByMember(member);
+        Map<String, String> badgeMap = new HashMap<>();
+
+        for (MemberBadge memberBadge : memberBadges) {
+            Badge badge = memberBadge.getBadge();
+            String imageUrl = badge.getImageUrl();
+            String badgeTypeLabel = badge.getBadgeType().label();
+
+            badgeMap.put(imageUrl, badgeTypeLabel);
+        }
+
+        return MemberRankDTO.builder()
+                .rank(memberWithRank.getRank())
+                .profileImageUrl(profileImageUrl)
+                .nickname(member.getNickname())
+                .badgeImage(badgeMap)
+                .point(member.getPoint())
+                .build();
+    }
+
+    public List<MemberRankInfoDTO> getTop10MemberAroundUserWithRank(Long memberId) {
+        Member currentMember = memberRepository.findById(memberId)
+                .orElseThrow(() -> new EntityNotFoundException("member not found"));
+
+        List<Member> allOrderedMembers = memberRepository.findAllByOrderByPointDesc();
+
+        int currentMemberRank = allOrderedMembers.indexOf(currentMember) + 1;
+        int startIndex = Math.max(0, currentMemberRank - 5); // 본인 순위에서 5명 전부터 시작
+
+        // 상위 멤버와 하위 멤버를 합쳐서 10명의 회원을 가져오도록 합니다.
+        List<MemberRankInfoDTO> top10MembersWithRank = new ArrayList<>();
+
+        for (int i = startIndex; i < startIndex + 10 && i < allOrderedMembers.size(); i++) {
+            Member member = allOrderedMembers.get(i);
+            top10MembersWithRank.add(new MemberRankInfoDTO(i + 1, member));
+        }
+
+        return top10MembersWithRank;
+    }
+
+    public MemberPointDTO convertToMemberPointDTO(Long id) {
+        Member member = memberRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("member not found"));
+
+        int rank = findMemberRankByUsername(member.getUsername());
+
+        return MemberPointDTO.builder()
+                .point(member.getPoint())
+                .rank(rank)
+                .build();
+    }
+
     private MemberRankDTO convertToMemberDTO(Member member) {
         String profileImageUrl = appConfig.getDefaultProfileImageUrl();
         if (member.getProfileImage() != null && member.getProfileImage().getImageUrl() != null) {
@@ -193,6 +273,7 @@ public class MemberService {
         }
 
         return MemberRankDTO.builder()
+                .rank(0)
                 .profileImageUrl(profileImageUrl)
                 .nickname(member.getNickname())
                 .badgeImage(badgeMap)
