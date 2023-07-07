@@ -345,4 +345,54 @@ public class MemberService {
                 .point(member.getPoint())
                 .build();
     }
+
+    public MemberProfileDTO convertToMemberProfileDTO(String nickname) {
+        Member member = memberRepository.findByNickname(nickname)
+                .orElseThrow(() -> new EntityNotFoundException("member not found"));
+
+        String profileImageUrl = appConfig.getDefaultProfileImageUrl();
+        if (member.getProfileImage() != null && member.getProfileImage().getImageUrl() != null) {
+            profileImageUrl = member.getProfileImage().getImageUrl();
+        }
+
+        return MemberProfileDTO.builder()
+                .profileImageUrl(profileImageUrl)
+                .nickname(member.getNickname())
+                .matzipCount(member.getMatzipMembers().size())
+                .reviewCount(member.getReviews().size())
+                .point(member.getPoint())
+                .build();
+    }
+
+    public MemberInfoDTO convertToMemberInfoDTO(Long memberId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new EntityNotFoundException("member not found"));
+
+        String profileImageUrl = appConfig.getDefaultProfileImageUrl();
+        if (member.getProfileImage() != null && member.getProfileImage().getImageUrl() != null) {
+            profileImageUrl = member.getProfileImage().getImageUrl();
+        }
+
+        return MemberInfoDTO.builder()
+                .nickname(member.getNickname())
+                .email(member.getEmail())
+                .profileImageUrl(profileImageUrl)
+                .badgeImage(showMemberBadge(member))
+                .build();
+    }
+
+    public Map<String, String> showMemberBadge(Member member) {
+        List<MemberBadge> memberBadges = memberBadgeRepository.findByMember(member);
+        Map<String, String> badgeMap = new HashMap<>();
+
+        for (MemberBadge memberBadge : memberBadges) {
+            Badge badge = memberBadge.getBadge();
+            String imageUrl = badge.getImageUrl();
+            String badgeTypeLabel = badge.getBadgeType().label();
+
+            badgeMap.put(imageUrl, badgeTypeLabel);
+        }
+
+        return badgeMap;
+    }
 }

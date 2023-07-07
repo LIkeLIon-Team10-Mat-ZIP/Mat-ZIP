@@ -12,8 +12,6 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import site.matzip.badge.service.MemberBadgeService;
-import site.matzip.base.appConfig.AppConfig;
 import site.matzip.base.rq.Rq;
 import site.matzip.base.rsData.RsData;
 import site.matzip.config.auth.PrincipalDetails;
@@ -35,8 +33,6 @@ public class MemberController {
 
     private final MemberService memberService;
     private final ProfileImageService profileImageService;
-    private final MemberBadgeService memberBadgeService;
-    private final AppConfig appConfig;
     private final Rq rq;
 
     @GetMapping("/login")
@@ -68,50 +64,35 @@ public class MemberController {
                              @AuthenticationPrincipal PrincipalDetails principalDetails) {
         Member member = principalDetails.getMember();
 
-        String profileImageUrl = appConfig.getDefaultProfileImageUrl();
-        if (member.getProfileImage() != null && member.getProfileImage().getImageUrl() != null) {
-            profileImageUrl = member.getProfileImage().getImageUrl();
-        }
-
-        MemberInfoDTO memberInfoDTO = MemberInfoDTO.builder()
-                .nickname(member.getNickname())
-                .email(member.getEmail())
-                .profileImageUrl(profileImageUrl)
-                .badgeImage(memberBadgeService.showMemberBadge(member))
-                .build();
-
+        MemberInfoDTO memberInfoDTO = memberService.convertToMemberInfoDTO(member.getId());
         MemberInfoCntDTO memberInfoCntDTO = memberService.convertToMemberInfoCntDTO(member.getId());
 
         model.addAttribute("memberInfoCntDTO", memberInfoCntDTO);
         model.addAttribute("memberInfoDTO", memberInfoDTO);
 
         switch (menu) {
-            case 2:
+            case 2 -> {
                 List<MyReviewDTO> myReviewDTOS = memberService.converToMyReviewDTO(member.getId());
-
                 model.addAttribute("myReviewDTOS", myReviewDTOS);
-
                 return "usr/member/myPage/review";
-            case 3:
+            }
+            case 3 -> {
                 List<FriendDetailDTO> friendDetailDTOS = memberService.converToFriendDetailDTO(member.getId());
-
                 model.addAttribute("friendDetailDTOS", friendDetailDTOS);
-
                 return "usr/member/myPage/friend";
-            case 4:
+            }
+            case 4 -> {
                 List<MemberRankDTO> memberRankDTOS = memberService.findAndConvertTenMemberAroundMember(member.getId());
                 MemberPointDTO memberPointDTO = memberService.convertToMemberPointDTO(member.getId());
-
                 model.addAttribute("memberPointDTO", memberPointDTO);
                 model.addAttribute("memberRankDTOS", memberRankDTOS);
-
                 return "usr/member/myPage/point";
-            default:
+            }
+            default -> {
                 List<MatzipInfoDTO> matzipInfoDTOS = memberService.convertToMatzipInfoDTO(member.getId());
-
                 model.addAttribute("matzipInfoDTOS", matzipInfoDTOS);
-
                 return "usr/member/myPage/matzip";
+            }
         }
     }
 
@@ -165,18 +146,6 @@ public class MemberController {
     @GetMapping("/getProfile")
     @ResponseBody
     public MemberProfileDTO getProfile(@RequestParam String nickname) {
-        Member member = memberService.findByNickname(nickname);
-        String profileImageUrl = appConfig.getDefaultProfileImageUrl();
-        if (member.getProfileImage() != null && member.getProfileImage().getImageUrl() != null) {
-            profileImageUrl = member.getProfileImage().getImageUrl();
-        }
-
-        return MemberProfileDTO.builder()
-                .profileImageUrl(profileImageUrl)
-                .nickname(member.getNickname())
-                .matzipCount(member.getMatzipMembers().size())
-                .reviewCount(member.getReviews().size())
-                .point(member.getPoint())
-                .build();
+        return memberService.convertToMemberProfileDTO(nickname);
     }
 }
