@@ -79,7 +79,7 @@ public class ReviewController {
     public ResponseEntity<Page<ReviewListDTO>> getReviewsByMatzipId(@PathVariable Long matzipId,
                                                                     @RequestParam int pageSize,
                                                                     @RequestParam int pageNumber) {
-        Pageable pageable = PageRequest.of(pageNumber - 1, pageSize); // 페이지 번호를 0부터 시작하도록 변경
+        Pageable pageable = PageRequest.of(pageNumber, pageSize); // 페이지 번호를 0부터 시작하도록 변경
         Page<ReviewListDTO> reviews = reviewService.findByMatzipId(matzipId, pageable);
 
         return ResponseEntity.ok(reviews);

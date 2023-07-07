@@ -75,7 +75,6 @@ public class MatzipService {
         return matzipRepository.findAll();
     }
 
-
     public Matzip findById(Long id) {
         return matzipRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Matzip not found with id: " + id));
     }

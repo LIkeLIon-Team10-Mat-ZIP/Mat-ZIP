@@ -110,7 +110,7 @@
             <div class="mt-3" id="reviewList">
                 <span class="text-lg"><i class="fa-solid fa-magnifying-glass"></i> 리뷰</span>
                 <div id="noReview" style="display: block;">리뷰가 없습니다.</div>
-                <ul id="reviewListContainer" style="display: none; height: 1000px; overflow-y:scroll;"></ul>
+                <ul id="reviewListContainer" style="display: none; height: 500px; overflow-y:scroll;"></ul>
             </div>
         </div>
         <button class="btn btn-info" id="matzipCreationButton" onclick="goToMatzipCreationPage()">맛집 등록</button>
@@ -168,6 +168,7 @@
         var nonFilteredData;
         let currentListType = "all";
         var currentReviews = [];
+        let previousMarkerId = null; // 이전에 클릭한 마커의 맛집 아이디
 
 
         var placeInfo = document.getElementById('placeInfo');
@@ -181,9 +182,7 @@
         var routeLink = document.getElementById('routeLink');
         var detailLink = document.getElementById('detailLink');
         var reviewButton = document.getElementById('reviewButton');
-
-        let pageNum = 1; // 현재 페이지 번호
-        let isGettingReviews = false; // 현재 리뷰를 불러오고 있는지 여부
+        let isGotAllReviews = false; // 현재 리뷰를 불러오고 있는지 여부
 
         // 마커 클러스터러를 생성합니다 (마커 여러개 하나로 묶어서 표시해줌)
         var clusterer = new kakao.maps.MarkerClusterer({
@@ -384,105 +383,116 @@
         }
 
         function addMarkerClickEvent(marker, matzip) {
-            kakao.maps.event.addListener(marker, 'click', function () {
-                showPlaceInfo(marker, matzip);
-                showInfoWindow(marker, matzip);
-                currentInfoWindow = infowindow;
-                isGettingReviews = false;
-                currentReviews = [];
-                getReviews(marker.matzipId);
-            });
+            let pageNum = 0;
+            kakao.maps.event.addListener(marker, 'click', (function (marker, matzip) {
+                return function () {
+                    showPlaceInfo(marker, matzip);
+                    showInfoWindow(marker, matzip);
+                    currentInfoWindow = infowindow;
+                    isGotAllReviews = false;
+
+                    if (marker.matzipId !== previousMarkerId) {
+                        pageNum = 0;
+                        currentReviews = [];
+                        document.getElementById('reviewListContainer').innerHTML = ''; // 기존 리뷰 리스트 비우기
+                        previousMarkerId = marker.matzipId;
+                    }
+                    getReviews(marker.matzipId, pageNum);
+                };
+            })(marker, matzip));
+
+            document.getElementById('reviewListContainer').addEventListener('scroll', (function (pageNum) {
+                return function (e) {
+                    const scrollHeight = e.target.scrollHeight;
+                    const scrollTop = e.target.scrollTop;
+                    const clientHeight = e.target.clientHeight;
+                    const scrollPosition = scrollTop + clientHeight;
+                    const scrollThreshold = scrollHeight * 0.8;
+
+                    if (scrollPosition >= scrollThreshold && !isGotAllReviews) {
+                        const matzipId = previousMarkerId;
+                        pageNum += 1;
+                        getReviews(matzipId, pageNum);
+                    }
+
+                    if (isGotAllReviews && isScrolledToEnd() && !reviewButtonExists()) {
+                        const reviewButton = document.createElement('button');
+                        reviewButton.innerText = '리뷰 작성';
+                        reviewButton.classList.add('review-button', 'btn', 'btn-primary', 'flex', 'justify-center');
+                        reviewButton.addEventListener('click', function () {
+                            const matzipId = previousMarkerId;
+                            window.location.href = `/review/create/${matzipId}`;
+                        });
+                        e.target.appendChild(reviewButton);
+                    }
+                };
+            })(pageNum));
         }
 
         function showReviewList(reviews) {
             reviewList.style.display = 'block';
-            // 리뷰 목록을 업데이트합니다.
             const reviewListContainer = document.getElementById('reviewListContainer');
             const noReview = document.getElementById('noReview');
 
-            const previousScrollHeight = reviewListContainer.scrollHeight; // 이전 스크롤 높이를 기억합니다.
-
-            if (reviews.length > 0) {
+            if (currentReviews.length > 0 || reviews.length > 0) {
                 noReview.style.display = 'none';
                 reviewListContainer.style.display = 'block';
                 // 리뷰 추가하기
                 reviews.forEach((review) => {
-                    createReviewList(review);
+                    const isDuplicate = currentReviews.some((existingReview) => existingReview.reviewId === review.reviewId);
+                    if (!isDuplicate) {
+                        createReviewList(review);
+                        currentReviews.push(review);
+                    }
                 });
-
-                // 스크롤 위치를 조정합니다.
-                const newScrollHeight = reviewListContainer.scrollHeight;
-                const scrollPosition = newScrollHeight - previousScrollHeight;
-                reviewListContainer.scrollTop = scrollPosition;
             } else {
-                noReview.style.display = 'none';
-                reviewListContainer.style.display = 'block';
+                noReview.style.display = 'block';
+                reviewListContainer.style.display = 'none';
             }
         }
 
-        function getReviews(matzipId) {
-            if (!isGettingReviews) {
+        function getReviews(matzipId, pageNum) {
+            if (!isGotAllReviews) {
                 // 페이지 크기와 현재 페이지 번호를 설정합니다.
                 const pageSize = 10;
                 const pageNumber = pageNum;
-
-                // 현재 리뷰를 불러오는 상태로 변경합니다.
-                isGettingReviews = true;
-
                 // 리뷰를 서버에 요청합니다.
                 loadReviews(matzipId, pageNumber, pageSize);
             }
         }
 
         function loadReviews(matzipId, pageNumber, pageSize) {
-            const reviewListContainer = document.getElementById('reviewListContainer');
-
             fetch(`/review/api/${matzipId}?pageNumber=${pageNumber}&pageSize=${pageSize}`)
                 .then((response) => response.json())
                 .then((reviews) => {
                     const reviewContent = reviews.content;
                     showReviewList(reviewContent);
-                    // 추가된 리뷰가 페이지 크기보다 작은 경우 모든 페이지를 불러온 것으로 간주하고 isGettingReviews를 true로 유지합니다.
                     if (reviewContent.length < pageSize) {
-                        isGettingReviews = true;
+                        isGotAllReviews = true;
                     } else {
-                        isGettingReviews = false;
+                        isGotAllReviews = false;
                     }
                 })
                 .catch((error) => {
                     console.log(error);
-                    isGettingReviews = false; // 오류가 발생한 경우에도 리뷰를 계속 로드할 수 있도록 상태를 변경합니다.
+                    isGotAllReviews = false; // 오류가 발생한 경우에도 리뷰를 계속 로드할 수 있도록 상태를 변경합니다.
                 });
         }
 
-        // 스크롤 이벤트 리스너
-        document.getElementById('reviewListContainer').addEventListener('scroll', (e) => {
-            const scrollHeight = e.target.scrollHeight;
-            const scrollTop = e.target.scrollTop;
-            const clientHeight = e.target.clientHeight;
+        // 리스트의 끝에 도달했는지 확인하는 함수
+        function isScrolledToEnd() {
+            const reviewListContainer = document.getElementById('reviewListContainer');
+            const scrollHeight = reviewListContainer.scrollHeight;
+            const scrollTop = reviewListContainer.scrollTop;
+            const clientHeight = reviewListContainer.clientHeight;
 
-            // 스크롤 위치 계산
-            const scrollPosition = scrollTop + clientHeight;
-            // 스크롤이 전체 스크롤 높이의 특정 비율 이상일 때 추가 리뷰 요청
-            const scrollThreshold = scrollHeight * 0.8;
+            return scrollTop + clientHeight >= scrollHeight - 1;
+        }
 
-            // 스크롤 위치가 일정 비율 이상인 경우 리뷰 추가 요청
-            if (scrollPosition >= scrollThreshold && !isGettingReviews) {
-                pageNum += 1;
-                getReviews(pageNum); // 다음 페이지의 리뷰를 불러옵니다.
-            }
-
-            // 스크롤 위치가 리스트의 끝에 도달한 경우
-            const isScrolledToEnd = scrollPosition >= scrollHeight - 1;
-            const endOfListMessageExists = document.querySelector('.end-of-list-message') !== null;
-
-            if (isScrolledToEnd && !endOfListMessageExists) {
-                const endOfListMessage = document.createElement('div');
-                endOfListMessage.innerText = '리스트의 끝입니다.';
-                endOfListMessage.classList.add('end-of-list-message');
-                reviewListContainer.appendChild(endOfListMessage);
-            }
-        });
+        // 리뷰 작성 버튼이 이미 존재하는지 확인하는 함수
+        function reviewButtonExists() {
+            return document.querySelector('.review-button') !== null;
+        }
 
         function createReviewList(review) {
             // 1. 전체 리뷰 컨테이너 생성
