@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html layout:decorate="~{common/layout/defaultLayout.html}">
 <head>
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+
     <title>리뷰 상세페이지</title>
     <style>
         .text-content {
@@ -66,10 +69,14 @@
                         </div>
 
                         <div class="flex">
-                            <div class="text-sm mr-2" th:text="${reviewDetailDTO.formattedCreateDate}"></div>
+                            <div class="text-sm mr-4" th:text="${reviewDetailDTO.formattedCreateDate}"></div>
                             <!-- TODO -->
                             <div class="text-sm mr-1">조회수</div>
-                            <div class="text-sm" id="viewCount"></div>
+                            <div class="text-sm mr-4" id="viewCount"></div>
+                            <button class="text-sm mr-1" id="heartButton">
+                                <i class="fa-regular fa-heart" style="color: #d70707;"></i>
+                            </button>
+                            <div class="text-sm mr-4" id="heartCount"></div>
                         </div>
                     </div>
 
@@ -120,7 +127,8 @@
                          class="w-40 h-40 object-cover mr-3"/>
 
                 </div>
-                <span class="mt-5 inline-block max-h-[600px] overflow-hidden break-all" id="text-content" th:text="${reviewDetailDTO.content}">
+                <span class="mt-5 inline-block max-h-[600px] overflow-hidden break-all" id="text-content"
+                      th:text="${reviewDetailDTO.content}">
                 </span>
                 <div class="fade-out" id="fade-out"></div>
                 <div class="button-container">
@@ -174,7 +182,8 @@
                     </div>
                     <!-- 댓글 내용 -->
                     <div class="flex mb-4 ml-3 mr-3">
-                        <div class="inline-block max-h-[600px] overflow-hidden break-all" th:text="${comment.content}"></div>
+                        <div class="inline-block max-h-[600px] overflow-hidden break-all"
+                             th:text="${comment.content}"></div>
                     </div>
                 </div>
             </div>
@@ -229,7 +238,80 @@
                     }
                 });
             }
+
+            const heartText = $('#heartCount');
+            if (reviewId) {
+                $.ajax({
+                    type: "GET",
+                    url: "/review/getHeartCount",
+                    data: {
+                        reviewId: reviewId
+                    },
+                    dataType: "text",
+                    success: function (data) {
+                        $(heartText).text(data)
+                    },
+                    error: function (error) {
+                        console.log(error);
+                    }
+                });
+            }
+
+            const header = $("meta[name='_csrf_header']").attr("content");
+            const token = $("meta[name='_csrf']").attr("content");
+            $(document).ajaxSend(function (e, xhr, options) {
+                xhr.setRequestHeader(header, token);
+            });
+
+            const heartButton = $('#heartButton');
+            const heartIcon = heartButton.find('i');
+
+            if (/*[[${reviewDetailDTO.isHeart}]]*/ false) {
+                heartIcon.addClass('fa-solid').removeClass('fa-regular');
+            } else {
+                heartIcon.addClass('fa-regular').removeClass('fa-solid');
+            }
+
+            heartButton.click(function () {
+                heartIcon.toggleClass('fa-regular fa-solid');
+
+                const requestData = {
+                    reviewId: reviewId,
+                };
+
+                $.ajax({
+                    type: "POST",
+                    url: "/review/updateHeart",
+                    data: requestData,
+                    success: function (response) {
+                        updateCount(reviewId);
+                        console.log("업데이트 성공");
+                    },
+                    error: function (error) {
+                        console.log("업데이트 실패");
+                    }
+                });
+            });
         })
+
+        function updateCount(reviewId) {
+            const heartText = $('#heartCount');
+            $.ajax({
+                type: "GET",
+                url: "/review/getHeartCount",
+                data: {
+                    reviewId: reviewId
+                },
+                dataType: "text",
+                success: function (data) {
+                    $(heartText).text(data)
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            });
+        }
+
     </script>
 </main>
 

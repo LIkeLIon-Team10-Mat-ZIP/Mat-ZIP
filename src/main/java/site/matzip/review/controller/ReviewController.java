@@ -99,9 +99,8 @@ public class ReviewController {
     public String detail(Model model, @PathVariable Long id, @AuthenticationPrincipal PrincipalDetails principalDetails,
                          HttpServletRequest request, HttpServletResponse response) {
         Review review = reviewService.findById(id);
-
         ReviewDetailDTO reviewDetailDTO = reviewService.convertToReviewDetailDTO(id);
-
+        reviewDetailDTO.setHeart(reviewService.isHeart(principalDetails.getMember(), review));
         List<Comment> comments = review.getComments();
         List<CommentInfoDTO> commentInfoDTOS = reviewService.convertToCommentInfoDTOS(comments, principalDetails.getMember().getId());
 
@@ -116,7 +115,22 @@ public class ReviewController {
     @GetMapping("/getViewCount")
     @ResponseBody
     public String getViewCount(@RequestParam Long reviewId) {
-        System.out.println(reviewId);
         return String.valueOf(reviewService.getViewCount(reviewId));
+    }
+
+    @GetMapping("/getHeartCount")
+    @ResponseBody
+    public String getHeartCount(@RequestParam Long reviewId) {
+        return String.valueOf(reviewService.getHeartCount(reviewId));
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping("/updateHeart")
+    @ResponseBody
+    public ResponseEntity<Long> updateHeart(@RequestParam Long reviewId,
+                                            @AuthenticationPrincipal PrincipalDetails principalDetails) {
+        reviewService.updateHeart(principalDetails.getMember().getId(), reviewId);
+
+        return ResponseEntity.ok(reviewId);
     }
 }
