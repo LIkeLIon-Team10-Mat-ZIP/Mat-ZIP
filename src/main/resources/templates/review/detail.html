@@ -59,12 +59,9 @@
                         <div class="flex items-center mb-1">
                             <div class="text-xl font-bold" th:text="${reviewDetailDTO.authorNickname}"></div>
                             <div class="flex mx-2">
-                                <img src="https://drive.google.com/uc?id=1Eu_ibwNeAbHi7n5nu0zGQK9ylyoKpset"
-                                     class="w-5 h-5 rounded-full mr-1">
-                                <img src="https://drive.google.com/uc?id=1Eu_ibwNeAbHi7n5nu0zGQK9ylyoKpset"
-                                     class="w-5 h-5 rounded-full mr-1">
-                                <img src="https://drive.google.com/uc?id=1Eu_ibwNeAbHi7n5nu0zGQK9ylyoKpset"
-                                     class="w-5 h-5 rounded-full mr-1">
+                                <div th:each="badge : ${reviewDetailDTO.badgeImage}">
+                                    <img th:src="${badge.key}" class="w-7 h-7 rounded-full mr-1" th:title="${badge.value}">
+                                </div>
                             </div>
                         </div>
 

@@ -13,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import site.matzip.badge.service.MemberBadgeService;
 import site.matzip.comment.domain.Comment;
 import site.matzip.comment.dto.CommentInfoDTO;
 import site.matzip.config.auth.PrincipalDetails;
@@ -36,6 +37,7 @@ public class ReviewController {
     private final ReviewService reviewService;
     private final ReviewImageService reviewImageService;
     private final MatzipService matzipService;
+    private final MemberBadgeService memberBadgeService;
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/create")
@@ -139,6 +141,7 @@ public class ReviewController {
         Review review = reviewService.findById(reviewId);
         ReviewDetailDTO reviewDetailDTO = reviewService.convertToReviewDetailDTO(reviewId, principalDetails.getMember().getId());
         reviewDetailDTO.setHeart(reviewService.isHeart(principalDetails.getMember(), review));
+        reviewDetailDTO.setBadgeImage(memberBadgeService.showMemberBadge(review.getAuthor()));
         List<Comment> comments = review.getComments();
         List<CommentInfoDTO> commentInfoDTOS = reviewService.convertToCommentInfoDTOS(comments, principalDetails.getMember().getId());
 
