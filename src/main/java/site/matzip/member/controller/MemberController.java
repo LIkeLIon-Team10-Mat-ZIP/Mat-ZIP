@@ -88,15 +88,20 @@ public class MemberController {
 
         model.addAttribute("memberInfoDTO", memberInfoDTO);
 
-        if (menu == 1) {
-            List<MatzipInfoDTO> matzipInfoDTOS = memberService.convertToMatzipInfoDTO(member.getId());
+        switch (menu) {
+            case 2:
+                List<MyReviewDTO> myReviewDTOS = memberService.converToMyReviewDTO(member.getId());
 
-            model.addAttribute("matzipInfoDTOS", matzipInfoDTOS);
+                model.addAttribute("myReviewDTOS", myReviewDTOS);
 
-            return "usr/member/myPage/matzip";
+                return "usr/member/myPage/review";
+            default:
+                List<MatzipInfoDTO> matzipInfoDTOS = memberService.convertToMatzipInfoDTO(member.getId());
+
+                model.addAttribute("matzipInfoDTOS", matzipInfoDTOS);
+
+                return "usr/member/myPage/matzip";
         }
-
-        return "usr/member/myPage";
     }
 
     @PreAuthorize("isAuthenticated()")

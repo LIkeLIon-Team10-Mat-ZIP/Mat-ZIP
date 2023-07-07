@@ -4,6 +4,7 @@ import lombok.Data;
 import site.matzip.review.domain.Review;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Data
 public class MyReviewDTO {
@@ -19,5 +20,10 @@ public class MyReviewDTO {
         this.content = review.getContent();
         this.views = review.getViews();
         this.createDate = review.getCreateDate();
+    }
+
+    public String getFormattedCreateDate() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        return createDate.format(formatter);
     }
 }

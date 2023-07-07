@@ -212,10 +212,11 @@ public class MemberService {
         return matzipInfoDTOS;
     }
 
-    public List<MyReviewDTO> converToMyReviewDTO(Member member) {
+    public List<MyReviewDTO> converToMyReviewDTO(Long memberId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new EntityNotFoundException("member not found"));
         List<MyReviewDTO> myReviewDTOS = new ArrayList<>();
-        System.out.println("member = " + member);
-        System.out.println("member.getReviews() = " + member.getReviews());
+
         for (Review review : member.getReviews()) {
             MyReviewDTO myReviewDTO = new MyReviewDTO(review);
             myReviewDTOS.add(myReviewDTO);
