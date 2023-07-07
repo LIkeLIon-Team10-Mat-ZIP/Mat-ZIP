@@ -36,7 +36,7 @@ public class CommentController {
     }
 
     @PreAuthorize("isAuthenticated()")
-    @DeleteMapping("{id}")
+    @DeleteMapping("/{id}")
     public String delete(@PathVariable Long id, @AuthenticationPrincipal PrincipalDetails principalDetails) {
         Comment comment = commentService.findById(id);
         Long reviewId = comment.getReview().getId();
