@@ -50,6 +50,10 @@
             right: 10px;
             z-index: 2;
         }
+
+        #reviewListContainer {
+            transition: height 0.5s; /* 높이에 대한 0.5초 동안의 transition 효과 설정 */
+        }
     </style>
 </head>
 <body>
@@ -106,7 +110,7 @@
             <div class="mt-3" id="reviewList">
                 <span class="text-lg"><i class="fa-solid fa-magnifying-glass"></i> 리뷰</span>
                 <div id="noReview" style="display: block;">리뷰가 없습니다.</div>
-                <ul id="reviewListContainer" style="display: none;"></ul>
+                <ul id="reviewListContainer" style="display: none; height: 1000px; overflow-y:scroll;"></ul>
             </div>
         </div>
         <button class="btn btn-info" id="matzipCreationButton" onclick="goToMatzipCreationPage()">맛집 등록</button>
@@ -163,6 +167,7 @@
         var markers = [];
         var nonFilteredData;
         let currentListType = "all";
+        var currentReviews = [];
 
 
         var placeInfo = document.getElementById('placeInfo');
@@ -176,6 +181,9 @@
         var routeLink = document.getElementById('routeLink');
         var detailLink = document.getElementById('detailLink');
         var reviewButton = document.getElementById('reviewButton');
+
+        let pageNum = 1; // 현재 페이지 번호
+        let isGettingReviews = false; // 현재 리뷰를 불러오고 있는지 여부
 
         // 마커 클러스터러를 생성합니다 (마커 여러개 하나로 묶어서 표시해줌)
         var clusterer = new kakao.maps.MarkerClusterer({
@@ -262,13 +270,7 @@
         }
 
         // 마커에 클릭 이벤트 리스너를 추가하는 함수
-        function addMarkerClickEvent(marker, matzip) {
-            kakao.maps.event.addListener(marker, 'click', function () {
-                showPlaceInfo(marker, matzip);
-                showInfoWindow(marker, matzip);
-                currentInfoWindow = infowindow;
-            });
-        }
+
 
         function createMarker(map, matzip, markerImage) {
             // 해당 위치에 마커를 생성합니다
@@ -282,97 +284,6 @@
             return marker;
         }
 
-
-        function createReviewList(review) {
-            // 1. 전체 리뷰 컨테이너 생성
-            const reviewContainer = document.createElement('div');
-            reviewContainer.classList.add('mt-3');
-
-            // 2. 사용자 프로필 이미지와 정보 컨테이너 생성
-            const userProfileWrapper = document.createElement('div');
-            userProfileWrapper.classList.add('flex', 'items-center', 'gap-2');
-            // 사용자 프로필 이미지 추가
-            const profileImg = document.createElement('img');
-            profileImg.src = review.profileImageUrl;
-            profileImg.classList.add('w-14', 'h-14', 'rounded-full', 'border', 'border-gray-100');
-            userProfileWrapper.appendChild(profileImg);
-
-            // 사용자 정보를 포함할 컨테이너 생성
-            const userInfoContainer = document.createElement('div');
-            userInfoContainer.classList.add('flex', 'flex-col', 'flex-grow');
-
-            // 3. 사용자 정보(닉네임, 작성 시간 등) 생성 및 추가
-            const nameDateWrapper = document.createElement('div');
-            nameDateWrapper.classList.add('flex', 'justify-between', 'items-center');
-            userInfoContainer.appendChild(nameDateWrapper);
-
-            const userDateDiv = document.createElement('div');
-            userDateDiv.classList.add('flex', 'space-x-1');
-            nameDateWrapper.appendChild(userDateDiv);
-
-            // 사용자 닉네임 추가
-            const userNickname = document.createElement('span');
-            userNickname.classList.add('text-md');
-            userNickname.innerText = review.authorNickname;
-            userDateDiv.appendChild(userNickname);
-
-            // 글 작성 시간 추가
-            const createDate = new Date(review.createDate);
-            const dateFormatOptions = {month: 'numeric', day: 'numeric', weekday: 'short'};
-            const formattedDate = new Intl.DateTimeFormat('ko-KR', dateFormatOptions).format(createDate);
-
-            const createDateSpan = document.createElement('span');
-            createDateSpan.classList.add('text-xs', 'flex', 'items-end');
-            createDateSpan.innerText = formattedDate;
-            userDateDiv.appendChild(createDateSpan);
-
-            // 4. 친구 추가 버튼 생성 및 추가
-            // TODO
-            const friendAddButton = document.createElement('button');
-            friendAddButton.classList.add('mx-3', 'btn', 'btn-xs', 'btn-info');
-            friendAddButton.innerHTML = '<i class="fa-solid fa-plus"></i>친구';
-            nameDateWrapper.appendChild(friendAddButton);
-
-            // 5. 사용자 추가 정보(등록 맛집, 작성 리뷰, 친구 수) 생성 및 추가
-            // TODO
-            const userAdditionalInfo = document.createElement('div');
-            userInfoContainer.appendChild(userAdditionalInfo);
-
-            const registeredRestaurants = document.createElement('span');
-            registeredRestaurants.classList.add('text-xs');
-            registeredRestaurants.innerText = '맛집 7';
-            userAdditionalInfo.appendChild(registeredRestaurants);
-
-            const writtenReviews = document.createElement('span');
-            writtenReviews.classList.add('text-xs');
-            writtenReviews.innerText = '리뷰 8';
-            userAdditionalInfo.appendChild(writtenReviews);
-
-            const friendCount = document.createElement('span');
-            friendCount.classList.add('text-xs');
-            friendCount.innerText = '친구 119';
-            userAdditionalInfo.appendChild(friendCount);
-
-            // 사용자 정보 컨테이너를 프로필 이미지 컨테이너에 추가
-            userProfileWrapper.appendChild(userInfoContainer);
-            // 사용자 정보와 프로필 이미지 컨테이너를 전체 리뷰 컨테이너에 추가
-            reviewContainer.appendChild(userProfileWrapper)
-
-            // 6. 리뷰 내용 생성 및 추가
-            const reviewContentWrapper = document.createElement('div');
-            reviewContentWrapper.classList.add('mt-3');
-            reviewContainer.appendChild(reviewContentWrapper);
-            const reviewContent = document.createElement('a');
-            reviewContent.setAttribute('href', 'review/detail/' + review.reviewId);
-            reviewContent.classList.add('break-words');
-            reviewContent.innerText = review.content;
-            reviewContentWrapper.appendChild(reviewContent);
-
-            // 7. 리뷰 리스트 컨테이너에 전체 리뷰 컨테이너 추가
-            const hr = document.createElement('hr')
-            reviewContainer.appendChild(hr);
-            reviewListContainer.appendChild(reviewContainer);
-        }
 
         function showPlaceInfo(marker, matzip) {
             // 장소 정보를 업데이트합니다.
@@ -472,31 +383,197 @@
             filterByNameOrType(searchName, searchType);
         }
 
+        function addMarkerClickEvent(marker, matzip) {
+            kakao.maps.event.addListener(marker, 'click', function () {
+                showPlaceInfo(marker, matzip);
+                showInfoWindow(marker, matzip);
+                currentInfoWindow = infowindow;
+                isGettingReviews = false;
+                currentReviews = [];
+                getReviews(marker.matzipId);
+            });
+        }
 
         function showReviewList(reviews) {
-            reviewList.style.display = 'block'
-
-            currentReviews = reviews.filter(review => review.matzipId === marker.matzipId);
+            reviewList.style.display = 'block';
             // 리뷰 목록을 업데이트합니다.
             const reviewListContainer = document.getElementById('reviewListContainer');
             const noReview = document.getElementById('noReview');
 
-            reviewListContainer.innerHTML = ''; // 이전에 표시된 리뷰 목록 초기화
+            const previousScrollHeight = reviewListContainer.scrollHeight; // 이전 스크롤 높이를 기억합니다.
 
             if (reviews.length > 0) {
                 noReview.style.display = 'none';
                 reviewListContainer.style.display = 'block';
-                //리뷰 반복문 (review x: reviews) 랑 같은거
+                // 리뷰 추가하기
                 reviews.forEach((review) => {
                     createReviewList(review);
                 });
+
+                // 스크롤 위치를 조정합니다.
+                const newScrollHeight = reviewListContainer.scrollHeight;
+                const scrollPosition = newScrollHeight - previousScrollHeight;
+                reviewListContainer.scrollTop = scrollPosition;
             } else {
-                noReview.style.display = 'block';
-                reviewListContainer.style.display = 'none';
+                noReview.style.display = 'none';
+                reviewListContainer.style.display = 'block';
             }
-            reviewButton.href = `/review/create/${matzip.matzipId}`;
         }
 
+        function getReviews(matzipId) {
+            if (!isGettingReviews) {
+                // 페이지 크기와 현재 페이지 번호를 설정합니다.
+                const pageSize = 10;
+                const pageNumber = pageNum;
+
+                // 현재 리뷰를 불러오는 상태로 변경합니다.
+                isGettingReviews = true;
+
+                // 리뷰를 서버에 요청합니다.
+                loadReviews(matzipId, pageNumber, pageSize);
+            }
+        }
+
+        function loadReviews(matzipId, pageNumber, pageSize) {
+            const reviewListContainer = document.getElementById('reviewListContainer');
+
+            fetch(`/review/api/${matzipId}?pageNumber=${pageNumber}&pageSize=${pageSize}`)
+                .then((response) => response.json())
+                .then((reviews) => {
+                    const reviewContent = reviews.content;
+                    showReviewList(reviewContent);
+                    // 추가된 리뷰가 페이지 크기보다 작은 경우 모든 페이지를 불러온 것으로 간주하고 isGettingReviews를 true로 유지합니다.
+                    if (reviewContent.length < pageSize) {
+                        isGettingReviews = true;
+                    } else {
+                        isGettingReviews = false;
+                    }
+                })
+                .catch((error) => {
+                    console.log(error);
+                    isGettingReviews = false; // 오류가 발생한 경우에도 리뷰를 계속 로드할 수 있도록 상태를 변경합니다.
+                });
+        }
+
+        // 스크롤 이벤트 리스너
+        document.getElementById('reviewListContainer').addEventListener('scroll', (e) => {
+            const scrollHeight = e.target.scrollHeight;
+            const scrollTop = e.target.scrollTop;
+            const clientHeight = e.target.clientHeight;
+
+            // 스크롤 위치 계산
+            const scrollPosition = scrollTop + clientHeight;
+            // 스크롤이 전체 스크롤 높이의 특정 비율 이상일 때 추가 리뷰 요청
+            const scrollThreshold = scrollHeight * 0.8;
+
+            // 스크롤 위치가 일정 비율 이상인 경우 리뷰 추가 요청
+            if (scrollPosition >= scrollThreshold && !isGettingReviews) {
+                pageNum += 1;
+                getReviews(pageNum); // 다음 페이지의 리뷰를 불러옵니다.
+            }
+
+            // 스크롤 위치가 리스트의 끝에 도달한 경우
+            const isScrolledToEnd = scrollPosition >= scrollHeight - 1;
+            const endOfListMessageExists = document.querySelector('.end-of-list-message') !== null;
+
+            if (isScrolledToEnd && !endOfListMessageExists) {
+                const endOfListMessage = document.createElement('div');
+                endOfListMessage.innerText = '리스트의 끝입니다.';
+                endOfListMessage.classList.add('end-of-list-message');
+                reviewListContainer.appendChild(endOfListMessage);
+            }
+        });
+
+        function createReviewList(review) {
+            // 1. 전체 리뷰 컨테이너 생성
+            const reviewContainer = document.createElement('div');
+            reviewContainer.classList.add('mt-3');
+
+            // 2. 사용자 프로필 이미지와 정보 컨테이너 생성
+            const userProfileWrapper = document.createElement('div');
+            userProfileWrapper.classList.add('flex', 'items-center', 'gap-2');
+            // 사용자 프로필 이미지 추가
+            const profileImg = document.createElement('img');
+            profileImg.src = review.profileImageUrl;
+            profileImg.classList.add('w-14', 'h-14', 'rounded-full', 'border', 'border-gray-100');
+            userProfileWrapper.appendChild(profileImg);
+
+            // 사용자 정보를 포함할 컨테이너 생성
+            const userInfoContainer = document.createElement('div');
+            userInfoContainer.classList.add('flex', 'flex-col', 'flex-grow');
+
+            // 3. 사용자 정보(닉네임, 작성 시간 등) 생성 및 추가
+            const nameDateWrapper = document.createElement('div');
+            nameDateWrapper.classList.add('flex', 'justify-between', 'items-center');
+            userInfoContainer.appendChild(nameDateWrapper);
+
+            const userDateDiv = document.createElement('div');
+            userDateDiv.classList.add('flex', 'space-x-1');
+            nameDateWrapper.appendChild(userDateDiv);
+
+            // 사용자 닉네임 추가
+            const userNickname = document.createElement('span');
+            userNickname.classList.add('text-md');
+            userNickname.innerText = review.authorNickname;
+            userDateDiv.appendChild(userNickname);
+
+            // 글 작성 시간 추가
+            const createDate = new Date(review.createDate);
+            const dateFormatOptions = {month: 'numeric', day: 'numeric', weekday: 'short'};
+            const formattedDate = new Intl.DateTimeFormat('ko-KR', dateFormatOptions).format(createDate);
+
+            const createDateSpan = document.createElement('span');
+            createDateSpan.classList.add('text-xs', 'flex', 'items-end');
+            createDateSpan.innerText = formattedDate;
+            userDateDiv.appendChild(createDateSpan);
+
+            // 4. 친구 추가 버튼 생성 및 추가
+            // TODO
+            const friendAddButton = document.createElement('button');
+            friendAddButton.classList.add('mx-3', 'btn', 'btn-xs', 'btn-info');
+            friendAddButton.innerHTML = '<i class="fa-solid fa-plus"></i>친구';
+            nameDateWrapper.appendChild(friendAddButton);
+
+            // 5. 사용자 추가 정보(등록 맛집, 작성 리뷰, 친구 수) 생성 및 추가
+            // TODO
+            const userAdditionalInfo = document.createElement('div');
+            userInfoContainer.appendChild(userAdditionalInfo);
+
+            const registeredRestaurants = document.createElement('span');
+            registeredRestaurants.classList.add('text-xs');
+            registeredRestaurants.innerText = '맛집 7';
+            userAdditionalInfo.appendChild(registeredRestaurants);
+
+            const writtenReviews = document.createElement('span');
+            writtenReviews.classList.add('text-xs');
+            writtenReviews.innerText = '리뷰 8';
+            userAdditionalInfo.appendChild(writtenReviews);
+
+            const friendCount = document.createElement('span');
+            friendCount.classList.add('text-xs');
+            friendCount.innerText = '친구 119';
+            userAdditionalInfo.appendChild(friendCount);
+
+            // 사용자 정보 컨테이너를 프로필 이미지 컨테이너에 추가
+            userProfileWrapper.appendChild(userInfoContainer);
+            // 사용자 정보와 프로필 이미지 컨테이너를 전체 리뷰 컨테이너에 추가
+            reviewContainer.appendChild(userProfileWrapper)
+
+            // 6. 리뷰 내용 생성 및 추가
+            const reviewContentWrapper = document.createElement('div');
+            reviewContentWrapper.classList.add('mt-3');
+            reviewContainer.appendChild(reviewContentWrapper);
+            const reviewContent = document.createElement('a');
+            reviewContent.setAttribute('href', 'review/detail/' + review.reviewId);
+            reviewContent.classList.add('break-words');
+            reviewContent.innerText = review.content;
+            reviewContentWrapper.appendChild(reviewContent);
+
+            // 7. 리뷰 리스트 컨테이너에 전체 리뷰 컨테이너 추가
+            const hr = document.createElement('hr')
+            reviewContainer.appendChild(hr);
+            reviewListContainer.appendChild(reviewContainer);
+        }
     </script>
 </main>
 </body>
