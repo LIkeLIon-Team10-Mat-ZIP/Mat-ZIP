@@ -131,6 +131,11 @@ public class MemberService {
                 .orElseThrow(() -> new EntityNotFoundException("Member not found"));
     }
 
+    public Member findByUsername(String username) {
+        return memberRepository.findByUsername(username)
+                .orElseThrow(() -> new EntityNotFoundException("Member not found"));
+    }
+
     public Member signUp(String username, String kakao_nickname, String password, String email) {
         password = passwordEncoder.encode(password);
         Member member = Member.builder()
@@ -142,10 +147,6 @@ public class MemberService {
                 .build();
         member = memberRepository.save(member);
         return member;
-    }
-
-    public Optional<Member> findByUsername(String username) {
-        return memberRepository.findByUsername(username);
     }
 
     @Transactional
@@ -162,9 +163,7 @@ public class MemberService {
     }
 
     private boolean isNicknameTaken(String nickname) {
-        Optional<Member> member = memberRepository.findByNickname(nickname);
-
-        return member.isPresent();
+        return memberRepository.findByNickname(nickname).isPresent();
     }
 
     public List<MemberRankDTO> findAndConvertTopTenMember() {
@@ -182,6 +181,7 @@ public class MemberService {
         return -1;
     }
 
+    // 멤버 주위로 10명(멤버 포함)
     public List<MemberRankDTO> findAndConvertTenMemberAroundMember(Long memberId) {
         List<MemberRankInfoDTO> membersWithRank = getTop10MemberAroundUserWithRank(memberId);
         return membersWithRank.stream().map(this::convertToMemberRankDTO).collect(Collectors.toList());
@@ -191,40 +191,25 @@ public class MemberService {
         Member member = memberWithRank.getMember();
 
         String profileImageUrl = appConfig.getDefaultProfileImageUrl();
-        if (member.getProfileImage() != null && member.getProfileImage().getImageUrl() != null) {
-            profileImageUrl = member.getProfileImage().getImageUrl();
-        }
-
-        List<MemberBadge> memberBadges = memberBadgeRepository.findByMember(member);
-        Map<String, String> badgeMap = new HashMap<>();
-
-        for (MemberBadge memberBadge : memberBadges) {
-            Badge badge = memberBadge.getBadge();
-            String imageUrl = badge.getImageUrl();
-            String badgeTypeLabel = badge.getBadgeType().label();
-
-            badgeMap.put(imageUrl, badgeTypeLabel);
-        }
 
         return MemberRankDTO.builder()
                 .rank(memberWithRank.getRank())
-                .profileImageUrl(profileImageUrl)
+                .profileImageUrl(member.getProfileImage() != null ? member.getProfileImage().getImageUrl() : profileImageUrl)
                 .nickname(member.getNickname())
-                .badgeImage(badgeMap)
+                .badgeImage(showMemberBadge(member))
                 .point(member.getPoint())
                 .build();
     }
 
     public List<MemberRankInfoDTO> getTop10MemberAroundUserWithRank(Long memberId) {
-        Member currentMember = memberRepository.findById(memberId)
-                .orElseThrow(() -> new EntityNotFoundException("member not found"));
+        Member currentMember = findMember(memberId);
 
         List<Member> allOrderedMembers = memberRepository.findAllByOrderByPointDesc();
 
         int currentMemberRank = allOrderedMembers.indexOf(currentMember) + 1;
         int startIndex = Math.max(0, currentMemberRank - 5); // 본인 순위에서 5명 전부터 시작
 
-        // 상위 멤버와 하위 멤버를 합쳐서 10명의 회원을 가져오도록 합니다.
+        // 상위 멤버와 하위 멤버를 합쳐서 10명의 회원을 가져옴
         List<MemberRankInfoDTO> top10MembersWithRank = new ArrayList<>();
 
         for (int i = startIndex; i < startIndex + 10 && i < allOrderedMembers.size(); i++) {
@@ -235,9 +220,8 @@ public class MemberService {
         return top10MembersWithRank;
     }
 
-    public MemberPointDTO convertToMemberPointDTO(Long id) {
-        Member member = memberRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("member not found"));
+    public MemberPointDTO convertToMemberPointDTO(Long memberId) {
+        Member member = findMember(memberId);
 
         int rank = findMemberRankByUsername(member.getUsername());
 
@@ -249,33 +233,18 @@ public class MemberService {
 
     private MemberRankDTO convertToMemberDTO(Member member) {
         String profileImageUrl = appConfig.getDefaultProfileImageUrl();
-        if (member.getProfileImage() != null && member.getProfileImage().getImageUrl() != null) {
-            profileImageUrl = member.getProfileImage().getImageUrl();
-        }
-
-        List<MemberBadge> memberBadges = memberBadgeRepository.findByMember(member);
-        Map<String, String> badgeMap = new HashMap<>();
-
-        for (MemberBadge memberBadge : memberBadges) {
-            Badge badge = memberBadge.getBadge();
-            String imageUrl = badge.getImageUrl();
-            String badgeTypeLabel = badge.getBadgeType().label();
-
-            badgeMap.put(imageUrl, badgeTypeLabel);
-        }
 
         return MemberRankDTO.builder()
                 .rank(0)
-                .profileImageUrl(profileImageUrl)
+                .profileImageUrl(member.getProfileImage() != null ? member.getProfileImage().getImageUrl() : profileImageUrl)
                 .nickname(member.getNickname())
-                .badgeImage(badgeMap)
+                .badgeImage(showMemberBadge(member))
                 .point(member.getPoint())
                 .build();
     }
 
     public List<MatzipInfoDTO> convertToMatzipInfoDTO(Long memberId) {
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new EntityNotFoundException("member not found"));
+        Member member = findMember(memberId);
         List<MatzipInfoDTO> matzipInfoDTOS = new ArrayList<>();
 
         for (MatzipMember matzipMember : member.getMatzipMembers()) {
@@ -288,8 +257,7 @@ public class MemberService {
     }
 
     public List<MyReviewDTO> converToMyReviewDTO(Long memberId) {
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new EntityNotFoundException("member not found"));
+        Member member = findMember(memberId);
         List<MyReviewDTO> myReviewDTOS = new ArrayList<>();
 
         for (Review review : member.getReviews()) {
@@ -301,8 +269,7 @@ public class MemberService {
     }
 
     public List<FriendDetailDTO> converToFriendDetailDTO(Long memberId) {
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new EntityNotFoundException("member not found"));
+        Member member = findMember(memberId);
         List<FriendDetailDTO> friendDetailDTOS = new ArrayList<>();
 
         String profileImageUrl = appConfig.getDefaultProfileImageUrl();
@@ -312,7 +279,7 @@ public class MemberService {
                     .id(friend.getId())
                     .profileImageUrl(friend.getMember2().getProfileImage() != null ? friend.getMember2().getProfileImage().getImageUrl() : profileImageUrl)
                     .friendNickname(friend.getMember2().getNickname())
-                    .badgeImage(convertMemberBadgesToMap(friend.getMember2().getMemberBadges()))
+                    .badgeImage(showMemberBadge(friend.getMember2()))
                     .build();
             friendDetailDTOS.add(friendDetailDTO);
         }
@@ -320,23 +287,8 @@ public class MemberService {
         return friendDetailDTOS;
     }
 
-    private Map<String, String> convertMemberBadgesToMap(List<MemberBadge> memberBadges) {
-        Map<String, String> badgeMap = new HashMap<>();
-
-        for (MemberBadge memberBadge : memberBadges) {
-            Badge badge = memberBadge.getBadge();
-            String imageUrl = badge.getImageUrl();
-            String badgeTypeLabel = badge.getBadgeType().label();
-
-            badgeMap.put(imageUrl, badgeTypeLabel);
-        }
-
-        return badgeMap;
-    }
-
     public MemberInfoCntDTO convertToMemberInfoCntDTO(Long memberId) {
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new EntityNotFoundException("member not found"));
+        Member member = findMember(memberId);
 
         return MemberInfoCntDTO.builder()
                 .matzipCnt(member.getMatzipMembers().size())
@@ -347,16 +299,12 @@ public class MemberService {
     }
 
     public MemberProfileDTO convertToMemberProfileDTO(String nickname) {
-        Member member = memberRepository.findByNickname(nickname)
-                .orElseThrow(() -> new EntityNotFoundException("member not found"));
+        Member member = findByNickname(nickname);
 
         String profileImageUrl = appConfig.getDefaultProfileImageUrl();
-        if (member.getProfileImage() != null && member.getProfileImage().getImageUrl() != null) {
-            profileImageUrl = member.getProfileImage().getImageUrl();
-        }
 
         return MemberProfileDTO.builder()
-                .profileImageUrl(profileImageUrl)
+                .profileImageUrl(member.getProfileImage() != null ? member.getProfileImage().getImageUrl() : profileImageUrl)
                 .nickname(member.getNickname())
                 .matzipCount(member.getMatzipMembers().size())
                 .reviewCount(member.getReviews().size())
@@ -365,18 +313,14 @@ public class MemberService {
     }
 
     public MemberInfoDTO convertToMemberInfoDTO(Long memberId) {
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new EntityNotFoundException("member not found"));
+        Member member = findMember(memberId);
 
         String profileImageUrl = appConfig.getDefaultProfileImageUrl();
-        if (member.getProfileImage() != null && member.getProfileImage().getImageUrl() != null) {
-            profileImageUrl = member.getProfileImage().getImageUrl();
-        }
 
         return MemberInfoDTO.builder()
                 .nickname(member.getNickname())
                 .email(member.getEmail())
-                .profileImageUrl(profileImageUrl)
+                .profileImageUrl(member.getProfileImage() != null ? member.getProfileImage().getImageUrl() : profileImageUrl)
                 .badgeImage(showMemberBadge(member))
                 .build();
     }

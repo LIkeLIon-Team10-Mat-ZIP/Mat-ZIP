@@ -25,7 +25,7 @@ public class NotificationController {
     @GetMapping("/list")
     @PreAuthorize("isAuthenticated()")
     public String showList(Model model, @AuthenticationPrincipal PrincipalDetails principalDetails) {
-        Member member = memberService.findByUsername("user1").orElseThrow();
+        Member member = memberService.findByUsername("user1"); // TODO: 추후에 principalDetails.getMember()로 변경
 
         List<NotificationDTO> notificationDTOS = notificationService.convertToNotificationDTOS(member);
 
