@@ -2,9 +2,7 @@ package site.matzip.review.dto;
 
 import lombok.Builder;
 import lombok.Data;
-import site.matzip.matzip.domain.Matzip;
 import site.matzip.matzip.domain.MatzipType;
-import site.matzip.review.domain.Review;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -25,6 +23,7 @@ public class ReviewDetailDTO {
     private String address;
     private String phoneNumber;
     private int heartCount;
+    private boolean isHeart;
     //private 리뷰이미지
 
     public String getFormattedCreateDate() {

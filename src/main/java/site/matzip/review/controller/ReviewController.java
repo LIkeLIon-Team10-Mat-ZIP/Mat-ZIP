@@ -100,7 +100,7 @@ public class ReviewController {
                          HttpServletRequest request, HttpServletResponse response) {
         Review review = reviewService.findById(id);
         ReviewDetailDTO reviewDetailDTO = reviewService.convertToReviewDetailDTO(id);
-        System.out.println("reviewDetailDTO = " + reviewDetailDTO);
+        reviewDetailDTO.setHeart(reviewService.isHeart(principalDetails.getMember(), review));
         List<Comment> comments = review.getComments();
         List<CommentInfoDTO> commentInfoDTOS = reviewService.convertToCommentInfoDTOS(comments, principalDetails.getMember().getId());
 
@@ -122,5 +122,15 @@ public class ReviewController {
     @ResponseBody
     public String getHeartCount(@RequestParam Long reviewId) {
         return String.valueOf(reviewService.getHeartCount(reviewId));
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping("/updateHeart")
+    @ResponseBody
+    public ResponseEntity<Long> updateHeart(@RequestParam Long reviewId,
+                                            @AuthenticationPrincipal PrincipalDetails principalDetails) {
+        reviewService.updateHeart(principalDetails.getMember().getId(), reviewId);
+
+        return ResponseEntity.ok(reviewId);
     }
 }
