@@ -55,7 +55,7 @@ public class ReviewService {
         return createdReview;
     }
 
-    @CacheEvict(value = {"reviewListCache"}, allEntries = true)
+    @CacheEvict(value = {"reviewListCache", "myReviewListCache"}, allEntries = true)
     public void remove(Review review) {
         reviewRepository.delete(review);
     }
