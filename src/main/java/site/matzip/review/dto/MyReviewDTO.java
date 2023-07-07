@@ -23,7 +23,7 @@ public class MyReviewDTO {
     }
 
     public String getFormattedCreateDate() {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         return createDate.format(formatter);
     }
 }

@@ -29,8 +29,6 @@ ul{list-style:none;}
     border-radius: 1rem;
 }
 
-.tabmenu input{display:none;}
-
 .tabCon{
     display:none;
     width: 100%;

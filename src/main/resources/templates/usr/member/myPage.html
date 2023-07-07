@@ -53,7 +53,8 @@
                     </div>
                     <p th:text="${memberInfoDTO.email}"></p>
                     <div class="flex gap-10 h-full mt-10">
-                        <div id="menu1" class="bg-base-100 rounded-xl shadow-xl transform hover:scale-110 transition-transform duration-300 cursor-pointer">
+                        <div id="menu1"
+                             class="bg-base-100 rounded-xl shadow-xl transform hover:scale-110 transition-transform duration-300 cursor-pointer">
                             <div class="flex flex-col justify-center items-center h-full w-32">
                                 <div class="bg-pink-200 rounded-t-xl flex justify-center items-center w-full font-bold flex-grow text-lg">
                                     맛집
@@ -63,7 +64,8 @@
                                 </div>
                             </div>
                         </div>
-                        <div id="menu2" class="bg-base-100 rounded-xl shadow-xl transform hover:scale-110 transition-transform duration-300 cursor-pointer">
+                        <div id="menu2"
+                             class="bg-base-100 rounded-xl shadow-xl transform hover:scale-110 transition-transform duration-300 cursor-pointer">
                             <div class="flex flex-col justify-center items-center h-full w-32">
                                 <div class="bg-pink-200 rounded-t-xl flex justify-center items-center w-full font-bold flex-grow text-lg">
                                     리뷰
@@ -73,7 +75,8 @@
                                 </div>
                             </div>
                         </div>
-                        <div id="menu3" class="bg-base-100 rounded-xl shadow-xl transform hover:scale-110 transition-transform duration-300 cursor-pointer">
+                        <div id="menu3"
+                             class="bg-base-100 rounded-xl shadow-xl transform hover:scale-110 transition-transform duration-300 cursor-pointer">
                             <div class="flex flex-col justify-center items-center h-full w-32">
                                 <div class="bg-pink-200 rounded-t-xl flex justify-center items-center w-full font-bold flex-grow text-lg">
                                     친구
@@ -83,7 +86,8 @@
                                 </div>
                             </div>
                         </div>
-                        <div id="menu4" class="bg-base-100 rounded-xl shadow-xl transform hover:scale-110 transition-transform duration-300 cursor-pointer">
+                        <div id="menu4"
+                             class="bg-base-100 rounded-xl shadow-xl transform hover:scale-110 transition-transform duration-300 cursor-pointer">
                             <div class="flex flex-col justify-center items-center h-full w-32">
                                 <div class="bg-pink-200 rounded-t-xl flex justify-center items-center w-full font-bold flex-grow text-lg">
                                     포인트
@@ -104,25 +108,25 @@
                             <div class="tabmenu out-tabmenu">
                                 <ul>
                                     <li id="tab1" class="btnCon">
-                                        <input type="radio" checked name="tabmenu" id="tabmenu1">
+                                        <input type="radio" checked name="tabmenu" id="tabmenu1" hidden>
                                         <div class="tabCon">
                                             <div layout:fragment="content" class="mt-4"></div>
                                         </div>
                                     </li>
                                     <li id="tab2" class="btnCon">
-                                        <input type="radio" name="tabmenu" id="tabmenu2">
+                                        <input type="radio" name="tabmenu" id="tabmenu2" hidden>
                                         <div class="tabCon">
                                             <div layout:fragment="content" class="mt-4"></div>
                                         </div>
                                     </li>
                                     <li id="tab3" class="btnCon">
-                                        <input type="radio" name="tabmenu" id="tabmenu3">
+                                        <input type="radio" name="tabmenu" id="tabmenu3" hidden>
                                         <div class="tabCon">
                                             <div layout:fragment="content" class="mt-4"></div>
                                         </div>
                                     </li>
                                     <li id="tab4" class="btnCon">
-                                        <input type="radio" name="tabmenu" id="tabmenu4">
+                                        <input type="radio" name="tabmenu" id="tabmenu4" hidden>
                                         <div class="tabCon">
                                             <div layout:fragment="content" class="mt-4"></div>
                                         </div>
@@ -215,6 +219,19 @@
                     // 서버로부터 오류 응답을 받았을 때의 처리 코드를 구현
                     console.log("Error:", textStatus, errorThrown);
                     modal.close();
+                }
+            });
+        });
+
+        // 리뷰에 등록되어 있던 별점을 표시하는 script
+        document.addEventListener('DOMContentLoaded', function () {
+            const ratingElem = document.querySelector('.rating');
+            const ratingValue = parseFloat(ratingElem.dataset.rating);
+            const inputElems = ratingElem.querySelectorAll('input');
+
+            inputElems.forEach(function (inputElem) {
+                if (parseFloat(inputElem.value) === ratingValue) {
+                    inputElem.setAttribute('checked', '');
                 }
             });
         });
