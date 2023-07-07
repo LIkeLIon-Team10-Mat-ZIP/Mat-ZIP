@@ -19,6 +19,8 @@ import site.matzip.badge.domain.MemberBadge;
 import site.matzip.badge.repository.MemberBadgeRepository;
 import site.matzip.base.appConfig.AppConfig;
 import site.matzip.base.rsData.RsData;
+import site.matzip.friend.dto.FriendDetailDTO;
+import site.matzip.friend.entity.Friend;
 import site.matzip.friendRequest.dto.FriendRequestDTO;
 import site.matzip.friendRequest.entity.FriendRequest;
 import site.matzip.matzip.domain.Matzip;
@@ -223,5 +225,18 @@ public class MemberService {
         }
 
         return myReviewDTOS;
+    }
+
+    public List<FriendDetailDTO> converToFriendDetailDTO(Long memberId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new EntityNotFoundException("member not found"));
+        List<FriendDetailDTO> friendDetailDTOS = new ArrayList<>();
+
+        for (Friend friend : member.getFriends2()) {
+            FriendDetailDTO friendDetailDTO = new FriendDetailDTO(friend);
+            friendDetailDTOS.add(friendDetailDTO);
+        }
+
+        return friendDetailDTOS;
     }
 }

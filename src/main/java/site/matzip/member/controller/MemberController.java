@@ -19,6 +19,7 @@ import site.matzip.base.appConfig.AppConfig;
 import site.matzip.base.rq.Rq;
 import site.matzip.base.rsData.RsData;
 import site.matzip.config.auth.PrincipalDetails;
+import site.matzip.friend.dto.FriendDetailDTO;
 import site.matzip.image.service.ProfileImageService;
 import site.matzip.matzip.domain.MatzipMember;
 import site.matzip.matzip.dto.MatzipInfoDTO;
@@ -95,6 +96,12 @@ public class MemberController {
                 model.addAttribute("myReviewDTOS", myReviewDTOS);
 
                 return "usr/member/myPage/review";
+            case 3:
+                List<FriendDetailDTO> friendDetailDTOS = memberService.converToFriendDetailDTO(member.getId());
+
+                model.addAttribute("friendDetailDTOS", friendDetailDTOS);
+
+                return "usr/member/myPage/friend";
             default:
                 List<MatzipInfoDTO> matzipInfoDTOS = memberService.convertToMatzipInfoDTO(member.getId());
 
