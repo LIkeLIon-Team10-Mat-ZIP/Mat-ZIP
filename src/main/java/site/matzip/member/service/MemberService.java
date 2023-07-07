@@ -8,9 +8,6 @@ import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.http.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -24,17 +21,12 @@ import site.matzip.base.appConfig.AppConfig;
 import site.matzip.base.rsData.RsData;
 import site.matzip.friend.dto.FriendDetailDTO;
 import site.matzip.friend.entity.Friend;
-import site.matzip.friendRequest.dto.FriendRequestDTO;
-import site.matzip.friendRequest.entity.FriendRequest;
 import site.matzip.matzip.domain.Matzip;
 import site.matzip.matzip.domain.MatzipMember;
 import site.matzip.matzip.dto.MatzipInfoDTO;
 import site.matzip.member.domain.Member;
 import site.matzip.member.domain.MemberToken;
-import site.matzip.member.dto.MemberPointDTO;
-import site.matzip.member.dto.MemberRankDTO;
-import site.matzip.member.dto.MemberRankInfoDTO;
-import site.matzip.member.dto.NicknameUpdateDTO;
+import site.matzip.member.dto.*;
 import site.matzip.member.repository.MemberRepository;
 import site.matzip.member.repository.MemberTokenRepository;
 import site.matzip.review.domain.Review;
@@ -340,5 +332,17 @@ public class MemberService {
         }
 
         return badgeMap;
+    }
+
+    public MemberInfoCntDTO convertToMemberInfoCntDTO(Long memberId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new EntityNotFoundException("member not found"));
+
+        return MemberInfoCntDTO.builder()
+                .matzipCnt(member.getMatzipMembers().size())
+                .reviewCnt(member.getReviews().size())
+                .friendCnt(member.getFriends2().size())
+                .point(member.getPoint())
+                .build();
     }
 }

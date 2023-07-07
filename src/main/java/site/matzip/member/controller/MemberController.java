@@ -5,8 +5,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
-import org.apache.tomcat.jni.FileInfo;
-import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -21,12 +19,10 @@ import site.matzip.base.rsData.RsData;
 import site.matzip.config.auth.PrincipalDetails;
 import site.matzip.friend.dto.FriendDetailDTO;
 import site.matzip.image.service.ProfileImageService;
-import site.matzip.matzip.domain.MatzipMember;
 import site.matzip.matzip.dto.MatzipInfoDTO;
 import site.matzip.member.domain.Member;
 import site.matzip.member.dto.*;
 import site.matzip.member.service.MemberService;
-import site.matzip.review.domain.Review;
 import site.matzip.review.dto.MyReviewDTO;
 
 import java.io.IOException;
@@ -84,6 +80,9 @@ public class MemberController {
                 .badgeImage(memberBadgeService.showMemberBadge(member))
                 .build();
 
+        MemberInfoCntDTO memberInfoCntDTO = memberService.convertToMemberInfoCntDTO(member.getId());
+
+        model.addAttribute("memberInfoCntDTO", memberInfoCntDTO);
         model.addAttribute("memberInfoDTO", memberInfoDTO);
 
         switch (menu) {
