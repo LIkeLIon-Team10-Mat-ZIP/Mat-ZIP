@@ -99,13 +99,34 @@
             <div class="mt-5">
                 <div>
                     <!-- tab menu -->
-                    <div class="flex flex-grow">
+                    <div class="flex flex-grow p-2">
                         <div class="tabmenu-container w-full">
                             <div class="tabmenu out-tabmenu">
                                 <ul>
                                     <li id="tab1" class="btnCon">
                                         <input type="radio" checked name="tabmenu" id="tabmenu1">
-                                        <label for="tabmenu1" class="font-bold">내가 작성한 리뷰</label>
+                                        <label for="tabmenu1">내 맛집</label>
+                                        <div class="tabCon">
+                                            <div layout:fragment="content" class="mt-4"></div>
+                                        </div>
+                                    </li>
+                                    <li id="tab2" class="btnCon">
+                                        <input type="radio" name="tabmenu" id="tabmenu2">
+                                        <label for="tabmenu2">내 리뷰</label>
+                                        <div class="tabCon">
+                                            <div layout:fragment="content" class="mt-4"></div>
+                                        </div>
+                                    </li>
+                                    <li id="tab3" class="btnCon">
+                                        <input type="radio" name="tabmenu" id="tabmenu3">
+                                        <label for="tabmenu3">친구</label>
+                                        <div class="tabCon">
+                                            <div layout:fragment="content" class="mt-4"></div>
+                                        </div>
+                                    </li>
+                                    <li id="tab4" class="btnCon">
+                                        <input type="radio" name="tabmenu" id="tabmenu4">
+                                        <label for="tabmenu4">포인트</label>
                                         <div class="tabCon">
                                             <div layout:fragment="content" class="mt-4"></div>
                                         </div>
@@ -118,6 +139,42 @@
             </div>
         </div>
     </div>
+
+    <script>
+        const pathArray = window.location.pathname.split('/');
+        const tab = pathArray[pathArray.length - 1];
+        switch (tab) {
+            case "review":
+                $('#tabmenu2').prop('checked', true);
+                break;
+            case "friend":
+                $('#tabmenu3').prop('checked', true);
+                break;
+            case "point":
+                $('#tabmenu4').prop('checked', true);
+                break;
+        }
+
+        const tBtn_1 = document.getElementById('tabmenu1');
+        tBtn_1.addEventListener('click', () => {
+            window.location.href = '/usr/member/myPage/matzip';
+        });
+
+        const tBtn_2 = document.getElementById('tabmenu2');
+        tBtn_2.addEventListener('click', () => {
+            window.location.href = '/usr/member/myPage/review';
+        });
+
+        const tBtn_3 = document.getElementById('tabmenu3');
+        tBtn_3.addEventListener('click', () => {
+            window.location.href = '/usr/member/myPage/friend';
+        });
+
+        const tBtn_4 = document.getElementById('tabmenu4');
+        tBtn_4.addEventListener('click', () => {
+            window.location.href = '/usr/member/myPage/point';
+        });
+    </script>
 
 </main>
 

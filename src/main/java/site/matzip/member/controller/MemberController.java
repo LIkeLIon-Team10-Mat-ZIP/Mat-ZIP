@@ -5,6 +5,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.apache.tomcat.jni.FileInfo;
+import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -18,6 +20,8 @@ import site.matzip.base.rq.Rq;
 import site.matzip.base.rsData.RsData;
 import site.matzip.config.auth.PrincipalDetails;
 import site.matzip.image.service.ProfileImageService;
+import site.matzip.matzip.domain.MatzipMember;
+import site.matzip.matzip.dto.MatzipInfoDTO;
 import site.matzip.member.domain.Member;
 import site.matzip.member.dto.MemberInfoDTO;
 import site.matzip.member.dto.MemberProfileDTO;
@@ -118,6 +122,18 @@ public class MemberController {
         profileImageService.saveProfileImage(profileImage, principalDetails.getMember());
 
         return "redirect:/usr/member/myPage";
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/myPage/matzip")
+    public String showMyMatzip(Model model, @AuthenticationPrincipal PrincipalDetails principalDetails) {
+        Member member = principalDetails.getMember();
+
+        //List<MatzipInfoDTO> matzipInfoDTOS = memberService.convertToMatzipInfoDTO(member);
+
+        //model.addAttribute("matzipInfoDTOS", matzipInfoDTOS);
+
+        return "usr/member/myPage/matzip";
     }
 
     @PreAuthorize("isAuthenticated()")

@@ -13,7 +13,7 @@ ul{list-style:none;}
 .tabmenu ul li{
     flex: 1;
     display: inline-block;
-    width: 33.33%;
+    width: 25%;
     float: left;
     text-align: center;
     background : #F8E0F1;
