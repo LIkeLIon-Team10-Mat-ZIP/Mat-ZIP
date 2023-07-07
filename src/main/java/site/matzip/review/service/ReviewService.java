@@ -220,8 +220,6 @@ public class ReviewService {
             Heart createdHeart = Heart.builder().build();
             createdHeart.setMember(findMember);
             createdHeart.setReview(findReview);
-            System.out.println("createdHeart.getReview().getId() = " + createdHeart.getReview().getId());
-            System.out.println("createdHeart.getReview().getId() = " + createdHeart.getMember().getId());
             heartRepository.save(createdHeart);
         } else {
             heartRepository.delete(findHeart.get());
