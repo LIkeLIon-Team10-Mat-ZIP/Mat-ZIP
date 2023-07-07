@@ -142,7 +142,16 @@
             <!-- 수정/삭제 버튼 -->
             <div class="flex justify-end mt-6">
                 <button class="btn btn-neutral btn-sm mx-2">수정</button>
-                <button class="btn btn-neutral btn-sm mr-5">삭제</button>
+                <div class="flex">
+                    <a href="javascript:void(0);" class="btn btn-neutral btn-sm mx-2"
+                       th:if="${reviewDetailDTO.authorId != null and reviewDetailDTO.loginId == reviewDetailDTO.authorId}"
+                       onclick="if ( confirm('정말로 삭제하시겠습니까?') ) $(this).next().submit();">
+                        삭제
+                    </a>
+                    <form hidden th:action="@{|/review/${reviewDetailDTO.reviewId}|}" method="POST">
+                        <input type="hidden" name="_method" value="delete">
+                    </form>
+                </div>
             </div>
 
             <div class="">
