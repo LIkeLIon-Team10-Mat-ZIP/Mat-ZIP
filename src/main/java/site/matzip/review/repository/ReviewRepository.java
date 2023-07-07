@@ -4,6 +4,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import site.matzip.badge.domain.MemberBadge;
 import site.matzip.member.domain.Member;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -31,4 +32,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     @EntityGraph(attributePaths = {"author"})
     @Query("SELECT r from Review r WHERE r.createDate < :olderThanTime")
     List<Review> findReviewsOlderThan(@Param("olderThanTime") LocalDateTime olderThanTime);
+
+    @Query("SELECT m FROM Review m JOIN FETCH m.hearts WHERE m.author = :author")
+    List<Review> findByAuthorForHeart(@Param("author") Member author);
 }
