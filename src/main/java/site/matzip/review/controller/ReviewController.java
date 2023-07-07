@@ -91,7 +91,7 @@ public class ReviewController {
         }
         reviewService.remove(review);
 
-        return "redirect:/matzip/list";
+        return "redirect:/";
     }
 
     @PreAuthorize("isAuthenticated()")
@@ -99,7 +99,7 @@ public class ReviewController {
     public String detail(Model model, @PathVariable Long id, @AuthenticationPrincipal PrincipalDetails principalDetails,
                          HttpServletRequest request, HttpServletResponse response) {
         Review review = reviewService.findById(id);
-        ReviewDetailDTO reviewDetailDTO = reviewService.convertToReviewDetailDTO(id);
+        ReviewDetailDTO reviewDetailDTO = reviewService.convertToReviewDetailDTO(id, principalDetails.getMember().getId());
         reviewDetailDTO.setHeart(reviewService.isHeart(principalDetails.getMember(), review));
         List<Comment> comments = review.getComments();
         List<CommentInfoDTO> commentInfoDTOS = reviewService.convertToCommentInfoDTOS(comments, principalDetails.getMember().getId());
