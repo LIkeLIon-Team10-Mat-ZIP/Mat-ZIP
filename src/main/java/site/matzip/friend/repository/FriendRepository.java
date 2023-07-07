@@ -10,4 +10,6 @@ import java.util.List;
 @Repository
 public interface FriendRepository extends JpaRepository<Friend, Long> {
     List<Friend> findByMember1(Member member);
+
+    Friend findByMember1AndMember2(Member member1, Member member2);
 }

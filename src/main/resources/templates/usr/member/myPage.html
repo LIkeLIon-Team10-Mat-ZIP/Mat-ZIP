@@ -137,6 +137,29 @@
         </div>
     </div>
 
+    <!-- 친구 추가 모달창 -->
+    <dialog id="addFriend_modal" class="modal">
+        <form method="dialog" class="modal-box" style="width: 400px; overflow-y: auto;">
+            <div class="flex justify-center">
+                <div class="flex flex-col mt-5">
+                    <p class="mb-3 text-lg"><i class="fa-regular fa-face-smile"></i> 추가할 친구의 닉네임을 입력해 주세요.</p>
+                    <div class="flex items-center space-x-4">
+                        <input type="text" name="nickname" placeholder="닉네임" autocomplete="off"
+                               class="bg-pink-100 h-10 p-4 w-80"/>
+                    </div>
+                    <div class="flex justify-end mt-5">
+                        <a href="/usr/member/myPage?menu=3"
+                           class="btn btn-sm bg-pink-200 h-10 w-16 mr-2 text-sm flex items-center justify-center hover:bg-pink-100">취소</a>
+                        <button class="addFriend btn btn-sm bg-pink-200 h-10 w-16 text-sm flex items-center justify-center hover:bg-pink-100"
+                                type="submit">
+                            <span class="text-center">추가</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </dialog>
+
     <script>
         const tBtn_1 = document.getElementById('menu1');
         tBtn_1.addEventListener('click', () => {
@@ -160,6 +183,41 @@
         tBtn_4.addEventListener('click', () => {
             document.getElementById('tabmenu4').checked = true;
             window.location.href = '/usr/member/myPage?menu=4';
+        });
+
+        document.querySelector('.addFriend').addEventListener('click', function (event) {
+            event.preventDefault(); // 폼의 기본 제출 동작을 취소
+            var token = $("meta[name='_csrf']").attr("content");
+            var header = $("meta[name='_csrf_header']").attr("content");
+            const nicknameInput = document.querySelector('input[name="nickname"]');
+            const nicknameValue = nicknameInput.value;
+            const modal = document.getElementById('addFriend_modal');
+
+            $.ajax({
+                url: '/friends/add',
+                type: 'POST',
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader(header, token);
+                },
+                data: {
+                    nickname: nicknameValue
+                },
+                success: function (response) {
+                    if (response === "success") {
+                        modal.close();
+                        toastNotice("친구 요청을 보냈습니다.");
+                    } else {
+                        toastWarning("존재하지 않는 닉네임입니다.");
+                    }
+                    // 서버로부터 성공적인 응답을 받았을 때의 처리 코드를 구현
+                    console.log("Success:", response);
+                },
+                error: function (xhr, textStatus, errorThrown) {
+                    // 서버로부터 오류 응답을 받았을 때의 처리 코드를 구현
+                    console.log("Error:", textStatus, errorThrown);
+                    modal.close();
+                }
+            });
         });
     </script>
 

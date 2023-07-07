@@ -232,11 +232,32 @@ public class MemberService {
                 .orElseThrow(() -> new EntityNotFoundException("member not found"));
         List<FriendDetailDTO> friendDetailDTOS = new ArrayList<>();
 
+        String profileImageUrl = appConfig.getDefaultProfileImageUrl();
+
         for (Friend friend : member.getFriends2()) {
-            FriendDetailDTO friendDetailDTO = new FriendDetailDTO(friend);
+            FriendDetailDTO friendDetailDTO = FriendDetailDTO.builder()
+                    .id(friend.getId())
+                    .profileImageUrl(friend.getMember2().getProfileImage() != null ? friend.getMember2().getProfileImage().getImageUrl() : profileImageUrl)
+                    .friendNickname(friend.getMember2().getNickname())
+                    .badgeImage(convertMemberBadgesToMap(friend.getMember2().getMemberBadges()))
+                    .build();
             friendDetailDTOS.add(friendDetailDTO);
         }
 
         return friendDetailDTOS;
+    }
+
+    private Map<String, String> convertMemberBadgesToMap(List<MemberBadge> memberBadges) {
+        Map<String, String> badgeMap = new HashMap<>();
+
+        for (MemberBadge memberBadge : memberBadges) {
+            Badge badge = memberBadge.getBadge();
+            String imageUrl = badge.getImageUrl();
+            String badgeTypeLabel = badge.getBadgeType().label();
+
+            badgeMap.put(imageUrl, badgeTypeLabel);
+        }
+
+        return badgeMap;
     }
 }
