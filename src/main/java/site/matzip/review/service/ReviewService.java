@@ -55,8 +55,16 @@ public class ReviewService {
         return createdReview;
     }
 
+    @CacheEvict(value = {"reviewListCache", "myReviewListCache"}, allEntries = true)
     public void remove(Review review) {
         reviewRepository.delete(review);
+    }
+
+    @CacheEvict(value = {"reviewListCache", "myReviewListCache"}, allEntries = true)
+    public void modify(Review review, ReviewCreationDTO reviewCreationDTO) {
+        review.updateContent(reviewCreationDTO.getContent());
+        review.updateRating(reviewCreationDTO.getRating());
+        reviewRepository.save(review);
     }
 
     public Review findById(Long reviewId) {
@@ -98,7 +106,7 @@ public class ReviewService {
                 .build();
     }
 
-    public ReviewDetailDTO convertToReviewDetailDTO(Long id) {
+    public ReviewDetailDTO convertToReviewDetailDTO(Long id, Long loginId) {
         Review review = reviewRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Review not Found"));
         Matzip matzip = review.getMatzip();
         String profileImageUrl = appConfig.getDefaultProfileImageUrl();
@@ -110,6 +118,8 @@ public class ReviewService {
                 .profileImageUrl(profileImageUrl)
                 .authorNickname(review.getAuthor().getNickname())
                 .reviewId(review.getId())
+                .authorId(review.getAuthor().getId())
+                .loginId(loginId)
                 .matzipName(matzip.getMatzipName())
                 .createDate(review.getCreateDate())
                 .address(matzip.getAddress())

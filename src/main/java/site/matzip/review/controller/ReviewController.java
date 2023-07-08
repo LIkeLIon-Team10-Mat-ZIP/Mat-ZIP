@@ -72,6 +72,44 @@ public class ReviewController {
         return "redirect:/";
     }
 
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/modify/{reviewId}")
+    public String modify(@PathVariable Long reviewId, ReviewCreationDTO reviewCreationDTO, Model model,
+                         @AuthenticationPrincipal PrincipalDetails principalDetails) {
+        Review review = reviewService.findById(reviewId);
+        Matzip matzip = review.getMatzip();
+        MatzipInfoDTO matzipInfoDTO = new MatzipInfoDTO(matzip);
+
+        if (!review.getAuthor().getId().equals(principalDetails.getMember().getId())) {
+            throw new AccessDeniedException("You do not have permission to modify.");
+        }
+
+        model.addAttribute("matzipInfoDTO", matzipInfoDTO);
+        reviewCreationDTO.setRating(review.getRating());
+        reviewCreationDTO.setContent(review.getContent());
+
+        return "/review/add";
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping("/modify/{reviewId}")
+    public String modify(@PathVariable Long reviewId, ReviewCreationDTO reviewCreationDTO, BindingResult bindingResult,
+                         @AuthenticationPrincipal PrincipalDetails principalDetails) {
+        Review review = reviewService.findById(reviewId);
+
+        if (bindingResult.hasErrors()) {
+            return "/review/add";
+        }
+
+        if (!review.getAuthor().getId().equals(principalDetails.getMember().getId())) {
+            throw new AccessDeniedException("You do not have permission to modify.");
+        }
+
+        reviewService.modify(review, reviewCreationDTO);
+
+        return "redirect:/review/detail/" + reviewId;
+    }
+
     @GetMapping("/api/{matzipId}")
     @ResponseBody
     public ResponseEntity<List<Review>> getReviewsByMatzipId(@PathVariable Long matzipId, @RequestParam int pageSize, @RequestParam int pageNumber) {
@@ -82,24 +120,24 @@ public class ReviewController {
     }
 
     @PreAuthorize("isAuthenticated()")
-    @DeleteMapping("/{id}")
-    public String delete(@PathVariable Long id, @AuthenticationPrincipal PrincipalDetails principalDetail) {
-        Review review = reviewService.findById(id);
+    @DeleteMapping("/{reviewId}")
+    public String delete(@PathVariable Long reviewId, @AuthenticationPrincipal PrincipalDetails principalDetail) {
+        Review review = reviewService.findById(reviewId);
 
         if (!Objects.equals(review.getAuthor().getId(), principalDetail.getMember().getId())) {
             throw new AccessDeniedException("You do not have permission to delete.");
         }
         reviewService.remove(review);
 
-        return "redirect:/matzip/list";
+        return "redirect:/";
     }
 
     @PreAuthorize("isAuthenticated()")
-    @GetMapping("/detail/{id}")
-    public String detail(Model model, @PathVariable Long id, @AuthenticationPrincipal PrincipalDetails principalDetails,
+    @GetMapping("/detail/{reviewId}")
+    public String detail(Model model, @PathVariable Long reviewId, @AuthenticationPrincipal PrincipalDetails principalDetails,
                          HttpServletRequest request, HttpServletResponse response) {
-        Review review = reviewService.findById(id);
-        ReviewDetailDTO reviewDetailDTO = reviewService.convertToReviewDetailDTO(id);
+        Review review = reviewService.findById(reviewId);
+        ReviewDetailDTO reviewDetailDTO = reviewService.convertToReviewDetailDTO(reviewId, principalDetails.getMember().getId());
         reviewDetailDTO.setHeart(reviewService.isHeart(principalDetails.getMember(), review));
         List<Comment> comments = review.getComments();
         List<CommentInfoDTO> commentInfoDTOS = reviewService.convertToCommentInfoDTOS(comments, principalDetails.getMember().getId());
