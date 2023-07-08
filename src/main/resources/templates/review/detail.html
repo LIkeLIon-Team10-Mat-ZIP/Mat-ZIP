@@ -43,6 +43,14 @@
         .fade-out.show {
             opacity: 1;
         }
+
+        .selectedImageContainer {
+            width: 120px;
+            height: 120px;
+            border: 2px solid #CCC;
+            border-radius: 4px;
+            overflow: hidden;
+        }
     </style>
 </head>
 <body>
@@ -120,9 +128,9 @@
                     </div>
                 </div>
                 <div class="flex">
-                    <img src="https://search.pstatic.net/common/?src=https%3A%2F%2Fldb-phinf.pstatic.net%2F20230315_55%2F1678864965197X3zz0_JPEG%2FIMG_6113.JPEG"
-                         class="w-40 h-40 object-cover mr-3"/>
-
+                    <div th:each="imageUrl : ${reviewDetailDTO.imageUrls}">
+                        <img th:src="${imageUrl}" class="w-40 h-40 object-cover mr-3"/>
+                    </div>
                 </div>
                 <span class="mt-5 inline-block max-h-[600px] overflow-hidden break-all" id="text-content"
                       th:text="${reviewDetailDTO.content}">

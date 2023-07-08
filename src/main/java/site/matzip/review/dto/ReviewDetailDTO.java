@@ -6,6 +6,7 @@ import site.matzip.matzip.domain.MatzipType;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Map;
 
 @Data
@@ -27,7 +28,7 @@ public class ReviewDetailDTO {
     private int heartCount;
     private boolean isHeart;
     private Map<String, String> badgeImage;
-    //private 리뷰이미지
+    private List<String> imageUrls;
 
     public String getFormattedCreateDate() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
