@@ -11,7 +11,6 @@ import site.matzip.badge.repository.BadgeRepository;
 import site.matzip.badge.repository.MemberBadgeRepository;
 import site.matzip.comment.domain.Comment;
 import site.matzip.comment.repository.CommentRepository;
-import site.matzip.friend.entity.Friend;
 import site.matzip.friend.repository.FriendRepository;
 import site.matzip.matzip.domain.MatzipMember;
 import site.matzip.matzip.repository.MatzipMemberRepository;
