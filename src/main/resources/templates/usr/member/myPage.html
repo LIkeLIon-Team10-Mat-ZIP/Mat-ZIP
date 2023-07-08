@@ -71,7 +71,7 @@
                                     리뷰
                                 </div>
                                 <div class="flex justify-center items-center w-full flex-grow">
-                                    <h2 class="card-title" th:text="${memberInfoCntDTO.reviewCnt}">20</h2>
+                                    <h2 class="card-title" th:text="${memberInfoCntDTO.reviewCnt}"></h2>
                                 </div>
                             </div>
                         </div>
@@ -100,40 +100,36 @@
                     </div>
                 </div>
             </div>
-            <div class="mt-5">
-                <div>
-                    <!-- tab menu -->
-                    <div class="flex flex-grow p-2">
-                        <div class="tabmenu-container w-full">
-                            <div class="tabmenu out-tabmenu">
-                                <ul>
-                                    <li id="tab1" class="btnCon">
-                                        <input type="radio" checked name="tabmenu" id="tabmenu1" hidden>
-                                        <div class="tabCon">
-                                            <div layout:fragment="content" class="mt-4"></div>
-                                        </div>
-                                    </li>
-                                    <li id="tab2" class="btnCon">
-                                        <input type="radio" name="tabmenu" id="tabmenu2" hidden>
-                                        <div class="tabCon">
-                                            <div layout:fragment="content" class="mt-4"></div>
-                                        </div>
-                                    </li>
-                                    <li id="tab3" class="btnCon">
-                                        <input type="radio" name="tabmenu" id="tabmenu3" hidden>
-                                        <div class="tabCon">
-                                            <div layout:fragment="content" class="mt-4"></div>
-                                        </div>
-                                    </li>
-                                    <li id="tab4" class="btnCon">
-                                        <input type="radio" name="tabmenu" id="tabmenu4" hidden>
-                                        <div class="tabCon">
-                                            <div layout:fragment="content" class="mt-4"></div>
-                                        </div>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
+            <!-- tab menu -->
+            <div class="flex flex-grow p-2">
+                <div class="tabmenu-container w-full">
+                    <div class="tabmenu out-tabmenu">
+                        <ul>
+                            <li id="tab1" class="btnCon">
+                                <input type="radio" checked name="tabmenu" id="tabmenu1" hidden="hidden">
+                                <div class="tabCon">
+                                    <div layout:fragment="content" class="mt-4"></div>
+                                </div>
+                            </li>
+                            <li id="tab2" class="btnCon">
+                                <input type="radio" name="tabmenu" id="tabmenu2" hidden="hidden">
+                                <div class="tabCon">
+                                    <div layout:fragment="content" class="mt-4"></div>
+                                </div>
+                            </li>
+                            <li id="tab3" class="btnCon">
+                                <input type="radio" name="tabmenu" id="tabmenu3" hidden="hidden">
+                                <div class="tabCon">
+                                    <div layout:fragment="content" class="mt-4"></div>
+                                </div>
+                            </li>
+                            <li id="tab4" class="btnCon">
+                                <input type="radio" name="tabmenu" id="tabmenu4" hidden="hidden">
+                                <div class="tabCon">
+                                    <div layout:fragment="content" class="mt-4"></div>
+                                </div>
+                            </li>
+                        </ul>
                     </div>
                 </div>
             </div>
@@ -219,19 +215,6 @@
                     // 서버로부터 오류 응답을 받았을 때의 처리 코드를 구현
                     console.log("Error:", textStatus, errorThrown);
                     modal.close();
-                }
-            });
-        });
-
-        // 리뷰에 등록되어 있던 별점을 표시하는 script
-        document.addEventListener('DOMContentLoaded', function () {
-            const ratingElem = document.querySelector('.rating');
-            const ratingValue = parseFloat(ratingElem.dataset.rating);
-            const inputElems = ratingElem.querySelectorAll('input');
-
-            inputElems.forEach(function (inputElem) {
-                if (parseFloat(inputElem.value) === ratingValue) {
-                    inputElem.setAttribute('checked', '');
                 }
             });
         });

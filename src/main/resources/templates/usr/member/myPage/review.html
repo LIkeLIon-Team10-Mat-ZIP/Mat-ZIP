@@ -32,30 +32,8 @@
             <tr class="text-center hover" th:each="myReviewDTO, loop : ${myReviewDTOS}">
                 <td th:text="|${loop.index + 1}|"></td>
                 <td th:text="${myReviewDTO.matzipName}"></td>
-                <td>
-                    <div class="rating rating-sm rating-half" th:attr="data-rating=${myReviewDTO.rating}">
-                        <input type="radio" name="rating" value="0.5"
-                               class="bg-yellow-500 mask mask-star-2 mask-half-1" disabled/>
-                        <input type="radio" name="rating" value="1.0"
-                               class="bg-yellow-500 mask mask-star-2 mask-half-2" disabled/>
-                        <input type="radio" name="rating" value="1.5"
-                               class="bg-yellow-500 mask mask-star-2 mask-half-1" disabled/>
-                        <input type="radio" name="rating" value="2.0"
-                               class="bg-yellow-500 mask mask-star-2 mask-half-2" disabled/>
-                        <input type="radio" name="rating" value="2.5"
-                               class="bg-yellow-500 mask mask-star-2 mask-half-1" disabled/>
-                        <input type="radio" name="rating" value="3.0"
-                               class="bg-yellow-500 mask mask-star-2 mask-half-2" disabled/>
-                        <input type="radio" name="rating" value="3.5"
-                               class="bg-yellow-500 mask mask-star-2 mask-half-1" disabled/>
-                        <input type="radio" name="rating" value="4.0"
-                               class="bg-yellow-500 mask mask-star-2 mask-half-2" disabled/>
-                        <input type="radio" name="rating" value="4.5"
-                               class="bg-yellow-500 mask mask-star-2 mask-half-1" disabled/>
-                        <input type="radio" name="rating" value="5.0"
-                               class="bg-yellow-500 mask mask-star-2 mask-half-2" disabled/>
-                    </div>
-                </td>
+                <!-- 추후에 별로 수정 -->
+                <td th:text="${myReviewDTO.rating}"></td>
                 <td class="w-full whitespace-nowrap overflow-x-hidden overflow-ellipsis"
                     th:text="${myReviewDTO.content}"></td>
                 <td th:text="${myReviewDTO.views}"></td>
@@ -65,4 +43,5 @@
         </table>
     </div>
 </div>
+
 </html>
