@@ -11,20 +11,24 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import site.matzip.base.appConfig.AppConfig;
 import site.matzip.comment.domain.Comment;
 import site.matzip.comment.dto.CommentInfoDTO;
 import site.matzip.matzip.domain.Matzip;
 import site.matzip.member.domain.Member;
 import site.matzip.member.repository.MemberRepository;
+import site.matzip.review.domain.Heart;
 import site.matzip.review.domain.Review;
 import site.matzip.review.dto.ReviewCreationDTO;
 import site.matzip.review.dto.ReviewDetailDTO;
 import site.matzip.review.dto.ReviewListDTO;
+import site.matzip.review.repository.HeartRepository;
 import site.matzip.review.repository.ReviewRepository;
 
 import java.time.*;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -32,6 +36,7 @@ import java.util.stream.Collectors;
 public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final MemberRepository memberRepository;
+    private final HeartRepository heartRepository;
     private final AppConfig appConfig;
 
     @CacheEvict(value = {"reviewListCache", "myReviewListCache"}, allEntries = true)
@@ -53,6 +58,13 @@ public class ReviewService {
     @CacheEvict(value = {"reviewListCache", "myReviewListCache"}, allEntries = true)
     public void remove(Review review) {
         reviewRepository.delete(review);
+    }
+
+    @CacheEvict(value = {"reviewListCache", "myReviewListCache"}, allEntries = true)
+    public void modify(Review review, ReviewCreationDTO reviewCreationDTO) {
+        review.updateContent(reviewCreationDTO.getContent());
+        review.updateRating(reviewCreationDTO.getRating());
+        reviewRepository.save(review);
     }
 
     public Review findById(Long reviewId) {
@@ -100,10 +112,9 @@ public class ReviewService {
                 .build();
     }
 
-    public ReviewDetailDTO convertToReviewDetailDTO(Long id) {
+    public ReviewDetailDTO convertToReviewDetailDTO(Long id, Long loginId) {
         Review review = reviewRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Review not Found"));
         Matzip matzip = review.getMatzip();
-
         String profileImageUrl = appConfig.getDefaultProfileImageUrl();
         if (review.getAuthor().getProfileImage() != null && review.getAuthor().getProfileImage().getImageUrl() != null) {
             profileImageUrl = review.getAuthor().getProfileImage().getImageUrl();
@@ -113,6 +124,8 @@ public class ReviewService {
                 .profileImageUrl(profileImageUrl)
                 .authorNickname(review.getAuthor().getNickname())
                 .reviewId(review.getId())
+                .authorId(review.getAuthor().getId())
+                .loginId(loginId)
                 .matzipName(matzip.getMatzipName())
                 .createDate(review.getCreateDate())
                 .address(matzip.getAddress())
@@ -120,7 +133,12 @@ public class ReviewService {
                 .matzipType(matzip.getMatzipType())
                 .phoneNumber(matzip.getPhoneNumber())
                 .content(review.getContent())
+                .heartCount(countHeart(review))
                 .build();
+    }
+
+    private int countHeart(Review review) {
+        return heartRepository.findByReview(review).size();
     }
 
     public List<CommentInfoDTO> convertToCommentInfoDTOS(List<Comment> comments, Long authorId) {
@@ -197,5 +215,35 @@ public class ReviewService {
                 reviewRepository.save(review); // 댓글 업데이트
             }
         }
+    }
+
+    public int getHeartCount(Long reviewId) {
+        return heartRepository.findByReviewId(reviewId).size();
+    }
+
+    public boolean isHeart(Member member, Review review) {
+        return heartRepository.findByMemberAndReview(member, review).isPresent();
+    }
+
+    @Transactional
+    public void updateHeart(Long memberId, Long reviewId) {
+        Member findMember = memberRepository.findById(memberId)
+                .orElseThrow(() -> new EntityNotFoundException("Review not Found"));
+        Review findReview = findReview(reviewId);
+        Optional<Heart> findHeart = heartRepository.findByMemberAndReview(findMember, findReview);
+
+        if (findHeart.isEmpty()) {
+            Heart createdHeart = Heart.builder().build();
+            createdHeart.setMember(findMember);
+            createdHeart.setReview(findReview);
+        } else {
+            heartRepository.delete(findHeart.get());
+        }
+    }
+
+    private Review findReview(Long reviewId) {
+        return reviewRepository
+                .findById(reviewId)
+                .orElseThrow(() -> new EntityNotFoundException("Review not Found"));
     }
 }
