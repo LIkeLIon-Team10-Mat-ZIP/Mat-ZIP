@@ -71,4 +71,12 @@ public class Review extends BaseEntity {
     public void updatePointsRewarded() {
         this.pointsRewarded = true;
     }
+
+    public void updateContent(String content) {
+        this.content = content;
+    }
+
+    public void updateRating(double rating) {
+        this.rating = rating;
+    }
 }
