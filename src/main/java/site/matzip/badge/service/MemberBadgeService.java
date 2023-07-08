@@ -11,12 +11,13 @@ import site.matzip.badge.repository.BadgeRepository;
 import site.matzip.badge.repository.MemberBadgeRepository;
 import site.matzip.comment.domain.Comment;
 import site.matzip.comment.repository.CommentRepository;
+import site.matzip.friend.entity.Friend;
+import site.matzip.friend.repository.FriendRepository;
 import site.matzip.matzip.domain.MatzipMember;
 import site.matzip.matzip.repository.MatzipMemberRepository;
 import site.matzip.member.domain.Member;
 import site.matzip.member.repository.MemberRepository;
 import site.matzip.review.domain.Review;
-import site.matzip.review.repository.HeartRepository;
 import site.matzip.review.repository.ReviewRepository;
 
 import java.util.HashMap;
@@ -33,6 +34,7 @@ public class MemberBadgeService {
     private final MatzipMemberRepository matzipMemberRepository;
     private final ReviewRepository reviewRepository;
     private final CommentRepository commentRepository;
+    private final FriendRepository friendRepository;
 
     public Map<String, String> showMemberBadge(Member member) {
         List<MemberBadge> memberBadges = memberBadgeRepository.findByMember(member);
@@ -141,6 +143,30 @@ public class MemberBadgeService {
                 memberBadgeRepository.findByMemberAndBadge(member, badge);
 
         if (findMemberBadge.isEmpty() && totalHeartCount > 0) {
+            MemberBadge createdMemberBadge = MemberBadge.builder().build();
+            createdMemberBadge.setMember(member);
+            createdMemberBadge.setBadge(badge);
+            memberBadgeRepository.save(createdMemberBadge);
+        }
+    }
+
+    @Scheduled(cron = "0 * * * * *")
+    @Transactional
+    public void calculateFriendBadge() {
+        List<Member> members = memberRepository.findAllWithFriends2();
+        Badge checkBadge = badgeRepository.findByBadgeType(BadgeType.LOTS_FRIENDS);
+
+        for (Member member : members) {
+            checkFriends(member, checkBadge);
+        }
+    }
+
+    private void checkFriends(Member member, Badge badge) {
+        Long friendsCount = friendRepository.countByMember2(member);
+        Optional<MemberBadge> findMemberBadge =
+                memberBadgeRepository.findByMemberAndBadge(member, badge);
+
+        if (findMemberBadge.isEmpty() && friendsCount > 0) {
             MemberBadge createdMemberBadge = MemberBadge.builder().build();
             createdMemberBadge.setMember(member);
             createdMemberBadge.setBadge(badge);
