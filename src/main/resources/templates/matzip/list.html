@@ -387,6 +387,7 @@
             let pageNum = 0;
             kakao.maps.event.addListener(marker, 'click', (function (marker, matzip) {
                 return function () {
+                    panTo(matzip.x, matzip.y);
                     showPlaceInfo(marker, matzip);
                     showInfoWindow(marker, matzip);
                     currentInfoWindow = infowindow;
@@ -619,6 +620,15 @@
             const matzipId = currentMatzipId; // 현재 선택된 맛집의 아이디를 가져옴
             window.location.href = `/review/create/${matzipId}`; // 리뷰 작성 페이지로 이동
         });
+
+        function panTo(markerX, markerY) {
+            // 이동할 위도 경도 위치를 생성합니다
+            var moveLatLon = new kakao.maps.LatLng(markerY, markerX);
+
+            // 지도 중심을 부드럽게 이동시킵니다
+            // 만약 이동할 거리가 지도 화면보다 크면 부드러운 효과 없이 이동합니다
+            map.panTo(moveLatLon);
+        }
     </script>
 </main>
 </body>

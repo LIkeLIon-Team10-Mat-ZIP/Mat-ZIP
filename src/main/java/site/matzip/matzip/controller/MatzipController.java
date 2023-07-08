@@ -53,7 +53,6 @@ public class MatzipController {
     public String createWithReview(@ModelAttribute MatzipReviewDTO matzipReviewDTO,
                                    BindingResult result,
                                    @AuthenticationPrincipal PrincipalDetails principalDetails) throws IOException {
-
         MatzipCreationDTO matzipCreationDTO = matzipReviewDTO.getMatzipCreationDTO();
         ReviewCreationDTO reviewCreationDTO = matzipReviewDTO.getReviewCreationDTO();
         Long authorId = principalDetails.getMember().getId();

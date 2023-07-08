@@ -50,6 +50,7 @@ public class ReviewService {
         return createdReview;
     }
 
+    @CacheEvict(value = {"reviewListCache", "myReviewListCache"}, allEntries = true)
     public void remove(Review review) {
         reviewRepository.delete(review);
     }
@@ -64,7 +65,7 @@ public class ReviewService {
         return reviewPage.map(this::convertToReviewDTO);
     }
 
-    @Cacheable(value = "myReviewListCache")
+    @Cacheable(value = "myReviewListCache", key = "#authorId")
     public Page<ReviewListDTO> findByMatzipIdWithAuthorAndConvertToReviewDTO(Long matzipId, Long authorId, Pageable pageable) {
         Page<Review> reviewPage = reviewRepository.findByMatzipIdAndAuthorId(matzipId, authorId, pageable);
         return reviewPage.map(this::convertToReviewDTO);
@@ -76,7 +77,6 @@ public class ReviewService {
         return reviews.stream().map(this::convertToReviewDTO).collect(Collectors.toList());
     }
 
-    @Cacheable(value = "myReviewListCache")
     public List<ReviewListDTO> findAndConvertMine(Long authorId) {
         List<Review> reviews = reviewRepository.findByAuthorId(authorId);
         return reviews.stream().map(this::convertToReviewDTO).collect(Collectors.toList());

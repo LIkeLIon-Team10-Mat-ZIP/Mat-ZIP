@@ -91,7 +91,7 @@ public class MatzipService {
     }
 
     //내가 등록한 맛집 정보 검색
-    @Cacheable(value = "myMatzipListCache")
+    @Cacheable(value = "myMatzipListCache", key = "#authorId")
     public List<MatzipListDTO> findAndConvertMine(Long authorId) {
         return convertToListDTO(findAllByAuthorId(authorId), authorId);
     }
