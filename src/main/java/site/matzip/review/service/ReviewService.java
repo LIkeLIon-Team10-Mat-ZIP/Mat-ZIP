@@ -60,6 +60,13 @@ public class ReviewService {
         reviewRepository.delete(review);
     }
 
+    @CacheEvict(value = {"reviewListCache", "myReviewListCache"}, allEntries = true)
+    public void modify(Review review, ReviewCreationDTO reviewCreationDTO) {
+        review.updateContent(reviewCreationDTO.getContent());
+        review.updateRating(reviewCreationDTO.getRating());
+        reviewRepository.save(review);
+    }
+
     public Review findById(Long reviewId) {
         return reviewRepository.findById(reviewId).orElseThrow(() -> new EntityNotFoundException("Review not Found"));
     }
