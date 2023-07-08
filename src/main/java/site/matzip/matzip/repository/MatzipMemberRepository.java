@@ -6,6 +6,7 @@ import site.matzip.matzip.domain.MatzipMember;
 import site.matzip.member.domain.Member;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface MatzipMemberRepository extends JpaRepository<MatzipMember, Long> {
     @Query("SELECT m, r FROM Matzip m " +
@@ -15,4 +16,7 @@ public interface MatzipMemberRepository extends JpaRepository<MatzipMember, Long
     List<Object[]> findMyMatzipsAndReviews(Long authorId);
 
     List<MatzipMember> findByAuthor(Member member);
+
+    Optional<MatzipMember> findByMatzipIdAndAuthorId(Long matzipId, Long authorId);
+
 }

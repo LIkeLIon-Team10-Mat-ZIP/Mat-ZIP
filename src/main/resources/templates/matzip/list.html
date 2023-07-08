@@ -223,7 +223,7 @@
 
         function showInfoWindow(marker, matzip) {
             if (matzip.matzipName.length > 9) {
-                iwContent = '<div style="padding:5px; overflow-wrap: break-word; font-size:0.8em;">' + matzip.matzipName + '</div>';
+                iwContent = '<div style="padding:5px; overflow-wrap: break-word; font-size:0.8em;">' + matzip.matzipName + '</div>'
             } else {
                 iwContent = '<div style="padding:5px; overflow-wrap: break-word;">' + matzip.matzipName + '</div>';
             }
@@ -424,14 +424,19 @@
                     }
 
                     if (isGotAllReviews && isScrolledToEnd() && !reviewButtonExists()) {
+                        const buttonContainer = document.createElement('div');
+                        buttonContainer.classList.add('flex', 'justify-center', 'mt-4');
+
                         const reviewButton = document.createElement('button');
                         reviewButton.innerText = '리뷰 작성';
-                        reviewButton.classList.add('review-button', 'btn', 'btn-primary', 'flex', 'justify-center');
+                        reviewButton.classList.add('review-button', 'btn', 'btn-primary');
                         reviewButton.addEventListener('click', function () {
                             const matzipId = currentMatzipId;
                             window.location.href = `/review/create/${matzipId}`;
                         });
-                        e.target.appendChild(reviewButton);
+
+                        buttonContainer.appendChild(reviewButton);
+                        e.target.appendChild(buttonContainer);
                     }
                 };
             })(pageNum));
@@ -459,6 +464,10 @@
             }
             //한번 리스트 로드 했는데 10개 안되고 리뷰 작성버튼 안생겼으면 만들어 줌
             if (currentReviews.length < 10 && !reviewButtonExists()) {
+                // 리뷰 작성 버튼을 감싸는 컨테이너 추가
+                const reviewButtonContainer = document.createElement('div');
+                reviewButtonContainer.classList.add('flex', 'justify-center', 'mt-4');
+
                 // 리뷰 작성 버튼 추가
                 const reviewButton = document.createElement('button');
                 reviewButton.innerText = '리뷰 작성';
@@ -467,7 +476,10 @@
                     const matzipId = previousMarkerId;
                     window.location.href = `/review/create/${matzipId}`;
                 });
-                reviewListContainer.appendChild(reviewButton);
+
+                // 컨테이너에 리뷰 작성 버튼 추가
+                reviewButtonContainer.appendChild(reviewButton);
+                reviewListContainer.appendChild(reviewButtonContainer);
             }
         }
 
