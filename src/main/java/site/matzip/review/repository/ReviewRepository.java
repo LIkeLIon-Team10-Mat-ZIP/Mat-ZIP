@@ -4,9 +4,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
-import site.matzip.member.domain.Member;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import site.matzip.member.domain.Member;
 import site.matzip.review.domain.Review;
 
 import java.time.LocalDateTime;
@@ -31,4 +31,6 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     @EntityGraph(attributePaths = {"author"})
     @Query("SELECT r from Review r WHERE r.createDate < :olderThanTime")
     List<Review> findReviewsOlderThan(@Param("olderThanTime") LocalDateTime olderThanTime);
+
+    Page<Review> findByMatzipIdAndAuthorId(Long matzipId, Long authorId, Pageable pageable);
 }

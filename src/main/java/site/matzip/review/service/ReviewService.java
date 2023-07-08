@@ -58,12 +58,19 @@ public class ReviewService {
         return reviewRepository.findById(reviewId).orElseThrow(() -> new EntityNotFoundException("Review not Found"));
     }
 
-    public Page<ReviewListDTO> findByMatzipId(Long matzipId, Pageable pageable) {
+    @Cacheable(value = "reviewListCache")
+    public Page<ReviewListDTO> findByMatzipIdAndConvertToDTO(Long matzipId, Pageable pageable) {
         Page<Review> reviewPage = reviewRepository.findByMatzipId(matzipId, pageable);
         return reviewPage.map(this::convertToReviewDTO);
     }
 
-    @Cacheable(value = "reviewListCache")
+    @Cacheable(value = "myReviewListCache")
+    public Page<ReviewListDTO> findByMatzipIdWithAuthorAndConvertToReviewDTO(Long matzipId, Long authorId, Pageable pageable) {
+        Page<Review> reviewPage = reviewRepository.findByMatzipIdAndAuthorId(matzipId, authorId, pageable);
+        return reviewPage.map(this::convertToReviewDTO);
+    }
+
+
     public List<ReviewListDTO> findAndConvertAll() {
         List<Review> reviews = reviewRepository.findAll();
         return reviews.stream().map(this::convertToReviewDTO).collect(Collectors.toList());

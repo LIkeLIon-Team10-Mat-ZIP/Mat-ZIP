@@ -167,8 +167,9 @@
         var markers = [];
         var nonFilteredData;
         let currentListType = "all";
+        let currentReviewsType = "all";
         var currentReviews = [];
-        let previousMarkerId = null; // 이전에 클릭한 마커의 맛집 아이디
+        let currentMatzipId = null; // 이전에 클릭한 마커의 맛집 아이디
 
 
         var placeInfo = document.getElementById('placeInfo');
@@ -182,7 +183,7 @@
         var routeLink = document.getElementById('routeLink');
         var detailLink = document.getElementById('detailLink');
         var reviewButton = document.getElementById('reviewButton');
-        let isGotAllReviews = false; // 현재 리뷰를 불러오고 있는지 여부
+        let isGotAllReviews = false; // 모든 리뷰를 받았는지
 
         // 마커 클러스터러를 생성합니다 (마커 여러개 하나로 묶어서 표시해줌)
         var clusterer = new kakao.maps.MarkerClusterer({
@@ -391,11 +392,17 @@
                     currentInfoWindow = infowindow;
                     isGotAllReviews = false;
 
-                    if (marker.matzipId !== previousMarkerId) {
+                    if (marker.matzipId !== currentMatzipId) {
                         pageNum = 0;
                         currentReviews = [];
                         document.getElementById('reviewListContainer').innerHTML = ''; // 기존 리뷰 리스트 비우기
-                        previousMarkerId = marker.matzipId;
+                        currentMatzipId = marker.matzipId;
+                    }
+                    if (currentListType !== currentReviewsType) {
+                        pageNum = 0;
+                        currentReviews = [];
+                        document.getElementById('reviewListContainer').innerHTML = '';
+                        currentMatzipId = marker.matzipId;
                     }
                     getReviews(marker.matzipId, pageNum);
                 };
@@ -410,7 +417,7 @@
                     const scrollThreshold = scrollHeight * 0.8;
 
                     if (scrollPosition >= scrollThreshold && !isGotAllReviews) {
-                        const matzipId = previousMarkerId;
+                        const matzipId = currentMatzipId;
                         pageNum += 1;
                         getReviews(matzipId, pageNum);
                     }
@@ -420,7 +427,7 @@
                         reviewButton.innerText = '리뷰 작성';
                         reviewButton.classList.add('review-button', 'btn', 'btn-primary', 'flex', 'justify-center');
                         reviewButton.addEventListener('click', function () {
-                            const matzipId = previousMarkerId;
+                            const matzipId = currentMatzipId;
                             window.location.href = `/review/create/${matzipId}`;
                         });
                         e.target.appendChild(reviewButton);
@@ -449,6 +456,18 @@
                 noReview.style.display = 'block';
                 reviewListContainer.style.display = 'none';
             }
+            //한번 리스트 로드 했는데 10개 안되고 리뷰 작성버튼 안생겼으면 만들어 줌
+            if (currentReviews.length < 10 && !reviewButtonExists()) {
+                // 리뷰 작성 버튼 추가
+                const reviewButton = document.createElement('button');
+                reviewButton.innerText = '리뷰 작성';
+                reviewButton.classList.add('btn', 'btn-primary', 'review-button');
+                reviewButton.addEventListener('click', function () {
+                    const matzipId = previousMarkerId;
+                    window.location.href = `/review/create/${matzipId}`;
+                });
+                reviewListContainer.appendChild(reviewButton);
+            }
         }
 
         function getReviews(matzipId, pageNum) {
@@ -462,7 +481,17 @@
         }
 
         function loadReviews(matzipId, pageNumber, pageSize) {
-            fetch(`/review/api/${matzipId}?pageNumber=${pageNumber}&pageSize=${pageSize}`)
+            let url = '';
+            if (currentListType === 'all') {
+                url = `/review/api/list/${matzipId}`;
+                currentReviewsType = 'all';
+            } else if (currentListType === 'my') {
+                url = `/review/api/mylist/${matzipId}`;
+                currentReviewsType = 'my';
+            }
+            url += `?pageNumber=${pageNumber}&pageSize=${pageSize}`;
+
+            fetch(url)
                 .then((response) => response.json())
                 .then((reviews) => {
                     const reviewContent = reviews.content;
@@ -584,6 +613,12 @@
             reviewContainer.appendChild(hr);
             reviewListContainer.appendChild(reviewContainer);
         }
+
+        //리뷰 등록 버튼 이벤트 리스너
+        reviewButton.addEventListener('click', function () {
+            const matzipId = currentMatzipId; // 현재 선택된 맛집의 아이디를 가져옴
+            window.location.href = `/review/create/${matzipId}`; // 리뷰 작성 페이지로 이동
+        });
     </script>
 </main>
 </body>

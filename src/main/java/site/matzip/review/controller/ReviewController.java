@@ -74,13 +74,25 @@ public class ReviewController {
         return "redirect:/";
     }
 
-    @GetMapping("/api/{matzipId}")
+    @GetMapping("/api/list/{matzipId}")
     @ResponseBody
     public ResponseEntity<Page<ReviewListDTO>> getReviewsByMatzipId(@PathVariable Long matzipId,
                                                                     @RequestParam int pageSize,
                                                                     @RequestParam int pageNumber) {
-        Pageable pageable = PageRequest.of(pageNumber, pageSize); // 페이지 번호를 0부터 시작하도록 변경
-        Page<ReviewListDTO> reviews = reviewService.findByMatzipId(matzipId, pageable);
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        Page<ReviewListDTO> reviews = reviewService.findByMatzipIdAndConvertToDTO(matzipId, pageable);
+
+        return ResponseEntity.ok(reviews);
+    }
+
+    @GetMapping("/api/mylist/{matzipId}")
+    public ResponseEntity<Page<ReviewListDTO>> getReviewsByMatzipIdAndAuthor(@PathVariable Long matzipId,
+                                                                             @RequestParam int pageSize,
+                                                                             @RequestParam int pageNumber,
+                                                                             @AuthenticationPrincipal PrincipalDetails principalDetails) {
+        Long authorId = principalDetails.getMember().getId();
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        Page<ReviewListDTO> reviews = reviewService.findByMatzipIdWithAuthorAndConvertToReviewDTO(matzipId, authorId, pageable);
 
         return ResponseEntity.ok(reviews);
     }
