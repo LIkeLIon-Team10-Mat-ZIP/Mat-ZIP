@@ -316,7 +316,7 @@
                                     userInfoContainer.appendChild(nameDateWrapper);
 
                                     const userDateDiv = document.createElement('div');
-                                    userDateDiv.classList.add('flex', 'space-x-1');
+                                    userDateDiv.classList.add('flex', 'space-x-2');
                                     nameDateWrapper.appendChild(userDateDiv);
 
                                     // 사용자 닉네임 추가
@@ -348,18 +348,19 @@
                                     userInfoContainer.appendChild(userAdditionalInfo);
 
                                     const registeredRestaurants = document.createElement('span');
-                                    registeredRestaurants.classList.add('text-xs');
-                                    registeredRestaurants.innerText = '맛집 7';
+                                    registeredRestaurants.classList.add('text-xs', 'mr-2', 'text-gray-500');
+                                    registeredRestaurants.innerText = '맛집 ' + review.matzipCount;
                                     userAdditionalInfo.appendChild(registeredRestaurants);
 
                                     const writtenReviews = document.createElement('span');
-                                    writtenReviews.classList.add('text-xs');
-                                    writtenReviews.innerText = '리뷰 8';
+                                    writtenReviews.classList.add('text-xs', 'mr-2', 'text-gray-500');
+                                    writtenReviews.innerText = '리뷰 ' + review.reviewCount;
                                     userAdditionalInfo.appendChild(writtenReviews);
 
                                     const friendCount = document.createElement('span');
-                                    friendCount.classList.add('text-xs');
-                                    friendCount.innerText = '친구 119';
+                                    friendCount.classList.add('text-xs', 'mr-2', 'text-gray-500');
+                                    friendCount.innerText = '친구 ' + review.friendCount;
+                                    userAdditionalInfo.appendChild(friendCount);
                                     userAdditionalInfo.appendChild(friendCount);
 
                                     // 사용자 정보 컨테이너를 프로필 이미지 컨테이너에 추가
@@ -603,17 +604,17 @@
 
                             const registeredRestaurants = document.createElement('span');
                             registeredRestaurants.classList.add('text-xs');
-                            registeredRestaurants.innerText = '맛집 7';
+                            registeredRestaurants.innerText = '맛집 ' + review.matzipCount;
                             userAdditionalInfo.appendChild(registeredRestaurants);
 
                             const writtenReviews = document.createElement('span');
                             writtenReviews.classList.add('text-xs');
-                            writtenReviews.innerText = '리뷰 8';
+                            writtenReviews.innerText = '리뷰 ' + review.reviewCount;
                             userAdditionalInfo.appendChild(writtenReviews);
 
                             const friendCount = document.createElement('span');
                             friendCount.classList.add('text-xs');
-                            friendCount.innerText = '친구 119';
+                            friendCount.innerText = '친구 ' + review.friendCount;
                             userAdditionalInfo.appendChild(friendCount);
 
                             // 사용자 정보 컨테이너를 프로필 이미지 컨테이너에 추가
