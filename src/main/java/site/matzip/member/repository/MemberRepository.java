@@ -22,5 +22,8 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     @Query("SELECT m FROM Member m JOIN FETCH m.comments")
     List<Member> findAllWithComments();
 
+    @Query("SELECT m FROM Member m JOIN FETCH m.friends2")
+    List<Member> findAllWithFriends2();
+
     List<Member> findTop10ByOrderByPointDesc();
 }
