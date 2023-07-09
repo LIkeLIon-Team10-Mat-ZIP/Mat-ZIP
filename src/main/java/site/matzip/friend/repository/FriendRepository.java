@@ -10,4 +10,6 @@ import java.util.List;
 @Repository
 public interface FriendRepository extends JpaRepository<Friend, Long> {
     List<Friend> findByMember1(Member member);
+
+    Long countByMember2(Member member);
 }

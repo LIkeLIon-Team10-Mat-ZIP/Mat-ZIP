@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import site.matzip.base.appConfig.AppConfig;
 import site.matzip.comment.domain.Comment;
 import site.matzip.comment.dto.CommentInfoDTO;
+import site.matzip.image.domain.ReviewImage;
 import site.matzip.matzip.domain.Matzip;
 import site.matzip.member.domain.Member;
 import site.matzip.member.repository.MemberRepository;
@@ -113,6 +114,8 @@ public class ReviewService {
     }
 
     public ReviewDetailDTO convertToReviewDetailDTO(Long id, Long loginId) {
+        // TODO findByIdFetch로 NotProd 클래스 삭제 후 변경
+        // 쿼리 양 때문에 fetch로 변경해야 함
         Review review = reviewRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Review not Found"));
         Matzip matzip = review.getMatzip();
         String profileImageUrl = appConfig.getDefaultProfileImageUrl();
@@ -134,6 +137,10 @@ public class ReviewService {
                 .phoneNumber(matzip.getPhoneNumber())
                 .content(review.getContent())
                 .heartCount(countHeart(review))
+                .imageUrls(review.getReviewImages()
+                        .stream()
+                        .map(ReviewImage::getImageUrl)
+                        .collect(Collectors.toList()))
                 .build();
     }
 
@@ -236,6 +243,7 @@ public class ReviewService {
             Heart createdHeart = Heart.builder().build();
             createdHeart.setMember(findMember);
             createdHeart.setReview(findReview);
+            heartRepository.save(createdHeart);
         } else {
             heartRepository.delete(findHeart.get());
         }

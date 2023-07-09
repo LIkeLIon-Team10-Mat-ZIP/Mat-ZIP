@@ -4,6 +4,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import site.matzip.badge.domain.MemberBadge;
+import site.matzip.member.domain.Member;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import site.matzip.member.domain.Member;
@@ -11,6 +13,7 @@ import site.matzip.review.domain.Review;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 public interface ReviewRepository extends JpaRepository<Review, Long> {
     Page<Review> findByMatzipId(Long matzipId, Pageable pageble);
@@ -20,6 +23,9 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     List<Review> findByAuthorId(Long authorId);
 
     List<Review> findByAuthor(Member author);
+
+    @Query("SELECT r FROM Review r JOIN FETCH r.reviewImages WHERE r.id = :reviewId")
+    Optional<Review> findByIdFetch(@Param("reviewId") Long reviewId);
 
     /*
        @EntityGraph(attributePaths = {"author"})
@@ -33,4 +39,8 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     List<Review> findReviewsOlderThan(@Param("olderThanTime") LocalDateTime olderThanTime);
 
     Page<Review> findByMatzipIdAndAuthorId(Long matzipId, Long authorId, Pageable pageable);
+
+    @Query("SELECT r FROM Review r JOIN FETCH r.hearts WHERE r.author = :author")
+    List<Review> findByAuthorForHeart(@Param("author") Member author);
+
 }
