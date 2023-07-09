@@ -29,7 +29,7 @@ public class MatzipService {
     private final MatzipRepository matzipRepository;
     private final MatzipMemberRepository matzipMemberRepository;
 
-    @CacheEvict(value = {"matzipListCache", "myMatzipListCache"}, allEntries = true)
+    @CacheEvict(value = {"matzipListCache", "myMatzipListCache", "reviewListCache"}, allEntries = true)
     public Matzip create(MatzipCreationDTO creationDTO, Member author) {
         Optional<Matzip> optionalExistingMatzip = matzipRepository.findByKakaoId(creationDTO.getKakaoId());
 
