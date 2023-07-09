@@ -14,6 +14,14 @@
             <a sec:authorize="isAuthenticated()" class="btn btn-ghost rounded-btn bg-transparent text-gray-800 dark:bg-transparent dark:text-gray-800" href="javascript:"
                onclick="$(this).next().submit();">로그아웃</a>
             <form class="!hidden" hidden th:action="|/usr/member/logout|" method="POST"></form>
+            <a sec:authorize="isAuthenticated()" id="notificationModal" class="btn btn-ghost">
+                <div class="indicator" style="position: relative;">
+                    <i class="fa-regular fa-bell">
+                            <span data-test="hasUnreadNotifications"
+                                  class="badge badge-xs badge-secondary indicator-item" style="position: absolute; top: -5px; right: -5px;"></span>
+                    </i>
+                </div>
+            </a>
         </div>
 
         <!-- Hamburger-Bar -->
