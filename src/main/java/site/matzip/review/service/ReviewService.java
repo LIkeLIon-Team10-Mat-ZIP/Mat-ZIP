@@ -62,10 +62,12 @@ public class ReviewService {
     }
 
     @CacheEvict(value = {"reviewListCache", "myReviewListCache"}, allEntries = true)
-    public void modify(Review review, ReviewCreationDTO reviewCreationDTO) {
+    public Review modify(Review review, ReviewCreationDTO reviewCreationDTO) {
         review.updateContent(reviewCreationDTO.getContent());
         review.updateRating(reviewCreationDTO.getRating());
         reviewRepository.save(review);
+
+        return review;
     }
 
     public Review findById(Long reviewId) {

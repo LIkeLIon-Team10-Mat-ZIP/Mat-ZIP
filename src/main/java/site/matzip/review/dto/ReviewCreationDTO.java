@@ -10,4 +10,5 @@ public class ReviewCreationDTO {
     private double rating;
     private String content;
     private List<MultipartFile> imageFiles;
+    private List<String> imageUrls;
 }

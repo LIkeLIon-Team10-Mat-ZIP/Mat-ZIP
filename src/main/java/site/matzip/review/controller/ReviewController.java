@@ -18,6 +18,7 @@ import site.matzip.badge.service.MemberBadgeService;
 import site.matzip.comment.domain.Comment;
 import site.matzip.comment.dto.CommentInfoDTO;
 import site.matzip.config.auth.PrincipalDetails;
+import site.matzip.image.domain.ReviewImage;
 import site.matzip.image.service.ReviewImageService;
 import site.matzip.matzip.domain.Matzip;
 import site.matzip.matzip.dto.MatzipInfoDTO;
@@ -31,6 +32,7 @@ import site.matzip.review.service.ReviewService;
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/review")
@@ -91,6 +93,10 @@ public class ReviewController {
         model.addAttribute("matzipInfoDTO", matzipInfoDTO);
         reviewCreationDTO.setRating(review.getRating());
         reviewCreationDTO.setContent(review.getContent());
+        reviewCreationDTO.setImageUrls(review.getReviewImages()
+                .stream()
+                .map(ReviewImage::getImageUrl)
+                .collect(Collectors.toList()));
 
         return "/review/add";
     }
@@ -98,7 +104,7 @@ public class ReviewController {
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/modify/{reviewId}")
     public String modify(@PathVariable Long reviewId, ReviewCreationDTO reviewCreationDTO, BindingResult bindingResult,
-                         @AuthenticationPrincipal PrincipalDetails principalDetails) {
+                         @AuthenticationPrincipal PrincipalDetails principalDetails) throws IOException {
         Review review = reviewService.findById(reviewId);
 
         if (bindingResult.hasErrors()) {
@@ -109,7 +115,8 @@ public class ReviewController {
             throw new AccessDeniedException("You do not have permission to modify.");
         }
 
-        reviewService.modify(review, reviewCreationDTO);
+        Review modifyReview = reviewService.modify(review, reviewCreationDTO);
+        reviewImageService.modify(reviewCreationDTO.getImageFiles(), modifyReview);
 
         return "redirect:/review/detail/" + reviewId;
     }
