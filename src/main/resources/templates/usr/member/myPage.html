@@ -53,71 +53,172 @@
                     </div>
                     <p th:text="${memberInfoDTO.email}"></p>
                     <div class="flex gap-10 h-full mt-10">
-                        <div class="bg-base-100 rounded-xl shadow-xl transform hover:scale-110 transition-transform duration-300 cursor-pointer">
+                        <div id="menu1"
+                             class="bg-base-100 rounded-xl shadow-xl transform hover:scale-110 transition-transform duration-300 cursor-pointer">
                             <div class="flex flex-col justify-center items-center h-full w-32">
-                                <div class="bg-pink-200 rounded-t-xl flex justify-center items-center w-full flex-grow text-3xl">
-                                    <i class="fa-solid fa-utensils"></i>
+                                <div class="bg-pink-200 rounded-t-xl flex justify-center items-center w-full font-bold flex-grow text-lg">
+                                    맛집
                                 </div>
                                 <div class="flex justify-center items-center w-full flex-grow">
-                                    <h2 class="card-title">16</h2>
+                                    <h2 class="card-title" th:text="${memberInfoCntDTO.matzipCnt}"></h2>
                                 </div>
                             </div>
                         </div>
-                        <div class="bg-base-100 rounded-xl shadow-xl transform hover:scale-110 transition-transform duration-300 cursor-pointer">
+                        <div id="menu2"
+                             class="bg-base-100 rounded-xl shadow-xl transform hover:scale-110 transition-transform duration-300 cursor-pointer">
                             <div class="flex flex-col justify-center items-center h-full w-32">
-                                <div class="bg-pink-200 rounded-t-xl flex justify-center items-center w-full flex-grow text-3xl">
-                                    <i class="fa-solid fa-pen-to-square"></i>
+                                <div class="bg-pink-200 rounded-t-xl flex justify-center items-center w-full font-bold flex-grow text-lg">
+                                    리뷰
                                 </div>
                                 <div class="flex justify-center items-center w-full flex-grow">
-                                    <h2 class="card-title">20</h2>
+                                    <h2 class="card-title" th:text="${memberInfoCntDTO.reviewCnt}"></h2>
                                 </div>
                             </div>
                         </div>
-                        <div class="bg-base-100 rounded-xl shadow-xl transform hover:scale-110 transition-transform duration-300 cursor-pointer">
+                        <div id="menu3"
+                             class="bg-base-100 rounded-xl shadow-xl transform hover:scale-110 transition-transform duration-300 cursor-pointer">
                             <div class="flex flex-col justify-center items-center h-full w-32">
-                                <div class="bg-pink-200 rounded-t-xl flex justify-center items-center w-full flex-grow text-3xl">
-                                    <i class="fa-solid fa-user-group"></i>
+                                <div class="bg-pink-200 rounded-t-xl flex justify-center items-center w-full font-bold flex-grow text-lg">
+                                    친구
                                 </div>
                                 <div class="flex justify-center items-center w-full flex-grow">
-                                    <h2 class="card-title">26</h2>
+                                    <h2 class="card-title" th:text="${memberInfoCntDTO.friendCnt}"></h2>
                                 </div>
                             </div>
                         </div>
-                        <div class="bg-base-100 rounded-xl shadow-xl transform hover:scale-110 transition-transform duration-300 cursor-pointer">
+                        <div id="menu4"
+                             class="bg-base-100 rounded-xl shadow-xl transform hover:scale-110 transition-transform duration-300 cursor-pointer">
                             <div class="flex flex-col justify-center items-center h-full w-32">
-                                <div class="bg-pink-200 rounded-t-xl flex justify-center items-center w-full flex-grow text-3xl">
-                                    <i class="fa-solid fa-coins"></i>
+                                <div class="bg-pink-200 rounded-t-xl flex justify-center items-center w-full font-bold flex-grow text-lg">
+                                    포인트
                                 </div>
                                 <div class="flex justify-center items-center w-full flex-grow">
-                                    <h2 class="card-title">5,000</h2>
+                                    <h2 class="card-title" th:text="${memberInfoCntDTO.point}"></h2>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="mt-5">
-                <div>
-                    <!-- tab menu -->
-                    <div class="flex flex-grow">
-                        <div class="tabmenu-container w-full">
-                            <div class="tabmenu out-tabmenu">
-                                <ul>
-                                    <li id="tab1" class="btnCon">
-                                        <input type="radio" checked name="tabmenu" id="tabmenu1">
-                                        <label for="tabmenu1" class="font-bold">내가 작성한 리뷰</label>
-                                        <div class="tabCon">
-                                            <div layout:fragment="content" class="mt-4"></div>
-                                        </div>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
+            <!-- tab menu -->
+            <div class="flex flex-grow p-2">
+                <div class="tabmenu-container w-full">
+                    <div class="tabmenu out-tabmenu">
+                        <ul>
+                            <li id="tab1" class="btnCon">
+                                <input type="radio" checked name="tabmenu" id="tabmenu1" hidden="hidden">
+                                <div class="tabCon">
+                                    <div layout:fragment="content" class="mt-4"></div>
+                                </div>
+                            </li>
+                            <li id="tab2" class="btnCon">
+                                <input type="radio" name="tabmenu" id="tabmenu2" hidden="hidden">
+                                <div class="tabCon">
+                                    <div layout:fragment="content" class="mt-4"></div>
+                                </div>
+                            </li>
+                            <li id="tab3" class="btnCon">
+                                <input type="radio" name="tabmenu" id="tabmenu3" hidden="hidden">
+                                <div class="tabCon">
+                                    <div layout:fragment="content" class="mt-4"></div>
+                                </div>
+                            </li>
+                            <li id="tab4" class="btnCon">
+                                <input type="radio" name="tabmenu" id="tabmenu4" hidden="hidden">
+                                <div class="tabCon">
+                                    <div layout:fragment="content" class="mt-4"></div>
+                                </div>
+                            </li>
+                        </ul>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- 친구 추가 모달창 -->
+    <dialog id="addFriend_modal" class="modal">
+        <form method="dialog" class="modal-box" style="width: 400px; overflow-y: auto;">
+            <div class="flex justify-center">
+                <div class="flex flex-col mt-5">
+                    <p class="mb-3 text-lg"><i class="fa-regular fa-face-smile"></i> 추가할 친구의 닉네임을 입력해 주세요.</p>
+                    <div class="flex items-center space-x-4">
+                        <input type="text" name="nickname" placeholder="닉네임" autocomplete="off"
+                               class="bg-pink-100 h-10 p-4 w-80"/>
+                    </div>
+                    <div class="flex justify-end mt-5">
+                        <a href="/usr/member/myPage?menu=3"
+                           class="btn btn-sm bg-pink-200 h-10 w-16 mr-2 text-sm flex items-center justify-center hover:bg-pink-100">취소</a>
+                        <button class="addFriend btn btn-sm bg-pink-200 h-10 w-16 text-sm flex items-center justify-center hover:bg-pink-100"
+                                type="submit">
+                            <span class="text-center">추가</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </dialog>
+
+    <script>
+        const tBtn_1 = document.getElementById('menu1');
+        tBtn_1.addEventListener('click', () => {
+            document.getElementById('tabmenu1').checked = true;
+            window.location.href = '/usr/member/myPage?menu=1';
+        });
+
+        const tBtn_2 = document.getElementById('menu2');
+        tBtn_2.addEventListener('click', () => {
+            document.getElementById('tabmenu2').checked = true;
+            window.location.href = '/usr/member/myPage?menu=2';
+        });
+
+        const tBtn_3 = document.getElementById('menu3');
+        tBtn_3.addEventListener('click', () => {
+            document.getElementById('tabmenu3').checked = true;
+            window.location.href = '/usr/member/myPage?menu=3';
+        });
+
+        const tBtn_4 = document.getElementById('menu4');
+        tBtn_4.addEventListener('click', () => {
+            document.getElementById('tabmenu4').checked = true;
+            window.location.href = '/usr/member/myPage?menu=4';
+        });
+
+        document.querySelector('.addFriend').addEventListener('click', function (event) {
+            event.preventDefault(); // 폼의 기본 제출 동작을 취소
+            var token = $("meta[name='_csrf']").attr("content");
+            var header = $("meta[name='_csrf_header']").attr("content");
+            const nicknameInput = document.querySelector('input[name="nickname"]');
+            const nicknameValue = nicknameInput.value;
+            const modal = document.getElementById('addFriend_modal');
+
+            $.ajax({
+                url: '/friends/add',
+                type: 'POST',
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader(header, token);
+                },
+                data: {
+                    nickname: nicknameValue
+                },
+                success: function (response) {
+                    if (response === "success") {
+                        modal.close();
+                        toastNotice("친구 요청을 보냈습니다.");
+                    } else {
+                        toastWarning("존재하지 않는 닉네임입니다.");
+                    }
+                    // 서버로부터 성공적인 응답을 받았을 때의 처리 코드를 구현
+                    console.log("Success:", response);
+                },
+                error: function (xhr, textStatus, errorThrown) {
+                    // 서버로부터 오류 응답을 받았을 때의 처리 코드를 구현
+                    console.log("Error:", textStatus, errorThrown);
+                    modal.close();
+                }
+            });
+        });
+    </script>
 
 </main>
 

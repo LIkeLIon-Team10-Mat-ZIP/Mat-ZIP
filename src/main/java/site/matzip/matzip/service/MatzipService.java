@@ -14,6 +14,9 @@ import site.matzip.matzip.dto.MatzipReviewListDTO;
 import site.matzip.matzip.repository.MatzipMemberRepository;
 import site.matzip.matzip.repository.MatzipRepository;
 import site.matzip.member.domain.Member;
+import site.matzip.member.repository.MemberRepository;
+import site.matzip.review.domain.Review;
+import site.matzip.review.dto.ReviewCreationDTO;
 import site.matzip.review.dto.ReviewListDTO;
 
 import java.util.ArrayList;
@@ -26,11 +29,14 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class MatzipService {
     private final MatzipRepository matzipRepository;
+    private final MemberRepository memberRepository;
     private final MatzipMemberRepository matzipMemberRepository;
 
-    @CacheEvict(value = {"matzipListCache", "myMatzipListCache"}, allEntries = true)
-    public Matzip create(MatzipCreationDTO creationDTO, Member author) {
+
+    @CacheEvict(value = {"matzipListCache", "myMatzipListCache", "reviewListCache"}, allEntries = true)
+    public Matzip create(MatzipCreationDTO creationDTO, Long authorId) {
         Optional<Matzip> optionalExistingMatzip = matzipRepository.findByKakaoId(creationDTO.getKakaoId());
+        Member author = memberRepository.findById(authorId).orElseThrow(() -> new EntityNotFoundException("member not found"));
 
         if (optionalExistingMatzip.isPresent()) {
             Matzip existingMatzip = optionalExistingMatzip.get();

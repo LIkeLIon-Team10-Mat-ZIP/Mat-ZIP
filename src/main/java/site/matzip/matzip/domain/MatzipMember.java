@@ -40,6 +40,6 @@ public class MatzipMember {
             this.matzip.getMatzipMembers().remove(this);
         }
         this.matzip = matzip;
-        author.getMatzipMembers().add(this);
+        matzip.getMatzipMembers().add(this);
     }
 }

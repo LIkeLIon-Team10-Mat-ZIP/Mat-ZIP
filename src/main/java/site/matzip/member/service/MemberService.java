@@ -19,17 +19,20 @@ import site.matzip.badge.domain.MemberBadge;
 import site.matzip.badge.repository.MemberBadgeRepository;
 import site.matzip.base.appConfig.AppConfig;
 import site.matzip.base.rsData.RsData;
+import site.matzip.friend.dto.FriendDetailDTO;
+import site.matzip.friend.entity.Friend;
+import site.matzip.matzip.domain.Matzip;
+import site.matzip.matzip.domain.MatzipMember;
+import site.matzip.matzip.dto.MatzipInfoDTO;
 import site.matzip.member.domain.Member;
 import site.matzip.member.domain.MemberToken;
-import site.matzip.member.dto.MemberRankDTO;
-import site.matzip.member.dto.NicknameUpdateDTO;
+import site.matzip.member.dto.*;
 import site.matzip.member.repository.MemberRepository;
 import site.matzip.member.repository.MemberTokenRepository;
+import site.matzip.review.domain.Review;
+import site.matzip.review.dto.MyReviewDTO;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -128,6 +131,11 @@ public class MemberService {
                 .orElseThrow(() -> new EntityNotFoundException("Member not found"));
     }
 
+    public Member findByUsername(String username) {
+        return memberRepository.findByUsername(username)
+                .orElseThrow(() -> new EntityNotFoundException("Member not found"));
+    }
+
     public Member signUp(String username, String kakao_nickname, String password, String email) {
         password = passwordEncoder.encode(password);
         Member member = Member.builder()
@@ -139,10 +147,6 @@ public class MemberService {
                 .build();
         member = memberRepository.save(member);
         return member;
-    }
-
-    public Optional<Member> findByUsername(String username) {
-        return memberRepository.findByUsername(username);
     }
 
     @Transactional
@@ -159,9 +163,7 @@ public class MemberService {
     }
 
     private boolean isNicknameTaken(String nickname) {
-        Optional<Member> member = memberRepository.findByNickname(nickname);
-
-        return member.isPresent();
+        return memberRepository.findByNickname(nickname).isPresent();
     }
 
     public List<MemberRankDTO> findAndConvertTopTenMember() {
@@ -169,12 +171,161 @@ public class MemberService {
         return members.stream().map(this::convertToMemberDTO).collect(Collectors.toList());
     }
 
-    private MemberRankDTO convertToMemberDTO(Member member) {
+    public int findMemberRankByUsername(String username) {
+        List<Member> orderedMembers = memberRepository.findAllByOrderByPointDesc();
+        for (int rank = 0; rank < orderedMembers.size(); rank++) {
+            if (orderedMembers.get(rank).getUsername().equals(username)) {
+                return rank + 1;
+            }
+        }
+        return -1;
+    }
+
+    // 멤버 주위로 10명(멤버 포함)
+    public List<MemberRankDTO> findAndConvertTenMemberAroundMember(Long memberId) {
+        List<MemberRankInfoDTO> membersWithRank = getTop10MemberAroundUserWithRank(memberId);
+        return membersWithRank.stream().map(this::convertToMemberRankDTO).collect(Collectors.toList());
+    }
+
+    private MemberRankDTO convertToMemberRankDTO(MemberRankInfoDTO memberWithRank) {
+        Member member = memberWithRank.getMember();
+
         String profileImageUrl = appConfig.getDefaultProfileImageUrl();
-        if (member.getProfileImage() != null && member.getProfileImage().getImageUrl() != null) {
-            profileImageUrl = member.getProfileImage().getImageUrl();
+
+        return MemberRankDTO.builder()
+                .rank(memberWithRank.getRank())
+                .profileImageUrl(member.getProfileImage() != null ? member.getProfileImage().getImageUrl() : profileImageUrl)
+                .nickname(member.getNickname())
+                .badgeImage(showMemberBadge(member))
+                .point(member.getPoint())
+                .build();
+    }
+
+    public List<MemberRankInfoDTO> getTop10MemberAroundUserWithRank(Long memberId) {
+        Member currentMember = findMember(memberId);
+
+        List<Member> allOrderedMembers = memberRepository.findAllByOrderByPointDesc();
+
+        int currentMemberRank = allOrderedMembers.indexOf(currentMember) + 1;
+        int startIndex = Math.max(0, currentMemberRank - 5); // 본인 순위에서 5명 전부터 시작
+
+        // 상위 멤버와 하위 멤버를 합쳐서 10명의 회원을 가져옴
+        List<MemberRankInfoDTO> top10MembersWithRank = new ArrayList<>();
+
+        for (int i = startIndex; i < startIndex + 10 && i < allOrderedMembers.size(); i++) {
+            Member member = allOrderedMembers.get(i);
+            top10MembersWithRank.add(new MemberRankInfoDTO(i + 1, member));
         }
 
+        return top10MembersWithRank;
+    }
+
+    public MemberPointDTO convertToMemberPointDTO(Long memberId) {
+        Member member = findMember(memberId);
+
+        int rank = findMemberRankByUsername(member.getUsername());
+
+        return MemberPointDTO.builder()
+                .point(member.getPoint())
+                .rank(rank)
+                .build();
+    }
+
+    private MemberRankDTO convertToMemberDTO(Member member) {
+        String profileImageUrl = appConfig.getDefaultProfileImageUrl();
+
+        return MemberRankDTO.builder()
+                .rank(0)
+                .profileImageUrl(member.getProfileImage() != null ? member.getProfileImage().getImageUrl() : profileImageUrl)
+                .nickname(member.getNickname())
+                .badgeImage(showMemberBadge(member))
+                .point(member.getPoint())
+                .build();
+    }
+
+    public List<MatzipInfoDTO> convertToMatzipInfoDTO(Long memberId) {
+        Member member = findMember(memberId);
+        List<MatzipInfoDTO> matzipInfoDTOS = new ArrayList<>();
+
+        for (MatzipMember matzipMember : member.getMatzipMembers()) {
+            Matzip matzip = matzipMember.getMatzip();
+            MatzipInfoDTO matzipInfoDTO = new MatzipInfoDTO(matzip);
+            matzipInfoDTOS.add(matzipInfoDTO);
+        }
+
+        return matzipInfoDTOS;
+    }
+
+    public List<MyReviewDTO> converToMyReviewDTO(Long memberId) {
+        Member member = findMember(memberId);
+        List<MyReviewDTO> myReviewDTOS = new ArrayList<>();
+
+        for (Review review : member.getReviews()) {
+            MyReviewDTO myReviewDTO = new MyReviewDTO(review);
+            myReviewDTOS.add(myReviewDTO);
+        }
+
+        return myReviewDTOS;
+    }
+
+    public List<FriendDetailDTO> converToFriendDetailDTO(Long memberId) {
+        Member member = findMember(memberId);
+        List<FriendDetailDTO> friendDetailDTOS = new ArrayList<>();
+
+        String profileImageUrl = appConfig.getDefaultProfileImageUrl();
+
+        for (Friend friend : member.getFriends2()) {
+            FriendDetailDTO friendDetailDTO = FriendDetailDTO.builder()
+                    .id(friend.getId())
+                    .profileImageUrl(friend.getMember2().getProfileImage() != null ? friend.getMember2().getProfileImage().getImageUrl() : profileImageUrl)
+                    .friendNickname(friend.getMember2().getNickname())
+                    .badgeImage(showMemberBadge(friend.getMember2()))
+                    .build();
+            friendDetailDTOS.add(friendDetailDTO);
+        }
+
+        return friendDetailDTOS;
+    }
+
+    public MemberInfoCntDTO convertToMemberInfoCntDTO(Long memberId) {
+        Member member = findMember(memberId);
+
+        return MemberInfoCntDTO.builder()
+                .matzipCnt(member.getMatzipMembers().size())
+                .reviewCnt(member.getReviews().size())
+                .friendCnt(member.getFriends2().size())
+                .point(member.getPoint())
+                .build();
+    }
+
+    public MemberProfileDTO convertToMemberProfileDTO(String nickname) {
+        Member member = findByNickname(nickname);
+
+        String profileImageUrl = appConfig.getDefaultProfileImageUrl();
+
+        return MemberProfileDTO.builder()
+                .profileImageUrl(member.getProfileImage() != null ? member.getProfileImage().getImageUrl() : profileImageUrl)
+                .nickname(member.getNickname())
+                .matzipCount(member.getMatzipMembers().size())
+                .reviewCount(member.getReviews().size())
+                .point(member.getPoint())
+                .build();
+    }
+
+    public MemberInfoDTO convertToMemberInfoDTO(Long memberId) {
+        Member member = findMember(memberId);
+
+        String profileImageUrl = appConfig.getDefaultProfileImageUrl();
+
+        return MemberInfoDTO.builder()
+                .nickname(member.getNickname())
+                .email(member.getEmail())
+                .profileImageUrl(member.getProfileImage() != null ? member.getProfileImage().getImageUrl() : profileImageUrl)
+                .badgeImage(showMemberBadge(member))
+                .build();
+    }
+
+    public Map<String, String> showMemberBadge(Member member) {
         List<MemberBadge> memberBadges = memberBadgeRepository.findByMember(member);
         Map<String, String> badgeMap = new HashMap<>();
 
@@ -186,11 +337,6 @@ public class MemberService {
             badgeMap.put(imageUrl, badgeTypeLabel);
         }
 
-        return MemberRankDTO.builder()
-                .profileImageUrl(profileImageUrl)
-                .nickname(member.getNickname())
-                .badgeImage(badgeMap)
-                .point(member.getPoint())
-                .build();
+        return badgeMap;
     }
 }

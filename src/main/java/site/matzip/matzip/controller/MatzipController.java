@@ -45,6 +45,7 @@ public class MatzipController {
     @PostMapping("/create")
     public String create(@RequestBody MatzipCreationDTO matzipCreationDTO, BindingResult result, Authentication authentication) {
         Member author = rq.getMember(authentication);
+
         matzipService.create(matzipCreationDTO, author);
         return "redirect:/";
     }
@@ -59,7 +60,7 @@ public class MatzipController {
         Long authorId = principalDetails.getMember().getId();
         Member author = principalDetails.getMember();
 
-        Matzip createdMatzip = matzipService.create(matzipCreationDTO, author);
+        Matzip createdMatzip = matzipService.create(matzipCreationDTO, authorId);
         Review createdReview = reviewService.create(reviewCreationDTO, authorId, createdMatzip);
         reviewImageService.create(reviewCreationDTO.getImageFiles(), createdReview);
 
