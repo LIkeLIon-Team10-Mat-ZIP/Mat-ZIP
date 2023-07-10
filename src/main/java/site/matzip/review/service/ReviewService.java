@@ -62,28 +62,36 @@ public class ReviewService {
     }
 
     @CacheEvict(value = {"reviewListCache", "myReviewListCache"}, allEntries = true)
-    public void modify(Review review, ReviewCreationDTO reviewCreationDTO) {
+    public Review modify(Review review, ReviewCreationDTO reviewCreationDTO) {
         review.updateContent(reviewCreationDTO.getContent());
         review.updateRating(reviewCreationDTO.getRating());
         reviewRepository.save(review);
+
+        return review;
     }
 
     public Review findById(Long reviewId) {
         return reviewRepository.findById(reviewId).orElseThrow(() -> new EntityNotFoundException("Review not Found"));
     }
 
-    public List<Review> findByMatzipId(Long matzipId, Pageable pageable) {
+    @Cacheable(value = "reviewListCache")
+    public Page<ReviewListDTO> findByMatzipIdAndConvertToDTO(Long matzipId, Pageable pageable) {
         Page<Review> reviewPage = reviewRepository.findByMatzipId(matzipId, pageable);
-        return reviewPage.getContent();
+        return reviewPage.map(this::convertToReviewDTO);
     }
 
-    @Cacheable(value = "reviewListCache")
+    @Cacheable(value = "myReviewListCache", key = "#authorId")
+    public Page<ReviewListDTO> findByMatzipIdWithAuthorAndConvertToReviewDTO(Long matzipId, Long authorId, Pageable pageable) {
+        Page<Review> reviewPage = reviewRepository.findByMatzipIdAndAuthorId(matzipId, authorId, pageable);
+        return reviewPage.map(this::convertToReviewDTO);
+    }
+
+
     public List<ReviewListDTO> findAndConvertAll() {
         List<Review> reviews = reviewRepository.findAll();
         return reviews.stream().map(this::convertToReviewDTO).collect(Collectors.toList());
     }
 
-    @Cacheable(value = "myReviewListCache")
     public List<ReviewListDTO> findAndConvertMine(Long authorId) {
         List<Review> reviews = reviewRepository.findByAuthorId(authorId);
         return reviews.stream().map(this::convertToReviewDTO).collect(Collectors.toList());

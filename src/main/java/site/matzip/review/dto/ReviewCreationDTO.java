@@ -15,4 +15,5 @@ public class ReviewCreationDTO {
     @NotBlank(message = "리뷰 내용을 입력해주세요")
     private String content;
     private List<MultipartFile> imageFiles;
+    private List<String> imageUrls;
 }
