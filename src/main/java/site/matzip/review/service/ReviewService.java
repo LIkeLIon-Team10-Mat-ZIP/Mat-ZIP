@@ -104,6 +104,9 @@ public class ReviewService {
                 .content(review.getContent())
                 .rating(review.getRating())
                 .createDate(review.getCreateDate())
+                .matzipCount(review.getAuthor().getMatzipMembers().size())
+                .reviewCount(review.getAuthor().getReviews().size())
+                .friendCount(review.getAuthor().getFriends2().size())
                 .build();
     }
 
