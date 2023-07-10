@@ -259,4 +259,9 @@ public class ReviewService {
                 .findById(reviewId)
                 .orElseThrow(() -> new EntityNotFoundException("Review not Found"));
     }
+
+    public boolean isImageFileEmpty(ReviewCreationDTO reviewCreationDTO) {
+        return reviewCreationDTO.getImageFiles().size() == 1 && reviewCreationDTO.getImageFiles().get(0).isEmpty();
+    }
+
 }
