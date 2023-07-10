@@ -57,6 +57,7 @@ public class ReviewController {
         ReviewCreationDTO reviewCreationDTO = new ReviewCreationDTO();
         model.addAttribute("matzipInfoDTO", matzipInfoDTO);
         model.addAttribute("reviewCreationDTO", reviewCreationDTO);
+        model.addAttribute("create", true);
 
         return "/review/add";
     }
