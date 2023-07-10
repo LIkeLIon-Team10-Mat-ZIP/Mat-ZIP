@@ -3,6 +3,7 @@ package site.matzip.review.controller;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +25,7 @@ import site.matzip.matzip.service.MatzipService;
 import site.matzip.review.domain.Review;
 import site.matzip.review.dto.ReviewCreationDTO;
 import site.matzip.review.dto.ReviewDetailDTO;
+import site.matzip.review.dto.ReviewListDTO;
 import site.matzip.review.service.ReviewService;
 
 import java.io.IOException;
@@ -112,11 +114,25 @@ public class ReviewController {
         return "redirect:/review/detail/" + reviewId;
     }
 
-    @GetMapping("/api/{matzipId}")
+    @GetMapping("/api/list/{matzipId}")
     @ResponseBody
-    public ResponseEntity<List<Review>> getReviewsByMatzipId(@PathVariable Long matzipId, @RequestParam int pageSize, @RequestParam int pageNumber) {
+    public ResponseEntity<Page<ReviewListDTO>> getReviewsByMatzipId(@PathVariable Long matzipId,
+                                                                    @RequestParam int pageSize,
+                                                                    @RequestParam int pageNumber) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
-        List<Review> reviews = reviewService.findByMatzipId(matzipId, pageable);
+        Page<ReviewListDTO> reviews = reviewService.findByMatzipIdAndConvertToDTO(matzipId, pageable);
+
+        return ResponseEntity.ok(reviews);
+    }
+
+    @GetMapping("/api/mylist/{matzipId}")
+    public ResponseEntity<Page<ReviewListDTO>> getReviewsByMatzipIdAndAuthor(@PathVariable Long matzipId,
+                                                                             @RequestParam int pageSize,
+                                                                             @RequestParam int pageNumber,
+                                                                             @AuthenticationPrincipal PrincipalDetails principalDetails) {
+        Long authorId = principalDetails.getMember().getId();
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        Page<ReviewListDTO> reviews = reviewService.findByMatzipIdWithAuthorAndConvertToReviewDTO(matzipId, authorId, pageable);
 
         return ResponseEntity.ok(reviews);
     }

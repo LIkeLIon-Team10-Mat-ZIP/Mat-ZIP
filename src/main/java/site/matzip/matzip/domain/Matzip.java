@@ -31,6 +31,7 @@ public class Matzip {
     @OneToMany(mappedBy = "matzip", cascade = CascadeType.ALL)
     private List<MatzipMember> matzipMembers = new ArrayList<>();
 
+
     @Builder
     public Matzip(String matzipName, String address, String phoneNumber,
                   String matzipUrl, Long kakaoId, MatzipType matzipType,
