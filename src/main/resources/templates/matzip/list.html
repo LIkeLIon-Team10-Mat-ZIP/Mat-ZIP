@@ -582,7 +582,7 @@
             userProfileWrapper.classList.add('flex', 'items-center', 'gap-2');
             // 사용자 프로필 이미지 추가
             const profileImg = document.createElement('img');
-            profileImg.src = review.profileImageUrl;
+            profileImg.src = 'https://placekitten.com/408/287';
             profileImg.classList.add('w-14', 'h-14', 'rounded-full', 'border', 'border-gray-100');
             userProfileWrapper.appendChild(profileImg);
 
@@ -629,17 +629,17 @@
 
             const registeredRestaurants = document.createElement('span');
             registeredRestaurants.classList.add('text-xs');
-            registeredRestaurants.innerText = '맛집 7';
+            registeredRestaurants.innerText = '맛집 ' + review.matzipCount;
             userAdditionalInfo.appendChild(registeredRestaurants);
 
             const writtenReviews = document.createElement('span');
             writtenReviews.classList.add('text-xs');
-            writtenReviews.innerText = '리뷰 8';
+            writtenReviews.innerText = '리뷰 ' + review.reviewCount;
             userAdditionalInfo.appendChild(writtenReviews);
 
             const friendCount = document.createElement('span');
             friendCount.classList.add('text-xs');
-            friendCount.innerText = '친구 119';
+            friendCount.innerText = '친구 ' + review.friendCount;
             userAdditionalInfo.appendChild(friendCount);
 
             // 사용자 정보 컨테이너를 프로필 이미지 컨테이너에 추가
@@ -652,7 +652,7 @@
             reviewContentWrapper.classList.add('mt-3');
             reviewContainer.appendChild(reviewContentWrapper);
             const reviewContent = document.createElement('a');
-            reviewContent.setAttribute('href', 'review/detail/' + review.reviewId);
+            reviewContent.setAttribute('href', '/review/detail/' + review.reviewId);
             reviewContent.classList.add('break-words');
             reviewContent.innerText = review.content;
             reviewContentWrapper.appendChild(reviewContent);
