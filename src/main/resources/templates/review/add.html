@@ -39,8 +39,10 @@
             <form enctype="multipart/form-data" id="reviewForm"
                   method="POST" th:action th:object="${reviewCreationDTO}">
                 <div class="flex flex-col">
-                    <span class="font-bold text-xl p-3 border-b border-gray-400"><i
+                    <span th:if="${create}" class="font-bold text-xl p-3 border-b border-gray-400"><i
                             class="fa-regular fa-pen-to-square"></i> 리뷰 작성</span>
+                    <span th:unless="${create}" class="font-bold text-xl p-3 border-b border-gray-400"><i
+                            class="fa-regular fa-pen-to-square"></i> 리뷰 수정</span>
                     <div class="flex p-3">
                         <div class="flex-grow">
                             <div class="flex items-center">
@@ -106,7 +108,8 @@
                             </div>
                         </div>
                         <div class="mt-2 flex justify-end">
-                            <button class="btn btn-neutral btn-sm" type="submit">등록하기</button>
+                            <button th:if="${create}"  class="btn btn-neutral btn-sm" type="submit">등록하기</button>
+                            <button th:unless="${create}" class="btn btn-neutral btn-sm" type="submit">수정하기</button>
                         </div>
                     </div>
                 </div>

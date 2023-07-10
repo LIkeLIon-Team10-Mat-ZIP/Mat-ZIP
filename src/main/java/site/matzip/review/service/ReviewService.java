@@ -10,11 +10,13 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import site.matzip.base.appConfig.AppConfig;
 import site.matzip.comment.domain.Comment;
 import site.matzip.comment.dto.CommentInfoDTO;
+import site.matzip.config.auth.PrincipalDetails;
 import site.matzip.image.domain.ReviewImage;
 import site.matzip.matzip.domain.Matzip;
 import site.matzip.member.domain.Member;
@@ -29,6 +31,7 @@ import site.matzip.review.repository.ReviewRepository;
 
 import java.time.*;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -258,5 +261,16 @@ public class ReviewService {
         return reviewRepository
                 .findById(reviewId)
                 .orElseThrow(() -> new EntityNotFoundException("Review not Found"));
+    }
+
+    public boolean isImageFileEmpty(ReviewCreationDTO reviewCreationDTO) {
+        return reviewCreationDTO.getImageFiles().size() == 1 && reviewCreationDTO.getImageFiles().get(0).isEmpty();
+    }
+
+    public void checkAccessPermission(Long reviewId, PrincipalDetails principalDetail) {
+        Review review = findById(reviewId);
+        if (!Objects.equals(review.getAuthor().getId(), principalDetail.getMember().getId())) {
+            throw new AccessDeniedException("You do not have permission.");
+        }
     }
 }

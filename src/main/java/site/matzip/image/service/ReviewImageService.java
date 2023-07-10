@@ -58,7 +58,6 @@ public class ReviewImageService {
 
     @Transactional
     public void modify(List<MultipartFile> multipartFiles, Review review) throws IOException {
-        System.out.println("multipartFiles.size() = " + multipartFiles.size());
         deleteForUpdate(review);
         review.getReviewImages().clear();
 
