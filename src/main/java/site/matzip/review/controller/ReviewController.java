@@ -145,7 +145,7 @@ public class ReviewController {
     }
 
     @PreAuthorize("isAuthenticated()")
-    @DeleteMapping("/{reviewId}")
+    @PostMapping("/delete/{reviewId}")
     public String delete(@PathVariable Long reviewId, @AuthenticationPrincipal PrincipalDetails principalDetail) {
         Review review = reviewService.findById(reviewId);
 
