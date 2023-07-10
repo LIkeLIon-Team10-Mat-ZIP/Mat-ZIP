@@ -218,6 +218,12 @@
                 }
             });
         });
+
+        function redirectToFriendMap(friendId) {
+            const apiUrl = `/matzip/api/list/${friendId}`;
+            sessionStorage.setItem('friendMapUrl', apiUrl);
+            window.location.href = "myPage/friendMap";
+        }
     </script>
 
 </main>

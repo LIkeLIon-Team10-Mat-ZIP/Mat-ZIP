@@ -46,7 +46,7 @@ public class MatzipController {
     public String create(@RequestBody MatzipCreationDTO matzipCreationDTO, BindingResult result, Authentication authentication) {
         Member author = rq.getMember(authentication);
 
-        matzipService.create(matzipCreationDTO, author);
+        matzipService.create(matzipCreationDTO, author.getId());
         return "redirect:/";
     }
 
@@ -88,7 +88,19 @@ public class MatzipController {
     @ResponseBody
     public ResponseEntity<List<MatzipListDTO>> searchMine(Authentication authentication) {
         try {
-            List<MatzipListDTO> matzipDtoList = matzipService.findAndConvertMine(rq.getMember(authentication).getId());
+            List<MatzipListDTO> matzipDtoList = matzipService.findAndConvertById(rq.getMember(authentication).getId());
+            return ResponseEntity.ok(matzipDtoList);
+        } catch (Exception e) {
+            // 예외 발생 시 처리
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @GetMapping("/api/list/{id}")
+    @ResponseBody
+    public ResponseEntity<List<MatzipListDTO>> searchFriendsMap(@PathVariable Long friendId) {
+        try {
+            List<MatzipListDTO> matzipDtoList = matzipService.findAndConvertById(friendId);
             return ResponseEntity.ok(matzipDtoList);
         } catch (Exception e) {
             // 예외 발생 시 처리

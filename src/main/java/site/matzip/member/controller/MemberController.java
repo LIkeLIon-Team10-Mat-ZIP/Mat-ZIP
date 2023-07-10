@@ -96,6 +96,11 @@ public class MemberController {
         }
     }
 
+    @GetMapping("/myPage/friendMap")
+    public String getFriendMap() {
+        return "usr/member/myPage/friendMap";
+    }
+
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/myPage/modifyNickname")
     public String showModifyNickName() {
