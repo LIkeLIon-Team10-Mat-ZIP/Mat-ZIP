@@ -46,7 +46,7 @@ public class MatzipController {
     public String create(@RequestBody MatzipCreationDTO matzipCreationDTO, BindingResult result, Authentication authentication) {
         Member author = rq.getMember(authentication);
 
-        matzipService.create(matzipCreationDTO, author);
+        matzipService.create(matzipCreationDTO, author.getId());
         return "redirect:/";
     }
 
