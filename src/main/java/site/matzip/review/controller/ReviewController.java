@@ -116,7 +116,7 @@ public class ReviewController {
         }
 
         Review modifyReview = reviewService.modify(review, reviewCreationDTO);
-        reviewImageService.update(reviewCreationDTO.getImageFiles(), modifyReview);
+        reviewImageService.modify(reviewCreationDTO.getImageFiles(), modifyReview);
 
         return "redirect:/review/detail/" + reviewId;
     }
