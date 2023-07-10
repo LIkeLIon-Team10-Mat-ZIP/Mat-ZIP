@@ -11,6 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import site.matzip.base.rq.Rq;
+import site.matzip.base.rsData.RsData;
 import site.matzip.config.auth.PrincipalDetails;
 import site.matzip.image.service.ReviewImageService;
 import site.matzip.matzip.domain.Matzip;
@@ -72,7 +73,7 @@ public class MatzipController {
 
     @GetMapping("/api/list")
     @ResponseBody
-    public ResponseEntity<List<MatzipListDTO>> searchAllWithReviews(Authentication authentication) {
+    public ResponseEntity<List<MatzipListDTO>> searchAll(Authentication authentication) {
         try {
             List<MatzipListDTO> matzipDtoList = matzipService.findAndConvertAll(rq.getMember(authentication).getId());
             return ResponseEntity.ok(matzipDtoList);
@@ -84,7 +85,7 @@ public class MatzipController {
 
     @GetMapping("/api/mylist")
     @ResponseBody
-    public ResponseEntity<List<MatzipListDTO>> searchMineWithReviews(Authentication authentication) {
+    public ResponseEntity<List<MatzipListDTO>> searchMine(Authentication authentication) {
         try {
             List<MatzipListDTO> matzipDtoList = matzipService.findAndConvertMine(rq.getMember(authentication).getId());
             return ResponseEntity.ok(matzipDtoList);
@@ -92,5 +93,13 @@ public class MatzipController {
             // 예외 발생 시 처리
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping("/api/delete/{id}")
+    @ResponseBody
+    public RsData delete(@PathVariable Long id, @AuthenticationPrincipal PrincipalDetails principalDetails) {
+        RsData deleteRs = matzipService.delete(id, principalDetails.getMember().getId());
+        return deleteRs;
     }
 }

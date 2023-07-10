@@ -97,6 +97,7 @@ public class MatzipService {
         return convertToListDTO(findAllByAuthorId(authorId), authorId);
     }
 
+    @CacheEvict(value = {"matzipListCache", "myMatzipListCache"}, allEntries = true)
     public RsData delete(Long matzipId, Long authorId) {
         MatzipMember matzipMember = matzipMemberRepository.findByMatzipIdAndAuthorId(matzipId, authorId).orElse(null);
         if (matzipMember == null) {
@@ -105,7 +106,7 @@ public class MatzipService {
         Matzip matzip = matzipMember.getMatzip();
         matzipMemberRepository.delete(matzipMember);
         //누구의 맛집 지도에도 남아있지 않으면 맛집 자체를 삭제
-        if (matzip.getMatzipMemberList().isEmpty()) {
+        if (matzip.getMatzipMembers().isEmpty()) {
             matzipRepository.delete(matzip);
         }
         return RsData.of("S-1", "맛집이 삭제되었습니다.");
@@ -114,7 +115,7 @@ public class MatzipService {
     //후기와 맛집 정보를 하나로 묶어서 MatzipListDTO로 변환
     private List<MatzipListDTO> convertToListDTO(List<Matzip> matzipList, Long authorId) {
         return matzipList.stream().map(matzip -> {
-            List<MatzipMember> matzipMemberList = matzip.getMatzipMemberList();
+            List<MatzipMember> matzipMemberList = matzip.getMatzipMembers();
 
             Optional<MatzipMember> authorRecommendation = matzipMemberList.stream()
                     .filter(recommendation -> recommendation.getAuthor().getId().equals(authorId))

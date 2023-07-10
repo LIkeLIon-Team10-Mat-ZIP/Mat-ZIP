@@ -2,7 +2,8 @@
 <html layout:decorate="~{common/layout/defaultLayout.html}">
 <head>
     <meta charset="utf-8">
-
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
     <title>Matzip</title>
 
     <style>
@@ -38,6 +39,15 @@
             margin: 0;
             font-size: 18px;
             font-weight: bold;
+        }
+
+        #placeName {
+            display: inline-block;
+            margin-right: 8px;
+        }
+
+        #placeName + a {
+            margin-left: 8px;
         }
 
         #placeInfo p {
@@ -91,6 +101,7 @@
     <div class="mt-3" id="map">
         <div id="placeInfo">
             <h2 id="placeName">맛집 이름</h2>
+            <a href=""><span>삭제</span></a>
             <p id="placeAddress">주소</p>
             <p id="placePhone">전화번호</p>
             <p id="placeDescription">설명</p>
@@ -306,6 +317,30 @@
             routeLink.innerText = '길찾기';
             detailLink.href = matzip.matzipUrl;
             detailLink.innerText = '상세정보';
+
+            // 리스트 타입이 'my'인 경우에만 삭제 버튼을 추가합니다.
+            if (currentListType === 'my') {
+                const deleteButton = document.querySelector('#placeName + a');
+
+                // 삭제 버튼이 존재하지 않을 경우에만 생성합니다.
+                if (!deleteButton) {
+                    const deleteButton = document.createElement('a');
+                    deleteButton.innerText = '삭제';
+                    deleteButton.classList.add('btn', 'btn-xs');
+                    deleteButton.addEventListener('click', function () {
+                        const matzipId = marker.matzipId
+                        deleteMatzip(matzipId);
+                    });
+                    placeName.insertAdjacentElement('afterend', deleteButton);
+                }
+            } else {
+                // 리스트 타입이 'all'인 경우, 삭제 버튼이 존재한다면 제거합니다.
+                const deleteButton = document.querySelector('#placeName + a');
+                if (deleteButton) {
+                    deleteButton.remove();
+                }
+            }
+
             placeInfo.style.display = 'block'; // Show place info
         }
 
@@ -493,6 +528,7 @@
             }
         }
 
+        //리뷰 불러오기 (서버에 요청)
         function loadReviews(matzipId, pageNumber, pageSize) {
             let url = '';
             if (currentListType === 'all') {
@@ -633,13 +669,35 @@
             window.location.href = `/review/create/${matzipId}`; // 리뷰 작성 페이지로 이동
         });
 
+        //지도 이동 메서드
         function panTo(markerX, markerY) {
-            // 이동할 위도 경도 위치를 생성합니다
             var moveLatLon = new kakao.maps.LatLng(markerY, markerX);
-
-            // 지도 중심을 부드럽게 이동시킵니다
-            // 만약 이동할 거리가 지도 화면보다 크면 부드러운 효과 없이 이동합니다
             map.panTo(moveLatLon);
+        }
+
+        //맛집 삭제 메서드
+        function deleteMatzip(matzipId) {
+            const csrfToken = document.querySelector('meta[name="_csrf"]').content;
+
+            // 서버에 맛집 삭제 요청을 보냅니다.
+            fetch(`/matzip/api/delete/${matzipId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken
+                }
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.success) {
+                        toastNotice('맛집이 삭제되었습니다.');
+                    } else {
+                        toastWarning('맛집 삭제에 실패했습니다.');
+                    }
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
         }
     </script>
 </main>
