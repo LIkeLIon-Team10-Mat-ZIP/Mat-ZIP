@@ -102,7 +102,7 @@ public class ReviewController {
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/modify/{reviewId}")
     public String modify(@PathVariable Long reviewId, ReviewCreationDTO reviewCreationDTO, BindingResult bindingResult,
-                         @AuthenticationPrincipal PrincipalDetails principalDetails) {
+                         @AuthenticationPrincipal PrincipalDetails principalDetails) throws IOException {
         Review review = reviewService.findById(reviewId);
 
         if (bindingResult.hasErrors()) {
@@ -113,7 +113,8 @@ public class ReviewController {
             throw new AccessDeniedException("You do not have permission to modify.");
         }
 
-        reviewService.modify(review, reviewCreationDTO);
+        Review modifyReview = reviewService.modify(review, reviewCreationDTO);
+        reviewImageService.modify(reviewCreationDTO.getImageFiles(), modifyReview);
 
         return "redirect:/review/detail/" + reviewId;
     }
