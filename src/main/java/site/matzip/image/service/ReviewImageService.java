@@ -76,4 +76,9 @@ public class ReviewImageService {
     private void delete(String orginalFilename) {
         amazonS3.deleteObject(bucket, "reviewImages/" + orginalFilename);
     }
+
+    @Transactional
+    public void remove(Review review) {
+        deleteForUpdate(review);
+    }
 }

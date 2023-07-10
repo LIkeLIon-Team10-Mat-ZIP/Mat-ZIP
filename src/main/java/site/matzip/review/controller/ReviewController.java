@@ -153,6 +153,7 @@ public class ReviewController {
             throw new AccessDeniedException("You do not have permission to delete.");
         }
         reviewService.remove(review);
+        reviewImageService.remove(review);
 
         return "redirect:/";
     }
