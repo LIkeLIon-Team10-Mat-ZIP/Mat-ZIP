@@ -1,5 +1,6 @@
 package site.matzip.friend.service;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -47,5 +48,19 @@ public class FriendService {
                         .friendNickname(friend.getMember2().getNickname())
                         .build())
                 .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public void delete(Long id) {
+        Friend friend = friendRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("friend not found"));
+        Member member1 = friend.getMember1();
+        Member member2 = friend.getMember2();
+
+        Friend friend1 = friendRepository.findByMember1AndMember2(member1, member2);
+        friendRepository.delete(friend1);
+
+        Friend friend2 = friendRepository.findByMember1AndMember2(member2, member1);
+        friendRepository.delete(friend2);
     }
 }

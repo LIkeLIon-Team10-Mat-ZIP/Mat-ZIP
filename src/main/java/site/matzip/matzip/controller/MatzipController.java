@@ -1,5 +1,6 @@
 package site.matzip.matzip.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,18 +12,17 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import site.matzip.base.rq.Rq;
+import site.matzip.base.rsData.RsData;
 import site.matzip.config.auth.PrincipalDetails;
 import site.matzip.image.service.ReviewImageService;
 import site.matzip.matzip.domain.Matzip;
 import site.matzip.matzip.dto.MatzipCreationDTO;
 import site.matzip.matzip.dto.MatzipListDTO;
 import site.matzip.matzip.dto.MatzipReviewDTO;
-import site.matzip.matzip.dto.MatzipReviewListDTO;
 import site.matzip.matzip.service.MatzipService;
 import site.matzip.member.domain.Member;
 import site.matzip.review.domain.Review;
 import site.matzip.review.dto.ReviewCreationDTO;
-import site.matzip.review.dto.ReviewListDTO;
 import site.matzip.review.service.ReviewService;
 
 import java.io.IOException;
@@ -44,11 +44,13 @@ public class MatzipController {
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/create")
-    public String create(@RequestBody MatzipCreationDTO matzipCreationDTO, BindingResult result, Authentication authentication) {
+    public String create(@RequestBody @Valid MatzipCreationDTO matzipCreationDTO,
+                         BindingResult result,
+                         Authentication authentication) {
         Member author = rq.getMember(authentication);
-        matzipService.create(matzipCreationDTO, author);
 
-        return "redirect:/matzip/mylist";
+        matzipService.create(matzipCreationDTO, author.getId());
+        return "redirect:/";
     }
 
     @PreAuthorize("isAuthenticated()")
@@ -56,13 +58,12 @@ public class MatzipController {
     public String createWithReview(@ModelAttribute MatzipReviewDTO matzipReviewDTO,
                                    BindingResult result,
                                    @AuthenticationPrincipal PrincipalDetails principalDetails) throws IOException {
-
         MatzipCreationDTO matzipCreationDTO = matzipReviewDTO.getMatzipCreationDTO();
         ReviewCreationDTO reviewCreationDTO = matzipReviewDTO.getReviewCreationDTO();
         Long authorId = principalDetails.getMember().getId();
         Member author = principalDetails.getMember();
 
-        Matzip createdMatzip = matzipService.create(matzipCreationDTO, author);
+        Matzip createdMatzip = matzipService.create(matzipCreationDTO, authorId);
         Review createdReview = reviewService.create(reviewCreationDTO, authorId, createdMatzip);
         reviewImageService.create(reviewCreationDTO.getImageFiles(), createdReview);
 
@@ -74,37 +75,34 @@ public class MatzipController {
         return "/matzip/list";
     }
 
-    @GetMapping("/mylist")
-    public String showMyList() {
-        return "/matzip/mylist";
-    }
-
     @GetMapping("/api/list")
     @ResponseBody
-    public ResponseEntity<List<MatzipReviewListDTO>> searchAllWithReviews(Authentication authentication) {
+    public ResponseEntity<List<MatzipListDTO>> searchAll(Authentication authentication) {
         try {
             List<MatzipListDTO> matzipDtoList = matzipService.findAndConvertAll(rq.getMember(authentication).getId());
-            List<ReviewListDTO> reviewDtoList = reviewService.findAndConvertAll();
-            List<MatzipReviewListDTO> matzipReviewDtoList = matzipService.mergeMatzipAndReviews(matzipDtoList, reviewDtoList);
-
-            return ResponseEntity.ok(matzipReviewDtoList);
+            return ResponseEntity.ok(matzipDtoList);
         } catch (Exception e) {
-            // 예외 발생 시 처리
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
     @GetMapping("/api/mylist")
     @ResponseBody
-    public ResponseEntity<List<MatzipReviewListDTO>> searchMineWithReviews(Authentication authentication) {
+    public ResponseEntity<List<MatzipListDTO>> searchMine(Authentication authentication) {
         try {
             List<MatzipListDTO> matzipDtoList = matzipService.findAndConvertMine(rq.getMember(authentication).getId());
-            List<ReviewListDTO> reviewDtoList = reviewService.findAndConvertMine(rq.getMember(authentication).getId());
-            List<MatzipReviewListDTO> matzipReviewDtoList = matzipService.mergeMatzipAndReviews(matzipDtoList, reviewDtoList);
-            return ResponseEntity.ok(matzipReviewDtoList);
+            return ResponseEntity.ok(matzipDtoList);
         } catch (Exception e) {
             // 예외 발생 시 처리
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping("/api/delete/{id}")
+    @ResponseBody
+    public RsData delete(@PathVariable Long id, @AuthenticationPrincipal PrincipalDetails principalDetails) {
+        RsData deleteRs = matzipService.delete(id, principalDetails.getMember().getId());
+        return deleteRs;
     }
 }

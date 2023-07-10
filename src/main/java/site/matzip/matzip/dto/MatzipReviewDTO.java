@@ -7,5 +7,4 @@ import site.matzip.review.dto.ReviewCreationDTO;
 public class MatzipReviewDTO {
     MatzipCreationDTO matzipCreationDTO;
     ReviewCreationDTO reviewCreationDTO;
-
 }

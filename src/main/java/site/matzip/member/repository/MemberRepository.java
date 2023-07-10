@@ -1,5 +1,7 @@
 package site.matzip.member.repository;
 
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import site.matzip.member.domain.Member;
@@ -22,5 +24,13 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     @Query("SELECT m FROM Member m JOIN FETCH m.comments")
     List<Member> findAllWithComments();
 
+    @Query("SELECT m FROM Member m JOIN FETCH m.friends2")
+    List<Member> findAllWithFriends2();
+
     List<Member> findTop10ByOrderByPointDesc();
+
+    List<Member> findAllByOrderByPointDesc();
+
+    Slice<Member> findTop4ByPointLessThanAndIdNotOrderByPointDesc(long point, long memberId, Pageable pageable);
+    Slice<Member> findTop5ByPointGreaterThanAndIdNotOrderByPointAsc(long point, Long id, Pageable lower5Pageable);
 }
