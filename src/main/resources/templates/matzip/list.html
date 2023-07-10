@@ -325,6 +325,8 @@
             routeLink.innerText = '길찾기';
             detailLink.href = matzip.matzipUrl;
             detailLink.innerText = '상세정보';
+            reviewButton.href = '/review/create/' + matzip.matzipId;
+            reviewButton.innerText = '리뷰 작성';
 
             // 리스트 타입이 'my'인 경우에만 삭제 버튼을 추가합니다.
             if (currentListType === 'my') {
@@ -510,6 +512,7 @@
         }
 
         function createReviewList(review) {
+            const reviewListContainer = document.getElementById('reviewListContainer');
             // 1. 전체 리뷰 컨테이너 생성
             const reviewContainer = document.createElement('div');
             reviewContainer.classList.add('mt-3');
@@ -560,7 +563,6 @@
             nameDateWrapper.appendChild(friendAddButton);
 
             // 5. 사용자 추가 정보(등록 맛집, 작성 리뷰, 친구 수) 생성 및 추가
-            // TODO
             const userAdditionalInfo = document.createElement('div');
             userInfoContainer.appendChild(userAdditionalInfo);
 
@@ -600,12 +602,6 @@
             reviewContainer.appendChild(hr);
             reviewListContainer.appendChild(reviewContainer);
         }
-
-        //리뷰 등록 버튼 이벤트 리스너
-        reviewButton.addEventListener('click', function () {
-            const matzipId = currentMatzipId; // 현재 선택된 맛집의 아이디를 가져옴
-            window.location.href = `/review/create/${matzipId}`; // 리뷰 작성 페이지로 이동
-        });
 
         //지도 이동 메서드
         function panTo(markerX, markerY) {
