@@ -38,6 +38,13 @@ public class ReviewImageService {
         log.info("Complete Review Images");
     }
 
+    @Transactional
+    public void modify(List<MultipartFile> multipartFiles, Review review) throws IOException {
+        review.getReviewImages().clear();
+
+        create(multipartFiles, review);
+    }
+
     private void saveReviewImage(MultipartFile multipartFile, Review review, int index) throws IOException {
 
         String filename = "reviewId_" + review.getId() + "_" + (index + 1);
