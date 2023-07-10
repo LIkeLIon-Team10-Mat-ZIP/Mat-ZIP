@@ -39,7 +39,7 @@ public class FriendRequestController {
     @GetMapping("/list")
     @PreAuthorize("isAuthenticated()")
     public String showList(Model model, @AuthenticationPrincipal PrincipalDetails principalDetails) {
-        Member member = memberService.findByUsername("user1").orElseThrow(() -> new EntityNotFoundException("member not found"));
+        Member member = memberService.findByUsername("user1");
         List<FriendRequestDTO> friendRequestDTOS = friendRequestService.convertToFriendRequestDTOS(member);
 
         model.addAttribute("friendRequestDTOS", friendRequestDTOS);
