@@ -25,12 +25,18 @@ public class NotificationController {
     @GetMapping("/list")
     @PreAuthorize("isAuthenticated()")
     public String showList(Model model, @AuthenticationPrincipal PrincipalDetails principalDetails) {
+        return "usr/notification/list";
+    }
+
+    @GetMapping("/reviewList")
+    @PreAuthorize("isAuthenticated()")
+    public String showReviewList(Model model, @AuthenticationPrincipal PrincipalDetails principalDetails) {
         Member member = memberService.findByUsername("user1").orElseThrow();
 
         List<NotificationDTO> notificationDTOS = notificationService.convertToNotificationDTOS(member);
 
         model.addAttribute("notificationDTOS", notificationDTOS);
 
-        return "usr/notification/list";
+        return "usr/notification/reviewList";
     }
 }

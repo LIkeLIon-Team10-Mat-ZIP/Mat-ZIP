@@ -4,6 +4,7 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,11 +13,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import site.matzip.base.event.EventAfterComment;
+import site.matzip.base.rq.Rq;
 import site.matzip.config.auth.PrincipalDetails;
 import site.matzip.friendRequest.dto.FriendRequestDTO;
 import site.matzip.friendRequest.entity.FriendRequest;
 import site.matzip.friendRequest.service.FriendRequestService;
 import site.matzip.member.domain.Member;
+import site.matzip.member.service.MemberService;
 
 import java.util.List;
 
@@ -26,11 +29,13 @@ import java.util.List;
 public class FriendRequestController {
     private final FriendRequestService friendRequestService;
     private final ApplicationEventPublisher publisher;
+    private final MemberService memberService;
 
     @GetMapping("/list")
     @PreAuthorize("isAuthenticated()")
     public String showList(Model model, @AuthenticationPrincipal PrincipalDetails principalDetails) {
-        List<FriendRequestDTO> friendRequestDTOS = friendRequestService.convertToFriendRequestDTOS(principalDetails.getMember());
+        Member member = memberService.findByUsername("user1").orElseThrow(() -> new EntityNotFoundException("member not found"));
+        List<FriendRequestDTO> friendRequestDTOS = friendRequestService.convertToFriendRequestDTOS(member);
 
         model.addAttribute("friendRequestDTOS", friendRequestDTOS);
 
