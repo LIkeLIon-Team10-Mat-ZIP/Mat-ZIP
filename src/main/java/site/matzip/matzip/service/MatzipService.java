@@ -31,8 +31,9 @@ public class MatzipService {
     private final MemberRepository memberRepository;
     private final MatzipMemberRepository matzipMemberRepository;
 
-    @CacheEvict(value = {"matzipListCache", "myMatzipListCache"}, allEntries = true)
-    public Matzip create(MatzipCreationDTO creationDTO, Long authorId) {
+
+    @CacheEvict(value = {"matzipListCache", "myMatzipListCache", "reviewListCache"}, allEntries = true)
+    public Matzip create(MatzipCreationDTO creationDTO, Member author) {
         Optional<Matzip> optionalExistingMatzip = matzipRepository.findByKakaoId(creationDTO.getKakaoId());
         Member author = memberRepository.findById(authorId).orElseThrow(() -> new EntityNotFoundException("member not found"));
 

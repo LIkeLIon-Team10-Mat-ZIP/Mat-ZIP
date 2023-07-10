@@ -11,14 +11,21 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import site.matzip.base.event.EventAfterFriendRequestAccept;
+
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 import site.matzip.base.rq.Rq;
 import site.matzip.config.auth.PrincipalDetails;
 import site.matzip.friendRequest.dto.FriendRequestDTO;
 import site.matzip.friendRequest.entity.FriendRequest;
 import site.matzip.friendRequest.service.FriendRequestService;
 import site.matzip.member.domain.Member;
-
+import site.matzip.member.service.MemberService;
+import site.matzip.base.event.EventAfterFriendRequestAccept;
+import site.matzip.base.event.EventAfterComment;
 import java.util.List;
 
 @Controller
@@ -27,12 +34,13 @@ import java.util.List;
 public class FriendRequestController {
     private final FriendRequestService friendRequestService;
     private final ApplicationEventPublisher publisher;
-    private final Rq rq;
+    private final MemberService memberService;
 
     @GetMapping("/list")
     @PreAuthorize("isAuthenticated()")
-    public String showList(Model model, Authentication authentication) {
-        List<FriendRequestDTO> friendRequestDTOS = friendRequestService.convertToFriendRequestDTOS(rq.getMember(authentication));
+    public String showList(Model model, @AuthenticationPrincipal PrincipalDetails principalDetails) {
+        Member member = memberService.findByUsername("user1").orElseThrow(() -> new EntityNotFoundException("member not found"));
+        List<FriendRequestDTO> friendRequestDTOS = friendRequestService.convertToFriendRequestDTOS(member);
 
         model.addAttribute("friendRequestDTOS", friendRequestDTOS);
 

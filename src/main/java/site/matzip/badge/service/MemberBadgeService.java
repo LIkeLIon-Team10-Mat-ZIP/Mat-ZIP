@@ -11,6 +11,7 @@ import site.matzip.badge.repository.BadgeRepository;
 import site.matzip.badge.repository.MemberBadgeRepository;
 import site.matzip.comment.domain.Comment;
 import site.matzip.comment.repository.CommentRepository;
+import site.matzip.friend.repository.FriendRepository;
 import site.matzip.matzip.domain.MatzipMember;
 import site.matzip.matzip.repository.MatzipMemberRepository;
 import site.matzip.member.domain.Member;
@@ -22,7 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
+// TODO count 쿼리로 변경 요소 있음
 @Service
 @RequiredArgsConstructor
 public class MemberBadgeService {
@@ -32,6 +33,7 @@ public class MemberBadgeService {
     private final MatzipMemberRepository matzipMemberRepository;
     private final ReviewRepository reviewRepository;
     private final CommentRepository commentRepository;
+    private final FriendRepository friendRepository;
 
     public Map<String, String> showMemberBadge(Member member) {
         List<MemberBadge> memberBadges = memberBadgeRepository.findByMember(member);
@@ -108,11 +110,62 @@ public class MemberBadgeService {
     }
 
     private void checkComments(Member member, Badge badge) {
-        List<Comment> reviews = commentRepository.findByAuthor(member);
+        List<Comment> comments = commentRepository.findByAuthor(member);
         Optional<MemberBadge> findMemberBadge =
                 memberBadgeRepository.findByMemberAndBadge(member, badge);
 
-        if (findMemberBadge.isEmpty() && reviews.size() > 10) {
+        if (findMemberBadge.isEmpty() && comments.size() > 10) {
+            MemberBadge createdMemberBadge = MemberBadge.builder().build();
+            createdMemberBadge.setMember(member);
+            createdMemberBadge.setBadge(badge);
+            memberBadgeRepository.save(createdMemberBadge);
+        }
+    }
+
+    @Scheduled(cron = "0 * * * * *")
+    @Transactional
+    public void calculateHeartBadge() {
+        List<Member> members = memberRepository.findAllWithReviews();
+        Badge checkBadge = badgeRepository.findByBadgeType(BadgeType.LOVED_ONE);
+
+        for (Member member : members) {
+            checkHearts(member, checkBadge);
+        }
+    }
+
+    private void checkHearts(Member member, Badge badge) {
+        List<Review> reviews = reviewRepository.findByAuthor(member);
+        long totalHeartCount = reviews.stream()
+                .mapToLong(review -> review.getHearts().size())
+                .sum();
+        Optional<MemberBadge> findMemberBadge =
+                memberBadgeRepository.findByMemberAndBadge(member, badge);
+
+        if (findMemberBadge.isEmpty() && totalHeartCount > 0) {
+            MemberBadge createdMemberBadge = MemberBadge.builder().build();
+            createdMemberBadge.setMember(member);
+            createdMemberBadge.setBadge(badge);
+            memberBadgeRepository.save(createdMemberBadge);
+        }
+    }
+
+    @Scheduled(cron = "0 * * * * *")
+    @Transactional
+    public void calculateFriendBadge() {
+        List<Member> members = memberRepository.findAllWithFriends2();
+        Badge checkBadge = badgeRepository.findByBadgeType(BadgeType.LOTS_FRIENDS);
+
+        for (Member member : members) {
+            checkFriends(member, checkBadge);
+        }
+    }
+
+    private void checkFriends(Member member, Badge badge) {
+        Long friendsCount = friendRepository.countByMember2(member);
+        Optional<MemberBadge> findMemberBadge =
+                memberBadgeRepository.findByMemberAndBadge(member, badge);
+
+        if (findMemberBadge.isEmpty() && friendsCount > 0) {
             MemberBadge createdMemberBadge = MemberBadge.builder().build();
             createdMemberBadge.setMember(member);
             createdMemberBadge.setBadge(badge);
