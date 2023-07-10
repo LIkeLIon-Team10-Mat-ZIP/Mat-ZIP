@@ -33,7 +33,7 @@ public class NotificationController {
     @GetMapping("/reviewList")
     @PreAuthorize("isAuthenticated()")
     public String showReviewList(Model model, @AuthenticationPrincipal PrincipalDetails principalDetails) {
-        Member member = memberService.findByUsername("user1").orElseThrow();
+        Member member = memberService.findByUsername("user1");
 
         List<NotificationDTO> notificationDTOS = notificationService.convertToNotificationDTOS(member);
 
