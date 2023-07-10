@@ -7,6 +7,15 @@
     <title>Matzip</title>
 
     <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
         #map {
             position: relative;
             width: 90vw;
@@ -45,74 +54,83 @@
             margin: 5px 0;
         }
 
-        #matzipCreationButton {
-            position: absolute;
-            bottom: 10px;
-            right: 10px;
-            z-index: 2;
-        }
-
         #reviewListContainer {
             transition: height 0.5s; /* 높이에 대한 0.5초 동안의 transition 효과 설정 */
         }
     </style>
 </head>
 <body>
-<main layout:fragment="Content" >
-    <div class="mx-auto">
-        <div class="flex justify-end space-x-4 mr-14">
-            <input class="input input-bordered w-full max-w-xs border-gray-400 border-2"
-                   id="searchInput"
-                   placeholder="맛집 이름, 주소로 검색" type="text">
-            <select class="rounded-md py-1 px-3 border-2 border-gray-400 focus:ring-2 focus:ring-blue-600"
-                    id="matzipTypeSelect">
-                <option value="ALL">전체</option>
-                <option value="KOREAN">한식</option>
-                <option value="JAPANESE">회/일식</option>
-                <option value="CHINESE">중식</option>
-                <option value="ASIAN">아시안</option>
-                <option value="BAR">술집</option>
-                <option value="CAFE">카페</option>
-                <option value="ETC">기타</option>
-            </select>
-            <button class="btn btn-info bg-blue-600 rounded-md py-1 px-4 text-white" id="filterBtn" onclick="search()">
-                검색
+<main layout:fragment="Content">
+    <div class="flex flex-shrink-0 btn-group justify-end mt-40">
+        <div class="btn-group rounded-md border border-blue-200 my-5">
+            <button class="btn-s bg-blue-600 text-white rounded-md py-1 px-3 space-x-2 mr-2"
+                    data-list-type="all"
+                    id="listBtnAll"
+                    onclick="toggleList('all')">
+                ALL
+                <span class="loading loading-spinner-sm inline" id="listSpinnerAll" style="display: none;"></span>
             </button>
-            <div>
-                <button class="btn btn-info rounded-md py-1 px-4 text-white space-x-2 mr-2"
-                        data-list-type="all" id="listBtn" onclick="toggleList()">
-                    All
-                    <span class="loading loading-spinner-sm inline" id="listSpinner" style="display: none;"></span>
-                </button>
-            </div>
+
+            <button class="btn-s rounded-md py-1 px-3 space-x-2"
+                    data-list-type="my"
+                    id="listBtnMy"
+                    onclick="toggleList('my')">
+                MY
+                <span class="loading loading-spinner-sm inline" id="listSpinnerMy" style="display: none;"></span>
+            </button>
         </div>
-        <div class="flex justify-center">
-            <div class="mt-3" id="map">
-                <div id="placeInfo">
-                    <h2 id="placeName">맛집 이름</h2>
-                    <p id="placeAddress">주소</p>
-                    <p id="placePhone">전화번호</p>
-                    <p id="placeDescription">설명</p>
-                    <p id="placeRating">내 평점</p>
-                    <a class="inline-block w-full py-1 px-4 rounded-3xl text-center bg-gray-100 shadow mb-2" id="mapLink"
-                       target="_blank">큰지도 보기</a>
-                    <br>
-                    <a class="inline-block w-full py-1 px-4 rounded-3xl text-center bg-gray-100 shadow mb-2" id="routeLink"
-                       target="_blank">길찾기</a>
-                    <br>
-                    <a class="inline-block w-full py-1 px-4 rounded-3xl text-center bg-gray-100 shadow mb-2" id="detailLink"
-                       target="_blank">상세정보</a>
-                    <br>
-                    <a class="mb-4 inline-block w-full py-1 px-4 rounded-3xl text-center bg-gray-100 shadow mb-1"
-                       id="reviewButton">리뷰 등록</a>
-                    <hr>
-                    <div class="mt-3" id="reviewList">
-                        <span class="text-lg"><i class="fa-solid fa-magnifying-glass"></i> 리뷰</span>
-                        <div id="noReview" style="display: block;">리뷰가 없습니다.</div>
-                        <ul id="reviewListContainer" style="display: none;"></ul>
-                    </div>
-                </div>
-                <button class="btn btn-info" id="matzipCreationButton" onclick="goToMatzipCreationPage()">맛집 등록</button>
+    </div>
+    <div class="flex justify-end space-x-4">
+        <input class="input input-bordered w-full max-w-xs"
+               id="searchInput"
+               placeholder="맛집 이름, 주소로 검색" type="text">
+        <select class="rounded-md py-1 px-3 border-2 border-gray-400 focus:ring-2 focus:ring-blue-600"
+                id="matzipTypeSelect">
+            <option value="ALL">전체</option>
+            <option value="KOREAN">한식</option>
+            <option value="JAPANESE">회/일식</option>
+            <option value="CHINESE">중식</option>
+            <option value="ASIAN">아시안</option>
+            <option value="BAR">술집</option>
+            <option value="CAFE">카페</option>
+            <option value="ETC">기타</option>
+        </select>
+        <button class="btn bg-blue-500 hover:bg-blue-700 rounded-md py-1 px-3 text-white" id="filterBtn"
+                onclick="search()">
+            검색
+        </button>
+
+        <button class="btn bg-blue-500 hover:bg-blue-700 text-white py-1 px-3" id="matzipCreationButton"
+                onclick="goToMatzipCreationPage()">
+            맛집 등록
+        </button>
+    </div>
+    <div class="mt-3" id="map">
+        <div id="placeInfo">
+            <h2 id="placeName">맛집 이름</h2>
+            <p id="placeAddress">주소</p>
+            <p id="placePhone">전화번호</p>
+            <p id="placeDescription">설명</p>
+            <p id="placeRating">내 평점</p>
+            <a class="w-full font-bold text-white rounded-3xl py-2 h-8 flex items-center justify-center shadow bg-blue-300"
+               id="mapLink"
+               target="_blank">큰지도 보기</a>
+            <br>
+            <a class="w-full font-bold text-white rounded-3xl py-2 h-8 flex items-center justify-center shadow bg-blue-300"
+               id="routeLink"
+               target="_blank">길찾기</a>
+            <br>
+            <a class="w-full font-bold text-white rounded-3xl py-2 h-8 flex items-center justify-center shadow bg-blue-300"
+               id="detailLink"
+               target="_blank">상세정보</a>
+            <br>
+            <a class="w-full font-bold text-white rounded-3xl py-2 h-8 flex items-center justify-center shadow bg-blue-300"
+               id="reviewButton">리뷰 등록</a>
+            <hr>
+            <div class="mt-3" id="reviewList">
+                <span class="text-lg"><i class="fa-solid fa-magnifying-glass"></i> 리뷰</span>
+                <div id="noReview" style="display: block;">리뷰가 없습니다.</div>
+                <ul id="reviewListContainer" style="display: none; height: 500px; overflow-y:scroll;"></ul>
             </div>
         </div>
     </div>
@@ -335,48 +353,27 @@
         }
 
         // 리스트 타입 토글 함수
-        function toggleList() {
-            const listBtn = document.getElementById("listBtn");
-            const listType = listBtn.getAttribute("data-list-type");
-
-            // 리스트 버튼 스피너 표시
-            document.getElementById("listSpinner").style.display = "inline-block";
+        function toggleList(listType) {
+            const listBtnAll = document.getElementById("listBtnAll");
+            const listBtnMy = document.getElementById("listBtnMy");
 
             if (listType === "all") {
                 // 나의 리스트 불러오기
-                loadMatzipList("/matzip/api/mylist", () => {
+                loadMatzipList("/matzip/api/list", () => {
                     // 리스트 버튼 스피너를 숨깁니다
-                    document.getElementById("listSpinner").style.display = "none";
-                    // 리스트 타입을 "my"로 변경
-                    listBtn.setAttribute("data-list-type", "my");
-                    listBtn.classList.remove("btn-info");
-                    listBtn.classList.add("btn-primary");
-
-                    // 버튼 텍스트 변경
-                    listBtn.innerHTML = `
-                PRIVATE
-                <span class="loading loading-spinner-sm inline" id="listSpinner" style="display: none;"></span>
-            `;
-
-                    currentListType = "my"; // 현재 리스트 타입 업데이트
+                    document.getElementById("listSpinnerMy").style.display = "none";
+                    // 버튼 활성화/비활성화 클래스 토글
+                    listBtnAll.classList.add("bg-blue-600", "text-white");
+                    listBtnMy.classList.remove("bg-blue-600", "text-white");
                 });
             } else {
                 // 전체 리스트 불러오기
-                loadMatzipList("/matzip/api/list", () => {
+                loadMatzipList("/matzip/api/mylist", () => {
                     // 리스트 버튼 스피너를 숨깁니다
-                    document.getElementById("listSpinner").style.display = "none";
-                    // 리스트 타입을 "all"로 변경
-                    listBtn.setAttribute("data-list-type", "all");
-                    listBtn.classList.remove("btn-primary");
-                    listBtn.classList.add("btn-info");
-
-                    // 버튼 텍스트 변경
-                    listBtn.innerHTML = `
-                ALL
-                <span class="loading loading-spinner-sm inline" id="listSpinner" style="display: none;"></span>
-            `;
-
-                    currentListType = "all"; // 현재 리스트 타입 업데이트
+                    document.getElementById("listSpinnerAll").style.display = "none";
+                    // 버튼 활성화/비활성화 클래스 토글
+                    listBtnAll.classList.remove("bg-blue-600", "text-white");
+                    listBtnMy.classList.add("bg-blue-600", "text-white");
                 });
             }
         }
@@ -447,22 +444,6 @@
                         pageNum += 1;
                         getReviews(matzipId, pageNum);
                     }
-
-                    if (isGotAllReviews && isScrolledToEnd() && !reviewButtonExists()) {
-                        const buttonContainer = document.createElement('div');
-                        buttonContainer.classList.add('flex', 'justify-center', 'mt-4');
-
-                        const reviewButton = document.createElement('button');
-                        reviewButton.innerText = '리뷰 작성';
-                        reviewButton.classList.add('review-button', 'btn', 'btn-primary');
-                        reviewButton.addEventListener('click', function () {
-                            const matzipId = currentMatzipId;
-                            window.location.href = `/review/create/${matzipId}`;
-                        });
-
-                        buttonContainer.appendChild(reviewButton);
-                        e.target.appendChild(buttonContainer);
-                    }
                 };
             })(pageNum));
         }
@@ -486,25 +467,6 @@
             } else {
                 noReview.style.display = 'block';
                 reviewListContainer.style.display = 'none';
-            }
-            //한번 리스트 로드 했는데 10개 안되고 리뷰 작성버튼 안생겼으면 만들어 줌
-            if (currentReviews.length < 10 && !reviewButtonExists()) {
-                // 리뷰 작성 버튼을 감싸는 컨테이너 추가
-                const reviewButtonContainer = document.createElement('div');
-                reviewButtonContainer.classList.add('flex', 'justify-center', 'mt-4');
-
-                // 리뷰 작성 버튼 추가
-                const reviewButton = document.createElement('button');
-                reviewButton.innerText = '리뷰 작성';
-                reviewButton.classList.add('btn', 'btn-primary', 'review-button');
-                reviewButton.addEventListener('click', function () {
-                    const matzipId = previousMarkerId;
-                    window.location.href = `/review/create/${matzipId}`;
-                });
-
-                // 컨테이너에 리뷰 작성 버튼 추가
-                reviewButtonContainer.appendChild(reviewButton);
-                reviewListContainer.appendChild(reviewButtonContainer);
             }
         }
 
@@ -547,21 +509,6 @@
                 });
         }
 
-        // 리스트의 끝에 도달했는지 확인하는 함수
-        function isScrolledToEnd() {
-            const reviewListContainer = document.getElementById('reviewListContainer');
-            const scrollHeight = reviewListContainer.scrollHeight;
-            const scrollTop = reviewListContainer.scrollTop;
-            const clientHeight = reviewListContainer.clientHeight;
-
-            return scrollTop + clientHeight >= scrollHeight - 1;
-        }
-
-        // 리뷰 작성 버튼이 이미 존재하는지 확인하는 함수
-        function reviewButtonExists() {
-            return document.querySelector('.review-button') !== null;
-        }
-
         function createReviewList(review) {
             // 1. 전체 리뷰 컨테이너 생성
             const reviewContainer = document.createElement('div');
@@ -572,7 +519,7 @@
             userProfileWrapper.classList.add('flex', 'items-center', 'gap-2');
             // 사용자 프로필 이미지 추가
             const profileImg = document.createElement('img');
-            profileImg.src = 'https://placekitten.com/408/287';
+            profileImg.src = review.profileImageUrl;
             profileImg.classList.add('w-14', 'h-14', 'rounded-full', 'border', 'border-gray-100');
             userProfileWrapper.appendChild(profileImg);
 
@@ -586,7 +533,7 @@
             userInfoContainer.appendChild(nameDateWrapper);
 
             const userDateDiv = document.createElement('div');
-            userDateDiv.classList.add('flex', 'space-x-1');
+            userDateDiv.classList.add('flex', 'space-x-2');
             nameDateWrapper.appendChild(userDateDiv);
 
             // 사용자 닉네임 추가
@@ -618,18 +565,19 @@
             userInfoContainer.appendChild(userAdditionalInfo);
 
             const registeredRestaurants = document.createElement('span');
-            registeredRestaurants.classList.add('text-xs');
+            registeredRestaurants.classList.add('text-xs', 'mr-2', 'text-gray-500');
             registeredRestaurants.innerText = '맛집 ' + review.matzipCount;
             userAdditionalInfo.appendChild(registeredRestaurants);
 
             const writtenReviews = document.createElement('span');
-            writtenReviews.classList.add('text-xs');
+            writtenReviews.classList.add('text-xs', 'mr-2', 'text-gray-500');
             writtenReviews.innerText = '리뷰 ' + review.reviewCount;
             userAdditionalInfo.appendChild(writtenReviews);
 
             const friendCount = document.createElement('span');
-            friendCount.classList.add('text-xs');
+            friendCount.classList.add('text-xs', 'mr-2', 'text-gray-500');
             friendCount.innerText = '친구 ' + review.friendCount;
+            userAdditionalInfo.appendChild(friendCount);
             userAdditionalInfo.appendChild(friendCount);
 
             // 사용자 정보 컨테이너를 프로필 이미지 컨테이너에 추가
@@ -642,7 +590,7 @@
             reviewContentWrapper.classList.add('mt-3');
             reviewContainer.appendChild(reviewContentWrapper);
             const reviewContent = document.createElement('a');
-            reviewContent.setAttribute('href', '/review/detail/' + review.reviewId);
+            reviewContent.setAttribute('href', 'review/detail/' + review.reviewId);
             reviewContent.classList.add('break-words');
             reviewContent.innerText = review.content;
             reviewContentWrapper.appendChild(reviewContent);
