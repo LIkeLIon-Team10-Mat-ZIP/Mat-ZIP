@@ -117,7 +117,10 @@ public class ReviewController {
         }
 
         Review modifyReview = reviewService.modify(review, reviewCreationDTO);
-        reviewImageService.modify(reviewCreationDTO.getImageFiles(), modifyReview);
+
+        if (!reviewService.isImageFileEmpty(reviewCreationDTO)) {
+            reviewImageService.modify(reviewCreationDTO.getImageFiles(), modifyReview);
+        }
 
         return "redirect:/review/detail/" + reviewId;
     }
