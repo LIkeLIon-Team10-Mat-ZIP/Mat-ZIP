@@ -1,5 +1,6 @@
 package site.matzip.matzip.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -43,7 +44,9 @@ public class MatzipController {
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/create")
-    public String create(@RequestBody MatzipCreationDTO matzipCreationDTO, BindingResult result, Authentication authentication) {
+    public String create(@RequestBody @Valid MatzipCreationDTO matzipCreationDTO,
+                         BindingResult result,
+                         Authentication authentication) {
         Member author = rq.getMember(authentication);
 
         matzipService.create(matzipCreationDTO, author.getId());
@@ -79,7 +82,6 @@ public class MatzipController {
             List<MatzipListDTO> matzipDtoList = matzipService.findAndConvertAll(rq.getMember(authentication).getId());
             return ResponseEntity.ok(matzipDtoList);
         } catch (Exception e) {
-            // 예외 발생 시 처리
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
