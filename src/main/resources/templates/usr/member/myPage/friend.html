@@ -1,0 +1,73 @@
+<html layout:decorate="~{usr/member/myPage.html}">
+<div layout:fragment="content">
+    <div class="flex">
+        <div class="flex-grow">
+            <h2 class="card-title">
+                <i class="fa-solid fa-user-group"></i>
+                친구 목록
+            </h2>
+        </div>
+        <div>
+            <button class="btn btn-xs" onclick="addFriend_modal.showModal();"><i class="fa-solid fa-user-plus"></i> 친구
+                추가
+            </button>
+        </div>
+    </div>
+    <hr/>
+    <div th:unless="${!#lists.isEmpty(friendDetailDTOS)}" class="text-center">
+        <div>친구를 등록하고 맛지도를 공유해보세요.</div>
+    </div>
+    <div th:if="${!#lists.isEmpty(friendDetailDTOS)}">
+        <table class="table mt-4 w-full table-fixed">
+            <colgroup>
+                <col style="width: 50px;">
+                <col style="width: 100px;">
+                <col style="width: 150px;">
+                <col>
+                <col style="width: 120px;">
+                <col style="width: 100px;">
+            </colgroup>
+            <thead class="table-dark">
+            <tr class="text-center">
+                <th>번호</th>
+                <th>프로필 이미지</th>
+                <th>닉네임</th>
+                <th>보유 뱃지</th>
+                <th></th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr class="text-center hover" th:each="friendDetailDTO, loop : ${friendDetailDTOS}">
+                <td th:text="|${loop.index + 1}|"></td>
+                <td>
+                    <div class="mask mask-squircle w-12 h-12">
+                        <img th:src="${friendDetailDTO.profileImageUrl}" alt=""/>
+                    </div>
+                </td>
+                <td th:text="${friendDetailDTO.friendNickname}"></td>
+                <td>
+                    <div th:each="badge : ${friendDetailDTO.badgeImage}">
+                        <img th:src="${badge.key}" class="w-14 h-14 rounded-full mr-1"
+                             th:title="${badge.value}">
+                    </div>
+                </td>
+                <td>
+                    <button class="btn btn-xs">맛집 지도 보기</button>
+                </td>
+                <td>
+                    <a href="javascript:void(0);" class="btn btn-xs"
+                       onclick="if ( confirm('정말로 이 친구를 삭제하시겠습니까? 삭제한 친구 관계는 되돌릴 수 없습니다.') ) $(this).next().submit();">
+                        친구 삭제
+                    </a>
+                    <form hidden th:action="@{|/usr/friends/${friendDetailDTO.id}|}" method="POST">
+                        <input type="hidden" name="_method" value="delete">
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+</html>

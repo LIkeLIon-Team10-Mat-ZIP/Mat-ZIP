@@ -10,6 +10,7 @@ import java.util.Map;
 @Builder
 @ToString
 public class MemberRankDTO {
+    private int rank;
     private String profileImageUrl;
     private String nickname;
     private Map<String, String> badgeImage;

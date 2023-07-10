@@ -1,0 +1,65 @@
+<html layout:decorate="~{usr/member/myPage.html}">
+<div layout:fragment="content">
+    <div class="flex">
+        <div class="flex-grow">
+            <h2 class="card-title">
+                <i class="fa-solid fa-coins"></i>
+                포인트
+            </h2>
+        </div>
+        <div class="mr-3">
+            <span class="text-gray-400">내 포인트 : </span>
+            <span th:text="${memberPointDTO.point}"></span>
+        </div>
+        <div class="mr-1">
+            <span class="text-gray-400">내 포인트 순위 : </span>
+            <span th:text="${memberPointDTO.rank}"></span>
+            <span>위</span>
+        </div>
+    </div>
+    <hr/>
+    <div th:if="${!#lists.isEmpty(memberRankDTOS)}">
+        <table class="table mt-4 w-full table-fixed">
+            <colgroup>
+                <col style="width: 70px">
+                <col style="width: 270px">
+                <col>
+                <col style="width: 120px">
+            </colgroup>
+            <thead class="table-dark">
+            <tr class="text-center">
+                <th>순위</th>
+                <th>유저명</th>
+                <th>보유 뱃지</th>
+                <th>포인트</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:classappend="${memberRankDTO.rank == memberPointDTO.rank} ? 'bg-pink-100'" class="text-center hover" th:each="memberRankDTO : ${memberRankDTOS}">
+                <td th:text="${memberRankDTO.rank}"></td>
+                <td>
+                    <div class="flex items-center space-x-3 ml-4">
+                        <div class="avatar">
+                            <div class="mask mask-squircle w-12 h-12">
+                                <img th:src="${memberRankDTO.profileImageUrl}" alt=""/>
+                            </div>
+                        </div>
+                        <div>
+                            <span th:text="${memberRankDTO.nickname}"></span>
+                        </div>
+                    </div>
+                </td>
+                <td class="flex flex-wrap justify-center">
+                    <div th:each="badge : ${memberRankDTO.badgeImage}">
+                        <img th:src="${badge.key}" class="w-14 h-14 rounded-full mr-1"
+                             th:title="${badge.value}">
+                    </div>
+                </td>
+                <td th:text="${memberRankDTO.point}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+</html>
