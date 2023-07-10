@@ -14,6 +14,7 @@ import site.matzip.review.domain.Review;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @Slf4j
@@ -28,21 +29,14 @@ public class ReviewImageService {
 
     @Transactional
     public void create(List<MultipartFile> multipartFiles, Review review) throws IOException {
-        if (multipartFiles.size() == 0) {
-            log.info("Can't save Review Images (no image)");
-        }
         for (int index = 0; index < multipartFiles.size(); index++) {
-            saveReviewImage(multipartFiles.get(index), review, index);
+            if (multipartFiles.get(index).getOriginalFilename() != null &&
+                    !Objects.requireNonNull(multipartFiles.get(index).getOriginalFilename()).isEmpty()) {
+                saveReviewImage(multipartFiles.get(index), review, index);
+            }
         }
 
-        log.info("Complete Review Images");
-    }
-
-    @Transactional
-    public void modify(List<MultipartFile> multipartFiles, Review review) throws IOException {
-        review.getReviewImages().clear();
-
-        create(multipartFiles, review);
+        log.info("Complete Save Review Images");
     }
 
     private void saveReviewImage(MultipartFile multipartFile, Review review, int index) throws IOException {
@@ -56,15 +50,35 @@ public class ReviewImageService {
 
         ReviewImage uploadImage = ReviewImage.builder()
                 .imageUrl(amazonS3.getUrl(bucket, "reviewImages/" + filename).toString())
-                .originalImageName(multipartFile.getOriginalFilename())
+                .originalImageName(filename)
                 .build();
         uploadImage.setReview(review);
         reviewImageRepository.save(uploadImage);
     }
 
     @Transactional
-    public void deleteImage(String originalFilename) {
+    public void modify(List<MultipartFile> multipartFiles, Review review) throws IOException {
+        System.out.println("multipartFiles.size() = " + multipartFiles.size());
+        deleteForUpdate(review);
+        review.getReviewImages().clear();
 
-        amazonS3.deleteObject(bucket, originalFilename);
+        create(multipartFiles, review);
+    }
+
+    private void deleteForUpdate(Review review) {
+        List<ReviewImage> findReviewImages = review.getReviewImages();
+
+        for (ReviewImage findReviewImage : findReviewImages) {
+            delete(findReviewImage.getOriginalImageName());
+        }
+    }
+
+    private void delete(String orginalFilename) {
+        amazonS3.deleteObject(bucket, "reviewImages/" + orginalFilename);
+    }
+
+    @Transactional
+    public void remove(Review review) {
+        deleteForUpdate(review);
     }
 }
