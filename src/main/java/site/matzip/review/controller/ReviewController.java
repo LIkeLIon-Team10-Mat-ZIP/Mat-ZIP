@@ -76,7 +76,9 @@ public class ReviewController {
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/modify/{reviewId}")
-    public String modify(@PathVariable Long reviewId, ReviewCreationDTO reviewCreationDTO, Model model,
+    public String modify(@PathVariable Long reviewId,
+                         @ModelAttribute ReviewCreationDTO reviewCreationDTO,
+                         Model model,
                          @AuthenticationPrincipal PrincipalDetails principalDetails) {
         Review review = reviewService.findById(reviewId);
         Matzip matzip = review.getMatzip();
@@ -95,7 +97,9 @@ public class ReviewController {
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/modify/{reviewId}")
-    public String modify(@PathVariable Long reviewId, ReviewCreationDTO reviewCreationDTO, BindingResult bindingResult,
+    public String modify(@PathVariable Long reviewId,
+                         @ModelAttribute ReviewCreationDTO reviewCreationDTO,
+                         BindingResult bindingResult,
                          @AuthenticationPrincipal PrincipalDetails principalDetails) {
         Review review = reviewService.findById(reviewId);
 
@@ -114,7 +118,9 @@ public class ReviewController {
 
     @GetMapping("/api/{matzipId}")
     @ResponseBody
-    public ResponseEntity<List<Review>> getReviewsByMatzipId(@PathVariable Long matzipId, @RequestParam int pageSize, @RequestParam int pageNumber) {
+    public ResponseEntity<List<Review>> getReviewsByMatzipId(@PathVariable Long matzipId,
+                                                             @RequestParam int pageSize,
+                                                             @RequestParam int pageNumber) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
         List<Review> reviews = reviewService.findByMatzipId(matzipId, pageable);
 
@@ -138,6 +144,7 @@ public class ReviewController {
     @GetMapping("/detail/{reviewId}")
     public String detail(Model model, @PathVariable Long reviewId, @AuthenticationPrincipal PrincipalDetails principalDetails,
                          HttpServletRequest request, HttpServletResponse response) {
+
         Review review = reviewService.findById(reviewId);
         ReviewDetailDTO reviewDetailDTO = reviewService.convertToReviewDetailDTO(reviewId, principalDetails.getMember().getId());
         reviewDetailDTO.setHeart(reviewService.isHeart(principalDetails.getMember(), review));

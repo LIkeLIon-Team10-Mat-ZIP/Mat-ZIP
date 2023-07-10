@@ -4,6 +4,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -60,7 +61,8 @@ public class MemberController {
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/myPage")
-    public String showMyPage(Model model, @RequestParam(value = "menu", defaultValue = "1") int menu,
+    public String showMyPage(Model model,
+                             @RequestParam(value = "menu", defaultValue = "1") int menu,
                              @AuthenticationPrincipal PrincipalDetails principalDetails) {
         Member member = principalDetails.getMember();
 
@@ -104,7 +106,9 @@ public class MemberController {
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/myPage/modifyNickname")
-    public String modifyNickName(NicknameUpdateDTO nicknameUpdateDTO, BindingResult result, @AuthenticationPrincipal PrincipalDetails principalDetails) {
+    public String modifyNickName(@Valid NicknameUpdateDTO nicknameUpdateDTO,
+                                 BindingResult result,
+                                 @AuthenticationPrincipal PrincipalDetails principalDetails) {
         if (result.hasErrors()) {
             return "/usr/member/myPage/modifyNickname";
         }
