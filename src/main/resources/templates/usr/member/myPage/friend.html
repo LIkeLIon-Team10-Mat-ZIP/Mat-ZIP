@@ -8,8 +8,8 @@
             </h2>
         </div>
         <div>
-            <button class="btn btn-xs" onclick="addFriend_modal.showModal();"><i class="fa-solid fa-user-plus"></i> 친구
-                추가
+            <button class="btn btn-xs" onclick="addFriend_modal.showModal();">
+                <i class="fa-solid fa-user-plus"></i> 친구 추가
             </button>
         </div>
     </div>
@@ -53,8 +53,11 @@
                     </div>
                 </td>
                 <td>
+<!--                    <button id="friendMapModalBtn" class="btn btn-xs" data-friend-id="${friendDetailDTO.id}">-->
+<!--                        맛집 지도 보기-->
+<!--                    </button>-->
                     <button class="btn btn-xs" data-friend-id="${friendDetailDTO.id}"
-                            onclick="redirectToFriendMap('${friendDetailDTO.id}')">맛집 지도 보기
+                            th:onclick="'redirectToFriendMap(' + ${friendDetailDTO.id} + ');'">맛집 지도 보기
                     </button>
                 </td>
                 <td>
@@ -71,4 +74,5 @@
         </table>
     </div>
 </div>
+
 </html>
