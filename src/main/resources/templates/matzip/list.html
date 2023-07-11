@@ -106,28 +106,29 @@
             맛집 등록
         </button>
     </div>
-    <div class="mt-3 shadow-lg" id="map">
+    <div class="mt-3 shadow-lg h-50 w-40" id="map">
         <div id="placeInfo">
             <h2 id="placeName">맛집 이름</h2>
             <p id="placeAddress">주소</p>
             <p id="placePhone">전화번호</p>
             <p id="placeDescription">설명</p>
-            <p id="placeRating">내 평점</p>
-            <a class="w-full text-white rounded-3xl py-2 h-8 flex items-center justify-center shadow"
-               id="mapLink"
-               style="background-color: #2E8B57;"
-               target="_blank">큰지도 보기</a>
-            <br>
-            <a class="w-full font-bold rounded-3xl py-2 h-8 flex items-center justify-center shadow bg-opacity-50 bg-blue-400"
-               id="routeLink"
-               target="_blank">길찾기</a>
-            <br>
-            <a class="w-full font-bold text-white rounded-3xl py-2 h-8 flex items-center justify-center shadow bg-green-500"
-               id="detailLink"
-               target="_blank">상세정보</a>
-            <br>
-            <a class="w-full font-bold  rounded-3xl py-2 h-8 flex items-center justify-center shadow bg-green-600"
-               id="reviewButton">리뷰 등록</a>
+            <p id="placeRating">평점</p>
+            <div class="flex flex-col items-center my-3">
+                <a class="w-full font-bold text-white rounded-3xl py-2 h-8 flex items-center justify-center shadow bg-blue-800 hover:bg-blue-500"
+                   id="mapLink"
+                   target="_blank">큰지도 보기</a>
+                <br>
+                <a class="w-full font-bold text-white rounded-3xl py-2 h-8 flex items-center justify-center shadow bg-blue-800 hover:bg-blue-500"
+                   id="routeLink"
+                   target="_blank">길찾기</a>
+                <br>
+                <a class="w-full font-bold text-white rounded-3xl py-2 h-8 flex items-center justify-center shadow bg-blue-800 hover:bg-blue-500"
+                   id="detailLink"
+                   target="_blank">상세정보</a>
+                <br>
+                <a class="w-full font-bold text-white rounded-3xl py-2 h-8 flex items-center justify-center shadow bg-blue-800 hover:bg-blue-500"
+                   id="reviewButton">리뷰 등록</a>
+            </div>
             <hr>
             <div class="mt-3" id="reviewList">
                 <span class="text-lg"><i class="fa-solid fa-magnifying-glass"></i> 리뷰</span>
@@ -317,16 +318,17 @@
             } else {
                 placeDescription.style.display = 'block';
                 placeDescription.innerHTML = `
-      <div class="description-wrapper"> 설명 :
-        <textarea id="descriptionInput" disabled>${matzip.description}</textarea>
+            <div class="flex content-start description-wrapper">
+           <div for="descriptionInput">설명 :</div>
+            <textarea disabled id="descriptionInput">${matzip.description}</textarea>
       </div>
     `;
 
                 placeRating.style.display = 'block';
                 placeRating.innerHTML = `
-      <div class="rating rating-md rating-half" disabled id="rating">
-      평점 :
-      </div>
+                <div class="rating rating-md rating-half" disabled id="rating">
+                평점 :
+                </div>
     `;
                 const ratingValue = matzip.rating;
                 const ratingDiv = document.getElementById("rating");

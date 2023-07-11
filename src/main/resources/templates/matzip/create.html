@@ -429,10 +429,10 @@
             // 버튼 추가 및 제어
             html += '<div>';
             if (isLoggedIn()) { // 로그인 상태인 경우
-                html += '<button class="w-full text-white rounded-3xl py-2 h-8 flex items-center justify-center shadow bg-blue-300" onclick="registerAsMatzip()"><strong>맛집으로 등록</strong></button>';
-                html += '<button class="w-full text-white rounded-3xl py-2 h-8 flex items-center justify-center shadow mt-2 bg-blue-300"  onclick="writeReview()"><strong>리뷰 작성</strong></button>';
+                html += '<button class="w-full font-bold text-white rounded-3xl py-2 h-8 flex items-center justify-center shadow bg-blue-800 hover:bg-blue-500" onclick="registerAsMatzip()"><strong>맛집으로 등록</strong></button>';
+                html += '<button class="w-full font-bold text-white rounded-3xl py-2 h-8 flex items-center justify-center shadow bg-blue-800 hover:bg-blue-500"  onclick="writeReview()"><strong>리뷰 작성</strong></button>';
             } else { // 로그인 상태가 아닌 경우
-                html += '<button class="w-full text-white rounded-3xl py-2 h-8 flex items-center justify-center shadow mt-2 bg-blue-300"  onclick="redirectToLoginPage()"><strong>로그인</strong></button>';
+                html += '<button class="w-full font-bold text-white rounded-3xl py-2 h-8 flex items-center justify-center shadow bg-blue-800 hover:bg-blue-500"  onclick="redirectToLoginPage()"><strong>로그인</strong></button>';
             }
             html += '</div>';
 
