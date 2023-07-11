@@ -72,8 +72,7 @@
         modal.classList.add("hidden");
     }
 
-    function
-    loadContent(url, contentId) {
+    function loadContent(url, contentId) {
         $.ajax({
             url: url,
             method: "GET",
@@ -120,8 +119,10 @@
 
         // 설정된 아이디가 있는 경우에만 클래스를 추가/삭제합니다.
         if (activeBtn && inactiveBtn) {
-            activeBtn.classList.add('btn-primary');
-            inactiveBtn.classList.remove('btn-primary');
+            activeBtn.classList.add('bg-blue-800');
+            activeBtn.classList.add('text-white');
+            inactiveBtn.classList.remove('bg-blue-800');
+            inactiveBtn.classList.remove('text-white');
         }
 
         if (activeId === 'friendBtn') { // 친구 버튼 활성화
@@ -220,7 +221,6 @@
             });
         }
     }
-
 </script>
 
 </body>
