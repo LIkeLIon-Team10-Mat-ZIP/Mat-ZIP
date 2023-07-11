@@ -57,7 +57,7 @@
 <!--                        맛집 지도 보기-->
 <!--                    </button>-->
                     <button class="btn btn-xs" data-friend-id="${friendDetailDTO.id}"
-                            onclick="friendMap_modal.showModal();">맛집 지도 보기
+                            th:onclick="|loadMatzipList('/matzip/api/list/${friendDetailDTO.id}'); friendMap_modal.showModal();|">맛집 지도 보기
                     </button>
                 </td>
                 <td>
