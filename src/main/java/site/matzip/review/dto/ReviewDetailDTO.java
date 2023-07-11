@@ -13,6 +13,7 @@ import java.util.Map;
 @Builder
 public class ReviewDetailDTO {
     private String profileImageUrl;
+    private String matzipUrl;
     private Long reviewId;
     private Long authorId;
     private Long loginId;

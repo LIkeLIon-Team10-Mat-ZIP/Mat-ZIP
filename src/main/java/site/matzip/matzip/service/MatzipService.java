@@ -4,13 +4,19 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import site.matzip.base.rsData.RsData;
 import site.matzip.matzip.domain.Matzip;
 import site.matzip.matzip.domain.MatzipMember;
 import site.matzip.matzip.dto.MatzipCreationDTO;
 import site.matzip.matzip.dto.MatzipListDTO;
 import site.matzip.matzip.dto.MatzipUpdateDTO;
+import site.matzip.matzip.dto.MatzipRankDTO;
+import site.matzip.matzip.dto.MatzipReviewListDTO;
 import site.matzip.matzip.repository.MatzipMemberRepository;
 import site.matzip.matzip.repository.MatzipRepository;
 import site.matzip.member.domain.Member;
@@ -155,5 +161,37 @@ public class MatzipService {
         matzipMember.update(matzipUpdateDTO.getDescription(), matzipUpdateDTO.getRating());
         matzipMemberRepository.save(matzipMember);
         return RsData.of("S-1", "업데이트가 완료되었습니다.");
+    }
+
+    @Transactional
+    public List<MatzipRankDTO> findAndConvertTopTenMatzip() {
+        List<Matzip> matzips = getTop10ByOrderByMatzipMembersSize();
+        return matzips.stream().map(this::convertToMatzipDTO).collect(Collectors.toList());
+    }
+
+    private List<Matzip> getTop10ByOrderByMatzipMembersSize() {
+        Pageable pageable = PageRequest.of(0, 10, Sort.unsorted());
+        return matzipRepository.findTop10ByOrderByMatzipMembersSizeDesc(pageable);
+    }
+
+    private MatzipRankDTO convertToMatzipDTO(Matzip matzip) {
+
+        return MatzipRankDTO.builder()
+                .matzipName(matzip.getMatzipName())
+                .averageRating(getAverageRating(matzip))
+                .reviewCount(matzip.getReviews().size())
+                .userCount(matzip.getMatzipMembers().size())
+                .matzipUrl(matzip.getMatzipUrl())
+                .build();
+    }
+
+    private double getAverageRating(Matzip matzip) {
+        double sum = 0;
+
+        for (MatzipMember matzipMember : matzip.getMatzipMembers()) {
+            sum += matzipMember.getRating();
+        }
+
+        return sum / (double) matzip.getMatzipMembers().size();
     }
 }

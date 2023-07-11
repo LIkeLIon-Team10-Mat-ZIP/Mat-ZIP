@@ -86,7 +86,11 @@
                         <div class="flex-grow">
                             <div class="flex items-center">
                                 <span class="font-bold text-xl mr-3" id="matzipName"></span>
-                                <a href="#" id="detailBtn" class="btn btn-outline btn-xs" target="_blank">상세보기</a>
+                                <a id="_matzipUrl" target="_blank">
+                                    <button class="btn bg-blue-800 hover:bg-blue-500 btn-xs text-white" type="button">
+                                        상세보기
+                                    </button>
+                                </a>
                             </div>
                             <div class="flex flex-col">
                                 <span id="matzipType"></span>
@@ -97,34 +101,34 @@
                         <div class="flex flex-col">
                             <span class="mb-2 text-lg">별점</span>
                             <div class="rating rating-md rating-half" id="rating">
-                                <input class="bg-yellow-500 mask mask-star-2 mask-half-1" disabled id="rating-0.5"
+                                <input class="bg-yellow-300 mask mask-star-2 mask-half-1" disabled id="rating-0.5"
                                        name="rating"
                                        type="radio" value="0.5"/>
-                                <input class="bg-yellow-500 mask mask-star-2 mask-half-2" disabled id="rating-1.0"
+                                <input class="bg-yellow-300 mask mask-star-2 mask-half-2" disabled id="rating-1.0"
                                        name="rating"
                                        type="radio" value="1.0"/>
-                                <input class="bg-yellow-500 mask mask-star-2 mask-half-1" disabled id="rating-1.5"
+                                <input class="bg-yellow-300 mask mask-star-2 mask-half-1" disabled id="rating-1.5"
                                        name="rating"
                                        type="radio" value="1.5"/>
-                                <input class="bg-yellow-500 mask mask-star-2 mask-half-2" disabled id="rating-2.0"
+                                <input class="bg-yellow-300 mask mask-star-2 mask-half-2" disabled id="rating-2.0"
                                        name="rating"
                                        type="radio" value="2.0"/>
-                                <input class="bg-yellow-500 mask mask-star-2 mask-half-1" disabled id="rating-2.5"
+                                <input class="bg-yellow-300 mask mask-star-2 mask-half-1" disabled id="rating-2.5"
                                        name="rating"
                                        type="radio" value="2.5"/>
-                                <input class="bg-yellow-500 mask mask-star-2 mask-half-2" disabled id="rating-3.0"
+                                <input class="bg-yellow-300 mask mask-star-2 mask-half-2" disabled id="rating-3.0"
                                        name="rating"
                                        type="radio" value="3.0"/>
-                                <input class="bg-yellow-500 mask mask-star-2 mask-half-1" disabled id="rating-3.5"
+                                <input class="bg-yellow-300 mask mask-star-2 mask-half-1" disabled id="rating-3.5"
                                        name="rating"
                                        type="radio" value="3.5"/>
-                                <input class="bg-yellow-500 mask mask-star-2 mask-half-2" disabled id="rating-4.0"
+                                <input class="bg-yellow-300 mask mask-star-2 mask-half-2" disabled id="rating-4.0"
                                        name="rating"
                                        type="radio" value="4.0"/>
-                                <input class="bg-yellow-500 mask mask-star-2 mask-half-1" disabled id="rating-4.5"
+                                <input class="bg-yellow-300 mask mask-star-2 mask-half-1" disabled id="rating-4.5"
                                        name="rating"
                                        type="radio" value="4.5"/>
-                                <input class="bg-yellow-500 mask mask-star-2 mask-half-2" disabled id="rating-5.0"
+                                <input class="bg-yellow-300 mask mask-star-2 mask-half-2" disabled id="rating-5.0"
                                        name="rating"
                                        type="radio" value="5.0"/>
                             </div>
@@ -132,7 +136,7 @@
                     </div>
                     <div class="flex flex-col p-3">
                         <div class="form-group">
-                            <input accept="image/*" class="file-input file-input-bordered w-full" id="imageFiles"
+                            <input accept="image/*" class="file-input border-blue-800 border-2 w-full" id="imageFiles"
                                    multiple
                                    name="reviewCreationDTO.imageFiles"
                                    onchange="checkFileCount(event)" type="file"/>
@@ -140,12 +144,13 @@
                         <div class="flex justify-start my-2" id="selectedImages"></div>
                         <div class="form-group w-full">
                             <div class="mt-2 flex justify-center">
-                                <textarea class="w-full" id="content" name="reviewCreationDTO.content"
+                                <textarea class="w-full border-blue-800 border-2" id="content"
+                                          name="reviewCreationDTO.content"
                                           style="height: 500px;"></textarea>
                             </div>
                         </div>
                         <div class="mt-2 flex justify-end">
-                            <button class="btn btn-neutral btn-sm" type="submit">등록하기</button>
+                            <button class="btn bg-blue-800 hover:bg-blue-500 text-white btn-sm" type="submit">등록하기</button>
                         </div>
                     </div>
                 </div>
@@ -163,6 +168,7 @@
         document.getElementById('address').textContent = matzipCreationDTO.address;
         document.getElementById('phoneNumber').textContent = matzipCreationDTO.phoneNumber;
         document.getElementById('matzipType').textContent = matzipCreationDTO.matzipType;
+        document.getElementById('_matzipUrl').setAttribute('href', matzipCreationDTO.matzipUrl);
 
         var ratingContainer = document.getElementById(eval("'rating-" + matzipCreationDTO.rating + "'"));
         ratingContainer.checked = true;
