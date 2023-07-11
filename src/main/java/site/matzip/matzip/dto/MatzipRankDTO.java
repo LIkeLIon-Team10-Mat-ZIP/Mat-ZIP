@@ -10,4 +10,5 @@ public class MatzipRankDTO {
     private double averageRating;
     private long userCount;
     private long reviewCount;
+    private String matzipUrl;
 }
