@@ -599,21 +599,22 @@
             reviewContent.innerText = review.content;
             reviewContentWrapper.appendChild(reviewContent);
 
-            // 7. 리뷰 이미지와 이미지 개수 추가
-            const reviewImageContainer = document.createElement('div');
-            reviewImageContainer.classList.add('w-36', 'h-32', 'mt-2', 'mb-2', 'mr-3', 'relative');
-            reviewContentWrapper.appendChild(reviewImageContainer);
+            // 7. 리뷰 이미지와 이미지 개수 추가 (리뷰 이미지가 없을 경우 제외하고 출력)
+            if (review.reviewImageCount !== 0) {
+                const reviewImageContainer = document.createElement('div');
+                reviewImageContainer.classList.add('w-36', 'h-32', 'mt-2', 'mb-2', 'mr-3', 'relative');
+                reviewContentWrapper.appendChild(reviewImageContainer);
 
-            const reviewImage = document.createElement('img');
-            reviewImage.src = review.reviewImageUrl;
-            reviewImage.classList.add('absolute', 'top-0', 'left-0', 'w-full', 'h-full', 'object-cover', 'rounded');
-            reviewImageContainer.appendChild(reviewImage);
+                const reviewImage = document.createElement('img');
+                reviewImage.src = review.reviewImageUrl;
+                reviewImage.classList.add('absolute', 'top-0', 'left-0', 'w-full', 'h-full', 'object-cover', 'rounded');
+                reviewImageContainer.appendChild(reviewImage);
 
-            const imageCount = document.createElement('div');
-            imageCount.classList.add('absolute', 'bottom-0', 'right-0', 'text-white', 'text-opacity-80', 'p-1', 'text-sm', 'bg-black', 'bg-opacity-30');
-            imageCount.innerText = review.reviewImageCount;
-            reviewImageContainer.appendChild(imageCount);
-
+                const imageCount = document.createElement('div');
+                imageCount.classList.add('absolute', 'bottom-0', 'right-0', 'text-white', 'text-opacity-80', 'p-1', 'text-sm', 'bg-black', 'bg-opacity-30');
+                imageCount.innerText = review.reviewImageCount;
+                reviewImageContainer.appendChild(imageCount);
+            }
             // 8. 리뷰 리스트 컨테이너에 전체 리뷰 컨테이너 추가
             const hr = document.createElement('hr')
             reviewContainer.appendChild(hr);
