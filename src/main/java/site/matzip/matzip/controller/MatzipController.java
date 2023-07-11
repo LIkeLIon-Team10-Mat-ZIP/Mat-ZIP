@@ -111,14 +111,4 @@ public class MatzipController {
         RsData deleteRs = matzipService.delete(id, principalDetails.getMember().getId());
         return deleteRs;
     }
-
-    @PreAuthorize("isAuthenticated()")
-    @GetMapping("/ranking")
-    public String showRanking(Model model) {
-        List<MatzipRankDTO> matzipRankDTOS = matzipService.findAndConvertTopTenMatzip();
-
-        model.addAttribute("matzipRankDTOS", matzipRankDTOS);
-
-        return "/ranking/matzip";
-    }
 }
