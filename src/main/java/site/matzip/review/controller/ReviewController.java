@@ -2,6 +2,7 @@ package site.matzip.review.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -14,6 +15,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import site.matzip.badge.service.MemberBadgeService;
+import site.matzip.base.rq.Rq;
 import site.matzip.comment.domain.Comment;
 import site.matzip.comment.dto.CommentInfoDTO;
 import site.matzip.config.auth.PrincipalDetails;
@@ -30,6 +32,7 @@ import site.matzip.review.service.ReviewService;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Controller
@@ -40,13 +43,16 @@ public class ReviewController {
     private final ReviewImageService reviewImageService;
     private final MatzipService matzipService;
     private final MemberBadgeService memberBadgeService;
+    private final Rq rq;
 
+    // 맛집과 함께 생성
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/create")
     public String create() {
         return "/review/create";
     }
 
+    // 리뷰만 생성
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/create/{matzipId}")
     public String create(Model model, @PathVariable Long matzipId) {
@@ -63,18 +69,21 @@ public class ReviewController {
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/create/{matzipId}")
     public String create(@PathVariable Long matzipId,
-                         @ModelAttribute ReviewCreationDTO reviewCreationDTO,
+                         @ModelAttribute @Valid ReviewCreationDTO reviewCreationDTO,
                          BindingResult result,
                          @AuthenticationPrincipal PrincipalDetails principalDetails) throws IOException {
+
         if (result.hasErrors()) {
-            return "/review/add";
+            return rq.historyBack("리뷰 등록을 위한 올바른 값을 입력해주세요.");
         }
+
         Matzip matzip = matzipService.findById(matzipId);
         Long authorId = principalDetails.getMember().getId();
 
         Review createdReview = reviewService.create(reviewCreationDTO, authorId, matzip);
         reviewImageService.create(reviewCreationDTO.getImageFiles(), createdReview);
-        return "redirect:/";
+
+        return rq.redirectWithMsg("/", "리뷰가 등록되었습니다.");
     }
 
     @PreAuthorize("isAuthenticated()")
