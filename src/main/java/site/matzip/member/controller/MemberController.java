@@ -144,7 +144,7 @@ public class MemberController {
 
         model.addAttribute("memberRankDtoList", memberRankDtoList);
 
-        return "/usr/member/ranking";
+        return "/ranking/member";
     }
 
     @GetMapping("/getProfile")
