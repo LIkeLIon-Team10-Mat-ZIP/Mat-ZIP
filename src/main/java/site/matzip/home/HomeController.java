@@ -30,6 +30,6 @@ public class HomeController {
         model.addAttribute("memberRankDtoList", memberRankDtoList);
         model.addAttribute("matzipRankDTOS", matzipRankDTOS);
 
-        return "matzip/list";
+        return "/ranking/ranking";
     }
 }
