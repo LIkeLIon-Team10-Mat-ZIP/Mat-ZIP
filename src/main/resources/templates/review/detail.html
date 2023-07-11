@@ -68,7 +68,8 @@
                             <div class="text-xl font-bold" th:text="${reviewDetailDTO.authorNickname}"></div>
                             <div class="flex mx-2">
                                 <div th:each="badge : ${reviewDetailDTO.badgeImage}">
-                                    <img th:src="${badge.key}" class="w-7 h-7 rounded-full mr-1" th:title="${badge.value}">
+                                    <img th:src="${badge.key}" class="w-7 h-7 rounded-full mr-1"
+                                         th:title="${badge.value}">
                                 </div>
                             </div>
                         </div>
@@ -94,7 +95,9 @@
                     <div>
                         <div class="flex items-center">
                             <span class="font-bold text-xl mr-3" th:text="${reviewDetailDTO.matzipName}"></span>
-                            <button class="btn btn-outline btn-xs" type="submit">상세보기</button>
+                            <a th:href="${reviewDetailDTO.matzipUrl}" target="_blank">
+                                <button class="btn bg-blue-800 hover:bg-blue-500 text-white btn-xs" type="submit">상세보기</button>
+                            </a>
                         </div>
 
                         <span th:text="${reviewDetailDTO.matzipType}"></span>
@@ -105,25 +108,25 @@
                         <span>평점 : </span>
                         <div class="rating rating-md rating-half" th:attr="data-rating=${reviewDetailDTO.rating}">
                             <input type="radio" name="rating" value="0.5"
-                                   class="bg-yellow-500 mask mask-star-2 mask-half-1" disabled/>
+                                   class="bg-yellow-300 mask mask-star-2 mask-half-1" disabled/>
                             <input type="radio" name="rating" value="1.0"
-                                   class="bg-yellow-500 mask mask-star-2 mask-half-2" disabled/>
+                                   class="bg-yellow-300 mask mask-star-2 mask-half-2" disabled/>
                             <input type="radio" name="rating" value="1.5"
-                                   class="bg-yellow-500 mask mask-star-2 mask-half-1" disabled/>
+                                   class="bg-yellow-300 mask mask-star-2 mask-half-1" disabled/>
                             <input type="radio" name="rating" value="2.0"
-                                   class="bg-yellow-500 mask mask-star-2 mask-half-2" disabled/>
+                                   class="bg-yellow-300 mask mask-star-2 mask-half-2" disabled/>
                             <input type="radio" name="rating" value="2.5"
-                                   class="bg-yellow-500 mask mask-star-2 mask-half-1" disabled/>
+                                   class="bg-yellow-300 mask mask-star-2 mask-half-1" disabled/>
                             <input type="radio" name="rating" value="3.0"
-                                   class="bg-yellow-500 mask mask-star-2 mask-half-2" disabled/>
+                                   class="bg-yellow-300 mask mask-star-2 mask-half-2" disabled/>
                             <input type="radio" name="rating" value="3.5"
-                                   class="bg-yellow-500 mask mask-star-2 mask-half-1" disabled/>
+                                   class="bg-yellow-300 mask mask-star-2 mask-half-1" disabled/>
                             <input type="radio" name="rating" value="4.0"
-                                   class="bg-yellow-500 mask mask-star-2 mask-half-2" disabled/>
+                                   class="bg-yellow-300 mask mask-star-2 mask-half-2" disabled/>
                             <input type="radio" name="rating" value="4.5"
-                                   class="bg-yellow-500 mask mask-star-2 mask-half-1" disabled/>
+                                   class="bg-yellow-300 mask mask-star-2 mask-half-1" disabled/>
                             <input type="radio" name="rating" value="5.0"
-                                   class="bg-yellow-500 mask mask-star-2 mask-half-2" disabled/>
+                                   class="bg-yellow-300 mask mask-star-2 mask-half-2" disabled/>
                         </div>
                     </div>
                 </div>
@@ -135,19 +138,12 @@
                 <span class="mt-5 inline-block max-h-[600px] overflow-hidden break-all" id="text-content"
                       th:text="${reviewDetailDTO.content}">
                 </span>
-                <div class="fade-out" id="fade-out"></div>
-                <div class="button-container">
-                    <button class="read-more text-xs text-gray-500 hover:underline" onclick="readMore()">더보기
-                    </button>
-                    <button class="read-less text-xs text-gray-500 hover:underline" onclick="readLess()">줄이기
-                    </button>
-                </div>
             </div>
 
             <!-- 수정/삭제 버튼 -->
             <div class="flex justify-end mt-6">
                 <div class="flex">
-                    <a href="javascript:void(0);" class="btn btn-neutral btn-sm mx-2"
+                    <a href="javascript:void(0);" class="btn bg-blue-800 hover:bg-blue-500 text-white btn-sm mx-2"
                        th:if="${reviewDetailDTO.authorId != null and reviewDetailDTO.loginId == reviewDetailDTO.authorId}"
                        onclick="if ( confirm('정말로 수정하시겠습니까?') ) $(this).next().submit();">
                         수정
@@ -156,7 +152,7 @@
                     </form>
                 </div>
                 <div class="flex">
-                    <a href="javascript:void(0);" class="btn btn-neutral btn-sm mx-2"
+                    <a href="javascript:void(0);" class="btn bg-blue-800 hover:bg-blue-500 text-white btn-sm mx-2"
                        th:if="${reviewDetailDTO.authorId != null and reviewDetailDTO.loginId == reviewDetailDTO.authorId}"
                        onclick="if ( confirm('정말로 삭제하시겠습니까?') ) $(this).next().submit();">
                         삭제
@@ -210,11 +206,12 @@
                 <div class="flex m-4 justify-center">
                     <form class="w-full" th:action="@{|/comment/create/${reviewDetailDTO.reviewId}|}" method="POST">
                         <div class="flex items-center">
-                            <textarea rows="2" placeholder="댓글을 남겨보세요" class="border border-gray-300 resize-none p-4"
+                            <textarea rows="2" placeholder="댓글을 남겨보세요" class="border-2 border-blue-800 resize-none p-4"
                                       name="content" style="width: 100%;"></textarea>
                         </div>
                         <div class="flex justify-end mt-2">
-                            <button class="btn btn-neutral btn-sm" type="submit">등록</button>
+                            <button class="btn bg-blue-800 hover:bg-blue-500 text-white btn-sm" type="submit">등록
+                            </button>
                         </div>
                     </form>
                 </div>
