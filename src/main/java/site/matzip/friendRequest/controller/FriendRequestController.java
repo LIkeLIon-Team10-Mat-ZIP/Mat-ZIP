@@ -56,6 +56,12 @@ public class FriendRequestController {
         return new ResponseEntity<>("success", HttpStatus.OK);
     }
 
+    @PostMapping("/add/{nickname}")
+    @ResponseBody
+    public ResponseEntity<String> addFriend(@PathVariable String nickname, @AuthenticationPrincipal PrincipalDetails principalDetails) {
+        return addFriend(principalDetails, nickname);
+    }
+
     @PostMapping("/accept")
     public String acceptFriendRequest(@RequestParam("friendRequestId") Long friendRequestId) {
         FriendRequest friendRequest = friendRequestService.getFriendRequest(friendRequestId)

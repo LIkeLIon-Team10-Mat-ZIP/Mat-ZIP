@@ -599,6 +599,33 @@
             friendAddButton.innerHTML = '<i class="fa-solid fa-plus"></i>친구';
             nameDateWrapper.appendChild(friendAddButton);
 
+            friendAddButton.addEventListener('click', () => {
+                const url = 'friends/add/' + review.authorNickname;
+                const csrfToken = document.querySelector('meta[name="_csrf"]').content;
+
+                fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken
+                    }
+                })
+                    .then((response) => {
+                        return response.text();
+                    })
+                    .then((text) => {
+                        if (text === 'success') {
+                            toastNotice('친구 요청을 보냈습니다.');
+                        } else {
+                            toastWarning('친구 요청을 보낼 수 없습니다.');
+                        }
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                    });
+            });
+
+
             // 5. 사용자 추가 정보(등록 맛집, 작 리뷰, 친구 수) 생성 및 추가
             const userAdditionalInfo = document.createElement('div');
             userInfoContainer.appendChild(userAdditionalInfo);
