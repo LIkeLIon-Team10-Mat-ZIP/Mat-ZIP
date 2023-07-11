@@ -64,6 +64,7 @@ public class MemberController {
     @GetMapping("/myPage")
     public String showMyPage(Model model, @RequestParam(value = "menu", defaultValue = "1") int menu,
                              Authentication authentication) {
+
         //Member member = principalDetails.getMember(); TODO: 수정 필요
         Member member = rq.getMember(authentication);
 
