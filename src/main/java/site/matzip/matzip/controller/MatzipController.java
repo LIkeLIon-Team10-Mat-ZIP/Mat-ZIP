@@ -93,12 +93,23 @@ public class MatzipController {
     @ResponseBody
     public ResponseEntity<List<MatzipListDTO>> searchMine(Authentication authentication) {
         try {
-            if (authentication == null || !authentication.isAuthenticated()) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-            }
-            List<MatzipListDTO> matzipDtoList = matzipService.findAndConvertMine(rq.getMember(authentication).getId());
+            List<MatzipListDTO> matzipDtoList = matzipService.findAndConvertById(rq.getMember(authentication).getId());
             return ResponseEntity.ok(matzipDtoList);
         } catch (Exception e) {
+            // 예외 발생 시 처리
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+    
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/api/list/{id}")
+    @ResponseBody
+    public ResponseEntity<List<MatzipListDTO>> searchFriendsMap(@PathVariable Long id) {
+        try {
+            List<MatzipListDTO> matzipDtoList = matzipService.findAndConvertById(id);
+            return ResponseEntity.ok(matzipDtoList);
+        } catch (Exception e) {
+            // 예외 발생 시 처리
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }

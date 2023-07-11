@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import site.matzip.base.domain.BaseEntity;
 import site.matzip.member.domain.Member;
 
@@ -34,5 +33,9 @@ public class Notification extends BaseEntity {
         this.typeCode = typeCode;
         this.toMember = toMember;
         this.fromMember = fromMember;
+    }
+
+    public void setAfterReadNotification(LocalDateTime localDateTime) {
+        this.readDate = localDateTime;
     }
 }
