@@ -34,8 +34,10 @@
                 <td th:text="${myReviewDTO.matzipName}"></td>
                 <!-- 추후에 별로 수정 -->
                 <td th:text="${myReviewDTO.rating}"></td>
-                <td class="w-full whitespace-nowrap overflow-x-hidden overflow-ellipsis"
-                    th:text="${myReviewDTO.content}"></td>
+                <td class="whitespace-nowrap overflow-x-hidden overflow-ellipsis">
+                    <a th:href="@{|/review/detail/${myReviewDTO.id}|}"
+                       th:text="${myReviewDTO.content}"></a>
+                </td>
                 <td th:text="${myReviewDTO.views}"></td>
                 <td th:text="${myReviewDTO.getFormattedCreateDate()}"></td>
             </tr>
