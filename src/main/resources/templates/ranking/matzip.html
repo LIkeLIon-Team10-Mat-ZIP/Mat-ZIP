@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html layout:decorate="~{common/layout/defaultLayout.html}">
+<head>
+    <title>Ranking</title>
+</head>
+
+<body>
+
+<main layout:fragment="Content">
+    <div class="flex justify-center mx-auto max-w-5xl">
+        <div class="flex flex-col w-full">
+            <div class="flex justify-center">
+                <span class="text-4xl text-gray-500"><i class="fa-solid fa-trophy"></i> Ranking</span>
+            </div>
+            <div class="mt-5">
+                <table class="table text-center">
+                    <thead>
+                    <tr class="bg-blue-100">
+                        <th>순위</th>
+                        <th>맛집명</th>
+                        <th>평점</th>
+                        <th>리뷰수</th>
+                        <th>맛집 등록 수</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="matzip, loop : ${matzipRankDTOS}">
+                        <td th:text="${loop.count}"></td>
+                        <td th:text="${matzip.matzipName}"></td>
+                        <td>
+                            <i class="fa-solid fa-star text-yellow-300"></i>
+                            <span th:text="${#numbers.formatDecimal(matzip.averageRating, 1, 2)}"></span>
+                        </td>
+                        <td th:text="${matzip.reviewCount}"></td>
+                        <td th:text="${matzip.userCount}"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</main>
+</body>
+
+</html>
