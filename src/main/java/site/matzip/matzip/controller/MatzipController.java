@@ -1,5 +1,6 @@
 package site.matzip.matzip.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -7,7 +8,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import site.matzip.base.rq.Rq;
@@ -43,7 +43,12 @@ public class MatzipController {
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/create")
-    public String create(@RequestBody MatzipCreationDTO matzipCreationDTO, BindingResult result, Authentication authentication) {
+    public String create(@RequestBody @Valid MatzipCreationDTO matzipCreationDTO,
+                         BindingResult result,
+                         Authentication authentication) {
+        if (result.hasErrors()) {
+            return "/matzip/create";
+        }
         Member author = rq.getMember(authentication);
 
         matzipService.create(matzipCreationDTO, author.getId());
@@ -67,23 +72,22 @@ public class MatzipController {
         return rq.redirectWithMsg("/", "맛집과 리뷰가 등록되었습니다.");
     }
 
-    @GetMapping("/list")
-    public String list(Model model) {
-        return "/matzip/list";
-    }
-
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/api/list")
     @ResponseBody
     public ResponseEntity<List<MatzipListDTO>> searchAll(Authentication authentication) {
         try {
+            if (authentication == null || !authentication.isAuthenticated()) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            }
             List<MatzipListDTO> matzipDtoList = matzipService.findAndConvertAll(rq.getMember(authentication).getId());
             return ResponseEntity.ok(matzipDtoList);
         } catch (Exception e) {
-            // 예외 발생 시 처리
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/api/mylist")
     @ResponseBody
     public ResponseEntity<List<MatzipListDTO>> searchMine(Authentication authentication) {
@@ -95,7 +99,8 @@ public class MatzipController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-
+    
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/api/list/{id}")
     @ResponseBody
     public ResponseEntity<List<MatzipListDTO>> searchFriendsMap(@PathVariable Long id) {

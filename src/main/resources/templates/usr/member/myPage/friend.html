@@ -64,8 +64,7 @@
                        onclick="if ( confirm('정말로 이 친구를 삭제하시겠습니까? 삭제한 친구 관계는 되돌릴 수 없습니다.') ) $(this).next().submit();">
                         친구 삭제
                     </a>
-                    <form hidden th:action="@{|/usr/friends/${friendDetailDTO.id}|}" method="POST">
-                        <input type="hidden" name="_method" value="delete">
+                    <form hidden th:action="@{|/usr/friends/delete/${friendDetailDTO.id}|}" method="POST">
                     </form>
                 </td>
             </tr>

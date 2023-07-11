@@ -4,6 +4,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -111,7 +112,9 @@ public class MemberController {
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/myPage/modifyNickname")
-    public String modifyNickName(NicknameUpdateDTO nicknameUpdateDTO, BindingResult result, @AuthenticationPrincipal PrincipalDetails principalDetails) {
+    public String modifyNickName(@Valid NicknameUpdateDTO nicknameUpdateDTO,
+                                 BindingResult result,
+                                 @AuthenticationPrincipal PrincipalDetails principalDetails) {
         if (result.hasErrors()) {
             return "/usr/member/myPage/modifyNickname";
         }

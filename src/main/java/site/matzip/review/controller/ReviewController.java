@@ -7,7 +7,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -31,7 +30,6 @@ import site.matzip.review.service.ReviewService;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Controller
@@ -57,6 +55,7 @@ public class ReviewController {
         ReviewCreationDTO reviewCreationDTO = new ReviewCreationDTO();
         model.addAttribute("matzipInfoDTO", matzipInfoDTO);
         model.addAttribute("reviewCreationDTO", reviewCreationDTO);
+        model.addAttribute("create", true);
 
         return "/review/add";
     }
@@ -86,9 +85,7 @@ public class ReviewController {
         Matzip matzip = review.getMatzip();
         MatzipInfoDTO matzipInfoDTO = new MatzipInfoDTO(matzip);
 
-        if (!review.getAuthor().getId().equals(principalDetails.getMember().getId())) {
-            throw new AccessDeniedException("You do not have permission to modify.");
-        }
+        reviewService.checkAccessPermission(reviewId, principalDetails);
 
         model.addAttribute("matzipInfoDTO", matzipInfoDTO);
         reviewCreationDTO.setRating(review.getRating());
@@ -106,17 +103,17 @@ public class ReviewController {
     public String modify(@PathVariable Long reviewId, ReviewCreationDTO reviewCreationDTO, BindingResult bindingResult,
                          @AuthenticationPrincipal PrincipalDetails principalDetails) throws IOException {
         Review review = reviewService.findById(reviewId);
+        reviewService.checkAccessPermission(reviewId, principalDetails);
 
         if (bindingResult.hasErrors()) {
             return "/review/add";
         }
 
-        if (!review.getAuthor().getId().equals(principalDetails.getMember().getId())) {
-            throw new AccessDeniedException("You do not have permission to modify.");
-        }
-
         Review modifyReview = reviewService.modify(review, reviewCreationDTO);
-        reviewImageService.modify(reviewCreationDTO.getImageFiles(), modifyReview);
+
+        if (!reviewService.isImageFileEmpty(reviewCreationDTO)) {
+            reviewImageService.modify(reviewCreationDTO.getImageFiles(), modifyReview);
+        }
 
         return "redirect:/review/detail/" + reviewId;
     }
@@ -145,14 +142,13 @@ public class ReviewController {
     }
 
     @PreAuthorize("isAuthenticated()")
-    @DeleteMapping("/{reviewId}")
+    @PostMapping("/delete/{reviewId}")
     public String delete(@PathVariable Long reviewId, @AuthenticationPrincipal PrincipalDetails principalDetail) {
         Review review = reviewService.findById(reviewId);
 
-        if (!Objects.equals(review.getAuthor().getId(), principalDetail.getMember().getId())) {
-            throw new AccessDeniedException("You do not have permission to delete.");
-        }
+        reviewService.checkAccessPermission(reviewId, principalDetail);
         reviewService.remove(review);
+        reviewImageService.remove(review);
 
         return "redirect:/";
     }
