@@ -325,6 +325,7 @@
                 placeRating.style.display = 'block';
                 placeRating.innerHTML = `
       <div class="rating rating-md rating-half" disabled id="rating">
+      평점 :
       </div>
     `;
                 const ratingValue = matzip.rating;
@@ -334,7 +335,7 @@
                     const value = i * 0.5;
                     const input = document.createElement('input');
                     input.type = 'radio';
-                    input.className = 'bg-yellow-500 mask mask-star-2';
+                    input.className = 'bg-yellow-300 mask mask-star-2';
                     input.name = 'rating';
                     input.value = value.toFixed(1);
                     input.id = 'rating-' + value.toFixed(1);
