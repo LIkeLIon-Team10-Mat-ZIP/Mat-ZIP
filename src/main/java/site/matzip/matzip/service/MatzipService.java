@@ -191,6 +191,7 @@ public class MatzipService {
                 .averageRating(getAverageRating(matzip))
                 .reviewCount(matzip.getReviews().size())
                 .userCount(matzip.getMatzipMembers().size())
+                .matzipUrl(matzip.getMatzipUrl())
                 .build();
     }
 
