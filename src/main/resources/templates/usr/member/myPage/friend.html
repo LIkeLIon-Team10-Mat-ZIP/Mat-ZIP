@@ -53,11 +53,10 @@
                     </div>
                 </td>
                 <td>
-<!--                    <button id="friendMapModalBtn" class="btn btn-xs" data-friend-id="${friendDetailDTO.id}">-->
-<!--                        맛집 지도 보기-->
-<!--                    </button>-->
-                    <button class="btn btn-xs" data-friend-id="${friendDetailDTO.id}"
-                            th:onclick="|loadMatzipList('/matzip/api/list/${friendDetailDTO.id}'); friendMap_modal.showModal();|">맛집 지도 보기
+                    <button class="btn btn-xs"
+                            th:attr="data-friend-id=${friendDetailDTO.id}, data-friend-nickname=${friendDetailDTO.friendNickname},
+                            data-friend-profileImageUrl=${friendDetailDTO.profileImageUrl}"
+                            onclick="loadMatzipListAndShowModal(this);">맛집 지도 보기
                     </button>
                 </td>
                 <td>
