@@ -1,6 +1,8 @@
 <html lang="en">
 <head>
     <th:block th:replace="common/fragments/config :: ConfigFragment"/>
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
     <title></title>
     <style>
         /*body {*/
@@ -177,6 +179,7 @@
                 success: function (result) {
                     if (result === 'success') {
                         reviewBtn.click();
+                        toastNotice('해당 알림이 삭제되었습니다.')
                     } else {
                         toastWarning('해당 알림이 없습니다.');
                     }
@@ -206,6 +209,7 @@
                 success: function (result) {
                     if (result === 'success') {
                         reviewBtn.click();
+                        toastNotice('해당 알림이 모두 삭제되었습니다.')
                     } else {
                         toastWarning('삭제하지 못 했습니다.');
                     }

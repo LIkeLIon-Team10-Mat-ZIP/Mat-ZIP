@@ -2,10 +2,8 @@ package site.matzip.notification.service;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import site.matzip.base.rq.Rq;
 import site.matzip.member.domain.Member;
 import site.matzip.member.repository.MemberRepository;
 import site.matzip.notification.dto.NotificationDTO;
@@ -22,7 +20,6 @@ import java.util.stream.Collectors;
 public class NotificationService {
     private final NotificationRepository notificationRepository;
     private final MemberRepository memberRepository;
-    private final Rq rq;
 
     public List<Notification> getNotifications(Member toMember) {
         return notificationRepository.findByToMember(toMember);
@@ -64,11 +61,11 @@ public class NotificationService {
         return true;
     }
 
-    public boolean countUnreadNotificationsByToMember(Member member) {
+    public boolean countUnreadNotificationsByToMember(Long memberId) {
+        Member member = memberRepository.findById(memberId).orElseThrow(() -> new EntityNotFoundException("member not found"));
         return notificationRepository.countByToMemberAndReadDateIsNull(member) > 0;
     }
 
-    @Transactional
     public boolean deleteNotification(Long notificationId) {
         Optional<Notification> notification = notificationRepository.findById(notificationId);
         if (notification.isEmpty()) return false;
@@ -77,7 +74,6 @@ public class NotificationService {
         return true;
     }
 
-    @Transactional
     public boolean allDeleteNotification(Integer deleteType) {
         Member member = memberRepository.findById(1L).orElseThrow(() -> new EntityNotFoundException("member not found"));
         List<Notification> notificationList = notificationRepository.findByToMember(member);

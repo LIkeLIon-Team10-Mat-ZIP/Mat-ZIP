@@ -26,8 +26,11 @@
             <a sec:authorize="isAuthenticated()" id="notificationModalBtn" class="btn btn-ghost">
                 <div class="indicator" style="position: relative;">
                     <i class="fa-regular fa-bell">
-                            <span class="badge badge-xs badge-secondary indicator-item"
-                                  style="position: absolute; top: -5px; right: -5px;"></span>
+<!--                        <span th:if="${@notificationService.countUnreadNotificationsByToMember(#authentication.principal.userId)}"-->
+<!--                              class="badge badge-xs badge-secondary indicator-item"-->
+<!--                              style="position: absolute; top: -5px; right: -5px;"></span>  // TODO: 마지막에 적용-->
+                        <span class="badge badge-xs badge-secondary indicator-item"
+                              style="position: absolute; top: -5px; right: -5px;"></span>
                     </i>
                 </div>
             </a>
