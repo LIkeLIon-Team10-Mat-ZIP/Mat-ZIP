@@ -18,4 +18,6 @@ public class ReviewListDTO {
     private long matzipCount;
     private long reviewCount;
     private long friendCount;
+    private String reviewImageUrl;
+    private long reviewImageCount;
 }

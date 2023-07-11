@@ -25,7 +25,7 @@
         #placeInfo {
             display: none;
             position: absolute;
-            width: 350px;
+            width: 500px;
             top: 10px;
             right: 10px;
             padding: 10px;
@@ -546,6 +546,8 @@
         }
 
         function createReviewList(review) {
+            const reviewListContainer = document.getElementById('reviewListContainer');
+
             // 1. 전체 리뷰 컨테이너 생성
             const reviewContainer = document.createElement('div');
             reviewContainer.classList.add('mt-3');
@@ -553,13 +555,14 @@
             // 2. 사용자 프로필 이미지와 정보 컨테이너 생성
             const userProfileWrapper = document.createElement('div');
             userProfileWrapper.classList.add('flex', 'items-center', 'gap-2');
+
             // 사용자 프로필 이미지 추가
             const profileImg = document.createElement('img');
             profileImg.src = review.profileImageUrl;
             profileImg.classList.add('w-14', 'h-14', 'rounded-full', 'border', 'border-gray-100');
             userProfileWrapper.appendChild(profileImg);
 
-            // 사용자 정보를 포함할 컨테이너 생성
+            // 사용자 정보를 포함할테이너 생성
             const userInfoContainer = document.createElement('div');
             userInfoContainer.classList.add('flex', 'flex-col', 'flex-grow');
 
@@ -589,14 +592,12 @@
             userDateDiv.appendChild(createDateSpan);
 
             // 4. 친구 추가 버튼 생성 및 추가
-            // TODO
             const friendAddButton = document.createElement('button');
             friendAddButton.classList.add('mx-3', 'btn', 'btn-xs', 'btn-info');
             friendAddButton.innerHTML = '<i class="fa-solid fa-plus"></i>친구';
             nameDateWrapper.appendChild(friendAddButton);
 
-            // 5. 사용자 추가 정보(등록 맛집, 작성 리뷰, 친구 수) 생성 및 추가
-            // TODO
+            // 5. 사용자 추가 정보(등록 맛집, 작 리뷰, 친구 수) 생성 및 추가
             const userAdditionalInfo = document.createElement('div');
             userInfoContainer.appendChild(userAdditionalInfo);
 
@@ -621,17 +622,35 @@
             // 사용자 정보와 프로필 이미지 컨테이너를 전체 리뷰 컨테이너에 추가
             reviewContainer.appendChild(userProfileWrapper)
 
-            // 6. 리뷰 내용 생성 및 추가
+            // 6. 리뷰 내용 및 추가
             const reviewContentWrapper = document.createElement('div');
-            reviewContentWrapper.classList.add('mt-3');
+            reviewContentWrapper.classList.add('mt-3', 'flex', 'justify-between');
             reviewContainer.appendChild(reviewContentWrapper);
+
             const reviewContent = document.createElement('a');
             reviewContent.setAttribute('href', 'review/detail/' + review.reviewId);
-            reviewContent.classList.add('break-words');
+            reviewContent.classList.add('break-all');
             reviewContent.innerText = review.content;
             reviewContentWrapper.appendChild(reviewContent);
 
-            // 7. 리뷰 리스트 컨테이너에 전체 리뷰 컨테이너 추가
+            // 7. 리뷰 이미지와 이미지 개수 추가 (리뷰 이미지가 없을 경우 제외하고 출력)
+            if (review.reviewImageCount !== 0) {
+                const reviewImageContainer = document.createElement('div');
+                reviewImageContainer.classList.add('mt-2', 'mb-2', 'mr-3', 'relative', 'w-32', 'h-32', 'flex', 'justify-end');
+                reviewContentWrapper.appendChild(reviewImageContainer);
+
+                const reviewImage = document.createElement('img');
+                reviewImage.src = review.reviewImageUrl;
+                reviewImage.classList.add('top-0', 'left-0', 'w-32','object-cover', 'rounded');
+                reviewImage.style.maxWidth = "200px";
+                reviewImageContainer.appendChild(reviewImage);
+
+                const imageCount = document.createElement('div');
+                imageCount.classList.add('absolute', 'bottom-0', 'right-0', 'text-white', 'text-opacity-80', 'p-1', 'text-sm', 'bg-black', 'bg-opacity-30');
+                imageCount.innerText = review.reviewImageCount;
+                reviewImageContainer.appendChild(imageCount);
+            }
+            // 8. 리뷰 리스트 컨테이너에 전체 리뷰 컨테이너 추가
             const hr = document.createElement('hr')
             reviewContainer.appendChild(hr);
             reviewListContainer.appendChild(reviewContainer);
