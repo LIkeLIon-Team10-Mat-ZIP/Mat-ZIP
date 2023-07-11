@@ -48,7 +48,7 @@
                             <div class="flex items-center">
                                 <span class="font-bold text-xl mr-3" th:text="${matzipInfoDTO.matzipName}"></span>
                                 <a th:href="${matzipInfoDTO.matzipUrl}" target="_blank">
-                                    <button class="btn btn-outline btn-xs" type="button">상세보기</button>
+                                    <button class="btn bg-blue-800 hover:bg-blue-500 btn-xs text-white" type="button">상세보기</button>
                                 </a>
                             </div>
                             <div class="flex flex-col">
@@ -60,34 +60,34 @@
                         <div class="flex flex-col">
                             <span class="mb-2 text-lg">별점</span>
                             <div class="rating rating-md rating-half" id="rating" th:attr="data-rating=${reviewCreationDTO.rating}">
-                                <input class="bg-yellow-500 mask mask-star-2 mask-half-1" id="rating-0.5" name="rating"
+                                <input class="bg-yellow-300 mask mask-star-2 mask-half-1" id="rating-0.5" name="rating"
                                        type="radio"
                                        value="0.5"/>
-                                <input class="bg-yellow-500 mask mask-star-2 mask-half-2" id="rating-1.0" name="rating"
+                                <input class="bg-yellow-300 mask mask-star-2 mask-half-2" id="rating-1.0" name="rating"
                                        type="radio"
                                        value="1.0"/>
-                                <input class="bg-yellow-500 mask mask-star-2 mask-half-1" id="rating-1.5" name="rating"
+                                <input class="bg-yellow-300 mask mask-star-2 mask-half-1" id="rating-1.5" name="rating"
                                        type="radio"
                                        value="1.5"/>
-                                <input class="bg-yellow-500 mask mask-star-2 mask-half-2" id="rating-2.0" name="rating"
+                                <input class="bg-yellow-300 mask mask-star-2 mask-half-2" id="rating-2.0" name="rating"
                                        type="radio"
                                        value="2.0"/>
-                                <input class="bg-yellow-500 mask mask-star-2 mask-half-1" id="rating-2.5" name="rating"
+                                <input class="bg-yellow-300 mask mask-star-2 mask-half-1" id="rating-2.5" name="rating"
                                        type="radio"
                                        value="2.5"/>
-                                <input checked class="bg-yellow-500 mask mask-star-2 mask-half-2" id="rating-3.0"
+                                <input checked class="bg-yellow-300 mask mask-star-2 mask-half-2" id="rating-3.0"
                                        name="rating"
                                        type="radio" value="3.0"/>
-                                <input class="bg-yellow-500 mask mask-star-2 mask-half-1" id="rating-3.5" name="rating"
+                                <input class="bg-yellow-300 mask mask-star-2 mask-half-1" id="rating-3.5" name="rating"
                                        type="radio"
                                        value="3.5"/>
-                                <input class="bg-yellow-500 mask mask-star-2 mask-half-2" id="rating-4.0" name="rating"
+                                <input class="bg-yellow-300 mask mask-star-2 mask-half-2" id="rating-4.0" name="rating"
                                        type="radio"
                                        value="4.0"/>
-                                <input class="bg-yellow-500 mask mask-star-2 mask-half-1" id="rating-4.5" name="rating"
+                                <input class="bg-yellow-300 mask mask-star-2 mask-half-1" id="rating-4.5" name="rating"
                                        type="radio"
                                        value="4.5"/>
-                                <input class="bg-yellow-500 mask mask-star-2 mask-half-2" id="rating-5.0" name="rating"
+                                <input class="bg-yellow-300 mask mask-star-2 mask-half-2" id="rating-5.0" name="rating"
                                        type="radio"
                                        value="5.0"/>
                             </div>
@@ -95,7 +95,7 @@
                     </div>
                     <div class="flex flex-col p-3">
                         <div class="form-group">
-                            <input accept="image/*" class="file-input file-input-bordered w-full" id="imageFiles"
+                            <input accept="image/*" class="file-input border-blue-800 border-2 w-full" id="imageFiles"
                                    multiple
                                    name="imageFiles"
                                    onchange="checkFileCount(event)" type="file"/>
@@ -103,13 +103,13 @@
                         <div class="flex justify-start my-2" id="selectedImages"></div>
                         <div class="form-group w-full">
                             <div class="mt-2 flex justify-center">
-                                <textarea class="w-full" id="content" name="content" th:text="${reviewCreationDTO.content}"
+                                <textarea class="w-full border-blue-800 border-2" id="content" name="content" th:text="${reviewCreationDTO.content}"
                                           style="height: 500px;"></textarea>
                             </div>
                         </div>
                         <div class="mt-2 flex justify-end">
-                            <button th:if="${create}"  class="btn btn-neutral btn-sm" type="submit">등록하기</button>
-                            <button th:unless="${create}" class="btn btn-neutral btn-sm" type="submit">수정하기</button>
+                            <button th:if="${create}"  class="btn bg-blue-800 hover:bg-blue-500 btn-sm text-white" type="submit">등록하기</button>
+                            <button th:unless="${create}" class="btn bg-blue-800 hover:bg-blue-500 btn-sm" type="submit">수정하기</button>
                         </div>
                     </div>
                 </div>

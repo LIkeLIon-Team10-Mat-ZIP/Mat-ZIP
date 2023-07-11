@@ -144,16 +144,6 @@ public class MemberController {
         return "redirect:/usr/member/myPage";
     }
 
-    @PreAuthorize("isAuthenticated()")
-    @GetMapping("/ranking")
-    public String showRanking(Model model) {
-        List<MemberRankDTO> memberRankDtoList = memberService.findAndConvertTopTenMember();
-
-        model.addAttribute("memberRankDtoList", memberRankDtoList);
-
-        return "/usr/member/ranking";
-    }
-
     @GetMapping("/getProfile")
     @ResponseBody
     public MemberProfileDTO getProfile(@RequestParam String nickname) {
