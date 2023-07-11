@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html layout:decorate="~{common/layout/defaultLayout.html}">
+
+<head>
+    <title>Mat.ZIP | 403 FORBIDDEN</title>
+
+    <script>
+        function goToMain() {
+            window.location.href = "/"; // 메인 화면으로 이동하는 URL로 변경해주세요
+        }
+    </script>
+</head>
+
+<body>
+<main layout:fragment="Content">
+    <div class="flex justify-center mx-auto max-w-5xl">
+        <div class="flex flex-col w-full">
+            <div style="display: flex; justify-content: center; align-items: center; height: 60vh;">
+                <img src="https://matzip-img.s3.ap-northeast-2.amazonaws.com/errorImages/403.png"
+                     style="max-width: 100%; height: auto;">
+            </div>
+        </div>
+    </div>
+    <div class="flex justify-center mx-auto max-w-5xl">
+        <button class="btn btn-info" onclick="goToMain()">메인 화면으로</button>
+    </div>
+</main>
+</body>
+</html>
