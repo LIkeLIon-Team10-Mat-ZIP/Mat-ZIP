@@ -1,7 +1,6 @@
 package site.matzip.matzip.dto;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 import site.matzip.matzip.domain.MatzipType;
@@ -17,16 +16,12 @@ public class MatzipCreationDTO {
     private String phoneNumber;
     @NotBlank(message = "맛집의 URL을 입력해주세요")
     private String matzipUrl;
-    @NotBlank(message = "Kakao Map API의 ID를 입력해주세요")
     private Long kakaoId;
     @NotBlank(message = "맛집의 유형을 입력해주세요")
     private String matzipType;
     private String description;
-    @NotBlank(message = "맛집점수를 입력해주세요")
     private double rating;
-    @NotBlank(message = "맛집의 X좌표를 입력해주세요")
     private double x;
-    @NotBlank(message = "맛집의 Y좌표를 입력해주세요")
     private double y;
 
     public MatzipType getMatzipTypeEnum() {

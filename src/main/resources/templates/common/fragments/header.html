@@ -1,4 +1,5 @@
-<header class="bg-red-100 bg-opacity-100 fixed top-0 left-0 right-0 z-50" th:fragment="HeaderFragment" style="border-bottom: 3px solid pink;">
+<header class="bg-white bg-opacity-100 fixed top-0 left-0 right-0 z-50 shadow-md" th:fragment="HeaderFragment"
+        style="border-bottom: 1px solid lightgray;">
     <div class="con mx-auto px-4 h-full flex items-center">
         <a href="/" class="logo text-lg font-bold flex items-center">
             <img src="/img/logo.png" class="p-2" alt="logo" style="height: 55px; width: 150px"/>
@@ -9,23 +10,23 @@
         <div class="flex h-full items-center justify-center hidden sm:block">
             <!--class="btn btn-ghost rounded-btn bg-transparent text-gray-800 dark:bg-transparent dark:text-gray-800" 다크모드일 경우 똑같은 값을 출력 -->
             <a sec:authorize="isAnonymous()"
-               class="btn btn-ghost rounded-btn bg-transparent text-gray-800 dark:bg-transparent dark:text-gray-800"
+               class="btn btn-ghost rounded-btn bg-transparent font-bold text-blue-800 dark:bg-transparent dark:text-gray-800"
                href="/oauth2/authorization/kakao">로그인</a>
             <a sec:authorize="isAuthenticated()"
-               class="btn btn-ghost rounded-btn bg-transparent text-gray-800 dark:bg-transparent dark:text-gray-800"
+               class="btn btn-ghost rounded-btn bg-transparent text-blue-800 dark:bg-transparent dark:text-gray-800"
                href="/usr/member/ranking">명예의 전당</a>
             <a sec:authorize="isAuthenticated()"
-               class="btn btn-ghost rounded-btn bg-transparent text-gray-800 dark:bg-transparent dark:text-gray-800"
+               class="btn btn-ghost rounded-btn bg-transparent text-blue-800 dark:bg-transparent dark:text-gray-800"
                href="/usr/member/myPage">마이 페이지</a>
             <a sec:authorize="isAuthenticated()"
-               class="btn btn-ghost rounded-btn bg-transparent text-gray-800 dark:bg-transparent dark:text-gray-800"
+               class="btn btn-ghost rounded-btn bg-transparent text-blue-800 font-bold dark:bg-transparent dark:text-gray-800"
                href="javascript:"
                onclick="$(this).next().submit();">로그아웃</a>
             <form class="!hidden" hidden th:action="|/usr/member/logout|" method="POST"></form>
             <a sec:authorize="isAuthenticated()" id="notificationModalBtn" class="btn btn-ghost">
                 <div class="indicator" style="position: relative;">
-                    <i class="fa-regular fa-bell">
-                            <span class="badge badge-xs badge-secondary indicator-item"
+                    <i class="fa-regular fa-bell text-blue-800">
+                            <span class="badge badge-xs badge-info indicator-item"
                                   style="position: absolute; top: -5px; right: -5px;"></span>
                     </i>
                 </div>
