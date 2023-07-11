@@ -15,8 +15,6 @@ import site.matzip.matzip.repository.MatzipMemberRepository;
 import site.matzip.matzip.repository.MatzipRepository;
 import site.matzip.member.domain.Member;
 import site.matzip.member.repository.MemberRepository;
-import site.matzip.review.domain.Review;
-import site.matzip.review.dto.ReviewCreationDTO;
 import site.matzip.review.dto.ReviewListDTO;
 
 import java.util.ArrayList;
@@ -97,9 +95,9 @@ public class MatzipService {
         return convertToListDTO(findAll(), authorId);
     }
 
-    //내가 등록한 맛집 정보 검색
+    //id로 등록한 맛집 정보 검색
     @Cacheable(value = "myMatzipListCache", key = "#authorId")
-    public List<MatzipListDTO> findAndConvertMine(Long authorId) {
+    public List<MatzipListDTO> findAndConvertById(Long authorId) {
         return convertToListDTO(findAllByAuthorId(authorId), authorId);
     }
 

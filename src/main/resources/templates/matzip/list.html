@@ -398,6 +398,7 @@
                     // 리스트 버튼 스피너를 숨깁니다
                     document.getElementById("listSpinnerMy").style.display = "none";
                     // 버튼 활성화/비활성화 클래스 토글
+
                     listBtnAll.classList.add("bg-blue-800", "text-white");
                     listBtnMy.classList.remove("bg-blue-800", "text-white");
                     currentListType = 'all'
@@ -546,6 +547,7 @@
         }
 
         function createReviewList(review) {
+
             const reviewListContainer = document.getElementById('reviewListContainer');
 
             // 1. 전체 리뷰 컨테이너 생성
@@ -629,6 +631,7 @@
 
             const reviewContent = document.createElement('a');
             reviewContent.setAttribute('href', 'review/detail/' + review.reviewId);
+
             reviewContent.classList.add('break-all');
             reviewContent.innerText = review.content;
             reviewContentWrapper.appendChild(reviewContent);
