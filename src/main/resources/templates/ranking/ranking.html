@@ -7,13 +7,13 @@
 <body>
 
 <main layout:fragment="Content">
-    <div>
+    <div class="mx-auto max-w-5xl">
         <div class="flex flex-col">
             <div class="flex justify-center space-x-4">
                 <i class="fa-solid fa-trophy text-yellow-300 text-4xl"></i>
                 <span id="subject" class="text-4xl">맛집 랭킹</span>
             </div>
-            <div class="flex justify-end mr-72 mt-10">
+            <div class="flex justify-end mt-10">
                 <div class="btn-group rounded-md border border-blue-200 ml-12">
                     <button class="btn-sm bg-blue-800 text-white rounded-md py-1 px-3 space-x-2 mr-2"
                             data-list-type="맛집"
@@ -32,7 +32,7 @@
             </div>
         </div>
         <!-- Matzip Ranking -->
-        <div id="matzip" class="flex justify-center mx-auto max-w-5xl" style="display: block">
+        <div id="matzip" class="flex justify-center" style="display: block">
             <div class="flex flex-col w-full">
                 <div class="mt-5">
                     <table class="table text-center">
