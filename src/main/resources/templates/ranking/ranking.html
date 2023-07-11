@@ -9,8 +9,9 @@
 <main layout:fragment="Content">
     <div>
         <div class="flex flex-col">
-            <div class="flex justify-center">
-                <span class="text-4xl text-gray-500"><i class="fa-solid fa-trophy"></i> Ranking</span>
+            <div class="flex justify-center space-x-4">
+                <i class="fa-solid fa-trophy text-yellow-300 text-4xl"></i>
+                <span id="subject" class="text-4xl">맛집 랭킹</span>
             </div>
             <div class="flex justify-end mr-72 mt-10">
                 <div class="btn-group rounded-md border border-blue-200 ml-12">
@@ -206,6 +207,8 @@
 
             const matzipRank = document.getElementById("matzip");
             const userRank = document.getElementById("user");
+
+            const subject = document.getElementById("subject")
             if (listType === "맛집") {
                 // 버튼 활성화/비활성화 클래스 토글
                 listBtnMatzip.classList.add("bg-blue-800", "text-white");
@@ -213,6 +216,8 @@
 
                 matzipRank.style.display = "block";
                 userRank.style.display = "none";
+                subject.textContent = "맛집 랭킹";
+
             } else {
                 // 버튼 활성화/비활성화 클래스 토글
                 listBtnMatzip.classList.remove("bg-blue-800", "text-white");
@@ -220,6 +225,7 @@
 
                 matzipRank.style.display = "none";
                 userRank.style.display = "block";
+                subject.textContent = "유저 랭킹";
             }
         }
     </script>
