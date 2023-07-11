@@ -101,11 +101,13 @@ public class ReviewService {
     }
 
     private ReviewListDTO convertToReviewDTO(Review review) {
-
         String profileImageUrl = appConfig.getDefaultProfileImageUrl();
         if (review.getAuthor().getProfileImage() != null && review.getAuthor().getProfileImage().getImageUrl() != null) {
             profileImageUrl = review.getAuthor().getProfileImage().getImageUrl();
         }
+
+        String reviewFirstImageUrl =
+                (review.getReviewImages().size() == 0) ? "" : review.getReviewImages().get(0).getImageUrl();
 
         return ReviewListDTO.builder()
                 .matzipId(review.getMatzip().getId())
@@ -118,7 +120,7 @@ public class ReviewService {
                 .matzipCount(review.getAuthor().getMatzipMembers().size())
                 .reviewCount(review.getAuthor().getReviews().size())
                 .friendCount(review.getAuthor().getFriends2().size())
-                .reviewImageUrl(review.getReviewImages().get(0).getImageUrl())
+                .reviewImageUrl(reviewFirstImageUrl)
                 .reviewImageCount(review.getReviewImages().size())
                 .build();
     }
