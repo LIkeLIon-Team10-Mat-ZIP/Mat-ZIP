@@ -16,7 +16,7 @@ ul{list-style:none;}
     width: 25%;
     float: left;
     text-align: center;
-    background : #F8E0F1;
+    background : #1E40AF;
     line-height: 40px;
     border-radius: 1rem;
 }
@@ -29,7 +29,7 @@ ul{list-style:none;}
     position:absolute;
     left:0; top:50px;
     box-sizing: border-box;
-    border : 5px solid #F8E0F1;
+    border : 5px solid #1E40AF;
     border-radius: 1rem;
 }
 
