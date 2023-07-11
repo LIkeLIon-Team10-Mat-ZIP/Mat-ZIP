@@ -98,9 +98,9 @@ public class MatzipController {
 
     @GetMapping("/api/list/{id}")
     @ResponseBody
-    public ResponseEntity<List<MatzipListDTO>> searchFriendsMap(@PathVariable Long friendId) {
+    public ResponseEntity<List<MatzipListDTO>> searchFriendsMap(@PathVariable Long id) {
         try {
-            List<MatzipListDTO> matzipDtoList = matzipService.findAndConvertById(friendId);
+            List<MatzipListDTO> matzipDtoList = matzipService.findAndConvertById(id);
             return ResponseEntity.ok(matzipDtoList);
         } catch (Exception e) {
             // 예외 발생 시 처리

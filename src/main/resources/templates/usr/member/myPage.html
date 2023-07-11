@@ -24,8 +24,9 @@
 
         #map {
             position: relative;
-            width: 30vw;
-            height: 30vh;
+            margin: auto;
+            width: 126vh;
+            height: 76vh;
         }
 
         #placeInfo {
@@ -60,6 +61,12 @@
             margin: 5px 0;
         }
 
+        #reviewListContainer {
+            transition: height 0.5s; /* 높이에 대한 0.5초 동안의 transition 효과 설정 */
+        }
+        .modal-box {
+            max-width: none !important;
+        }
     </style>
 </head>
 
@@ -152,9 +159,7 @@
                     </div>
                 </div>
             </div>
-            <button id="friendMapBtn" class="btn btn-xs">
-                맛집 지도 보기
-            </button>
+
             <!-- tab menu -->
             <div class="flex flex-grow p-2">
                 <div class="tabmenu-container w-full">
@@ -214,53 +219,53 @@
         </form>
     </dialog>
 
-    <div class="mx-auto min-h-xl">
-        <!-- Notification Modal -->
-        <div id="friendMapModal" class="friendMapModal hidden text-black">
-            <div class="flex flex-col friendMapModal-content justify-end">
-                <div id="friendMapModalContent">
-                    <div class="flex justify-end space-x-4">
-                        <input class="input input-bordered w-full max-w-xs"
-                               id="searchInput"
-                               placeholder="맛집 이름, 주소로 검색" type="text">
-                        <select class="rounded-md py-1 px-3 border-2 border-gray-400 focus:ring-2 focus:ring-blue-600"
-                                id="matzipTypeSelect">
-                            <option value="ALL">전체</option>
-                            <option value="KOREAN">한식</option>
-                            <option value="JAPANESE">회/일식</option>
-                            <option value="CHINESE">중식</option>
-                            <option value="ASIAN">아시안</option>
-                            <option value="BAR">술집</option>
-                            <option value="CAFE">카페</option>
-                            <option value="ETC">기타</option>
-                        </select>
-                        <button class="btn btn-info bg-blue-600 rounded-md py-1 px-4 text-white" id="filterBtn" onclick="search()">
-                            검색
-                        </button>
-                    </div>
-                    <div class="mt-3" id="map">
-                        <div id="placeInfo">
-                            <h2 id="placeName">맛집 이름</h2>
-                            <p id="placeAddress">주소</p>
-                            <p id="placePhone">전화번호</p>
-                            <p id="placeDescription">설명</p>
-                            <p id="placeRating">내 평점</p>
-                            <a class="inline-block w-full py-1 px-4 rounded-3xl text-center bg-gray-100 shadow mb-2" id="mapLink"
-                               target="_blank">큰지도 보기</a>
-                            <br>
-                            <a class="inline-block w-full py-1 px-4 rounded-3xl text-center bg-gray-100 shadow mb-2" id="routeLink"
-                               target="_blank">길찾기</a>
-                            <br>
-                            <a class="inline-block w-full py-1 px-4 rounded-3xl text-center bg-gray-100 shadow mb-2" id="detailLink"
-                               target="_blank">상세정보</a>
-                            <br>
-                            <hr>
-                        </div>
+    <dialog id="friendMap_modal" class="modal m-auto">
+        <form method="dialog" class="modal-box bg-white p-4" style="width: 130vh; height: 90vh">
+            <div class="w-full overflow-hidden">
+                <div class="flex justify-end space-x-4 my-3">
+                    <input class="input input-bordered w-full max-w-xs"
+                           id="searchInput"
+                           placeholder="맛집 이름, 주소로 검색" type="text">
+                    <select class="rounded-md py-1 px-3 border-2 border-gray-400 focus:ring-2 focus:ring-blue-600"
+                            id="matzipTypeSelect">
+                        <option value="ALL">전체</option>
+                        <option value="KOREAN">한식</option>
+                        <option value="JAPANESE">회/일식</option>
+                        <option value="CHINESE">중식</option>
+                        <option value="ASIAN">아시안</option>
+                        <option value="BAR">술집</option>
+                        <option value="CAFE">카페</option>
+                        <option value="ETC">기타</option>
+                    </select>
+                    <button class="btn btn-info bg-blue-600 rounded-md py-1 px-4 text-white" id="filterBtn" type="button" onclick="search()">
+                        검색
+                    </button>
+                </div>
+                <div class="mt-3" id="map">
+                    <div id="placeInfo">
+                        <h2 id="placeName">맛집 이름</h2>
+                        <p id="placeAddress">주소</p>
+                        <p id="placePhone">전화번호</p>
+                        <p id="placeDescription">설명</p>
+                        <p id="placeRating">내 평점</p>
+                        <a class="inline-block w-full py-1 px-4 rounded-3xl text-center bg-gray-100 shadow mb-2" id="mapLink"
+                           target="_blank">큰지도 보기</a>
+                        <br>
+                        <a class="inline-block w-full py-1 px-4 rounded-3xl text-center bg-gray-100 shadow mb-2" id="routeLink"
+                           target="_blank">길찾기</a>
+                        <br>
+                        <a class="inline-block w-full py-1 px-4 rounded-3xl text-center bg-gray-100 shadow mb-2" id="detailLink"
+                           target="_blank">상세정보</a>
+                        <br>
+                        <hr>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
+        </form>
+        <form method="dialog" class="modal-backdrop w-full h-full">
+            <button>close</button>
+        </form>
+    </dialog>
 
     <script>
         const tBtn_1 = document.getElementById('menu1');
@@ -321,44 +326,6 @@
                 }
             });
         });
-
-        function redirectToFriendMap(friendId) {
-            const apiUrl = `/matzip/api/list/${friendId}`;
-            console.log(friendId);
-            sessionStorage.setItem('friendMapUrl', apiUrl);
-            console.log(sessionStorage.getItem('friendMapUrl'));
-            window.location.href = "myPage/friendMap";
-        }
-
-        function closeFriendMapModal() {
-            const friendMapModal = document.getElementById("friendMapModal");
-            friendMapModal.classList.add("hidden");
-        }
-
-        const openFriendMapModalBtn = document.getElementById("friendMapModalBtn");
-        if (openFriendMapModalBtn != null) {
-            openFriendMapModalBtn.onclick = function () {
-
-                const friendMapModal = document.getElementById("friendMapModal");
-
-                // 이미 열려있는 경우, 모달을 닫음
-                if (!friendMapModal.classList.contains("hidden")) {
-                    closeFriendMapModal();
-                    return false;
-                }
-
-                // 콘텐츠 로드 및 모달 열기
-                // loadMatzipList("/matzip/api/list/2")
-                friendMapModal.classList.remove("hidden");
-
-                // 모달창 이외의 곳을 클릭하면 모달창을 닫음
-                friendMapModal.onclick = function (event) {
-                    if (event.target === friendMapModal) {
-                        closeFriendMapModal();
-                    }
-                };
-            }
-        }
     </script>
 
     <script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=868d9aa6d8d0e67bad6c59729809c3fa&libraries=services,clusterer"
@@ -450,8 +417,8 @@
             infowindow.open(map, marker);
         }
 
-        const apiUrl = sessionStorage.getItem('friendMapUrl');
-        //loadMatzipList(apiUrl)
+        const apiUrl = '/matzip/api/list/2'
+        loadMatzipList(apiUrl)
 
         //맛집 리스트 로드 함수. (apiUrl에 따라 다른 리스트 불러옴, 맨 아래에 있음)
         function loadMatzipList(apiUrl, callback) {
