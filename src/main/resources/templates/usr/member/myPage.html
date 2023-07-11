@@ -73,7 +73,7 @@
 <body>
 
 <main layout:fragment="Content">
-    <div class="flex justify-center mx-auto max-w-5xl">
+    <div class="flex justify-center mx-auto max-w-5xl mt-96" style="height: 1100px;">
         <div class="flex flex-col w-full">
             <div class="p-3 border-b border-gray-400">
                 <span class="font-bold text-xl"><i class="fa-regular fa-user"></i> 마이 페이지</span>
@@ -89,7 +89,7 @@
                         <span class="mr-3 text-xl font-bold" th:text="${memberInfoDTO.nickname}"></span>
                         <div class="flex flex-grow">
                             <div th:each="badge : ${memberInfoDTO.badgeImage}">
-                                <img th:src="${badge.key}" class="w-7 h-7 rounded-full mr-1" th:title="${badge.value}">
+                                <img th:src="${badge.key}" class="w-12 h-12 rounded-full mr-1" th:title="${badge.value}">
                             </div>
                         </div>
                         <div class="dropdown dropdown-left">
@@ -161,7 +161,7 @@
             </div>
 
             <!-- tab menu -->
-            <div class="flex flex-grow p-2">
+            <div class="flex flex-grow">
                 <div class="tabmenu-container w-full">
                     <div class="tabmenu out-tabmenu">
                         <ul>
@@ -204,12 +204,12 @@
                     <p class="mb-3 text-lg"><i class="fa-regular fa-face-smile"></i> 추가할 친구의 닉네임을 입력해 주세요.</p>
                     <div class="flex items-center space-x-4">
                         <input type="text" name="nickname" placeholder="닉네임" autocomplete="off"
-                               class="bg-pink-100 h-10 p-4 w-80"/>
+                               class="bg-blue-100 h-10 p-4 w-80"/>
                     </div>
                     <div class="flex justify-end mt-5">
                         <a href="/usr/member/myPage?menu=3"
-                           class="btn btn-sm bg-pink-200 h-10 w-16 mr-2 text-sm flex items-center justify-center hover:bg-pink-100">취소</a>
-                        <button class="addFriend btn btn-sm bg-pink-200 h-10 w-16 text-sm flex items-center justify-center hover:bg-pink-100"
+                           class="btn btn-sm bg-blue-800 h-10 w-16 mr-2 text-sm text-white flex items-center justify-center hover:bg-blue-700">취소</a>
+                        <button class="addFriend btn btn-sm bg-blue-800 h-10 w-16 text-sm text-white flex items-center justify-center hover:bg-blue-700"
                                 type="submit">
                             <span class="text-center">추가</span>
                         </button>
