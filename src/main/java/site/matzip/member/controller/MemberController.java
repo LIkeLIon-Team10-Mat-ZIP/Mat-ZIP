@@ -4,6 +4,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -63,6 +64,8 @@ public class MemberController {
     @GetMapping("/myPage")
     public String showMyPage(Model model, @RequestParam(value = "menu", defaultValue = "1") int menu,
                              Authentication authentication) {
+
+        //Member member = principalDetails.getMember(); TODO: 수정 필요
         Member member = rq.getMember(authentication);
 
         MemberInfoDTO memberInfoDTO = memberService.convertToMemberInfoDTO(member.getId());
@@ -97,6 +100,11 @@ public class MemberController {
         }
     }
 
+    @GetMapping("/myPage/friendMap")
+    public String getFriendMap() {
+        return "usr/member/myPage/friendMap";
+    }
+
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/myPage/modifyNickname")
     public String showModifyNickName() {
@@ -105,7 +113,9 @@ public class MemberController {
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/myPage/modifyNickname")
-    public String modifyNickName(NicknameUpdateDTO nicknameUpdateDTO, BindingResult result, @AuthenticationPrincipal PrincipalDetails principalDetails) {
+    public String modifyNickName(@Valid NicknameUpdateDTO nicknameUpdateDTO,
+                                 BindingResult result,
+                                 @AuthenticationPrincipal PrincipalDetails principalDetails) {
         if (result.hasErrors()) {
             return "/usr/member/myPage/modifyNickname";
         }

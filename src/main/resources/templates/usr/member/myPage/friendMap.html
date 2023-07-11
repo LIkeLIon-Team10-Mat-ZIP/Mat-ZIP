@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html layout:decorate="~{common/layout/defaultLayout.html}">
+<head>
+    <meta charset="utf-8">
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+    <title>Matzip</title>
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        #map {
+            position: relative;
+            width: 90vw;
+            height: 90vh;
+        }
+
+        #placeInfo {
+            display: none;
+            position: absolute;
+            width: 350px;
+            top: 10px;
+            right: 10px;
+            padding: 10px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+            z-index: 2;
+        }
+
+        #placeInfo h2 {
+            margin: 0;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        #placeName {
+            display: inline-block;
+            margin-right: 8px;
+        }
+
+        #placeName + a {
+            margin-left: 8px;
+        }
+
+        #placeInfo p {
+            margin: 5px 0;
+        }
+
+    </style>
+</head>
+<body>
+<main layout:fragment="Content">
+    <div class="flex justify-end space-x-4">
+        <input class="input input-bordered w-full max-w-xs"
+               id="searchInput"
+               placeholder="맛집 이름, 주소로 검색" type="text">
+        <select class="rounded-md py-1 px-3 border-2 border-gray-400 focus:ring-2 focus:ring-blue-600"
+                id="matzipTypeSelect">
+            <option value="ALL">전체</option>
+            <option value="KOREAN">한식</option>
+            <option value="JAPANESE">회/일식</option>
+            <option value="CHINESE">중식</option>
+            <option value="ASIAN">아시안</option>
+            <option value="BAR">술집</option>
+            <option value="CAFE">카페</option>
+            <option value="ETC">기타</option>
+        </select>
+        <button class="btn btn-info bg-blue-600 rounded-md py-1 px-4 text-white" id="filterBtn" onclick="search()">
+            검색
+        </button>
+    </div>
+    <div class="mt-3" id="map">
+        <div id="placeInfo">
+            <h2 id="placeName">맛집 이름</h2>
+            <p id="placeAddress">주소</p>
+            <p id="placePhone">전화번호</p>
+            <p id="placeDescription">설명</p>
+            <p id="placeRating">내 평점</p>
+            <a class="inline-block w-full py-1 px-4 rounded-3xl text-center bg-gray-100 shadow mb-2" id="mapLink"
+               target="_blank">큰지도 보기</a>
+            <br>
+            <a class="inline-block w-full py-1 px-4 rounded-3xl text-center bg-gray-100 shadow mb-2" id="routeLink"
+               target="_blank">길찾기</a>
+            <br>
+            <a class="inline-block w-full py-1 px-4 rounded-3xl text-center bg-gray-100 shadow mb-2" id="detailLink"
+               target="_blank">상세정보</a>
+            <br>
+            <hr>
+        </div>
+    </div>
+
+    <script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=868d9aa6d8d0e67bad6c59729809c3fa&libraries=services,clusterer"
+            type="text/javascript"></script>
+    <script>
+        var mapContainer = document.getElementById('map'),
+            mapOption = {
+                center: new kakao.maps.LatLng(37.56682, 126.97865),
+                level: 7,
+                mapTypeId: kakao.maps.MapTypeId.ROADMAP
+            };
+
+        var map = new kakao.maps.Map(mapContainer, mapOption);
+
+        // 일반 지도와 스카이뷰로 지도 타입을 전환할 수 있는 지도타입 컨트롤을 생성합니다
+        var mapTypeControl = new kakao.maps.MapTypeControl();
+
+        // 지도에 컨트롤을 추가해야 지도위에 표시됩니다
+        // kakao.maps.ControlPosition은 컨트롤이 표시될 위치를 정의하는데 TOPLEFT는 왼쪽 위를 의미합니다
+        map.addControl(mapTypeControl, kakao.maps.ControlPosition.TOPLEFT);
+
+        // 지도 확대 축소를 제어할 수 있는  줌 컨트롤을 생성합니다
+        var zoomControl = new kakao.maps.ZoomControl();
+        map.addControl(zoomControl, kakao.maps.ControlPosition.LEFT);
+
+        //map 설정이 끝났으니 세션에 담겨있던거 삭제
+        sessionStorage.clear();
+
+        // 검색 결과 목록이나 마커를 클릭했을 때 장소명을 표출할 인포윈도우를 생성합니다
+        var infowindow = new kakao.maps.InfoWindow({zIndex: 1});
+
+        var imageSrc = "https://ifh.cc/g/64zAsK.png";
+        var imageSize = new kakao.maps.Size(36, 37);
+        var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize);
+        var currentInfoWindow = null;
+        var markers = [];
+        var nonFilteredData;
+
+        var placeInfo = document.getElementById('placeInfo');
+        var placeName = document.getElementById('placeName');
+        var placeAddress = document.getElementById('placeAddress');
+        var placePhone = document.getElementById('placePhone');
+        var placeDescription = document.getElementById('placeDescription');
+        var placeRating = document.getElementById('placeRating')
+        var mapLink = document.getElementById('mapLink');
+        var routeLink = document.getElementById('routeLink');
+        var detailLink = document.getElementById('detailLink');
+
+        // 마커 클러스터러를 생성합니다 (마커 여러개 하나로 묶어서 표시해줌)
+        var clusterer = new kakao.maps.MarkerClusterer({
+            map: map, // 마커들을 클러스터로 관리하고 표시할 지도 객체
+            averageCenter: true, // 클러스터에 포함된 마커들의 평균 위치를 클러스터 마커 위치로 설정
+            minLevel: 7 // 클러스터 할 최소 지도 레벨
+        });
+
+        //지도 영역 외의 다른 부분을 클릭했을 때 placeInfo, reviewList, infoWindow를 숨깁니다.
+        document.addEventListener('click', function (event) {
+            var target = event.target;
+            var mapContainer = document.getElementById('map');
+            var placeInfo = document.getElementById('placeInfo');
+
+            var reviewList = document.getElementById('reviewList');
+            if (target !== mapContainer && !mapContainer.contains(target) && target !== placeInfo && !placeInfo.contains(target)) {
+                placeInfo.style.display = 'none'; // Hide place info
+                reviewList.style.display = 'none';
+                if (currentInfoWindow) {
+                    currentInfoWindow.close();
+                }
+            }
+        });
+
+        // 지도 위에 표시되고 있는 마커를 모두 제거합니다
+        function removeMarker() {
+            if (markers.length > 0) {
+                for (var i = 0; i < markers.length; i++) {
+                    markers[i].setMap(null);
+                }
+                markers = [];
+            }
+        }
+
+        function showInfoWindow(marker, matzip) {
+            if (matzip.matzipName.length > 9) {
+                iwContent = '<div style="padding:5px; overflow-wrap: break-word; font-size:0.8em;">' + matzip.matzipName + '</div>'
+            } else {
+                iwContent = '<div style="padding:5px; overflow-wrap: break-word;">' + matzip.matzipName + '</div>';
+            }
+            infowindow.setContent(iwContent);
+            infowindow.open(map, marker);
+        }
+
+        const apiUrl = `/matzip/api/list/2`;
+        loadMatzipList(apiUrl)
+
+        //맛집 리스트 로드 함수. (apiUrl에 따라 다른 리스트 불러옴, 맨 아래에 있음)
+        function loadMatzipList(apiUrl, callback) {
+            removeMarker();
+            clusterer.clear();
+            // 서버에 matzip 정보를 요청합니다
+            fetch(apiUrl)
+                .then(response => response.json())
+                .then(data => {
+                    //전역 변수에 넘어온 모든 데이터 할당
+                    nonFilteredData = data;
+                    // 각 맛집 정보에 대해서 반복 처리를 합니다
+                    data.forEach(matzip => {
+                        const marker = createMarker(map, matzip, markerImage);
+                        addMarkerClickEvent(marker, matzip);
+                        markers.push(marker);
+                    });
+                    clusterer.addMarkers(markers);
+                    if (callback) callback();
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                    if (callback) callback();
+                });
+        }
+
+        //검색 결과 반환하는 함수
+        function loadMatzipListWithFilteredList(filteredList) {
+            removeMarker();
+            clusterer.clear();
+            filteredList.forEach(matzip => {
+                const marker = createMarker(map, matzip, markerImage);
+                addMarkerClickEvent(marker, matzip);
+                markers.push(marker);
+            });
+
+            clusterer.addMarkers(markers);
+        }
+
+        // 마커에 클릭 이벤트 리스너를 추가하는 함수
+
+
+        function createMarker(map, matzip, markerImage) {
+            // 해당 위치에 마커를 생성합니다
+            var marker = new kakao.maps.Marker({
+                map: map,
+                position: new kakao.maps.LatLng(matzip.y, matzip.x),
+                title: matzip.matzipName,
+                image: markerImage,
+            });
+            marker.matzipId = matzip.matzipId;
+            return marker;
+        }
+
+        function showPlaceInfo(marker, matzip) {
+            // 장소 정보를 업데이트합니다.
+            placeName.innerText = matzip.matzipName;
+            placeAddress.innerText = '주소: ' + matzip.address;
+            placePhone.innerText = '전화번호: ' + matzip.phoneNumber;
+            // 설명이나 평점이 없는 경우, 해당 요소를 숨깁니다
+            if (matzip.description === "" && matzip.rating === 0) {
+                placeDescription.style.display = 'none';
+                placeRating.style.display = 'none';
+            } else {
+                placeDescription.style.display = 'block';
+                placeDescription.innerText = '설명: ' + matzip.description;
+                placeRating.style.display = 'block';
+                placeRating.innerText = '내 평점: ' + matzip.rating;
+            }
+            mapLink.href = 'https://map.kakao.com/link/map/' + matzip.matzipName + ',' + matzip.y + ',' + matzip.x;
+            mapLink.innerText = '큰지도보기';
+            routeLink.href = 'https://map.kakao.com/link/to/' + matzip.matzipName + ',' + matzip.y + ',' + matzip.x;
+            routeLink.innerText = '길찾기';
+            detailLink.href = matzip.matzipUrl;
+            detailLink.innerText = '상세정보';
+            placeInfo.style.display = 'block'; // Show place info
+        }
+
+        //조건에 맞게 검색
+        function filterByNameOrType(searchName, searchType) {
+            const filteredList = nonFilteredData.filter((matzip) => {
+                const {matzipName, address, matzipType} = matzip
+
+                let isNameMatched = searchName
+                    ? matzipName.includes(searchName) || address.includes(searchName)
+                    : true;
+                let isTypeMatched = !searchType || searchType === "ALL" || matzipType === searchType;
+
+                return isNameMatched && isTypeMatched;
+            });
+
+            loadMatzipListWithFilteredList(filteredList);
+        }
+
+        //검색 버튼 누르면 실행
+        function search() {
+            const searchName = document.getElementById("searchInput").value;
+            const searchType = document.getElementById("matzipTypeSelect").value;
+            filterByNameOrType(searchName, searchType);
+        }
+
+        function addMarkerClickEvent(marker, matzip) {
+            kakao.maps.event.addListener(marker, 'click', (function (marker, matzip) {
+                return function () {
+                    panTo(matzip.x, matzip.y);
+                    showPlaceInfo(marker, matzip);
+                    showInfoWindow(marker, matzip);
+                    currentInfoWindow = infowindow;
+                };
+            })(marker, matzip));
+        }
+
+        //지도 이동 메서드
+        function panTo(markerX, markerY) {
+            var moveLatLon = new kakao.maps.LatLng(markerY, markerX);
+            map.panTo(moveLatLon);
+        }
+    </script>
+</main>
+</body>
+</html>

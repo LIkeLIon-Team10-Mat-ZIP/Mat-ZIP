@@ -3,10 +3,10 @@ package site.matzip.review.controller;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -17,6 +17,7 @@ import site.matzip.badge.service.MemberBadgeService;
 import site.matzip.comment.domain.Comment;
 import site.matzip.comment.dto.CommentInfoDTO;
 import site.matzip.config.auth.PrincipalDetails;
+import site.matzip.image.domain.ReviewImage;
 import site.matzip.image.service.ReviewImageService;
 import site.matzip.matzip.domain.Matzip;
 import site.matzip.matzip.dto.MatzipInfoDTO;
@@ -24,11 +25,12 @@ import site.matzip.matzip.service.MatzipService;
 import site.matzip.review.domain.Review;
 import site.matzip.review.dto.ReviewCreationDTO;
 import site.matzip.review.dto.ReviewDetailDTO;
+import site.matzip.review.dto.ReviewListDTO;
 import site.matzip.review.service.ReviewService;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/review")
@@ -53,6 +55,7 @@ public class ReviewController {
         ReviewCreationDTO reviewCreationDTO = new ReviewCreationDTO();
         model.addAttribute("matzipInfoDTO", matzipInfoDTO);
         model.addAttribute("reviewCreationDTO", reviewCreationDTO);
+        model.addAttribute("create", true);
 
         return "/review/add";
     }
@@ -82,13 +85,15 @@ public class ReviewController {
         Matzip matzip = review.getMatzip();
         MatzipInfoDTO matzipInfoDTO = new MatzipInfoDTO(matzip);
 
-        if (!review.getAuthor().getId().equals(principalDetails.getMember().getId())) {
-            throw new AccessDeniedException("You do not have permission to modify.");
-        }
+        reviewService.checkAccessPermission(reviewId, principalDetails);
 
         model.addAttribute("matzipInfoDTO", matzipInfoDTO);
         reviewCreationDTO.setRating(review.getRating());
         reviewCreationDTO.setContent(review.getContent());
+        reviewCreationDTO.setImageUrls(review.getReviewImages()
+                .stream()
+                .map(ReviewImage::getImageUrl)
+                .collect(Collectors.toList()));
 
         return "/review/add";
     }
@@ -96,40 +101,54 @@ public class ReviewController {
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/modify/{reviewId}")
     public String modify(@PathVariable Long reviewId, ReviewCreationDTO reviewCreationDTO, BindingResult bindingResult,
-                         @AuthenticationPrincipal PrincipalDetails principalDetails) {
+                         @AuthenticationPrincipal PrincipalDetails principalDetails) throws IOException {
         Review review = reviewService.findById(reviewId);
+        reviewService.checkAccessPermission(reviewId, principalDetails);
 
         if (bindingResult.hasErrors()) {
             return "/review/add";
         }
 
-        if (!review.getAuthor().getId().equals(principalDetails.getMember().getId())) {
-            throw new AccessDeniedException("You do not have permission to modify.");
-        }
+        Review modifyReview = reviewService.modify(review, reviewCreationDTO);
 
-        reviewService.modify(review, reviewCreationDTO);
+        if (!reviewService.isImageFileEmpty(reviewCreationDTO)) {
+            reviewImageService.modify(reviewCreationDTO.getImageFiles(), modifyReview);
+        }
 
         return "redirect:/review/detail/" + reviewId;
     }
 
-    @GetMapping("/api/{matzipId}")
+    @GetMapping("/api/list/{matzipId}")
     @ResponseBody
-    public ResponseEntity<List<Review>> getReviewsByMatzipId(@PathVariable Long matzipId, @RequestParam int pageSize, @RequestParam int pageNumber) {
+    public ResponseEntity<Page<ReviewListDTO>> getReviewsByMatzipId(@PathVariable Long matzipId,
+                                                                    @RequestParam int pageSize,
+                                                                    @RequestParam int pageNumber) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
-        List<Review> reviews = reviewService.findByMatzipId(matzipId, pageable);
+        Page<ReviewListDTO> reviews = reviewService.findByMatzipIdAndConvertToDTO(matzipId, pageable);
+
+        return ResponseEntity.ok(reviews);
+    }
+
+    @GetMapping("/api/mylist/{matzipId}")
+    public ResponseEntity<Page<ReviewListDTO>> getReviewsByMatzipIdAndAuthor(@PathVariable Long matzipId,
+                                                                             @RequestParam int pageSize,
+                                                                             @RequestParam int pageNumber,
+                                                                             @AuthenticationPrincipal PrincipalDetails principalDetails) {
+        Long authorId = principalDetails.getMember().getId();
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        Page<ReviewListDTO> reviews = reviewService.findByMatzipIdWithAuthorAndConvertToReviewDTO(matzipId, authorId, pageable);
 
         return ResponseEntity.ok(reviews);
     }
 
     @PreAuthorize("isAuthenticated()")
-    @DeleteMapping("/{reviewId}")
+    @PostMapping("/delete/{reviewId}")
     public String delete(@PathVariable Long reviewId, @AuthenticationPrincipal PrincipalDetails principalDetail) {
         Review review = reviewService.findById(reviewId);
 
-        if (!Objects.equals(review.getAuthor().getId(), principalDetail.getMember().getId())) {
-            throw new AccessDeniedException("You do not have permission to delete.");
-        }
+        reviewService.checkAccessPermission(reviewId, principalDetail);
         reviewService.remove(review);
+        reviewImageService.remove(review);
 
         return "redirect:/";
     }

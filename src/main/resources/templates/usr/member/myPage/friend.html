@@ -8,8 +8,8 @@
             </h2>
         </div>
         <div>
-            <button class="btn btn-xs" onclick="addFriend_modal.showModal();"><i class="fa-solid fa-user-plus"></i> 친구
-                추가
+            <button class="btn btn-xs" onclick="addFriend_modal.showModal();">
+                <i class="fa-solid fa-user-plus"></i> 친구 추가
             </button>
         </div>
     </div>
@@ -53,15 +53,18 @@
                     </div>
                 </td>
                 <td>
-                    <button class="btn btn-xs">맛집 지도 보기</button>
+                    <button class="btn btn-xs"
+                            th:attr="data-friend-id=${friendDetailDTO.id}, data-friend-nickname=${friendDetailDTO.friendNickname},
+                            data-friend-profileImageUrl=${friendDetailDTO.profileImageUrl}"
+                            onclick="loadMatzipListAndShowModal(this);">맛집 지도 보기
+                    </button>
                 </td>
                 <td>
                     <a href="javascript:void(0);" class="btn btn-xs"
                        onclick="if ( confirm('정말로 이 친구를 삭제하시겠습니까? 삭제한 친구 관계는 되돌릴 수 없습니다.') ) $(this).next().submit();">
                         친구 삭제
                     </a>
-                    <form hidden th:action="@{|/usr/friends/${friendDetailDTO.id}|}" method="POST">
-                        <input type="hidden" name="_method" value="delete">
+                    <form hidden th:action="@{|/usr/friends/delete/${friendDetailDTO.id}|}" method="POST">
                     </form>
                 </td>
             </tr>

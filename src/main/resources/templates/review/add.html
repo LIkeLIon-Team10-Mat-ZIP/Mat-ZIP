@@ -39,8 +39,10 @@
             <form enctype="multipart/form-data" id="reviewForm"
                   method="POST" th:action th:object="${reviewCreationDTO}">
                 <div class="flex flex-col">
-                    <span class="font-bold text-xl p-3 border-b border-gray-400"><i
+                    <span th:if="${create}" class="font-bold text-xl p-3 border-b border-gray-400"><i
                             class="fa-regular fa-pen-to-square"></i> 리뷰 작성</span>
+                    <span th:unless="${create}" class="font-bold text-xl p-3 border-b border-gray-400"><i
+                            class="fa-regular fa-pen-to-square"></i> 리뷰 수정</span>
                     <div class="flex p-3">
                         <div class="flex-grow">
                             <div class="flex items-center">
@@ -106,7 +108,8 @@
                             </div>
                         </div>
                         <div class="mt-2 flex justify-end">
-                            <button class="btn btn-neutral btn-sm" type="submit">등록하기</button>
+                            <button th:if="${create}"  class="btn btn-neutral btn-sm" type="submit">등록하기</button>
+                            <button th:unless="${create}" class="btn btn-neutral btn-sm" type="submit">수정하기</button>
                         </div>
                     </div>
                 </div>
@@ -114,7 +117,7 @@
         </div>
     </div>
 
-    <script>
+    <script th:inline="javascript">
         function checkFileCount(event) {
             const fileInput = event.target;
             const files = fileInput.files;
@@ -174,8 +177,12 @@
             selectedImagesDiv.innerHTML = "";
         }
 
-        // 리뷰에 등록되어 있던 별점을 표시하는 script
         document.addEventListener('DOMContentLoaded', function () {
+            // 수정전 이미지 보여지기
+            const existingImages = /*[[${reviewCreationDTO.imageUrls}]]*/ null;
+            displayExistingImages(existingImages);
+
+            // 리뷰에 등록되어 있던 별점을 표시하는 script
             const ratingElem = document.querySelector('.rating');
             const ratingValue = parseFloat(ratingElem.dataset.rating);
             const inputElems = ratingElem.querySelectorAll('input');
@@ -186,6 +193,28 @@
                 }
             });
         });
+
+        // 수정전 이미지 가져오기
+        function displayExistingImages(images) {
+            const selectedImagesDiv = document.getElementById("selectedImages");
+
+            images.forEach(image => {
+                // 이미지 컨테이너를 생성합니다.
+                const imageContainer = document.createElement("div");
+                imageContainer.classList.add("selectedImageContainer");
+
+                // 이미지를 표시하기 위한 HTML 요소를 동적으로 생성합니다.
+                const imgElement = document.createElement("img");
+                imgElement.src = image;
+                imgElement.classList.add("selectedImage");
+
+                // 이미지를 컨테이너에 추가합니다.
+                imageContainer.appendChild(imgElement);
+
+                // 컨테이너를 추가합니다.
+                selectedImagesDiv.appendChild(imageContainer);
+            });
+        }
     </script>
 </main>
 

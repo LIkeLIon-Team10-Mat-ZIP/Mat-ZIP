@@ -8,6 +8,7 @@ import site.matzip.badge.domain.MemberBadge;
 import site.matzip.member.domain.Member;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import site.matzip.member.domain.Member;
 import site.matzip.review.domain.Review;
 
 import java.time.LocalDateTime;
@@ -37,6 +38,9 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     @Query("SELECT r from Review r WHERE r.createDate < :olderThanTime")
     List<Review> findReviewsOlderThan(@Param("olderThanTime") LocalDateTime olderThanTime);
 
+    Page<Review> findByMatzipIdAndAuthorId(Long matzipId, Long authorId, Pageable pageable);
+
     @Query("SELECT r FROM Review r JOIN FETCH r.hearts WHERE r.author = :author")
     List<Review> findByAuthorForHeart(@Param("author") Member author);
+
 }

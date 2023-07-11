@@ -10,11 +10,13 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import site.matzip.base.appConfig.AppConfig;
 import site.matzip.comment.domain.Comment;
 import site.matzip.comment.dto.CommentInfoDTO;
+import site.matzip.config.auth.PrincipalDetails;
 import site.matzip.image.domain.ReviewImage;
 import site.matzip.matzip.domain.Matzip;
 import site.matzip.member.domain.Member;
@@ -29,6 +31,7 @@ import site.matzip.review.repository.ReviewRepository;
 
 import java.time.*;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -62,39 +65,49 @@ public class ReviewService {
     }
 
     @CacheEvict(value = {"reviewListCache", "myReviewListCache"}, allEntries = true)
-    public void modify(Review review, ReviewCreationDTO reviewCreationDTO) {
+    public Review modify(Review review, ReviewCreationDTO reviewCreationDTO) {
         review.updateContent(reviewCreationDTO.getContent());
         review.updateRating(reviewCreationDTO.getRating());
         reviewRepository.save(review);
+
+        return review;
     }
 
     public Review findById(Long reviewId) {
         return reviewRepository.findById(reviewId).orElseThrow(() -> new EntityNotFoundException("Review not Found"));
     }
 
-    public List<Review> findByMatzipId(Long matzipId, Pageable pageable) {
+    @Cacheable(value = "reviewListCache")
+    public Page<ReviewListDTO> findByMatzipIdAndConvertToDTO(Long matzipId, Pageable pageable) {
         Page<Review> reviewPage = reviewRepository.findByMatzipId(matzipId, pageable);
-        return reviewPage.getContent();
+        return reviewPage.map(this::convertToReviewDTO);
     }
 
-    @Cacheable(value = "reviewListCache")
+    @Cacheable(value = "myReviewListCache", key = "#authorId")
+    public Page<ReviewListDTO> findByMatzipIdWithAuthorAndConvertToReviewDTO(Long matzipId, Long authorId, Pageable pageable) {
+        Page<Review> reviewPage = reviewRepository.findByMatzipIdAndAuthorId(matzipId, authorId, pageable);
+        return reviewPage.map(this::convertToReviewDTO);
+    }
+
+
     public List<ReviewListDTO> findAndConvertAll() {
         List<Review> reviews = reviewRepository.findAll();
         return reviews.stream().map(this::convertToReviewDTO).collect(Collectors.toList());
     }
 
-    @Cacheable(value = "myReviewListCache")
     public List<ReviewListDTO> findAndConvertMine(Long authorId) {
         List<Review> reviews = reviewRepository.findByAuthorId(authorId);
         return reviews.stream().map(this::convertToReviewDTO).collect(Collectors.toList());
     }
 
     private ReviewListDTO convertToReviewDTO(Review review) {
-
         String profileImageUrl = appConfig.getDefaultProfileImageUrl();
         if (review.getAuthor().getProfileImage() != null && review.getAuthor().getProfileImage().getImageUrl() != null) {
             profileImageUrl = review.getAuthor().getProfileImage().getImageUrl();
         }
+
+        String reviewFirstImageUrl =
+                (review.getReviewImages().size() == 0) ? "" : review.getReviewImages().get(0).getImageUrl();
 
         return ReviewListDTO.builder()
                 .matzipId(review.getMatzip().getId())
@@ -107,6 +120,8 @@ public class ReviewService {
                 .matzipCount(review.getAuthor().getMatzipMembers().size())
                 .reviewCount(review.getAuthor().getReviews().size())
                 .friendCount(review.getAuthor().getFriends2().size())
+                .reviewImageUrl(reviewFirstImageUrl)
+                .reviewImageCount(review.getReviewImages().size())
                 .build();
     }
 
@@ -250,5 +265,16 @@ public class ReviewService {
         return reviewRepository
                 .findById(reviewId)
                 .orElseThrow(() -> new EntityNotFoundException("Review not Found"));
+    }
+
+    public boolean isImageFileEmpty(ReviewCreationDTO reviewCreationDTO) {
+        return reviewCreationDTO.getImageFiles().size() == 1 && reviewCreationDTO.getImageFiles().get(0).isEmpty();
+    }
+
+    public void checkAccessPermission(Long reviewId, PrincipalDetails principalDetail) {
+        Review review = findById(reviewId);
+        if (!Objects.equals(review.getAuthor().getId(), principalDetail.getMember().getId())) {
+            throw new AccessDeniedException("You do not have permission.");
+        }
     }
 }

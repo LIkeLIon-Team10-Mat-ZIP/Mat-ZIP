@@ -64,13 +64,16 @@
     });
 </script>
 
+<!--Footer 영역을 참조합니다.-->
+<footer th:replace="common/fragments/footer :: FooterFragment"></footer>
 <script>
     function closeModal() {
         const modal = document.getElementById("notificationModal");
         modal.classList.add("hidden");
     }
 
-    function loadContent(url, contentId) {
+    function
+    loadContent(url, contentId) {
         $.ajax({
             url: url,
             method: "GET",
@@ -217,6 +220,7 @@
             });
         }
     }
+
 </script>
 
 </body>

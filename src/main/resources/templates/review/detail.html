@@ -161,9 +161,7 @@
                        onclick="if ( confirm('정말로 삭제하시겠습니까?') ) $(this).next().submit();">
                         삭제
                     </a>
-                    <form hidden th:action="@{|/review/${reviewDetailDTO.reviewId}|}" method="POST">
-                        <input type="hidden" name="_method" value="delete">
-                    </form>
+                    <form hidden th:action="@{|/review/delete/${reviewDetailDTO.reviewId}|}" method="POST"></form>
                 </div>
             </div>
 
@@ -195,9 +193,7 @@
                                        onclick="if ( confirm('정말로 삭제하시겠습니까?') ) $(this).next().submit();">
                                         삭제
                                     </a>
-                                    <form hidden th:action="@{|/comment/${comment.id}|}" method="POST">
-                                        <input type="hidden" name="_method" value="delete">
-                                    </form>
+                                    <form hidden th:action="@{|/comment/delete/${comment.id}|}" method="POST"></form>
                                 </div>
                             </div>
                         </div>
