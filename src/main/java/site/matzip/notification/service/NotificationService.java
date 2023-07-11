@@ -1,19 +1,28 @@
 package site.matzip.notification.service;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import site.matzip.base.rq.Rq;
 import site.matzip.member.domain.Member;
+import site.matzip.member.repository.MemberRepository;
 import site.matzip.notification.dto.NotificationDTO;
 import site.matzip.notification.entity.Notification;
 import site.matzip.notification.repository.NotificationRepository;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class NotificationService {
     private final NotificationRepository notificationRepository;
+    private final MemberRepository memberRepository;
+    private final Rq rq;
 
     public List<Notification> getNotifications(Member toMember) {
         return notificationRepository.findByToMember(toMember);
@@ -42,4 +51,47 @@ public class NotificationService {
 
         notificationRepository.save(notification);
     }
+
+    @Transactional
+    public boolean getAfterReadNotification(Long notificationId) {
+        LocalDateTime localDateTime = LocalDateTime.now();
+        Optional<Notification> notification = notificationRepository.findById(notificationId);
+        if (notification.isEmpty()) return false;
+
+        if (notification.get().getReadDate() == null) {
+            notification.get().setAfterReadNotification(localDateTime);
+        }
+        return true;
+    }
+
+    public boolean countUnreadNotificationsByToMember(Member member) {
+        return notificationRepository.countByToMemberAndReadDateIsNull(member) > 0;
+    }
+
+    @Transactional
+    public boolean deleteNotification(Long notificationId) {
+        Optional<Notification> notification = notificationRepository.findById(notificationId);
+        if (notification.isEmpty()) return false;
+
+        notificationRepository.delete(notification.get());
+        return true;
+    }
+
+    @Transactional
+    public boolean allDeleteNotification(Integer deleteType) {
+        Member member = memberRepository.findById(1L).orElseThrow(() -> new EntityNotFoundException("member not found"));
+        List<Notification> notificationList = notificationRepository.findByToMember(member);
+        if (notificationList.size() == 0) return false;
+
+        if (deleteType == 1) {    // 읽은 알림 전체 삭제
+            notificationList.stream()
+                    .filter(notification -> notification.getReadDate() != null)
+                    .forEach(notificationRepository::delete);
+        } else if (deleteType == 2) {   // 알림 전체 삭제
+            notificationRepository.deleteAll(notificationList);
+        }
+
+        return true;
+    }
+
 }
