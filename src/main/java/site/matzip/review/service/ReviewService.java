@@ -118,6 +118,8 @@ public class ReviewService {
                 .matzipCount(review.getAuthor().getMatzipMembers().size())
                 .reviewCount(review.getAuthor().getReviews().size())
                 .friendCount(review.getAuthor().getFriends2().size())
+                .reviewImageUrl(review.getReviewImages().get(0).getImageUrl())
+                .reviewImageCount(review.getReviewImages().size())
                 .build();
     }
 
