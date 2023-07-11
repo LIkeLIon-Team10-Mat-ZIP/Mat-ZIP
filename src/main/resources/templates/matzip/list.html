@@ -402,16 +402,14 @@
         }
 
         function updateButtonClickListener(updateButton, matzipId) {
-            updateButton.addEventListener('click', function () {
-                if (updateButton.innerText === "수정") {
-                    updateButton.innerText = "완료";
-                    makeEditable();
-                } else if (updateButton.innerText === "완료") {
-                    updateButton.innerText = "수정";
-                    updateMatzip(matzipId); // matzipId를 이용해 수정 요청 보냄
-                    doneEditing();
-                }
-            });
+            if (updateButton.innerText === "수정") {
+                updateButton.innerText = "완료";
+                makeEditable();
+            } else if (updateButton.innerText === "완료") {
+                updateButton.innerText = "수정";
+                updateMatzip(matzipId); // matzipId를 이용해 수정 요청 보냄
+                doneEditing();
+            }
         }
 
         function updateMatzip(matzipId) {
