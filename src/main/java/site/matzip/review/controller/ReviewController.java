@@ -5,8 +5,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -135,8 +133,7 @@ public class ReviewController {
     public ResponseEntity<Page<ReviewListDTO>> getReviewsByMatzipId(@PathVariable Long matzipId,
                                                                     @RequestParam int pageSize,
                                                                     @RequestParam int pageNumber) {
-        Pageable pageable = PageRequest.of(pageNumber, pageSize);
-        Page<ReviewListDTO> reviews = reviewService.findByMatzipIdAndConvertToDTO(matzipId, pageable);
+        Page<ReviewListDTO> reviews = reviewService.findByMatzipIdAndConvertToDTO(matzipId, pageSize, pageNumber);
 
         return ResponseEntity.ok(reviews);
     }
@@ -147,8 +144,7 @@ public class ReviewController {
                                                                              @RequestParam int pageNumber,
                                                                              @AuthenticationPrincipal PrincipalDetails principalDetails) {
         Long authorId = principalDetails.getMember().getId();
-        Pageable pageable = PageRequest.of(pageNumber, pageSize);
-        Page<ReviewListDTO> reviews = reviewService.findByMatzipIdWithAuthorAndConvertToReviewDTO(matzipId, authorId, pageable);
+        Page<ReviewListDTO> reviews = reviewService.findByMatzipIdWithAuthorAndConvertToReviewDTO(matzipId, authorId, pageSize, pageNumber);
 
         return ResponseEntity.ok(reviews);
     }
