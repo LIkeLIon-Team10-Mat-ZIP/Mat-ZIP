@@ -12,9 +12,11 @@ public class MemberBadge extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "badge_id")
     private Badge badge;
@@ -22,15 +24,13 @@ public class MemberBadge extends BaseEntity {
     @Builder
     public MemberBadge() {}
 
-    public void setMember(Member member) {
+    public void addAssociation(Member member, Badge badge) {
         if (this.member != null) {
             this.member.getMemberBadges().remove(this);
         }
         this.member = member;
         this.member.getMemberBadges().add(this);
-    }
 
-    public void setBadge(Badge badge) {
         if (this.badge != null) {
             this.badge.getMemberBadges().remove(this);
         }
