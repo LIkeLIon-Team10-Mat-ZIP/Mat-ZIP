@@ -1,9 +1,7 @@
 package site.matzip.matzip.controller;
 
 import jakarta.validation.Valid;
-
 import lombok.RequiredArgsConstructor;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -12,7 +10,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-
 import site.matzip.base.exception.UnauthorizedException;
 import site.matzip.base.rq.Rq;
 import site.matzip.base.rsData.RsData;
@@ -22,8 +19,8 @@ import site.matzip.image.service.ReviewImageService;
 import site.matzip.matzip.domain.Matzip;
 import site.matzip.matzip.dto.MatzipCreationDTO;
 import site.matzip.matzip.dto.MatzipListDTO;
+import site.matzip.matzip.dto.MatzipModifyDTO;
 import site.matzip.matzip.dto.MatzipReviewDTO;
-import site.matzip.matzip.dto.MatzipUpdateDTO;
 import site.matzip.matzip.service.MatzipService;
 import site.matzip.member.domain.Member;
 import site.matzip.review.domain.Review;
@@ -142,16 +139,16 @@ public class MatzipController {
         return new ResponseEntity<>(deleteRs, HttpStatus.OK);
     }
 
-    @PostMapping("/api/update/{id}")
-    public ResponseEntity<RsData> update(@PathVariable Long id, 
+    @PostMapping("/api/modify/{id}")
+    public ResponseEntity<RsData> modify(@PathVariable Long id,
                                          @AuthenticationPrincipal PrincipalDetails principalDetails,
-                                         @RequestBody MatzipUpdateDTO matzipUpdateDTO) {
-        RsData updateRs = matzipService.update(id, principalDetails.getMember().getId(), matzipUpdateDTO);
+                                         @RequestBody MatzipModifyDTO matzipModifyDTO) {
+        RsData updateRs = matzipService.modify(id, principalDetails.getMember().getId(), matzipModifyDTO);
 
         if (updateRs.isFail()) {
             return new ResponseEntity<>(updateRs, HttpStatus.NOT_FOUND);
         }
-      
+
         return new ResponseEntity<>(updateRs, HttpStatus.OK);
     }
 }

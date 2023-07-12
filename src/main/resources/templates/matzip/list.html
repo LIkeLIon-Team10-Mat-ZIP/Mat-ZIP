@@ -434,29 +434,29 @@
                 makeEditable();
             } else if (updateButton.innerText === "완료") {
                 updateButton.innerText = "수정";
-                updateMatzip(matzipId); // matzipId를 이용해 수정 요청 보냄
+                modifyMatzip(matzipId); // matzipId를 이용해 수정 요청 보냄
                 doneEditing();
             }
         }
 
-        function updateMatzip(matzipId) {
+        function modifyMatzip(matzipId) {
             var description = document.getElementById("descriptionInput").value;
             var rating = document.querySelector('input[name="rating"]:checked')?.value ?? 0;
             const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
             const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
 
-            var matzipUpdateDTO = {
+            var matzipModifyDTO = {
                 description: description,
                 rating: rating
             }
             // 서버로 맛집 정보를 전송합니다
-            fetch(`/matzip/api/update/${matzipId}`, {
+            fetch(`/matzip/api/modify/${matzipId}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     [csrfHeader]: csrfToken // CSRF 토큰을 헤더에 포함합니다
                 },
-                body: JSON.stringify(matzipUpdateDTO)
+                body: JSON.stringify(matzipModifyDTO)
             })
                 .then(response => {
                     if (response.ok) {
