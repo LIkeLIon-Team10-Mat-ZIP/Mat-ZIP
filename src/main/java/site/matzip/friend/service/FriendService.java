@@ -32,6 +32,7 @@ public class FriendService {
         friendRepository.save(friend2);
     }
 
+    @Transactional(readOnly = true)
     public List<Friend> getFriendList(Member member) {
         return friendRepository.findByMember1(member);
     }
@@ -41,6 +42,7 @@ public class FriendService {
 
         String profileImageUrl = appConfig.getDefaultProfileImageUrl();
 
+        // TODO 메서드로 분리
         return friendList.stream()
                 .map(friend -> FriendDTO.builder()
                         .id(friend.getId())
@@ -65,7 +67,6 @@ public class FriendService {
     }
 
     public boolean isFriend(Long userId, Long friendId) {
-        if (friendRepository.findByMember1IdAndMember2Id(userId, friendId) == null) return false;
-        return true;
+        return friendRepository.findByMember1IdAndMember2Id(userId, friendId).isPresent();
     }
 }
