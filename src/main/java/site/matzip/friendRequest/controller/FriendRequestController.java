@@ -36,7 +36,8 @@ public class FriendRequestController {
     @GetMapping("/list")
     @PreAuthorize("isAuthenticated()")
     public String showList(Model model, @AuthenticationPrincipal PrincipalDetails principalDetails) {
-        Member member = memberService.findByUsername("user1");
+        Member member = principalDetails.getMember();
+
         List<FriendRequestDTO> friendRequestDTOS = friendRequestService.convertToFriendRequestDTOS(member);
 
         model.addAttribute("friendRequestDTOS", friendRequestDTOS);
@@ -81,7 +82,7 @@ public class FriendRequestController {
 
         friendRequestService.deleteRequest(friendRequestId); // 요청 삭제
 
-        return rq.redirectWithMsg("/usr/member/myPage?menu=3", "친구수락이 완료되었습니다.");
+        return rq.redirectWithMsg("/usr/member/myPage", "친구수락이 완료되었습니다.");
     }
 
     @PostMapping("/reject")
