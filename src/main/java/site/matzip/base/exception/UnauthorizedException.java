@@ -1,9 +1,11 @@
 package site.matzip.base.exception;
 
-public class UnauthorizedException extends Exception {
-    private String msg;
+import org.springframework.http.HttpStatus;
 
-    public UnauthorizedException(String msg) {
-        this.msg = msg;
+public class UnauthorizedException extends Exception {
+    protected HttpStatus httpStatus;
+
+    public UnauthorizedException(HttpStatus httpStatus) {
+        this.httpStatus = httpStatus;
     }
 }

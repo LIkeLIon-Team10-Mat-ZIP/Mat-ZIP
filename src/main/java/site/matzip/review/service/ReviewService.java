@@ -95,17 +95,6 @@ public class ReviewService {
         return reviewPage.map(this::convertToReviewDTO);
     }
 
-
-    public List<ReviewListDTO> findAndConvertAll() {
-        List<Review> reviews = reviewRepository.findAll();
-        return reviews.stream().map(this::convertToReviewDTO).collect(Collectors.toList());
-    }
-
-    public List<ReviewListDTO> findAndConvertMine(Long authorId) {
-        List<Review> reviews = reviewRepository.findByAuthorId(authorId);
-        return reviews.stream().map(this::convertToReviewDTO).collect(Collectors.toList());
-    }
-
     private ReviewListDTO convertToReviewDTO(Review review) {
         String profileImageUrl = appConfig.getDefaultProfileImageUrl();
         if (review.getAuthor().getProfileImage() != null && review.getAuthor().getProfileImage().getImageUrl() != null) {

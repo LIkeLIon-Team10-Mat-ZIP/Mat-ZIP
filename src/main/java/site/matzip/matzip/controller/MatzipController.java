@@ -88,10 +88,9 @@ public class MatzipController {
     @ResponseBody
     public ResponseEntity<List<MatzipListDTO>> searchAll(Authentication authentication) throws UnauthorizedException {
         if (authentication == null) {
-            throw new UnauthorizedException("Please login");
+            throw new UnauthorizedException(HttpStatus.UNAUTHORIZED);
         }
         List<MatzipListDTO> matzipDtoList = matzipService.findAndConvertAll(rq.getMember(authentication).getId());
-
         return ResponseEntity.ok(matzipDtoList);
     }
 
@@ -101,7 +100,7 @@ public class MatzipController {
     public ResponseEntity<List<MatzipListDTO>> searchMine(Authentication authentication) throws UnauthorizedException {
 
         if (authentication == null) {
-            throw new UnauthorizedException("Please login");
+            throw new UnauthorizedException(HttpStatus.UNAUTHORIZED);
         }
         List<MatzipListDTO> matzipDtoList = matzipService.findAndConvertById(rq.getMember(authentication).getId());
         return ResponseEntity.ok(matzipDtoList);
@@ -114,7 +113,7 @@ public class MatzipController {
                                                                 @AuthenticationPrincipal PrincipalDetails principalDetails) throws UnauthorizedException {
         // 인증되지 않은 사용자는 UnauthorizedException 발생
         if (principalDetails == null) {
-            throw new UnauthorizedException("Please Login");
+            throw new UnauthorizedException(HttpStatus.UNAUTHORIZED);
         }
         // 둘이 친구가 아닌 경우, BadRequest(잘못된 요청) 응답 반환
         if (!friendService.isFriend(id, principalDetails.getUserId())) {
