@@ -5,8 +5,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Service;
 
+import org.springframework.transaction.annotation.Transactional;
 import site.matzip.base.event.EventAfterComment;
 import site.matzip.base.appConfig.AppConfig;
 import site.matzip.comment.domain.Comment;
@@ -26,14 +26,13 @@ public class CommentService {
     private final MemberRepository memberRepository;
     private final AppConfig appConfig;
 
+    @Transactional
     public void create(Review review, Member author, String content) {
-        Comment comment = Comment.builder()
+        Comment createdComment = Comment.builder()
                 .content(content)
                 .build();
-
-        comment.setReview(review);
-        comment.setAuthor(author);
-        commentRepository.save(comment);
+        createdComment.addAssociation(review, author);
+        commentRepository.save(createdComment);
 
         if (!review.getAuthor().getNickname().equals(author.getNickname())) {
             // 본인 리뷰에 본인이 댓글을 단 경우를 제외하고 이벤트 발행
@@ -41,14 +40,17 @@ public class CommentService {
         }
     }
 
+    @Transactional
     public void remove(Comment comment) {
         commentRepository.delete(comment);
     }
 
+    @Transactional(readOnly = true)
     public Comment findById(Long commentId) {
         return commentRepository.findById(commentId).orElseThrow(() -> new EntityNotFoundException("Comment not Found"));
     }
 
+    @Transactional
     @Scheduled(fixedRate = 10 * 60 * 1000) // 주기 10분
     public void rewardPointsForComments() {
         LocalDateTime referenceTime = LocalDateTime.now().minusHours(appConfig.getPointRewardReferenceTime());

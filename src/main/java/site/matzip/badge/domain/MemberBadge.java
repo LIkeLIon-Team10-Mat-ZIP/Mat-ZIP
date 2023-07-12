@@ -25,12 +25,19 @@ public class MemberBadge extends BaseEntity {
     public MemberBadge() {}
 
     public void addAssociation(Member member, Badge badge) {
+        addMember(member);
+        addBadge(badge);
+    }
+
+    private void addMember(Member member) {
         if (this.member != null) {
             this.member.getMemberBadges().remove(this);
         }
         this.member = member;
         this.member.getMemberBadges().add(this);
+    }
 
+    private void addBadge(Badge badge) {
         if (this.badge != null) {
             this.badge.getMemberBadges().remove(this);
         }
