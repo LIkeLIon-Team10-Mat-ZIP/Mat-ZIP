@@ -1,12 +1,10 @@
 package site.matzip.review.dto;
 
-import lombok.Data;
 import site.matzip.review.domain.Review;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-@Data
 public class MyReviewDTO {
     private Long id;
     private String matzipName;
