@@ -254,11 +254,14 @@
         }
 
         function showInfoWindow(marker, matzip) {
+            let averageRating = matzip.averageRating.toFixed(2); // 소수점 두 자리까지 반올림하여 표시
             if (matzip.matzipName.length > 9) {
-                iwContent = '<div style="padding:5px; overflow-wrap: break-word; font-size:0.8em;">' + matzip.matzipName + '</div>'
+                iwContent = '<div class="flex justify-center" style="padding:5px; overflow-wrap: break-word; font-size:0.8em;">' + matzip.matzipName + '</div>'
             } else {
-                iwContent = '<div style="padding:5px; overflow-wrap: break-word;">' + matzip.matzipName + '</div>';
+                iwContent = '<div class="flex justify-center" style="padding:5px; overflow-wrap: break-word;">' + matzip.matzipName + '</div>';
             }
+            iwContent += '<div style="padding:5px;">' + '<i class="fa-solid fa-star text-yellow-300"></i>' + '  :  ' + averageRating + '</div>'; // 평균 평점 추가
+            ': + averageRating'; // 평균 평점 추가
             infowindow.setContent(iwContent);
             infowindow.open(map, marker);
         }
