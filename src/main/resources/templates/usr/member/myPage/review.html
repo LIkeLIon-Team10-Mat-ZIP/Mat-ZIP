@@ -1,12 +1,18 @@
-<html layout:decorate="~{usr/member/myPage.html}">
-<div layout:fragment="content">
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Review</title>
+</head>
+
+<body>
+<div th:fragment="reviewSection" class="my-20">
     <h2 class="card-title">
         <i class="fa-solid fa-pen-to-square"></i>
         내 리뷰
     </h2>
     <hr/>
     <div th:unless="${!#lists.isEmpty(myReviewDTOS)}" class="text-center">
-        <div>등록한 리뷰가 없습니다.</div>
+        <div class="mt-20">등록한 리뷰가 없습니다.</div>
     </div>
     <div th:if="${!#lists.isEmpty(myReviewDTOS)}">
         <table class="table mt-4 w-full table-fixed">
@@ -45,5 +51,6 @@
         </table>
     </div>
 </div>
+</body>
 
 </html>

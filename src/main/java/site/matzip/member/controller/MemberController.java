@@ -62,8 +62,7 @@ public class MemberController {
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/myPage")
-    public String showMyPage(Model model, @RequestParam(value = "menu", defaultValue = "1") int menu,
-                             Authentication authentication) {
+    public String showMyPage(Model model, Authentication authentication) {
 
         //Member member = principalDetails.getMember(); TODO: 수정 필요
         Member member = rq.getMember(authentication);
@@ -74,30 +73,21 @@ public class MemberController {
         model.addAttribute("memberInfoCntDTO", memberInfoCntDTO);
         model.addAttribute("memberInfoDTO", memberInfoDTO);
 
-        switch (menu) {
-            case 2 -> {
-                List<MyReviewDTO> myReviewDTOS = memberService.converToMyReviewDTO(member.getId());
-                model.addAttribute("myReviewDTOS", myReviewDTOS);
-                return "usr/member/myPage/review";
-            }
-            case 3 -> {
-                List<FriendDetailDTO> friendDetailDTOS = memberService.converToFriendDetailDTO(member.getId());
-                model.addAttribute("friendDetailDTOS", friendDetailDTOS);
-                return "usr/member/myPage/friend";
-            }
-            case 4 -> {
-                List<MemberRankDTO> memberRankDTOS = memberService.findAndConvertTenMemberAroundMember(member.getId());
-                MemberPointDTO memberPointDTO = memberService.convertToMemberPointDTO(member.getId());
-                model.addAttribute("memberPointDTO", memberPointDTO);
-                model.addAttribute("memberRankDTOS", memberRankDTOS);
-                return "usr/member/myPage/point";
-            }
-            default -> {
-                List<MatzipInfoDTO> matzipInfoDTOS = memberService.convertToMatzipInfoDTO(member.getId());
-                model.addAttribute("matzipInfoDTOS", matzipInfoDTOS);
-                return "usr/member/myPage/matzip";
-            }
-        }
+        List<MyReviewDTO> myReviewDTOS = memberService.converToMyReviewDTO(member.getId());
+        model.addAttribute("myReviewDTOS", myReviewDTOS);
+
+        List<FriendDetailDTO> friendDetailDTOS = memberService.converToFriendDetailDTO(member.getId());
+        model.addAttribute("friendDetailDTOS", friendDetailDTOS);
+
+        List<MemberRankDTO> memberRankDTOS = memberService.findAndConvertTenMemberAroundMember(member.getId());
+        MemberPointDTO memberPointDTO = memberService.convertToMemberPointDTO(member.getId());
+        model.addAttribute("memberPointDTO", memberPointDTO);
+        model.addAttribute("memberRankDTOS", memberRankDTOS);
+
+        List<MatzipInfoDTO> matzipInfoDTOS = memberService.convertToMatzipInfoDTO(member.getId());
+        model.addAttribute("matzipInfoDTOS", matzipInfoDTOS);
+
+        return "usr/member/myPage";
     }
 
     @GetMapping("/myPage/friendMap")
