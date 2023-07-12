@@ -1,6 +1,7 @@
 package site.matzip.comment.controller;
 
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -8,6 +9,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import site.matzip.base.rq.Rq;
 import site.matzip.comment.domain.Comment;
 import site.matzip.comment.service.CommentService;
 import site.matzip.config.auth.PrincipalDetails;
@@ -23,6 +26,7 @@ import java.util.Objects;
 public class CommentController {
     private final CommentService commentService;
     private final ReviewService reviewService;
+    private final Rq rq;
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/create/{id}")
@@ -31,7 +35,8 @@ public class CommentController {
         Member author = principalDetails.getMember();
 
         commentService.create(review, author, content);
-        return "redirect:/review/detail/%d".formatted(id);
+
+        return rq.redirectWithMsg("/review/detail/%d".formatted(id), "댓글 등록이 완료되었습니다.");
     }
 
     @PreAuthorize("isAuthenticated()")
@@ -45,6 +50,7 @@ public class CommentController {
         }
 
         commentService.remove(comment);
-        return "redirect:/review/detail/%d".formatted(reviewId);
+
+        return rq.redirectWithMsg("/review/detail/%d".formatted(reviewId), "댓글 삭제가 완료되었습니다.");
     }
 }

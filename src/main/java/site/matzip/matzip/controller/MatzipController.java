@@ -53,6 +53,7 @@ public class MatzipController {
     public String create(@RequestBody @Valid MatzipCreationDTO matzipCreationDTO,
                          BindingResult result,
                          Authentication authentication) {
+
         if (result.hasErrors()) {
             return rq.historyBack("맛집등록에 실패했습니다.");
         }
@@ -93,6 +94,7 @@ public class MatzipController {
             throw new UnauthorizedException("Please login");
         }
         List<MatzipListDTO> matzipDtoList = matzipService.findAndConvertAll(rq.getMember(authentication).getId());
+
         return ResponseEntity.ok(matzipDtoList);
     }
 
@@ -122,27 +124,33 @@ public class MatzipController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
         List<MatzipListDTO> matzipDtoList = matzipService.findAndConvertById(id);
+
         return ResponseEntity.ok(matzipDtoList);
     }
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/api/delete/{id}")
     @ResponseBody
-    public ResponseEntity<RsData> delete(@PathVariable Long id, @AuthenticationPrincipal PrincipalDetails principalDetails) {
+    public ResponseEntity<RsData> delete(@PathVariable Long id,
+                                         @AuthenticationPrincipal PrincipalDetails principalDetails) {
+
         RsData deleteRs = matzipService.delete(id, principalDetails.getMember().getId());
         if (deleteRs.isFail()) {
             return new ResponseEntity<>(deleteRs, HttpStatus.NOT_FOUND);
         }
+
         return new ResponseEntity<>(deleteRs, HttpStatus.OK);
     }
 
     @PostMapping("/api/update/{id}")
     public ResponseEntity<RsData> update(@PathVariable Long id, @AuthenticationPrincipal PrincipalDetails principalDetails,
                                          @RequestBody MatzipUpdateDTO matzipUpdateDTO) {
+
         RsData updateRs = matzipService.update(id, principalDetails.getMember().getId(), matzipUpdateDTO);
         if (updateRs.isFail()) {
             return new ResponseEntity<>(updateRs, HttpStatus.NOT_FOUND);
         }
+
         return new ResponseEntity<>(updateRs, HttpStatus.OK);
     }
 }

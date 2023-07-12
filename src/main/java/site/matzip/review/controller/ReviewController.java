@@ -109,13 +109,16 @@ public class ReviewController {
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/modify/{reviewId}")
-    public String modify(@PathVariable Long reviewId, ReviewCreationDTO reviewCreationDTO, BindingResult bindingResult,
+    public String modify(@PathVariable Long reviewId,
+                         @ModelAttribute @Valid ReviewCreationDTO reviewCreationDTO,
+                         BindingResult bindingResult,
                          @AuthenticationPrincipal PrincipalDetails principalDetails) throws IOException {
+        
         Review review = reviewService.findById(reviewId);
         reviewService.checkAccessPermission(reviewId, principalDetails);
 
         if (bindingResult.hasErrors()) {
-            return "/review/add";
+            return rq.historyBack("리뷰 수정에 올바른 형식이 아닙니다.");
         }
 
         Review modifyReview = reviewService.modify(review, reviewCreationDTO);
@@ -124,7 +127,7 @@ public class ReviewController {
             reviewImageService.modify(reviewCreationDTO.getImageFiles(), modifyReview);
         }
 
-        return "redirect:/review/detail/" + reviewId;
+        return rq.redirectWithMsg("/review/detail/" + reviewId, "리뷰 수정이 완료되었습니다.");
     }
 
     @GetMapping("/api/list/{matzipId}")
@@ -159,7 +162,7 @@ public class ReviewController {
         reviewService.remove(review);
         reviewImageService.remove(review);
 
-        return "redirect:/main";
+        return rq.redirectWithMsg("/main", "리뷰 삭제가 완료되었습니다.");
     }
 
     @PreAuthorize("isAuthenticated()")
