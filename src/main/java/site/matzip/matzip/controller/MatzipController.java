@@ -1,7 +1,9 @@
 package site.matzip.matzip.controller;
 
 import jakarta.validation.Valid;
+
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -10,6 +12,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
 import site.matzip.base.exception.UnauthorizedException;
 import site.matzip.base.rq.Rq;
 import site.matzip.base.rsData.RsData;
@@ -50,20 +53,27 @@ public class MatzipController {
     public String create(@RequestBody @Valid MatzipCreationDTO matzipCreationDTO,
                          BindingResult result,
                          Authentication authentication) {
+
         if (result.hasErrors()) {
-            return "/matzip/create";
+            return rq.historyBack("맛집등록에 실패했습니다.");
         }
         Member author = rq.getMember(authentication);
 
         matzipService.create(matzipCreationDTO, author.getId());
-        return "redirect:/main";
+
+        return rq.redirectWithMsg("/main", "맛집이 등록되었습니다.");
     }
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/createWithReview")
-    public String createWithReview(@ModelAttribute MatzipReviewDTO matzipReviewDTO,
+    public String createWithReview(@ModelAttribute @Valid MatzipReviewDTO matzipReviewDTO,
                                    BindingResult result,
                                    @AuthenticationPrincipal PrincipalDetails principalDetails) throws IOException {
+
+        if (result.hasErrors()) {
+            return rq.historyBack("리뷰등록에 올바른 값이 아닙니다.");
+        }
+
         MatzipCreationDTO matzipCreationDTO = matzipReviewDTO.getMatzipCreationDTO();
         ReviewCreationDTO reviewCreationDTO = matzipReviewDTO.getReviewCreationDTO();
         Long authorId = principalDetails.getMember().getId();
@@ -76,6 +86,7 @@ public class MatzipController {
         return rq.redirectWithMsg("/main", "맛집과 리뷰가 등록되었습니다.");
     }
 
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/api/list")
     @ResponseBody
     public ResponseEntity<List<MatzipListDTO>> searchAll(Authentication authentication) throws UnauthorizedException {
@@ -83,6 +94,7 @@ public class MatzipController {
             throw new UnauthorizedException("Please login");
         }
         List<MatzipListDTO> matzipDtoList = matzipService.findAndConvertAll(rq.getMember(authentication).getId());
+
         return ResponseEntity.ok(matzipDtoList);
     }
 
@@ -112,27 +124,34 @@ public class MatzipController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
         List<MatzipListDTO> matzipDtoList = matzipService.findAndConvertById(id);
+
         return ResponseEntity.ok(matzipDtoList);
     }
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/api/delete/{id}")
     @ResponseBody
-    public ResponseEntity<RsData> delete(@PathVariable Long id, @AuthenticationPrincipal PrincipalDetails principalDetails) {
+    public ResponseEntity<RsData> delete(@PathVariable Long id,
+                                         @AuthenticationPrincipal PrincipalDetails principalDetails) {
+
         RsData deleteRs = matzipService.delete(id, principalDetails.getMember().getId());
         if (deleteRs.isFail()) {
             return new ResponseEntity<>(deleteRs, HttpStatus.NOT_FOUND);
         }
+
         return new ResponseEntity<>(deleteRs, HttpStatus.OK);
     }
 
     @PostMapping("/api/update/{id}")
-    public ResponseEntity<RsData> update(@PathVariable Long id, @AuthenticationPrincipal PrincipalDetails principalDetails,
+    public ResponseEntity<RsData> update(@PathVariable Long id, 
+                                         @AuthenticationPrincipal PrincipalDetails principalDetails,
                                          @RequestBody MatzipUpdateDTO matzipUpdateDTO) {
-        RsData updateRs = matzipService.modify(id, principalDetails.getMember().getId(), matzipUpdateDTO);
+        RsData updateRs = matzipService.update(id, principalDetails.getMember().getId(), matzipUpdateDTO);
+
         if (updateRs.isFail()) {
             return new ResponseEntity<>(updateRs, HttpStatus.NOT_FOUND);
         }
+      
         return new ResponseEntity<>(updateRs, HttpStatus.OK);
     }
 }
