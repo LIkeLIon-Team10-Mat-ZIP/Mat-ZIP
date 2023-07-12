@@ -81,7 +81,7 @@ public class FriendRequestController {
 
         friendRequestService.deleteRequest(friendRequestId); // 요청 삭제
 
-        return "redirect:/usr/member/myPage";
+        return rq.redirectWithMsg("/usr/member/myPage?menu=3", "친구수락이 완료되었습니다.");
     }
 
     @PostMapping("/reject")

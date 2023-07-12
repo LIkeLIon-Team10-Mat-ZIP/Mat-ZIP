@@ -57,7 +57,7 @@ public class MemberController {
         cookie.setPath("/");
         response.addCookie(cookie);
 
-        return "redirect:/";
+        return rq.redirectWithMsg("/main", "로그아웃이 완료되었습니다.");
     }
 
     @PreAuthorize("isAuthenticated()")
@@ -135,13 +135,14 @@ public class MemberController {
         return "usr/member/myPage/modifyProfileImage";
     }
 
+    // DTO로 감싸서 검증하자
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/myPage/modifyProfileImage")
     public String modifyProfileImage(@RequestParam("profileImage") MultipartFile profileImage,
                                      @AuthenticationPrincipal PrincipalDetails principalDetails) throws IOException {
         profileImageService.saveProfileImage(profileImage, principalDetails.getMember());
 
-        return "redirect:/usr/member/myPage";
+        return rq.redirectWithMsg("/usr/member/myPage", "프로필 이미지가 변경되었습니다.");
     }
 
     @GetMapping("/getProfile")

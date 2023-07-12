@@ -15,8 +15,11 @@ public class Friend extends BaseEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member1_id")
+
     private Member member1;
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member2_id")
     private Member member2;
 
     public Friend(Member member1, Member member2) {

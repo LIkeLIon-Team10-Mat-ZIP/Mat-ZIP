@@ -14,17 +14,14 @@ import site.matzip.matzip.domain.Matzip;
 import site.matzip.matzip.domain.MatzipMember;
 import site.matzip.matzip.dto.MatzipCreationDTO;
 import site.matzip.matzip.dto.MatzipListDTO;
+import site.matzip.matzip.dto.MatzipModifyDTO;
 import site.matzip.matzip.dto.MatzipRankDTO;
-import site.matzip.matzip.dto.MatzipReviewListDTO;
 import site.matzip.matzip.repository.MatzipMemberRepository;
 import site.matzip.matzip.repository.MatzipRepository;
 import site.matzip.member.domain.Member;
 import site.matzip.member.repository.MemberRepository;
-import site.matzip.review.dto.ReviewListDTO;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -147,30 +144,22 @@ public class MatzipService {
                     .x(matzip.getX())
                     .y(matzip.getY())
                     .rating(rating)
+                    .averageRating(getAverageRating(matzip))
                     .description(description)
                     .matzipId(matzip.getId())
                     .build();
         }).collect(Collectors.toList());
     }
 
-    //컨트롤러에서 받은 리뷰DTO와 맛집DTO를 머지해서 하나로 만들어 준다.
-    public List<MatzipReviewListDTO> mergeMatzipAndReviews(List<MatzipListDTO> matzipDtoList, List<ReviewListDTO> reviewDtoList) {
-        List<MatzipReviewListDTO> matzipReviewList = new ArrayList<>();
-
-        for (MatzipListDTO matzipListDTO : matzipDtoList) {
-            List<ReviewListDTO> matchedReviews = reviewDtoList.stream()
-                    .filter(review -> Objects.equals(review.getMatzipId(), matzipListDTO.getMatzipId()))
-                    .collect(Collectors.toList());
-
-            MatzipReviewListDTO matzipReviewListDTO = MatzipReviewListDTO.builder()
-                    .matzipListDTO(matzipListDTO)
-                    .reviewListDTOs(matchedReviews)
-                    .build();
-
-            matzipReviewList.add(matzipReviewListDTO);
+    @CacheEvict(value = {"matzipListCache", "myMatzipListCache"}, allEntries = true)
+    public RsData modify(Long matzipId, Long authorId, MatzipModifyDTO matzipModifyDTO) {
+        MatzipMember matzipMember = matzipMemberRepository.findByMatzipIdAndAuthorId(matzipId, authorId).orElse(null);
+        if (matzipMember == null) {
+            return RsData.of("F-1", "사용자의 후기를 찾을 수 없습니다.");
         }
-
-        return matzipReviewList;
+        matzipMember.modify(matzipModifyDTO.getDescription(), matzipModifyDTO.getRating());
+        matzipMemberRepository.save(matzipMember);
+        return RsData.of("S-1", "업데이트가 완료되었습니다.");
     }
 
     @Transactional

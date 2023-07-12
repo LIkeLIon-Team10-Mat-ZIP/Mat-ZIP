@@ -22,7 +22,7 @@ public class MatzipMember {
     @JoinColumn(name = "matzip_id")
     private Matzip matzip;
 
-    public void update(String description, double rating) {
+    public void modify(String description, double rating) {
         this.rating = rating;
         this.description = description;
     }

@@ -21,7 +21,11 @@ public class HomeController {
     private final MemberService memberService;
     private final Rq rq;
 
-    @GetMapping("/")
+    public String showHome() {
+        return "/main/main";
+    }
+
+    @GetMapping("/main")
     public String showMain(Model model, Authentication authentication) {
         model.addAttribute("memberId", rq.getMember(authentication).getId());
 
