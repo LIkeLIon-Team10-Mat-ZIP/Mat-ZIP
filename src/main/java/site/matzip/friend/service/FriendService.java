@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class FriendService {
     private final FriendRepository friendRepository;
     private final AppConfig appConfig;
@@ -32,7 +33,6 @@ public class FriendService {
         friendRepository.save(friend2);
     }
 
-    @Transactional(readOnly = true)
     public List<Friend> getFriendList(Member member) {
         return friendRepository.findByMember1(member);
     }
