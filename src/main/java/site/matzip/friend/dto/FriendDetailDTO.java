@@ -5,7 +5,6 @@ import lombok.Data;
 
 import java.util.Map;
 
-@Data
 @Builder
 public class FriendDetailDTO {
     private Long id;
