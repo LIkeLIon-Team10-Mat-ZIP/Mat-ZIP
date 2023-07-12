@@ -1,0 +1,46 @@
+<html lang="en">
+<head>
+    <th:block th:replace="common/fragments/config :: ConfigFragment"/>
+    <title>Main</title>
+    <style>
+        .demo-02 {
+            font-size: 100%;
+            transition-duration: 3s;
+        }
+
+        .demo-02:hover {
+            font-size: 100%;
+        }
+    </style>
+
+    <style>
+        .hero {
+            background-image: url('/img/main.gif');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+    </style>
+
+</head>
+<body>
+<main>
+    <div class="hero min-h-screen">
+        <div class="hero-overlay"></div>
+        <div class="hero-content text-center text-neutral-content w-full">
+            <div class="max-w-md">
+                <h1 class="mb-5 text-5xl font-bold">Hello there</h1>
+                <p class="mb-5">"환영합니다! 우리는 여러분의 완벽한 맛집 지도 생성을 도와주는 프로젝트를 소개하게 되어 기쁩니다.
+                    이 프로젝트를 통해 좋아하는 맛집을 등록하고, 다른 사람들과 공유하거나 프라이빗 옵션으로 자신만이 볼 수 있는 맛집 목록을 만들 수 있습니다.
+                    또한 카카오톡을 통해 친구들과 손쉽게 맛집 정보를 공유할 수 있어, 맛있는 음식을 함께 즐길 수 있는 기회를 놓치지 않게 됩니다.
+                    지금 바로 가입하고, 나만의 맛집 지도를 완성하고, 모두와 함께 놀라운 맛집 경험을 나누어 보세요!"</p>
+                <a href="/oauth2/authorization/kakao">
+                    <button class="btn btn-outline btn-warning demo-02">시작하기</button>
+                </a>
+            </div>
+        </div>
+    </div>
+</main>
+</body>
+
+</html>

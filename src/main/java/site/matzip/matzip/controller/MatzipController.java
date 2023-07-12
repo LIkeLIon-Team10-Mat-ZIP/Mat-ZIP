@@ -10,7 +10,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,7 +20,6 @@ import site.matzip.image.service.ReviewImageService;
 import site.matzip.matzip.domain.Matzip;
 import site.matzip.matzip.dto.MatzipCreationDTO;
 import site.matzip.matzip.dto.MatzipListDTO;
-import site.matzip.matzip.dto.MatzipRankDTO;
 import site.matzip.matzip.dto.MatzipReviewDTO;
 import site.matzip.matzip.dto.MatzipUpdateDTO;
 import site.matzip.matzip.service.MatzipService;

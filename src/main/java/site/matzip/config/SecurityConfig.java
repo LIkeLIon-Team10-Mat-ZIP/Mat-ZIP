@@ -37,6 +37,8 @@ public class SecurityConfig {
                                 .loginPage("/usr/member/login")
                                 .userInfoEndpoint()
                                 .userService(principalOAuth2UserService) // OAuth2.0 로그인을 성공하면 해당 service 실행
+                                .and()
+                                .defaultSuccessUrl("/main")
                 )
                 .logout()
         ;
