@@ -443,6 +443,16 @@
             filterByNameOrType(searchName, searchType);
         }
 
+        // 검색 폼에서 엔터 입력 시 submit 처리
+        document.getElementById("searchInput").addEventListener("keypress", function (event) {
+            if (event.key === "Enter") {
+                event.preventDefault(); // 기본 동작 방지
+                const searchName = document.getElementById("searchInput").value;
+                const searchType = document.getElementById("matzipTypeSelect").value;
+                filterByNameOrType(searchName, searchType);
+            }
+        });
+
         function addMarkerClickEvent(marker, matzip) {
             let pageNum = 0;
             kakao.maps.event.addListener(marker, 'click', (function (marker, matzip) {

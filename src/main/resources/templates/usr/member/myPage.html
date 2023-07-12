@@ -13,15 +13,6 @@
 
 
     <style>
-        body {
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-
         #map {
             position: relative;
             margin: auto;
@@ -73,7 +64,7 @@
 <body>
 
 <main layout:fragment="Content">
-    <div class="flex justify-center mx-auto max-w-5xl mt-96" style="height: 1100px;">
+    <div class="flex justify-center mx-auto max-w-5xl">
         <div class="flex flex-col w-full">
             <div class="p-3 border-b border-gray-400">
                 <span class="font-bold text-xl"><i class="fa-regular fa-user"></i> 마이 페이지</span>
@@ -246,7 +237,7 @@
                             <option value="CAFE">카페</option>
                             <option value="ETC">기타</option>
                         </select>
-                        <button class="btn bg-blue-800 hover:bg-blue-500 rounded-md px-3 text-white w-20" id="filterBtn"
+                        <button class="btn bg-blue-800 hover:bg-blue-500 rounded-md px-3 text-white w-20" type="button" id="filterBtn"
                                 onclick="search()">
                             검색
                         </button>
@@ -539,6 +530,16 @@
             const searchType = document.getElementById("matzipTypeSelect").value;
             filterByNameOrType(searchName, searchType);
         }
+
+        // 검색 폼에서 엔터 입력 시 submit 처리
+        document.getElementById("searchInput").addEventListener("keypress", function (event) {
+            if (event.key === "Enter") {
+                event.preventDefault(); // 기본 동작 방지
+                const searchName = document.getElementById("searchInput").value;
+                const searchType = document.getElementById("matzipTypeSelect").value;
+                filterByNameOrType(searchName, searchType);
+            }
+        });
 
         function addMarkerClickEvent(marker, matzip) {
             kakao.maps.event.addListener(marker, 'click', (function (marker, matzip) {
