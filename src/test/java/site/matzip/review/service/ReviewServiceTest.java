@@ -13,15 +13,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
+import site.matzip.base.appConfig.AppConfig;
 import site.matzip.matzip.domain.Matzip;
 import site.matzip.matzip.domain.MatzipType;
 import site.matzip.matzip.dto.MatzipCreationDTO;
 import site.matzip.matzip.service.MatzipService;
 import site.matzip.member.domain.Member;
+import site.matzip.member.repository.MemberRepository;
 import site.matzip.member.service.MemberService;
 import site.matzip.review.domain.Review;
 import site.matzip.review.dto.ReviewCreationDTO;
+import site.matzip.review.repository.ReviewRepository;
 
+import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -43,12 +48,28 @@ class ReviewServiceTest {
     @Autowired
     private MatzipService matzipService;
     @Mock
+    private AppConfig appConfig;
+    @Mock
+    private ReviewRepository reviewRepository;
+    @Mock
+    private MemberRepository memberRepository;
+    @Mock
     private HttpServletRequest request;
     @Mock
     private HttpServletResponse response;
     ReviewCreationDTO reviewCreationDTO = ReviewCreationDTO.builder()
             .rating(4.0)
             .content("맛있어요")
+            .build();
+
+    MatzipCreationDTO matzipCreationDTO = MatzipCreationDTO.builder()
+            .address("서울 용산구 이태원동 258-7")
+            .kakaoId(7849814L)
+            .matzipName("라쿠치나")
+            .matzipType(String.valueOf(MatzipType.KOREAN))
+            .phoneNumber("02-794-6006")
+            .x(126.99647354065)
+            .y(37.5405570353927)
             .build();
 
     @BeforeEach
@@ -58,16 +79,6 @@ class ReviewServiceTest {
                 "testUser", "1234", "test@email.com");
 
         // Matzip 생성
-        MatzipCreationDTO matzipCreationDTO = MatzipCreationDTO.builder()
-                .address("서울 용산구 이태원동 258-7")
-                .kakaoId(7849814L)
-                .matzipName("라쿠치나")
-                .matzipType(String.valueOf(MatzipType.KOREAN))
-                .phoneNumber("02-794-6006")
-                .x(126.99647354065)
-                .y(37.5405570353927)
-                .build();
-
         matzip = matzipService.create(matzipCreationDTO, testUser.getId());
     }
 
@@ -164,5 +175,28 @@ class ReviewServiceTest {
         Review result = reviewService.findById(review.getId());
 
         assertThat(result.getViews()).isEqualTo(0);
+    }
+
+    @Test
+    void rewardPointsForReviews() {
+        testUser.addPoints(100);
+
+        Review review = reviewService.create(reviewCreationDTO, testUser.getId(), matzip);
+        review.setCreatedDate(LocalDateTime.now().minusHours(25));
+
+        when(appConfig.getPointRewardReview()).thenReturn(100L);
+        when(appConfig.getPointRewardReferenceTime()).thenReturn(24L);
+
+        LocalDateTime referenceTime = LocalDateTime.now().minusHours(appConfig.getPointRewardReferenceTime());
+        when(reviewRepository.findReviewsOlderThan(referenceTime)).thenReturn(Collections.singletonList(review));
+
+        reviewService.rewardPointsForReviews();
+
+        // Verify that the member's points have been updated
+        assertThat(testUser.getPoint()).isEqualTo(110);
+
+        // Verify that repository methods were invoked with correct parameters
+        verify(memberRepository, times(1)).save(testUser);
+        verify(reviewRepository, times(1)).save(review);
     }
 }
