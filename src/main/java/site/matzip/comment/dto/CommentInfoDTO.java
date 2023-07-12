@@ -7,7 +7,6 @@ import site.matzip.comment.domain.Comment;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-@Data
 @Builder
 public class CommentInfoDTO {
     private String profileImageUrl;
