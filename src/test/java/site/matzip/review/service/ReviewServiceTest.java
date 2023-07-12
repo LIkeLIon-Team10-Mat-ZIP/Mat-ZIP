@@ -1,7 +1,14 @@
 package site.matzip.review.service;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
@@ -16,21 +23,33 @@ import site.matzip.review.domain.Review;
 import site.matzip.review.dto.ReviewCreationDTO;
 
 import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.*;
 
 
 @SpringBootTest
 @Transactional
 @ActiveProfiles("test")
+@ExtendWith(MockitoExtension.class)
 class ReviewServiceTest {
     private Member testUser;
     private Matzip matzip;
     @Autowired
+    @InjectMocks
     private ReviewService reviewService;
     @Autowired
     private MemberService memberService;
     @Autowired
     private MatzipService matzipService;
+    @Mock
+    private HttpServletRequest request;
+    @Mock
+    private HttpServletResponse response;
+    ReviewCreationDTO reviewCreationDTO = ReviewCreationDTO.builder()
+            .rating(4.0)
+            .content("맛있어요")
+            .build();
 
     @BeforeEach
     public void setUp() {
@@ -54,11 +73,6 @@ class ReviewServiceTest {
 
     @Test
     void create() {
-        ReviewCreationDTO reviewCreationDTO = ReviewCreationDTO.builder()
-                .rating(4.0)
-                .content("맛있어요")
-                .build();
-
         reviewService.create(reviewCreationDTO, testUser.getId(), matzip);
 
         List<Review> reviews = reviewService.findAll();
@@ -88,11 +102,6 @@ class ReviewServiceTest {
 
     @Test
     void modify() {
-        ReviewCreationDTO reviewCreationDTO = ReviewCreationDTO.builder()
-                .rating(4.0)
-                .content("맛있어요")
-                .build();
-
         Review review = reviewService.create(reviewCreationDTO, testUser.getId(), matzip);
 
         ReviewCreationDTO modifyReviewCreationDTO = ReviewCreationDTO.builder()
@@ -103,5 +112,57 @@ class ReviewServiceTest {
         reviewService.modify(review, modifyReviewCreationDTO);
 
         assertThat(review.getContent()).isEqualTo("맛없다");
+    }
+
+    @Test
+    void incrementViewCount() {
+        Review review = reviewService.create(reviewCreationDTO, testUser.getId(), matzip);
+        reviewService.incrementViewCount(review);
+
+        Review result = reviewService.findById(review.getId());
+
+        assertThat(result.getViews()).isEqualTo(1);
+    }
+
+    @Test
+    void updateViewCountWithCookie_noCookie() {
+        Review review = reviewService.create(reviewCreationDTO, testUser.getId(), matzip);
+        when(request.getCookies()).thenReturn(null);
+
+        reviewService.updateViewCountWithCookie(review, request, response);
+
+        Review result = reviewService.findById(review.getId());
+
+        assertThat(result.getViews()).isEqualTo(1);
+        verify(response, times(1)).addCookie(any(Cookie.class));
+    }
+
+    @Test
+    void updateViewCountWithCookie_withCookie_notInView() {
+        Review review = reviewService.create(reviewCreationDTO, testUser.getId(), matzip);
+        Cookie[] cookies = {new Cookie("reviewView", "[]")};
+
+        when(request.getCookies()).thenReturn(cookies);
+
+        reviewService.updateViewCountWithCookie(review, request, response);
+
+        Review result = reviewService.findById(review.getId());
+
+        assertThat(result.getViews()).isEqualTo(1);
+        verify(response, times(1)).addCookie(any(Cookie.class));
+    }
+
+    @Test
+    void updateViewCountWithCookie_withCookie_alreadyInView() {
+        Review review = reviewService.create(reviewCreationDTO, testUser.getId(), matzip);
+        Cookie[] cookies = {new Cookie("reviewView", "[" + review.getId() + "]")};
+
+        when(request.getCookies()).thenReturn(cookies);
+
+        reviewService.updateViewCountWithCookie(review, request, response);
+
+        Review result = reviewService.findById(review.getId());
+
+        assertThat(result.getViews()).isEqualTo(0);
     }
 }
