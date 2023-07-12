@@ -48,7 +48,10 @@ public class ReviewService {
     @CacheEvict(value = {"reviewListCache", "myReviewListCache"}, allEntries = true)
     public Review create(ReviewCreationDTO reviewCreationDTO, Long authorId, Matzip matzip) {
 
-        Review createdReview = Review.builder().rating(reviewCreationDTO.getRating()).content(reviewCreationDTO.getContent()).build();
+        Review createdReview = Review.builder()
+                .rating(reviewCreationDTO.getRating())
+                .content(reviewCreationDTO.getContent())
+                .build();
 
         Member author = memberRepository.findById(authorId).orElseThrow(() -> new EntityNotFoundException("Member not Found"));
         createdReview.setMatzip(matzip);
@@ -168,7 +171,8 @@ public class ReviewService {
         String profileImageUrl = appConfig.getDefaultProfileImageUrl();
 
         return comments.stream().map(comment -> CommentInfoDTO.builder()
-                        .profileImageUrl(comment.getAuthor().getProfileImage() != null ? comment.getAuthor().getProfileImage().getImageUrl() : profileImageUrl).id(comment.getId())
+                        .profileImageUrl(comment.getAuthor().getProfileImage() != null ? comment.getAuthor().getProfileImage().getImageUrl() : profileImageUrl)
+                        .id(comment.getId())
                         .loginId(authorId)
                         .authorId(comment.getAuthor().getId())
                         .authorNickname(comment.getAuthor().getNickname())
