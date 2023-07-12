@@ -16,7 +16,6 @@ import site.matzip.config.auth.PrincipalDetails;
 import site.matzip.friend.dto.FriendDTO;
 import site.matzip.friend.service.FriendService;
 import site.matzip.member.domain.Member;
-import site.matzip.member.service.MemberService;
 
 import java.util.List;
 
@@ -24,14 +23,13 @@ import java.util.List;
 @RequestMapping("/usr/friends")
 @RequiredArgsConstructor
 public class FriendController {
-    private final MemberService memberService;
     private final FriendService friendService;
     private final Rq rq;
 
     @GetMapping("/list")
     @PreAuthorize("isAuthenticated()")
     public String showList(Model model, @AuthenticationPrincipal PrincipalDetails principalDetails) {
-        Member member = memberService.findByUsername("user1");  // TODO: 추후에 principalDetails.getMember()로 변경
+        Member member = principalDetails.getMember();
 
         List<FriendDTO> friendDTOS = friendService.convertToFriendDTOS(member);
 
@@ -45,6 +43,6 @@ public class FriendController {
     public String delete(@PathVariable("id") Long id) {
         friendService.delete(id);
 
-        return rq.redirectWithMsg("/usr/member/myPage?menu=3", "친구삭제가 완료되었습니다.");
+        return rq.redirectWithMsg("/usr/member/myPage", "친구삭제가 완료되었습니다.");
     }
 }

@@ -6,14 +6,15 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
 import site.matzip.base.rq.Rq;
 import site.matzip.base.rsData.RsData;
 import site.matzip.config.auth.PrincipalDetails;
@@ -62,10 +63,9 @@ public class MemberController {
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/myPage")
-    public String showMyPage(Model model, Authentication authentication) {
+    public String showMyPage(Model model, @AuthenticationPrincipal PrincipalDetails principalDetails) {
 
-        //Member member = principalDetails.getMember(); TODO: 수정 필요
-        Member member = rq.getMember(authentication);
+        Member member = principalDetails.getMember();
 
         MemberInfoDTO memberInfoDTO = memberService.convertToMemberInfoDTO(member.getId());
         MemberInfoCntDTO memberInfoCntDTO = memberService.convertToMemberInfoCntDTO(member.getId());
