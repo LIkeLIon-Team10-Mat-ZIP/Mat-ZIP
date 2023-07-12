@@ -122,8 +122,8 @@ public class ReviewService {
                 .matzipCount(review.getAuthor().getMatzipMembers().size())
                 .reviewCount(review.getAuthor().getReviews().size())
                 .friendCount(review.getAuthor().getFriends2().size())
-                .reviewImageUrl(reviewFirstImageUrl).
-                reviewImageCount(review.getReviewImages().size())
+                .reviewImageUrl(reviewFirstImageUrl)
+                .reviewImageCount(review.getReviewImages().size())
                 .build();
     }
 
@@ -143,7 +143,8 @@ public class ReviewService {
                 .matzipUrl(review.getMatzip().getMatzipUrl())
                 .reviewId(review.getId())
                 .authorId(review.getAuthor().getId())
-                .loginId(loginId).matzipName(matzip.getMatzipName())
+                .loginId(loginId)
+                .matzipName(matzip.getMatzipName())
                 .createDate(review.getCreateDate())
                 .address(matzip.getAddress())
                 .rating(review.getRating())
@@ -154,7 +155,8 @@ public class ReviewService {
                 .imageUrls(review.getReviewImages()
                         .stream()
                         .map(ReviewImage::getImageUrl)
-                        .collect(Collectors.toList())).build();
+                        .collect(Collectors.toList()))
+                .build();
     }
 
     private int countHeart(Review review) {
