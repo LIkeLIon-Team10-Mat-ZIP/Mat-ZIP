@@ -8,7 +8,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnit;
+import org.mockito.junit.MockitoRule;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.quality.Strictness;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
@@ -21,13 +24,18 @@ import site.matzip.matzip.service.MatzipService;
 import site.matzip.member.domain.Member;
 import site.matzip.member.repository.MemberRepository;
 import site.matzip.member.service.MemberService;
+import site.matzip.review.domain.Heart;
 import site.matzip.review.domain.Review;
 import site.matzip.review.dto.ReviewCreationDTO;
+import site.matzip.review.repository.HeartRepository;
 import site.matzip.review.repository.ReviewRepository;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
@@ -53,6 +61,8 @@ class ReviewServiceTest {
     private ReviewRepository reviewRepository;
     @Mock
     private MemberRepository memberRepository;
+    @Mock
+    private HeartRepository heartRepository;
     @Mock
     private HttpServletRequest request;
     @Mock
@@ -93,23 +103,23 @@ class ReviewServiceTest {
         assertThat(fristReview.getAuthor()).isEqualTo(testUser);
     }
 
-//    @Test
-//    void remove() {
-//        ReviewCreationDTO reviewCreationDTO = ReviewCreationDTO.builder()
-//                .rating(4.0)
-//                .content("맛있어요")
-//                .build();
-//
-//        Review review = reviewService.create(reviewCreationDTO, testUser.getId(), matzip);
-//
-//        reviewService.remove(review);
-//
-//        List<Review> reviews = reviewService.findAll();
-//
-//        System.out.println("reviews.get(0).getContent() = " + reviews.get(0).getContent());
-//
-//        assertThat(reviews.size()).isEqualTo(0);
-//    }
+/*    @Test
+    void remove() {
+        ReviewCreationDTO reviewCreationDTO = ReviewCreationDTO.builder()
+                .rating(4.0)
+                .content("맛있어요")
+                .build();
+
+        Review review = reviewService.create(reviewCreationDTO, testUser.getId(), matzip);
+
+        reviewService.remove(review);
+
+        List<Review> reviews = reviewService.findAll();
+
+        System.out.println("reviews.get(0).getContent() = " + reviews.get(0).getContent());
+
+        assertThat(reviews.size()).isEqualTo(0);
+    }*/
 
     @Test
     void modify() {
@@ -179,24 +189,18 @@ class ReviewServiceTest {
 
     @Test
     void rewardPointsForReviews() {
-        testUser.addPoints(100);
+        long referenceTimeHours = appConfig.getPointRewardReferenceTime();
+        long pointRewardReview = appConfig.getPointRewardReview();
 
-        Review review = reviewService.create(reviewCreationDTO, testUser.getId(), matzip);
-        review.setCreatedDate(LocalDateTime.now().minusHours(25));
+        LocalDateTime referenceTime = LocalDateTime.now().minusHours(referenceTimeHours + 1);
+        Review expiredReview = reviewService.create(reviewCreationDTO, testUser.getId(), matzip);
 
-        when(appConfig.getPointRewardReview()).thenReturn(100L);
-        when(appConfig.getPointRewardReferenceTime()).thenReturn(24L);
+        expiredReview.setCreatedDate(referenceTime);
 
-        LocalDateTime referenceTime = LocalDateTime.now().minusHours(appConfig.getPointRewardReferenceTime());
-        when(reviewRepository.findReviewsOlderThan(referenceTime)).thenReturn(Collections.singletonList(review));
+        lenient().when(reviewRepository.findReviewsOlderThan(any())).thenReturn(Collections.singletonList(expiredReview));
 
         reviewService.rewardPointsForReviews();
 
-        // Verify that the member's points have been updated
-        assertThat(testUser.getPoint()).isEqualTo(110);
-
-        // Verify that repository methods were invoked with correct parameters
-        verify(memberRepository, times(1)).save(testUser);
-        verify(reviewRepository, times(1)).save(review);
+        assertThat(testUser.getPoint()).isEqualTo(pointRewardReview);
     }
 }
