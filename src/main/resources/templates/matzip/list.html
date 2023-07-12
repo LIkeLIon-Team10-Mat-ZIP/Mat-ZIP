@@ -63,7 +63,7 @@
 <main layout:fragment="Content">
     <div class="flex flex-shrink-0 btn-group justify-end mt-40">
         <div class="btn-group rounded-md border border-blue-200 my-5">
-            <button class="btn-s bg-blue-800 text-white rounded-md py-1 px-3 space-x-2 mr-2"
+            <button class="btn-sm bg-blue-800 text-white rounded-md py-1 px-3 space-x-2 mr-2"
                     data-list-type="all"
                     id="listBtnAll"
                     onclick="toggleList('all')">
@@ -71,7 +71,7 @@
                 <span class="loading loading-spinner-sm inline" id="listSpinnerAll" style="display: none;"></span>
             </button>
 
-            <button class="btn-s rounded-md py-1 px-3 space-x-2"
+            <button class="btn-sm rounded-md py-1 px-3 space-x-2"
                     data-list-type="my"
                     id="listBtnMy"
                     onclick="toggleList('my')">
@@ -90,6 +90,7 @@
             <option value="KOREAN">한식</option>
             <option value="JAPANESE">회/일식</option>
             <option value="CHINESE">중식</option>
+            <option value="WESTERN">양식</option>
             <option value="ASIAN">아시안</option>
             <option value="BAR">술집</option>
             <option value="CAFE">카페</option>
@@ -105,28 +106,29 @@
             맛집 등록
         </button>
     </div>
-    <div class="mt-3 shadow-lg" id="map">
+    <div class="mt-3 shadow-lg h-50 w-40" id="map">
         <div id="placeInfo">
             <h2 id="placeName">맛집 이름</h2>
             <p id="placeAddress">주소</p>
             <p id="placePhone">전화번호</p>
             <p id="placeDescription">설명</p>
-            <p id="placeRating">내 평점</p>
-            <a class="w-full text-white rounded-3xl py-2 h-8 flex items-center justify-center shadow"
-               style="background-color: #2E8B57;"
-               id="mapLink"
-               target="_blank">큰지도 보기</a>
-            <br>
-            <a class="w-full font-bold rounded-3xl py-2 h-8 flex items-center justify-center shadow bg-opacity-50 bg-blue-400"
-               id="routeLink"
-               target="_blank">길찾기</a>
-            <br>
-            <a class="w-full font-bold text-white rounded-3xl py-2 h-8 flex items-center justify-center shadow bg-green-500"
-               id="detailLink"
-               target="_blank">상세정보</a>
-            <br>
-            <a class="w-full font-bold  rounded-3xl py-2 h-8 flex items-center justify-center shadow bg-green-600"
-               id="reviewButton">리뷰 등록</a>
+            <p id="placeRating">평점</p>
+            <div class="flex flex-col items-center my-3">
+                <a class="w-full font-bold text-white rounded-3xl py-2 h-8 flex items-center justify-center shadow bg-blue-800 hover:bg-blue-500"
+                   id="mapLink"
+                   target="_blank">큰지도 보기</a>
+                <br>
+                <a class="w-full font-bold text-white rounded-3xl py-2 h-8 flex items-center justify-center shadow bg-blue-800 hover:bg-blue-500"
+                   id="routeLink"
+                   target="_blank">길찾기</a>
+                <br>
+                <a class="w-full font-bold text-white rounded-3xl py-2 h-8 flex items-center justify-center shadow bg-blue-800 hover:bg-blue-500"
+                   id="detailLink"
+                   target="_blank">상세정보</a>
+                <br>
+                <a class="w-full font-bold text-white rounded-3xl py-2 h-8 flex items-center justify-center shadow bg-blue-800 hover:bg-blue-500"
+                   id="reviewButton">리뷰 등록</a>
+            </div>
             <hr>
             <div class="mt-3" id="reviewList">
                 <span class="text-lg"><i class="fa-solid fa-magnifying-glass"></i> 리뷰</span>
@@ -315,15 +317,18 @@
                 placeRating.style.display = 'none';
             } else {
                 placeDescription.style.display = 'block';
-                placeDescription.innerText = '설명: ' + matzip.description;
-                // 내 평점을 별점으로 표시합니다
+                placeDescription.innerHTML = `
+            <div class="flex content-start description-wrapper">
+           <div for="descriptionInput">설명 :</div>
+            <textarea disabled id="descriptionInput">${matzip.description}</textarea>
+      </div>
+    `;
+
                 placeRating.style.display = 'block';
                 placeRating.innerHTML = `
-      <div class="flex">
-        <span class="mb-2"> 평점: </span>
-        <span class="rating rating-md rating-half" id="rating">
-        </span>
-      </div>
+                <div class="rating rating-md rating-half" disabled id="rating">
+                평점 :
+                </div>
     `;
                 const ratingValue = matzip.rating;
                 const ratingDiv = document.getElementById("rating");
@@ -332,7 +337,7 @@
                     const value = i * 0.5;
                     const input = document.createElement('input');
                     input.type = 'radio';
-                    input.className = 'bg-yellow-500 mask mask-star-2';
+                    input.className = 'bg-yellow-300 mask mask-star-2';
                     input.name = 'rating';
                     input.value = value.toFixed(1);
                     input.id = 'rating-' + value.toFixed(1);
@@ -360,31 +365,110 @@
             detailLink.innerText = '상세정보';
             reviewButton.href = '/review/create/' + matzip.matzipId;
             reviewButton.innerText = '리뷰 작성';
-
-            // 리스트 타입이 'my'인 경우에만 삭제 버튼을 추가합니다.
+            // 리스트 타입이 'my'인 경우에만 수정과 삭제 버튼을 추가합니다.
             if (currentListType === 'my') {
-                let deleteButton = document.querySelector('#placeName + a');
-
-                // 삭제 버튼이 존재하지 않을 경우에만 생성합니다.
-                if (!deleteButton) {
+                let updateButton = document.querySelector('#placeName + a.update-button');
+                let deleteButton = document.querySelector('#placeName + a.delete-button');
+                // 수정 버튼이 존재하지 않을 경우에만 생성합니다.
+                if (!updateButton && !deleteButton) {
                     deleteButton = document.createElement('a');
+
                     deleteButton.innerText = '삭제';
-                    deleteButton.classList.add('btn', 'btn-xs');
+                    deleteButton.classList.add('btn', 'btn-xs', 'delete-button');
                     deleteButton.addEventListener('click', function () {
-                        const matzipId = marker.matzipId
+                        const matzipId = matzip.matzipId;
                         deleteMatzip(matzipId);
                     });
                     placeName.insertAdjacentElement('afterend', deleteButton);
+
+                    updateButton = document.createElement('a');
+                    updateButton.innerText = '수정';
+                    updateButton.classList.add('btn', 'btn-xs', 'update-button');
+                    updateButton.addEventListener('click', function () {
+                        const matzipId = matzip.matzipId;
+                        updateButtonClickListener(updateButton, matzipId);
+                    });
+                    placeName.insertAdjacentElement('afterend', updateButton);
                 }
             } else {
-                // 리스트 타입이 'all'인 경우, 삭제 버튼이 존재한다면 제거합니다.
-                const deleteButton = document.querySelector('#placeName + a');
+                // 리스트 타입이 'all'인 경우, 삭제 버튼과 수정 버튼이 존재한다면 제거합니다.
+                const deleteButton = document.querySelector('#placeName + a.delete-button');
                 if (deleteButton) {
                     deleteButton.remove();
                 }
+                const updateButton = document.querySelector('#placeName + a.update-button');
+                if (updateButton) {
+                    updateButton.remove();
+                }
             }
-
             placeInfo.style.display = 'block'; // Show place info
+        }
+
+        function updateButtonClickListener(updateButton, matzipId) {
+            if (updateButton.innerText === "수정") {
+                updateButton.innerText = "완료";
+                makeEditable();
+            } else if (updateButton.innerText === "완료") {
+                updateButton.innerText = "수정";
+                updateMatzip(matzipId); // matzipId를 이용해 수정 요청 보냄
+                doneEditing();
+            }
+        }
+
+        function updateMatzip(matzipId) {
+            var description = document.getElementById("descriptionInput").value;
+            var rating = document.querySelector('input[name="rating"]:checked')?.value ?? 0;
+            const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+            const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+
+            var matzipUpdateDTO = {
+                description: description,
+                rating: rating
+            }
+            // 서버로 맛집 정보를 전송합니다
+            fetch(`/matzip/api/update/${matzipId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    [csrfHeader]: csrfToken // CSRF 토큰을 헤더에 포함합니다
+                },
+                body: JSON.stringify(matzipUpdateDTO)
+            })
+                .then(response => {
+                    if (response.ok) {
+                        toastNotice("맛집 정보가 업데이트 되었습니다.")
+                        // 여기서 다시 맛집 정보를 가져오거나 페이지를 이동하는 등의 작업을 수행할 수 있습니다.
+                    } else {
+                        toastWarning('맛집 정보 업데이트에 실패했습니다.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('맛집 정보 업데이트에 실패했습니다.');
+                });
+        }
+
+        // 완료 버튼 클릭 시 호출되는 함수
+        function doneEditing() {
+            const descriptionInput = document.getElementById("descriptionInput");
+            const ratingRadios = document.querySelectorAll('input[name="rating"]');
+
+            descriptionInput.disabled = true;
+            ratingRadios.forEach(radio => {
+                radio.disabled = true;
+            });
+        }
+
+
+        // 수정 가능한 상태로 변경하는 함수
+        function makeEditable() {
+            const descriptionInput = document.getElementById("descriptionInput");
+            const ratingRadios = document.querySelectorAll('input[name="rating"]');
+
+            descriptionInput.disabled = false;
+            ratingRadios.forEach(radio => {
+                radio.disabled = false;
+            });
         }
 
         // 리스트 타입 토글 함수
@@ -398,6 +482,7 @@
                     // 리스트 버튼 스피너를 숨깁니다
                     document.getElementById("listSpinnerMy").style.display = "none";
                     // 버튼 활성화/비활성화 클래스 토글
+
                     listBtnAll.classList.add("bg-blue-800", "text-white");
                     listBtnMy.classList.remove("bg-blue-800", "text-white");
                     currentListType = 'all'
@@ -546,6 +631,7 @@
         }
 
         function createReviewList(review) {
+
             const reviewListContainer = document.getElementById('reviewListContainer');
 
             // 1. 전체 리뷰 컨테이너 생성
@@ -593,7 +679,7 @@
 
             // 4. 친구 추가 버튼 생성 및 추가
             const friendAddButton = document.createElement('button');
-            friendAddButton.classList.add('mx-3', 'btn', 'btn-xs', 'btn-info');
+            friendAddButton.classList.add('mx-3', 'btn', 'btn-xs', 'bg-blue-800', 'hover:bg-blue-500', 'text-white');
             friendAddButton.innerHTML = '<i class="fa-solid fa-plus"></i>친구';
             nameDateWrapper.appendChild(friendAddButton);
 
@@ -629,6 +715,7 @@
 
             const reviewContent = document.createElement('a');
             reviewContent.setAttribute('href', 'review/detail/' + review.reviewId);
+
             reviewContent.classList.add('break-all');
             reviewContent.innerText = review.content;
             reviewContentWrapper.appendChild(reviewContent);
@@ -641,7 +728,7 @@
 
                 const reviewImage = document.createElement('img');
                 reviewImage.src = review.reviewImageUrl;
-                reviewImage.classList.add('top-0', 'left-0', 'w-32','object-cover', 'rounded');
+                reviewImage.classList.add('top-0', 'left-0', 'w-32', 'object-cover', 'rounded');
                 reviewImage.style.maxWidth = "200px";
                 reviewImageContainer.appendChild(reviewImage);
 

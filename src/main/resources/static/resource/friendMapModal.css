@@ -1,0 +1,68 @@
+/* 모달 창 애니메이션 효과 */
+@keyframes modalFadeIn {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes modalFadeOut {
+    0% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+/* modal.css */
+.friendMapModal {
+    top: 58px; /* 상단바의 높이와 같아야 함 */
+    visibility: visible !important;
+    opacity: 1 !important;
+    z-index: 9999;
+    background-color: rgba(0, 0, 0, 0);
+}
+
+.friendMapModal.show {
+    display: block; /* 모달 표시 */
+}
+
+.friendMapModal.hidden {
+    /* 모달 창이 사라질 때의 애니메이션 */
+    animation: modalFadeOut 0.6s ease-in-out forwards;
+}
+
+.friendMapModal-content {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 1000px;
+    height: 50%;
+    background-color: #fefefe;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3); /* 입체감 있는 그림자 효과 */
+
+    /* 모달 창이 나타날 때의 애니메이션 */
+    animation: modalFadeIn 0.6s ease-in-out forwards;
+}
+
+#friendMapModalContent {
+    overflow-y: auto; /* 내용이 넘칠 경우 스크롤바 표시 (추가) */
+}
+
+.friendMapModalClose {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.friendMapModalClose:hover,
+.friendMapModalClose:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}

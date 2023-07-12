@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -61,10 +62,11 @@ public class MemberController {
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/myPage")
-    public String showMyPage(Model model,
-                             @RequestParam(value = "menu", defaultValue = "1") int menu,
-                             @AuthenticationPrincipal PrincipalDetails principalDetails) {
-        Member member = principalDetails.getMember();
+    public String showMyPage(Model model, @RequestParam(value = "menu", defaultValue = "1") int menu,
+                             Authentication authentication) {
+
+        //Member member = principalDetails.getMember(); TODO: 수정 필요
+        Member member = rq.getMember(authentication);
 
         MemberInfoDTO memberInfoDTO = memberService.convertToMemberInfoDTO(member.getId());
         MemberInfoCntDTO memberInfoCntDTO = memberService.convertToMemberInfoCntDTO(member.getId());
@@ -96,6 +98,11 @@ public class MemberController {
                 return "usr/member/myPage/matzip";
             }
         }
+    }
+
+    @GetMapping("/myPage/friendMap")
+    public String getFriendMap() {
+        return "usr/member/myPage/friendMap";
     }
 
     @PreAuthorize("isAuthenticated()")
@@ -136,16 +143,6 @@ public class MemberController {
         profileImageService.saveProfileImage(profileImage, principalDetails.getMember());
 
         return rq.redirectWithMsg("/usr/member/myPage", "프로필 이미지가 변경되었습니다.");
-    }
-
-    @PreAuthorize("isAuthenticated()")
-    @GetMapping("/ranking")
-    public String showRanking(Model model) {
-        List<MemberRankDTO> memberRankDtoList = memberService.findAndConvertTopTenMember();
-
-        model.addAttribute("memberRankDtoList", memberRankDtoList);
-
-        return "/usr/member/ranking";
     }
 
     @GetMapping("/getProfile")

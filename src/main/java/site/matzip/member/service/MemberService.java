@@ -274,9 +274,9 @@ public class MemberService {
 
         String profileImageUrl = appConfig.getDefaultProfileImageUrl();
 
-        for (Friend friend : member.getFriends2()) {
+        for (Friend friend : member.getFriends1()) {
             FriendDetailDTO friendDetailDTO = FriendDetailDTO.builder()
-                    .id(friend.getId())
+                    .id(friend.getMember2().getId())
                     .profileImageUrl(friend.getMember2().getProfileImage() != null ? friend.getMember2().getProfileImage().getImageUrl() : profileImageUrl)
                     .friendNickname(friend.getMember2().getNickname())
                     .badgeImage(showMemberBadge(friend.getMember2()))

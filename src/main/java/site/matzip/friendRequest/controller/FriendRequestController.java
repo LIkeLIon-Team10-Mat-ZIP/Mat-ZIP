@@ -6,17 +6,11 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-
+import site.matzip.base.event.EventAfterFriendRequestAccept;
 import site.matzip.base.rq.Rq;
 import site.matzip.config.auth.PrincipalDetails;
 import site.matzip.friendRequest.dto.FriendRequestDTO;
@@ -24,8 +18,7 @@ import site.matzip.friendRequest.entity.FriendRequest;
 import site.matzip.friendRequest.service.FriendRequestService;
 import site.matzip.member.domain.Member;
 import site.matzip.member.service.MemberService;
-import site.matzip.base.event.EventAfterFriendRequestAccept;
-import site.matzip.base.event.EventAfterComment;
+
 import java.util.List;
 
 @Controller
@@ -35,6 +28,7 @@ public class FriendRequestController {
     private final FriendRequestService friendRequestService;
     private final ApplicationEventPublisher publisher;
     private final MemberService memberService;
+    private final Rq rq;
 
     @GetMapping("/list")
     @PreAuthorize("isAuthenticated()")
@@ -46,11 +40,6 @@ public class FriendRequestController {
 
         return "usr/friend/requestList";
     }
-
-    @GetMapping("/add")
-    public String showAddFriendForm() {
-        return "usr/friend/requestForm";
-    } // TODO : 추후에 삭제
 
     @PostMapping("/add")
     @ResponseBody
@@ -79,13 +68,13 @@ public class FriendRequestController {
 
         friendRequestService.deleteRequest(friendRequestId); // 요청 삭제
 
-        return "redirect:/friends/list";
+        return "redirect:/usr/member/myPage?menu=3";
     }
 
     @PostMapping("/reject")
     public String rejectFriendRequest(@RequestParam("friendRequestId") Long friendRequestId) {
         friendRequestService.deleteRequest(friendRequestId);
 
-        return "redirect:/friends/list";
+        return rq.historyBack("친구 요청을 거절하셨습니다.");
     }
 }
