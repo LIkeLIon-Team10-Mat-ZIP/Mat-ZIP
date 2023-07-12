@@ -63,4 +63,9 @@ public class FriendService {
         Friend friend2 = friendRepository.findByMember1AndMember2(member2, member1);
         friendRepository.delete(friend2);
     }
+
+    public boolean isFriend(Long userId, Long friendId) {
+        if (friendRepository.findByMember1IdAndMember2Id(userId, friendId) == null) return false;
+        return true;
+    }
 }
