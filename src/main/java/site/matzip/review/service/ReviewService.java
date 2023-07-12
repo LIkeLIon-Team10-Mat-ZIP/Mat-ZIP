@@ -117,6 +117,7 @@ public class ReviewService {
         return ReviewListDTO.builder()
                 .matzipId(review.getMatzip().getId())
                 .reviewId(review.getId())
+                .authorId(review.getAuthor().getId())
                 .authorNickname(review.getAuthor().getNickname())
                 .profileImageUrl(profileImageUrl)
                 .content(review.getContent())

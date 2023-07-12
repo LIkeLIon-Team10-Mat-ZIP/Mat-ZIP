@@ -2,6 +2,7 @@ package site.matzip.friendRequest.controller;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,8 +11,10 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
 import site.matzip.base.event.EventAfterFriendRequestAccept;
 import site.matzip.base.rq.Rq;
+import site.matzip.base.rsData.RsData;
 import site.matzip.config.auth.PrincipalDetails;
 import site.matzip.friendRequest.dto.FriendRequestDTO;
 import site.matzip.friendRequest.entity.FriendRequest;
@@ -46,14 +49,24 @@ public class FriendRequestController {
     public ResponseEntity<String> addFriend(@AuthenticationPrincipal PrincipalDetails principalDetails, String nickname) {
         Member fromMember = principalDetails.getMember();
 
-        if (!friendRequestService.checkNicknameExists(nickname)) {
-            return new ResponseEntity<>("fail", HttpStatus.BAD_REQUEST);
+        RsData<FriendRequest> friendRequestRsData = friendRequestService.checkRequestAdmin(nickname, fromMember.getNickname());
+
+        if (friendRequestRsData.isFail()) {
+            return new ResponseEntity<>(friendRequestRsData.getMsg(), HttpStatus.OK);
         }
 
         Member toMember = friendRequestService.getMember(nickname);
         friendRequestService.addFriendRequest(toMember, fromMember);
 
-        return new ResponseEntity<>("success", HttpStatus.OK);
+        return new ResponseEntity<>(friendRequestRsData.getMsg(), HttpStatus.OK);
+    }
+
+    @PostMapping("/add/{memberId}")
+    @ResponseBody
+    public ResponseEntity<String> addFriend(@PathVariable Long memberId, @AuthenticationPrincipal PrincipalDetails principalDetails) {
+        Member member = friendRequestService.getMember(memberId);
+
+        return addFriend(principalDetails, member.getNickname());
     }
 
     @PostMapping("/accept")

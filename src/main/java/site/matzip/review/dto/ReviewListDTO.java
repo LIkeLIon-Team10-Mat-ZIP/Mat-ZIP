@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 public class ReviewListDTO {
     private Long matzipId;
     private Long reviewId;
+    private Long authorId;
     private String authorNickname;
     private String profileImageUrl;
     private double rating;

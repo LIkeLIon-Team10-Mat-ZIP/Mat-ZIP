@@ -59,7 +59,7 @@
         }
     </style>
 </head>
-<body>
+<body th:data-user-id="${memberId}">
 <main layout:fragment="Content">
     <container class="container mx-auto my-3">
         <div class="flex flex-shrink-0 btn-group justify-end">
@@ -718,10 +718,38 @@
             userDateDiv.appendChild(createDateSpan);
 
             // 4. 친구 추가 버튼 생성 및 추가
+            const currentUserId = parseInt(document.body.dataset.userId);
             const friendAddButton = document.createElement('button');
             friendAddButton.classList.add('mx-3', 'btn', 'btn-xs', 'bg-blue-800', 'hover:bg-blue-500', 'text-white');
+            if (currentUserId === review.authorId) {
+                friendAddButton.classList.add('hidden');
+            }
             friendAddButton.innerHTML = '<i class="fa-solid fa-plus"></i>친구';
             nameDateWrapper.appendChild(friendAddButton);
+
+            friendAddButton.addEventListener('click', () => {
+                const url = '/friends/add/' + review.authorId;
+                const csrfToken = document.querySelector('meta[name="_csrf"]').content;
+
+                fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                    },
+                })
+                    .then((response) => {
+                        return response.text();
+                    })
+                    .then((text) => {
+                        toastNotice(text);
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                        toastWarning("친구 요청을 보낼 수 없습니다.");
+                    });
+            });
+
 
             // 5. 사용자 추가 정보(등록 맛집, 작 리뷰, 친구 수) 생성 및 추가
             const userAdditionalInfo = document.createElement('div');
