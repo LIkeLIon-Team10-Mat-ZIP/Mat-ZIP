@@ -1,8 +1,9 @@
 package site.matzip.friendRequest.dto;
 
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 
+@Getter
 @Builder
 public class FriendRequestDTO {
     private Long id;

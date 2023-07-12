@@ -1,7 +1,7 @@
 package site.matzip.review.dto;
 
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.Setter;
 import site.matzip.matzip.domain.MatzipType;
 
@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 @Setter
+@Getter
 @Builder
 public class ReviewDetailDTO {
     private String profileImageUrl;

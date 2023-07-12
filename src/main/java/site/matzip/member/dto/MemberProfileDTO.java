@@ -1,9 +1,9 @@
 package site.matzip.member.dto;
 
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 
-@Data
+@Getter
 @Builder
 public class MemberProfileDTO {
     private String profileImageUrl;
