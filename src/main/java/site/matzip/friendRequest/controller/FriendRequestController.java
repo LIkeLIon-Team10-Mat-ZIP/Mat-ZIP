@@ -3,20 +3,21 @@ package site.matzip.friendRequest.controller;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import site.matzip.base.event.EventAfterComment;
+import org.springframework.web.bind.annotation.*;
+import site.matzip.base.event.EventAfterFriendRequestAccept;
+import site.matzip.base.rq.Rq;
 import site.matzip.config.auth.PrincipalDetails;
 import site.matzip.friendRequest.dto.FriendRequestDTO;
 import site.matzip.friendRequest.entity.FriendRequest;
 import site.matzip.friendRequest.service.FriendRequestService;
 import site.matzip.member.domain.Member;
+import site.matzip.member.service.MemberService;
 
 import java.util.List;
 
@@ -26,29 +27,33 @@ import java.util.List;
 public class FriendRequestController {
     private final FriendRequestService friendRequestService;
     private final ApplicationEventPublisher publisher;
+    private final MemberService memberService;
+    private final Rq rq;
 
     @GetMapping("/list")
     @PreAuthorize("isAuthenticated()")
     public String showList(Model model, @AuthenticationPrincipal PrincipalDetails principalDetails) {
-        List<FriendRequestDTO> friendRequestDTOS = friendRequestService.convertToFriendRequestDTOS(principalDetails.getMember());
+        Member member = memberService.findByUsername("user1");
+        List<FriendRequestDTO> friendRequestDTOS = friendRequestService.convertToFriendRequestDTOS(member);
 
         model.addAttribute("friendRequestDTOS", friendRequestDTOS);
 
         return "usr/friend/requestList";
     }
 
-    @GetMapping("/add")
-    public String showAddFriendForm() {
-        return "usr/friend/requestForm";
-    }
-
     @PostMapping("/add")
-    public String addFriend(@AuthenticationPrincipal PrincipalDetails principalDetails, Member fromMember) {
-        Member toMember = principalDetails.getMember();
+    @ResponseBody
+    public ResponseEntity<String> addFriend(@AuthenticationPrincipal PrincipalDetails principalDetails, String nickname) {
+        Member fromMember = principalDetails.getMember();
 
+        if (!friendRequestService.checkNicknameExists(nickname)) {
+            return new ResponseEntity<>("fail", HttpStatus.BAD_REQUEST);
+        }
+
+        Member toMember = friendRequestService.getMember(nickname);
         friendRequestService.addFriendRequest(toMember, fromMember);
 
-        return "redirect:/friends/list";
+        return new ResponseEntity<>("success", HttpStatus.OK);
     }
 
     @PostMapping("/accept")
@@ -59,17 +64,17 @@ public class FriendRequestController {
         Member member1 = friendRequest.getToMember();
         Member member2 = friendRequest.getFromMember();
 
-        publisher.publishEvent(new EventAfterComment(this, member1, member2)); // 친구 요청 수락 시 이벤트 발행
+        publisher.publishEvent(new EventAfterFriendRequestAccept(this, member1, member2)); // 친구 요청 수락 시 이벤트 발행
 
         friendRequestService.deleteRequest(friendRequestId); // 요청 삭제
 
-        return "redirect:/friends/list";
+        return "redirect:/usr/member/myPage?menu=3";
     }
 
     @PostMapping("/reject")
     public String rejectFriendRequest(@RequestParam("friendRequestId") Long friendRequestId) {
         friendRequestService.deleteRequest(friendRequestId);
 
-        return "redirect:/friends/list";
+        return rq.historyBack("친구 요청을 거절하셨습니다.");
     }
 }

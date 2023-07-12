@@ -37,18 +37,18 @@
     <div class="flex justify-center mx-auto max-w-5xl">
         <div class="w-full">
             <form enctype="multipart/form-data" id="reviewForm"
-                  method="POST" th:action="@{|/review/create/${matzipInfoDTO.matzipId}|}"
-                  th:object="${reviewCreationDTO}">
-
+                  method="POST" th:action th:object="${reviewCreationDTO}">
                 <div class="flex flex-col">
-                    <span class="font-bold text-xl p-3 border-b border-gray-400"><i
+                    <span th:if="${create}" class="font-bold text-xl p-3 border-b border-gray-400"><i
                             class="fa-regular fa-pen-to-square"></i> 리뷰 작성</span>
+                    <span th:unless="${create}" class="font-bold text-xl p-3 border-b border-gray-400"><i
+                            class="fa-regular fa-pen-to-square"></i> 리뷰 수정</span>
                     <div class="flex p-3">
                         <div class="flex-grow">
                             <div class="flex items-center">
                                 <span class="font-bold text-xl mr-3" th:text="${matzipInfoDTO.matzipName}"></span>
                                 <a th:href="${matzipInfoDTO.matzipUrl}" target="_blank">
-                                    <button class="btn btn-outline btn-xs" type="button">상세보기</button>
+                                    <button class="btn bg-blue-800 hover:bg-blue-500 btn-xs text-white" type="button">상세보기</button>
                                 </a>
                             </div>
                             <div class="flex flex-col">
@@ -59,35 +59,35 @@
                         </div>
                         <div class="flex flex-col">
                             <span class="mb-2 text-lg">별점</span>
-                            <div class="rating rating-md rating-half" id="rating">
-                                <input class="bg-yellow-500 mask mask-star-2 mask-half-1" id="rating-0.5" name="rating"
+                            <div class="rating rating-md rating-half" id="rating" th:attr="data-rating=${reviewCreationDTO.rating}">
+                                <input class="bg-yellow-300 mask mask-star-2 mask-half-1" id="rating-0.5" name="rating"
                                        type="radio"
                                        value="0.5"/>
-                                <input class="bg-yellow-500 mask mask-star-2 mask-half-2" id="rating-1.0" name="rating"
+                                <input class="bg-yellow-300 mask mask-star-2 mask-half-2" id="rating-1.0" name="rating"
                                        type="radio"
                                        value="1.0"/>
-                                <input class="bg-yellow-500 mask mask-star-2 mask-half-1" id="rating-1.5" name="rating"
+                                <input class="bg-yellow-300 mask mask-star-2 mask-half-1" id="rating-1.5" name="rating"
                                        type="radio"
                                        value="1.5"/>
-                                <input class="bg-yellow-500 mask mask-star-2 mask-half-2" id="rating-2.0" name="rating"
+                                <input class="bg-yellow-300 mask mask-star-2 mask-half-2" id="rating-2.0" name="rating"
                                        type="radio"
                                        value="2.0"/>
-                                <input class="bg-yellow-500 mask mask-star-2 mask-half-1" id="rating-2.5" name="rating"
+                                <input class="bg-yellow-300 mask mask-star-2 mask-half-1" id="rating-2.5" name="rating"
                                        type="radio"
                                        value="2.5"/>
-                                <input checked class="bg-yellow-500 mask mask-star-2 mask-half-2" id="rating-3.0"
+                                <input checked class="bg-yellow-300 mask mask-star-2 mask-half-2" id="rating-3.0"
                                        name="rating"
                                        type="radio" value="3.0"/>
-                                <input class="bg-yellow-500 mask mask-star-2 mask-half-1" id="rating-3.5" name="rating"
+                                <input class="bg-yellow-300 mask mask-star-2 mask-half-1" id="rating-3.5" name="rating"
                                        type="radio"
                                        value="3.5"/>
-                                <input class="bg-yellow-500 mask mask-star-2 mask-half-2" id="rating-4.0" name="rating"
+                                <input class="bg-yellow-300 mask mask-star-2 mask-half-2" id="rating-4.0" name="rating"
                                        type="radio"
                                        value="4.0"/>
-                                <input class="bg-yellow-500 mask mask-star-2 mask-half-1" id="rating-4.5" name="rating"
+                                <input class="bg-yellow-300 mask mask-star-2 mask-half-1" id="rating-4.5" name="rating"
                                        type="radio"
                                        value="4.5"/>
-                                <input class="bg-yellow-500 mask mask-star-2 mask-half-2" id="rating-5.0" name="rating"
+                                <input class="bg-yellow-300 mask mask-star-2 mask-half-2" id="rating-5.0" name="rating"
                                        type="radio"
                                        value="5.0"/>
                             </div>
@@ -95,7 +95,7 @@
                     </div>
                     <div class="flex flex-col p-3">
                         <div class="form-group">
-                            <input accept="image/*" class="file-input file-input-bordered w-full" id="imageFiles"
+                            <input accept="image/*" class="file-input border-blue-800 border-2 w-full" id="imageFiles"
                                    multiple
                                    name="imageFiles"
                                    onchange="checkFileCount(event)" type="file"/>
@@ -103,12 +103,13 @@
                         <div class="flex justify-start my-2" id="selectedImages"></div>
                         <div class="form-group w-full">
                             <div class="mt-2 flex justify-center">
-                                <textarea class="w-full" id="content" name="content"
+                                <textarea class="w-full border-blue-800 border-2" id="content" name="content" th:text="${reviewCreationDTO.content}"
                                           style="height: 500px;"></textarea>
                             </div>
                         </div>
                         <div class="mt-2 flex justify-end">
-                            <button class="btn btn-neutral btn-sm" type="submit">등록하기</button>
+                            <button th:if="${create}"  class="btn bg-blue-800 hover:bg-blue-500 btn-sm text-white" type="submit">등록하기</button>
+                            <button th:unless="${create}" class="btn bg-blue-800 hover:bg-blue-500 btn-sm" type="submit">수정하기</button>
                         </div>
                     </div>
                 </div>
@@ -116,7 +117,7 @@
         </div>
     </div>
 
-    <script>
+    <script th:inline="javascript">
         function checkFileCount(event) {
             const fileInput = event.target;
             const files = fileInput.files;
@@ -174,6 +175,45 @@
         function clearSelectedImages() {
             const selectedImagesDiv = document.getElementById("selectedImages");
             selectedImagesDiv.innerHTML = "";
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            // 수정전 이미지 보여지기
+            const existingImages = /*[[${reviewCreationDTO.imageUrls}]]*/ null;
+            displayExistingImages(existingImages);
+
+            // 리뷰에 등록되어 있던 별점을 표시하는 script
+            const ratingElem = document.querySelector('.rating');
+            const ratingValue = parseFloat(ratingElem.dataset.rating);
+            const inputElems = ratingElem.querySelectorAll('input');
+
+            inputElems.forEach(function (inputElem) {
+                if (parseFloat(inputElem.value) === ratingValue) {
+                    inputElem.setAttribute('checked', '');
+                }
+            });
+        });
+
+        // 수정전 이미지 가져오기
+        function displayExistingImages(images) {
+            const selectedImagesDiv = document.getElementById("selectedImages");
+
+            images.forEach(image => {
+                // 이미지 컨테이너를 생성합니다.
+                const imageContainer = document.createElement("div");
+                imageContainer.classList.add("selectedImageContainer");
+
+                // 이미지를 표시하기 위한 HTML 요소를 동적으로 생성합니다.
+                const imgElement = document.createElement("img");
+                imgElement.src = image;
+                imgElement.classList.add("selectedImage");
+
+                // 이미지를 컨테이너에 추가합니다.
+                imageContainer.appendChild(imgElement);
+
+                // 컨테이너를 추가합니다.
+                selectedImagesDiv.appendChild(imageContainer);
+            });
         }
     </script>
 </main>

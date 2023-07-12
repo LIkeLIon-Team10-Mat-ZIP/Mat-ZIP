@@ -305,30 +305,19 @@
             }
 
             // 장소검색 객체를 통해 키워드로 장소검색을 요청합니다
-            ps.keywordSearch(keyword, placesSearchCB);
+            ps.keywordSearch(keyword, placesSearchCB, {category_group_code: 'FD6'});
         }
 
         // 장소검색이 완료됐을 때 호출되는 콜백함수 입니다
         function placesSearchCB(data, status, pagination) {
             if (status === kakao.maps.services.Status.OK) {
-
-                // 정상적으로 검색이 완료됐으면
-                // 검색 목록과 마커를 표출합니다
                 displayPlaces(data);
-
                 // 페이지 번호를 표출합니다
                 displayPagination(pagination);
-
             } else if (status === kakao.maps.services.Status.ZERO_RESULT) {
-
                 alert('검색 결과가 존재하지 않습니다.');
-
-
             } else if (status === kakao.maps.services.Status.ERROR) {
-
                 alert('검색 결과 중 오류가 발생했습니다.');
-
-
             }
         }
 
@@ -343,12 +332,9 @@
 
             // 검색 결과 목록에 추가된 항목들을 제거합니다
             removeAllChildNods(listEl);
-
             // 지도에 표시되고 있는 마커를 제거합니다
             removeMarker();
-
             for (var i = 0; i < places.length; i++) {
-
                 // 마커를 생성하고 지도에 표시합니다
                 var placePosition = new kakao.maps.LatLng(places[i].y, places[i].x),
                     marker = addMarker(placePosition, i, places[i]);
@@ -367,28 +353,22 @@
                         displayInfowindow(marker, title);
                         showPlaceInfo(place);
                     });
-
                     itemEl.addEventListener('click', function () {
                         displayInfowindow(marker, title);
                         showPlaceInfo(place);
                         map.setCenter(marker.getPosition()); // 마커 위치로 중앙 이동
                     });
                 })(marker, places[i].place_name, places[i]);
-
                 fragment.appendChild(itemEl);
-
                 // 마커에 클릭 이벤트를 등록한다 (우클릭 : rightclick)
                 kakao.maps.event.addListener(marker, 'click', function () {
                     showPlaceInfo(this.place);
                 });
             }
-
             clusterer.addMarkers(markers);
-
             // 검색결과 항목들을 검색결과 목록 Element에 추가합니다
             listEl.appendChild(fragment);
             menuEl.scrollTop = 0;
-
             // 검색된 장소 위치를 기준으로 지도 범위를 재설정합니다
             map.setBounds(bounds);
         }
@@ -449,10 +429,10 @@
             // 버튼 추가 및 제어
             html += '<div>';
             if (isLoggedIn()) { // 로그인 상태인 경우
-                html += '<button class="w-full text-white rounded-3xl py-2 h-8 flex items-center justify-center shadow" style="background-color: #2E8B57;" onclick="registerAsMatzip()"><strong>맛집으로 등록</strong></button>';
-                html += '<button class="w-full text-white rounded-3xl py-2 h-8 flex items-center justify-center shadow mt-2" style="background-color: #2E8B57;" onclick="writeReview()"><strong>리뷰 작성</strong></button>';
+                html += '<button class="w-full font-bold text-white rounded-3xl py-2 h-8 flex items-center justify-center shadow bg-blue-800 hover:bg-blue-500" onclick="registerAsMatzip()"><strong>맛집으로 등록</strong></button>';
+                html += '<button class="w-full font-bold text-white rounded-3xl py-2 h-8 flex items-center justify-center shadow bg-blue-800 hover:bg-blue-500"  onclick="writeReview()"><strong>리뷰 작성</strong></button>';
             } else { // 로그인 상태가 아닌 경우
-                html += '<button class="w-full text-white rounded-3xl py-2 h-8 flex items-center justify-center shadow mt-2" style="background-color: #2E8B57;" onclick="redirectToLoginPage()"><strong>로그인</strong></button>';
+                html += '<button class="w-full font-bold text-white rounded-3xl py-2 h-8 flex items-center justify-center shadow bg-blue-800 hover:bg-blue-500"  onclick="redirectToLoginPage()"><strong>로그인</strong></button>';
             }
             html += '</div>';
 
@@ -506,8 +486,6 @@
                         x: coords.getLng(),
                         y: coords.getLat()
                     };
-
-                    console.log(matzipCreationDTO);
 
                     // 서버로 맛집 정보를 전송합니다
                     // CSRF 토큰을 가져옵니다

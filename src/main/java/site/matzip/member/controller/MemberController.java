@@ -4,26 +4,26 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import site.matzip.badge.service.MemberBadgeService;
-import site.matzip.base.appConfig.AppConfig;
 import site.matzip.base.rq.Rq;
 import site.matzip.base.rsData.RsData;
 import site.matzip.config.auth.PrincipalDetails;
+import site.matzip.friend.dto.FriendDetailDTO;
 import site.matzip.image.service.ProfileImageService;
+import site.matzip.matzip.dto.MatzipInfoDTO;
 import site.matzip.member.domain.Member;
-import site.matzip.member.dto.MemberInfoDTO;
-import site.matzip.member.dto.MemberProfileDTO;
-import site.matzip.member.dto.MemberRankDTO;
-import site.matzip.member.dto.NicknameUpdateDTO;
+import site.matzip.member.dto.*;
 import site.matzip.member.service.MemberService;
+import site.matzip.review.dto.MyReviewDTO;
 
 import java.io.IOException;
 import java.util.List;
@@ -35,8 +35,6 @@ public class MemberController {
 
     private final MemberService memberService;
     private final ProfileImageService profileImageService;
-    private final MemberBadgeService memberBadgeService;
-    private final AppConfig appConfig;
     private final Rq rq;
 
     @GetMapping("/login")
@@ -64,23 +62,47 @@ public class MemberController {
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/myPage")
-    public String showMyPage(Model model, @AuthenticationPrincipal PrincipalDetails principalDetails) {
-        Member member = principalDetails.getMember();
+    public String showMyPage(Model model, @RequestParam(value = "menu", defaultValue = "1") int menu,
+                             Authentication authentication) {
 
-        String profileImageUrl = appConfig.getDefaultProfileImageUrl();
-        if (member.getProfileImage() != null && member.getProfileImage().getImageUrl() != null) {
-            profileImageUrl = member.getProfileImage().getImageUrl();
-        }
+        //Member member = principalDetails.getMember(); TODO: 수정 필요
+        Member member = rq.getMember(authentication);
 
-        MemberInfoDTO memberInfoDTO = MemberInfoDTO.builder()
-                .nickname(member.getNickname())
-                .email(member.getEmail())
-                .profileImageUrl(profileImageUrl)
-                .badgeImage(memberBadgeService.showMemberBadge(member))
-                .build();
+        MemberInfoDTO memberInfoDTO = memberService.convertToMemberInfoDTO(member.getId());
+        MemberInfoCntDTO memberInfoCntDTO = memberService.convertToMemberInfoCntDTO(member.getId());
 
+        model.addAttribute("memberInfoCntDTO", memberInfoCntDTO);
         model.addAttribute("memberInfoDTO", memberInfoDTO);
-        return "usr/member/myPage";
+
+        switch (menu) {
+            case 2 -> {
+                List<MyReviewDTO> myReviewDTOS = memberService.converToMyReviewDTO(member.getId());
+                model.addAttribute("myReviewDTOS", myReviewDTOS);
+                return "usr/member/myPage/review";
+            }
+            case 3 -> {
+                List<FriendDetailDTO> friendDetailDTOS = memberService.converToFriendDetailDTO(member.getId());
+                model.addAttribute("friendDetailDTOS", friendDetailDTOS);
+                return "usr/member/myPage/friend";
+            }
+            case 4 -> {
+                List<MemberRankDTO> memberRankDTOS = memberService.findAndConvertTenMemberAroundMember(member.getId());
+                MemberPointDTO memberPointDTO = memberService.convertToMemberPointDTO(member.getId());
+                model.addAttribute("memberPointDTO", memberPointDTO);
+                model.addAttribute("memberRankDTOS", memberRankDTOS);
+                return "usr/member/myPage/point";
+            }
+            default -> {
+                List<MatzipInfoDTO> matzipInfoDTOS = memberService.convertToMatzipInfoDTO(member.getId());
+                model.addAttribute("matzipInfoDTOS", matzipInfoDTOS);
+                return "usr/member/myPage/matzip";
+            }
+        }
+    }
+
+    @GetMapping("/myPage/friendMap")
+    public String getFriendMap() {
+        return "usr/member/myPage/friendMap";
     }
 
     @PreAuthorize("isAuthenticated()")
@@ -91,7 +113,9 @@ public class MemberController {
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/myPage/modifyNickname")
-    public String modifyNickName(NicknameUpdateDTO nicknameUpdateDTO, BindingResult result, @AuthenticationPrincipal PrincipalDetails principalDetails) {
+    public String modifyNickName(@Valid NicknameUpdateDTO nicknameUpdateDTO,
+                                 BindingResult result,
+                                 @AuthenticationPrincipal PrincipalDetails principalDetails) {
         if (result.hasErrors()) {
             return "/usr/member/myPage/modifyNickname";
         }
@@ -120,31 +144,9 @@ public class MemberController {
         return "redirect:/usr/member/myPage";
     }
 
-    @PreAuthorize("isAuthenticated()")
-    @GetMapping("/ranking")
-    public String showRanking(Model model) {
-        List<MemberRankDTO> memberRankDtoList = memberService.findAndConvertTopTenMember();
-
-        model.addAttribute("memberRankDtoList", memberRankDtoList);
-
-        return "/usr/member/ranking";
-    }
-
     @GetMapping("/getProfile")
     @ResponseBody
     public MemberProfileDTO getProfile(@RequestParam String nickname) {
-        Member member = memberService.findByNickname(nickname);
-        String profileImageUrl = appConfig.getDefaultProfileImageUrl();
-        if (member.getProfileImage() != null && member.getProfileImage().getImageUrl() != null) {
-            profileImageUrl = member.getProfileImage().getImageUrl();
-        }
-
-        return MemberProfileDTO.builder()
-                .profileImageUrl(profileImageUrl)
-                .nickname(member.getNickname())
-                .matzipCount(member.getMatzipMembers().size())
-                .reviewCount(member.getReviews().size())
-                .point(member.getPoint())
-                .build();
+        return memberService.convertToMemberProfileDTO(nickname);
     }
 }

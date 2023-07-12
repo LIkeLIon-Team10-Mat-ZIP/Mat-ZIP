@@ -4,14 +4,14 @@ import lombok.Getter;
 
 @Getter
 public enum MatzipType {
-    KOREAN("korean"),
-    JAPANESE("japanese"),
-    CHINESE("chinese"),
-    ASIAN("asian"),
-    WESTERN("western"),
-    BAR("bar"),
-    CAFE("cafe"),
-    ETC("etc");
+    KOREAN("한식"),
+    JAPANESE("회/일식"),
+    CHINESE("중식"),
+    ASIAN("아시안"),
+    WESTERN("양식"),
+    BAR("술집"),
+    CAFE("카페"),
+    ETC("기타");
     private String value;
 
     private MatzipType(String value) {

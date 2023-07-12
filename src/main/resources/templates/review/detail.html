@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html layout:decorate="~{common/layout/defaultLayout.html}">
 <head>
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+
     <title>리뷰 상세페이지</title>
     <style>
         .text-content {
@@ -40,6 +43,14 @@
         .fade-out.show {
             opacity: 1;
         }
+
+        .selectedImageContainer {
+            width: 120px;
+            height: 120px;
+            border: 2px solid #CCC;
+            border-radius: 4px;
+            overflow: hidden;
+        }
     </style>
 </head>
 <body>
@@ -56,20 +67,22 @@
                         <div class="flex items-center mb-1">
                             <div class="text-xl font-bold" th:text="${reviewDetailDTO.authorNickname}"></div>
                             <div class="flex mx-2">
-                                <img src="https://drive.google.com/uc?id=1Eu_ibwNeAbHi7n5nu0zGQK9ylyoKpset"
-                                     class="w-5 h-5 rounded-full mr-1">
-                                <img src="https://drive.google.com/uc?id=1Eu_ibwNeAbHi7n5nu0zGQK9ylyoKpset"
-                                     class="w-5 h-5 rounded-full mr-1">
-                                <img src="https://drive.google.com/uc?id=1Eu_ibwNeAbHi7n5nu0zGQK9ylyoKpset"
-                                     class="w-5 h-5 rounded-full mr-1">
+                                <div th:each="badge : ${reviewDetailDTO.badgeImage}">
+                                    <img th:src="${badge.key}" class="w-7 h-7 rounded-full mr-1"
+                                         th:title="${badge.value}">
+                                </div>
                             </div>
                         </div>
 
                         <div class="flex">
-                            <div class="text-sm mr-2" th:text="${reviewDetailDTO.formattedCreateDate}"></div>
+                            <div class="text-sm mr-4" th:text="${reviewDetailDTO.formattedCreateDate}"></div>
                             <!-- TODO -->
                             <div class="text-sm mr-1">조회수</div>
-                            <div class="text-sm" id="viewCount"></div>
+                            <div class="text-sm mr-4" id="viewCount"></div>
+                            <button class="text-sm mr-1" id="heartButton">
+                                <i class="fa-regular fa-heart" style="color: #d70707;"></i>
+                            </button>
+                            <div class="text-sm mr-4" id="heartCount"></div>
                         </div>
                     </div>
 
@@ -82,7 +95,9 @@
                     <div>
                         <div class="flex items-center">
                             <span class="font-bold text-xl mr-3" th:text="${reviewDetailDTO.matzipName}"></span>
-                            <button class="btn btn-outline btn-xs" type="submit">상세보기</button>
+                            <a th:href="${reviewDetailDTO.matzipUrl}" target="_blank">
+                                <button class="btn bg-blue-800 hover:bg-blue-500 text-white btn-xs" type="submit">상세보기</button>
+                            </a>
                         </div>
 
                         <span th:text="${reviewDetailDTO.matzipType}"></span>
@@ -93,48 +108,57 @@
                         <span>평점 : </span>
                         <div class="rating rating-md rating-half" th:attr="data-rating=${reviewDetailDTO.rating}">
                             <input type="radio" name="rating" value="0.5"
-                                   class="bg-yellow-500 mask mask-star-2 mask-half-1" disabled/>
+                                   class="bg-yellow-300 mask mask-star-2 mask-half-1" disabled/>
                             <input type="radio" name="rating" value="1.0"
-                                   class="bg-yellow-500 mask mask-star-2 mask-half-2" disabled/>
+                                   class="bg-yellow-300 mask mask-star-2 mask-half-2" disabled/>
                             <input type="radio" name="rating" value="1.5"
-                                   class="bg-yellow-500 mask mask-star-2 mask-half-1" disabled/>
+                                   class="bg-yellow-300 mask mask-star-2 mask-half-1" disabled/>
                             <input type="radio" name="rating" value="2.0"
-                                   class="bg-yellow-500 mask mask-star-2 mask-half-2" disabled/>
+                                   class="bg-yellow-300 mask mask-star-2 mask-half-2" disabled/>
                             <input type="radio" name="rating" value="2.5"
-                                   class="bg-yellow-500 mask mask-star-2 mask-half-1" disabled/>
+                                   class="bg-yellow-300 mask mask-star-2 mask-half-1" disabled/>
                             <input type="radio" name="rating" value="3.0"
-                                   class="bg-yellow-500 mask mask-star-2 mask-half-2" disabled/>
+                                   class="bg-yellow-300 mask mask-star-2 mask-half-2" disabled/>
                             <input type="radio" name="rating" value="3.5"
-                                   class="bg-yellow-500 mask mask-star-2 mask-half-1" disabled/>
+                                   class="bg-yellow-300 mask mask-star-2 mask-half-1" disabled/>
                             <input type="radio" name="rating" value="4.0"
-                                   class="bg-yellow-500 mask mask-star-2 mask-half-2" disabled/>
+                                   class="bg-yellow-300 mask mask-star-2 mask-half-2" disabled/>
                             <input type="radio" name="rating" value="4.5"
-                                   class="bg-yellow-500 mask mask-star-2 mask-half-1" disabled/>
+                                   class="bg-yellow-300 mask mask-star-2 mask-half-1" disabled/>
                             <input type="radio" name="rating" value="5.0"
-                                   class="bg-yellow-500 mask mask-star-2 mask-half-2" disabled/>
+                                   class="bg-yellow-300 mask mask-star-2 mask-half-2" disabled/>
                         </div>
                     </div>
                 </div>
                 <div class="flex">
-                    <img src="https://search.pstatic.net/common/?src=https%3A%2F%2Fldb-phinf.pstatic.net%2F20230315_55%2F1678864965197X3zz0_JPEG%2FIMG_6113.JPEG"
-                         class="w-40 h-40 object-cover mr-3"/>
-
+                    <div th:each="imageUrl : ${reviewDetailDTO.imageUrls}">
+                        <img th:src="${imageUrl}" class="w-40 h-40 object-cover mr-3"/>
+                    </div>
                 </div>
-                <span class="mt-5 inline-block max-h-[600px] overflow-hidden break-all" id="text-content" th:text="${reviewDetailDTO.content}">
+                <span class="mt-5 inline-block max-h-[600px] overflow-hidden break-all" id="text-content"
+                      th:text="${reviewDetailDTO.content}">
                 </span>
-                <div class="fade-out" id="fade-out"></div>
-                <div class="button-container">
-                    <button class="read-more text-xs text-gray-500 hover:underline" onclick="readMore()">더보기
-                    </button>
-                    <button class="read-less text-xs text-gray-500 hover:underline" onclick="readLess()">줄이기
-                    </button>
-                </div>
             </div>
 
             <!-- 수정/삭제 버튼 -->
             <div class="flex justify-end mt-6">
-                <button class="btn btn-neutral btn-sm mx-2">수정</button>
-                <button class="btn btn-neutral btn-sm mr-5">삭제</button>
+                <div class="flex">
+                    <a href="javascript:void(0);" class="btn bg-blue-800 hover:bg-blue-500 text-white btn-sm mx-2"
+                       th:if="${reviewDetailDTO.authorId != null and reviewDetailDTO.loginId == reviewDetailDTO.authorId}"
+                       onclick="if ( confirm('정말로 수정하시겠습니까?') ) $(this).next().submit();">
+                        수정
+                    </a>
+                    <form hidden th:action="@{|/review/modify/${reviewDetailDTO.reviewId}|}" method="GET">
+                    </form>
+                </div>
+                <div class="flex">
+                    <a href="javascript:void(0);" class="btn bg-blue-800 hover:bg-blue-500 text-white btn-sm mx-2"
+                       th:if="${reviewDetailDTO.authorId != null and reviewDetailDTO.loginId == reviewDetailDTO.authorId}"
+                       onclick="if ( confirm('정말로 삭제하시겠습니까?') ) $(this).next().submit();">
+                        삭제
+                    </a>
+                    <form hidden th:action="@{|/review/delete/${reviewDetailDTO.reviewId}|}" method="POST"></form>
+                </div>
             </div>
 
             <div class="">
@@ -165,16 +189,15 @@
                                        onclick="if ( confirm('정말로 삭제하시겠습니까?') ) $(this).next().submit();">
                                         삭제
                                     </a>
-                                    <form hidden th:action="@{|/comment/${comment.id}|}" method="POST">
-                                        <input type="hidden" name="_method" value="delete">
-                                    </form>
+                                    <form hidden th:action="@{|/comment/delete/${comment.id}|}" method="POST"></form>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <!-- 댓글 내용 -->
                     <div class="flex mb-4 ml-3 mr-3">
-                        <div class="inline-block max-h-[600px] overflow-hidden break-all" th:text="${comment.content}"></div>
+                        <div class="inline-block max-h-[600px] overflow-hidden break-all"
+                             th:text="${comment.content}"></div>
                     </div>
                 </div>
             </div>
@@ -183,11 +206,12 @@
                 <div class="flex m-4 justify-center">
                     <form class="w-full" th:action="@{|/comment/create/${reviewDetailDTO.reviewId}|}" method="POST">
                         <div class="flex items-center">
-                            <textarea rows="2" placeholder="댓글을 남겨보세요" class="border border-gray-300 resize-none p-4"
+                            <textarea rows="2" placeholder="댓글을 남겨보세요" class="border-2 border-blue-800 resize-none p-4"
                                       name="content" style="width: 100%;"></textarea>
                         </div>
                         <div class="flex justify-end mt-2">
-                            <button class="btn btn-neutral btn-sm" type="submit">등록</button>
+                            <button class="btn bg-blue-800 hover:bg-blue-500 text-white btn-sm" type="submit">등록
+                            </button>
                         </div>
                     </form>
                 </div>
@@ -229,7 +253,80 @@
                     }
                 });
             }
+
+            const heartText = $('#heartCount');
+            if (reviewId) {
+                $.ajax({
+                    type: "GET",
+                    url: "/review/getHeartCount",
+                    data: {
+                        reviewId: reviewId
+                    },
+                    dataType: "text",
+                    success: function (data) {
+                        $(heartText).text(data)
+                    },
+                    error: function (error) {
+                        console.log(error);
+                    }
+                });
+            }
+
+            const header = $("meta[name='_csrf_header']").attr("content");
+            const token = $("meta[name='_csrf']").attr("content");
+            $(document).ajaxSend(function (e, xhr, options) {
+                xhr.setRequestHeader(header, token);
+            });
+
+            const heartButton = $('#heartButton');
+            const heartIcon = heartButton.find('i');
+
+            if (/*[[${reviewDetailDTO.isHeart}]]*/ false) {
+                heartIcon.addClass('fa-solid').removeClass('fa-regular');
+            } else {
+                heartIcon.addClass('fa-regular').removeClass('fa-solid');
+            }
+
+            heartButton.click(function () {
+                heartIcon.toggleClass('fa-regular fa-solid');
+
+                const requestData = {
+                    reviewId: reviewId,
+                };
+
+                $.ajax({
+                    type: "POST",
+                    url: "/review/updateHeart",
+                    data: requestData,
+                    success: function (response) {
+                        updateCount(reviewId);
+                        console.log("업데이트 성공");
+                    },
+                    error: function (error) {
+                        console.log("업데이트 실패");
+                    }
+                });
+            });
         })
+
+        function updateCount(reviewId) {
+            const heartText = $('#heartCount');
+            $.ajax({
+                type: "GET",
+                url: "/review/getHeartCount",
+                data: {
+                    reviewId: reviewId
+                },
+                dataType: "text",
+                success: function (data) {
+                    $(heartText).text(data)
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            });
+        }
+
     </script>
 </main>
 

@@ -15,4 +15,9 @@ public class ReviewListDTO {
     private double rating;
     private String content;
     private LocalDateTime createDate;
+    private long matzipCount;
+    private long reviewCount;
+    private long friendCount;
+    private String reviewImageUrl;
+    private long reviewImageCount;
 }

@@ -8,8 +8,8 @@ import java.util.Map;
 
 @Data
 @Builder
-@ToString
 public class MemberRankDTO {
+    private int rank;
     private String profileImageUrl;
     private String nickname;
     private Map<String, String> badgeImage;

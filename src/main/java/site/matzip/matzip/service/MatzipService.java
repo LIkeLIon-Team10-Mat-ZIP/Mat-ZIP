@@ -4,22 +4,26 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import site.matzip.base.rsData.RsData;
 import site.matzip.matzip.domain.Matzip;
 import site.matzip.matzip.domain.MatzipMember;
 import site.matzip.matzip.dto.MatzipCreationDTO;
 import site.matzip.matzip.dto.MatzipListDTO;
+import site.matzip.matzip.dto.MatzipUpdateDTO;
+import site.matzip.matzip.dto.MatzipRankDTO;
 import site.matzip.matzip.dto.MatzipReviewListDTO;
 import site.matzip.matzip.repository.MatzipMemberRepository;
 import site.matzip.matzip.repository.MatzipRepository;
 import site.matzip.member.domain.Member;
-import site.matzip.review.domain.Review;
-import site.matzip.review.dto.ReviewCreationDTO;
+import site.matzip.member.repository.MemberRepository;
 import site.matzip.review.dto.ReviewListDTO;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -27,11 +31,14 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class MatzipService {
     private final MatzipRepository matzipRepository;
+    private final MemberRepository memberRepository;
     private final MatzipMemberRepository matzipMemberRepository;
 
-    @CacheEvict(value = {"matzipListCache", "myMatzipListCache"}, allEntries = true)
-    public Matzip create(MatzipCreationDTO creationDTO, Member author) {
+
+    @CacheEvict(value = {"matzipListCache", "myMatzipListCache", "reviewListCache"}, allEntries = true)
+    public Matzip create(MatzipCreationDTO creationDTO, Long authorId) {
         Optional<Matzip> optionalExistingMatzip = matzipRepository.findByKakaoId(creationDTO.getKakaoId());
+        Member author = memberRepository.findById(authorId).orElseThrow(() -> new EntityNotFoundException("member not found"));
 
         if (optionalExistingMatzip.isPresent()) {
             Matzip existingMatzip = optionalExistingMatzip.get();
@@ -73,28 +80,15 @@ public class MatzipService {
         return createdMatzipMember;
     }
 
-    //리뷰 엔티티 만드는 메서드
-    private Review createReviewEntity(Matzip matzip, ReviewCreationDTO reviewCreationDTO, Member author) {
-        Review createdReview = Review.builder()
-                .content(reviewCreationDTO.getContent())
-                .rating(reviewCreationDTO.getRating())
-                .build();
-        createdReview.setMatzip(matzip);
-        createdReview.setAuthor(author);
-
-        return createdReview;
-    }
-
     public List<Matzip> findAll() {
         return matzipRepository.findAll();
     }
-
 
     public Matzip findById(Long id) {
         return matzipRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Matzip not found with id: " + id));
     }
 
-    //사용자의 맛집지도 속 맛집 호출
+    //사용자의 id로 맛집과 맛집_멤버 같이 호출
     public List<Matzip> findAllByAuthorId(Long authorId) {
         return matzipRepository.findAllByAuthorId(authorId);
     }
@@ -105,16 +99,31 @@ public class MatzipService {
         return convertToListDTO(findAll(), authorId);
     }
 
-    //내가 등록한 맛집 정보 검색
-    @Cacheable(value = "myMatzipListCache")
-    public List<MatzipListDTO> findAndConvertMine(Long authorId) {
+    //id로 등록한 맛집 정보 검색
+    @Cacheable(value = "myMatzipListCache", key = "#authorId")
+    public List<MatzipListDTO> findAndConvertById(Long authorId) {
         return convertToListDTO(findAllByAuthorId(authorId), authorId);
+    }
+
+    @CacheEvict(value = {"matzipListCache", "myMatzipListCache"}, allEntries = true)
+    public RsData delete(Long matzipId, Long authorId) {
+        MatzipMember matzipMember = matzipMemberRepository.findByMatzipIdAndAuthorId(matzipId, authorId).orElse(null);
+        if (matzipMember == null) {
+            return RsData.of("F-1", "이미 삭제된 맛집입니다");
+        }
+        Matzip matzip = matzipMember.getMatzip();
+        matzipMemberRepository.delete(matzipMember);
+        //누구의 맛집 지도에도 남아있지 않으면 맛집 자체를 삭제
+        if (matzip.getMatzipMembers().isEmpty()) {
+            matzipRepository.delete(matzip);
+        }
+        return RsData.of("S-1", "맛집이 삭제되었습니다.");
     }
 
     //후기와 맛집 정보를 하나로 묶어서 MatzipListDTO로 변환
     private List<MatzipListDTO> convertToListDTO(List<Matzip> matzipList, Long authorId) {
         return matzipList.stream().map(matzip -> {
-            List<MatzipMember> matzipMemberList = matzip.getMatzipMemberList();
+            List<MatzipMember> matzipMemberList = matzip.getMatzipMembers();
 
             Optional<MatzipMember> authorRecommendation = matzipMemberList.stream()
                     .filter(recommendation -> recommendation.getAuthor().getId().equals(authorId))
@@ -143,23 +152,46 @@ public class MatzipService {
         }).collect(Collectors.toList());
     }
 
-    //컨트롤러에서 받은 리뷰DTO와 맛집DTO를 머지해서 하나로 만들어 준다.
-    public List<MatzipReviewListDTO> mergeMatzipAndReviews(List<MatzipListDTO> matzipDtoList, List<ReviewListDTO> reviewDtoList) {
-        List<MatzipReviewListDTO> matzipReviewList = new ArrayList<>();
+    @CacheEvict(value = {"matzipListCache", "myMatzipListCache"}, allEntries = true)
+    public RsData update(Long matzipId, Long authorId, MatzipUpdateDTO matzipUpdateDTO) {
+        MatzipMember matzipMember = matzipMemberRepository.findByMatzipIdAndAuthorId(matzipId, authorId).orElse(null);
+        if (matzipMember == null) {
+            return RsData.of("F-1", "사용자의 후기를 찾을 수 없습니다.");
+        }
+        matzipMember.update(matzipUpdateDTO.getDescription(), matzipUpdateDTO.getRating());
+        matzipMemberRepository.save(matzipMember);
+        return RsData.of("S-1", "업데이트가 완료되었습니다.");
+    }
 
-        for (MatzipListDTO matzipListDTO : matzipDtoList) {
-            List<ReviewListDTO> matchedReviews = reviewDtoList.stream()
-                    .filter(review -> Objects.equals(review.getMatzipId(), matzipListDTO.getMatzipId()))
-                    .collect(Collectors.toList());
+    @Transactional
+    public List<MatzipRankDTO> findAndConvertTopTenMatzip() {
+        List<Matzip> matzips = getTop10ByOrderByMatzipMembersSize();
+        return matzips.stream().map(this::convertToMatzipDTO).collect(Collectors.toList());
+    }
 
-            MatzipReviewListDTO matzipReviewListDTO = MatzipReviewListDTO.builder()
-                    .matzipListDTO(matzipListDTO)
-                    .reviewListDTOs(matchedReviews)
-                    .build();
+    private List<Matzip> getTop10ByOrderByMatzipMembersSize() {
+        Pageable pageable = PageRequest.of(0, 10, Sort.unsorted());
+        return matzipRepository.findTop10ByOrderByMatzipMembersSizeDesc(pageable);
+    }
 
-            matzipReviewList.add(matzipReviewListDTO);
+    private MatzipRankDTO convertToMatzipDTO(Matzip matzip) {
+
+        return MatzipRankDTO.builder()
+                .matzipName(matzip.getMatzipName())
+                .averageRating(getAverageRating(matzip))
+                .reviewCount(matzip.getReviews().size())
+                .userCount(matzip.getMatzipMembers().size())
+                .matzipUrl(matzip.getMatzipUrl())
+                .build();
+    }
+
+    private double getAverageRating(Matzip matzip) {
+        double sum = 0;
+
+        for (MatzipMember matzipMember : matzip.getMatzipMembers()) {
+            sum += matzipMember.getRating();
         }
 
-        return matzipReviewList;
+        return sum / (double) matzip.getMatzipMembers().size();
     }
 }

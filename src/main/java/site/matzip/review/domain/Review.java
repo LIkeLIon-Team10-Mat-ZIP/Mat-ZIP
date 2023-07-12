@@ -39,6 +39,8 @@ public class Review extends BaseEntity {
     private List<ReviewImage> reviewImages = new ArrayList<>();
     @OneToMany(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();
+    @OneToMany(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Heart> hearts = new ArrayList<>();
 
     @Builder
     public Review(double rating, String content) {
@@ -68,5 +70,13 @@ public class Review extends BaseEntity {
 
     public void updatePointsRewarded() {
         this.pointsRewarded = true;
+    }
+
+    public void updateContent(String content) {
+        this.content = content;
+    }
+
+    public void updateRating(double rating) {
+        this.rating = rating;
     }
 }

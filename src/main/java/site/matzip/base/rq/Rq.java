@@ -113,8 +113,7 @@ public class Rq {
             // 주어진 Authentication 객체를 사용하고 UserDetails 중에서 member 찾기
             UserDetails userDetails = (UserDetails) principal;
             String username = userDetails.getUsername();
-            author = memberService.findByUsername(username)
-                    .orElseThrow(() -> new UsernameNotFoundException("username(%s) not found".formatted(username)));
+            author = memberService.findByUsername(username);
         }
         return author;
     }
