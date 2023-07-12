@@ -20,6 +20,7 @@ import site.matzip.matzip.dto.MatzipCreationDTO;
 import site.matzip.matzip.dto.MatzipListDTO;
 import site.matzip.matzip.dto.MatzipRankDTO;
 import site.matzip.matzip.dto.MatzipReviewDTO;
+import site.matzip.matzip.dto.MatzipUpdateDTO;
 import site.matzip.matzip.service.MatzipService;
 import site.matzip.member.domain.Member;
 import site.matzip.review.domain.Review;
@@ -118,8 +119,21 @@ public class MatzipController {
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/api/delete/{id}")
     @ResponseBody
-    public RsData delete(@PathVariable Long id, @AuthenticationPrincipal PrincipalDetails principalDetails) {
+    public ResponseEntity<RsData> delete(@PathVariable Long id, @AuthenticationPrincipal PrincipalDetails principalDetails) {
         RsData deleteRs = matzipService.delete(id, principalDetails.getMember().getId());
-        return deleteRs;
+        if (deleteRs.isFail()) {
+            return new ResponseEntity<>(deleteRs, HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(deleteRs, HttpStatus.OK);
+    }
+
+    @PostMapping("/api/update/{id}")
+    public ResponseEntity<RsData> update(@PathVariable Long id, @AuthenticationPrincipal PrincipalDetails principalDetails,
+                                         @RequestBody MatzipUpdateDTO matzipUpdateDTO) {
+        RsData updateRs = matzipService.update(id, principalDetails.getMember().getId(), matzipUpdateDTO);
+        if (updateRs.isFail()) {
+            return new ResponseEntity<>(updateRs, HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(updateRs, HttpStatus.OK);
     }
 }
