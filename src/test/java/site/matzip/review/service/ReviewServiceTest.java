@@ -49,7 +49,6 @@ class ReviewServiceTest {
     private Member testUser;
     private Matzip matzip;
     @Autowired
-    @InjectMocks
     private ReviewService reviewService;
     @Autowired
     private MemberService memberService;
@@ -202,5 +201,19 @@ class ReviewServiceTest {
         reviewService.rewardPointsForReviews();
 
         assertThat(testUser.getPoint()).isEqualTo(pointRewardReview);
+    }
+
+    @Test
+    void updateHeartTest() {
+        Review review = reviewService.create(reviewCreationDTO, testUser.getId(), matzip);
+
+        reviewService.updateHeart(testUser.getId(), review.getId());
+
+        assertThat(review.getHearts()).isNotEmpty();
+        assertThat(review.getHearts().size()).isEqualTo(1);
+
+//        reviewService.updateHeart(testUser.getId(), review.getId());
+//
+//        assertThat(review.getHearts()).isEmpty();
     }
 }
