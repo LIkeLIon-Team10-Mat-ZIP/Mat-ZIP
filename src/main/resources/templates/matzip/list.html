@@ -244,7 +244,14 @@
             }
         }
 
-        loadMatzipList("/matzip/api/list");
+        const storedListType = localStorage.getItem("current_list_type");
+        if (storedListType === "my") {
+            // 현재 리스트 타입이 'my'인 경우, 나의 리스트를 로드합니다.
+            toggleList("my");
+        } else {
+            // 현재 리스트 타입이 'all'이거나 저장된 값이 없는 경우, 전체 리스트를 로드합니다.
+            toggleList("all");
+        }
 
         function showInfoWindow(marker, matzip) {
             if (matzip.matzipName.length > 9) {
@@ -492,6 +499,8 @@
         function toggleList(listType) {
             const listBtnAll = document.getElementById("listBtnAll");
             const listBtnMy = document.getElementById("listBtnMy");
+
+            localStorage.setItem("current_list_type", listType);
 
             if (listType === "all") {
                 // 나의 리스트 불러오기
@@ -785,6 +794,7 @@
                 .then((response) => response.json())
                 .then((data) => {
                     if (data.success) {
+                        window.location.reload();
                         toastNotice('맛집이 삭제되었습니다.');
                     } else {
                         toastWarning('맛집 삭제에 실패했습니다.');

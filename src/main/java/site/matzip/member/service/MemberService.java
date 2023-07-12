@@ -32,7 +32,10 @@ import site.matzip.member.repository.MemberTokenRepository;
 import site.matzip.review.domain.Review;
 import site.matzip.review.dto.MyReviewDTO;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -336,7 +339,6 @@ public class MemberService {
 
             badgeMap.put(imageUrl, badgeTypeLabel);
         }
-
         return badgeMap;
     }
 }
