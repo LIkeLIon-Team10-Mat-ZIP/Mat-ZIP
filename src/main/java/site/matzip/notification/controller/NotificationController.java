@@ -2,12 +2,10 @@ package site.matzip.notification.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import site.matzip.base.rq.Rq;
 import site.matzip.config.auth.PrincipalDetails;
 import site.matzip.member.domain.Member;
 import site.matzip.member.service.MemberService;
@@ -22,20 +20,17 @@ import java.util.List;
 public class NotificationController {
     private final MemberService memberService;
     private final NotificationService notificationService;
-    private final Rq rq;
 
     @GetMapping("/list")
     @PreAuthorize("isAuthenticated()")
-    public String showList(Model model, @AuthenticationPrincipal PrincipalDetails principalDetails) {
-        Member member = memberService.findByUsername("user1"); // TODO: 추후에 principalDetails.getMember()로 변경
-      
+    public String showList() {
         return "usr/notification/list";
     }
 
     @GetMapping("/reviewList")
     @PreAuthorize("isAuthenticated()")
     public String showReviewList(Model model, @AuthenticationPrincipal PrincipalDetails principalDetails) {
-        Member member = memberService.findByUsername("user1");
+        Member member = principalDetails.getMember();
 
         List<NotificationDTO> notificationDTOS = notificationService.convertToNotificationDTOS(member);
 
