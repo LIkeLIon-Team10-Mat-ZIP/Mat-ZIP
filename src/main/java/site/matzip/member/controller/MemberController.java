@@ -57,7 +57,7 @@ public class MemberController {
         cookie.setPath("/");
         response.addCookie(cookie);
 
-        return "redirect:/main";
+        return rq.redirectWithMsg("/main", "로그아웃이 완료되었습니다.");
     }
 
     @PreAuthorize("isAuthenticated()")
@@ -141,7 +141,7 @@ public class MemberController {
                                      @AuthenticationPrincipal PrincipalDetails principalDetails) throws IOException {
         profileImageService.saveProfileImage(profileImage, principalDetails.getMember());
 
-        return "redirect:/usr/member/myPage";
+        return rq.redirectWithMsg("/usr/member/myPage", "프로필 이미지가 변경되었습니다.");
     }
 
     @GetMapping("/getProfile")

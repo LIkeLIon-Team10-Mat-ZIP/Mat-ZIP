@@ -8,7 +8,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
@@ -82,13 +84,17 @@ public class ReviewService {
     }
 
     @Cacheable(value = "reviewListCache")
-    public Page<ReviewListDTO> findByMatzipIdAndConvertToDTO(Long matzipId, Pageable pageable) {
+    public Page<ReviewListDTO> findByMatzipIdAndConvertToDTO(Long matzipId, int pageSize, int pageNumber) {
+        Sort sort = Sort.by(Sort.Direction.DESC, "views");
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
         Page<Review> reviewPage = reviewRepository.findByMatzipId(matzipId, pageable);
         return reviewPage.map(this::convertToReviewDTO);
     }
 
     @Cacheable(value = "myReviewListCache", key = "#authorId")
-    public Page<ReviewListDTO> findByMatzipIdWithAuthorAndConvertToReviewDTO(Long matzipId, Long authorId, Pageable pageable) {
+    public Page<ReviewListDTO> findByMatzipIdWithAuthorAndConvertToReviewDTO(Long matzipId, Long authorId, int pageSize, int pageNumber) {
+        Sort sort = Sort.by(Sort.Direction.DESC, "views");
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
         Page<Review> reviewPage = reviewRepository.findByMatzipIdAndAuthorId(matzipId, authorId, pageable);
         return reviewPage.map(this::convertToReviewDTO);
     }
@@ -110,8 +116,7 @@ public class ReviewService {
             profileImageUrl = review.getAuthor().getProfileImage().getImageUrl();
         }
 
-        String reviewFirstImageUrl =
-                (review.getReviewImages().size() == 0) ? "" : review.getReviewImages().get(0).getImageUrl();
+        String reviewFirstImageUrl = (review.getReviewImages().size() == 0) ? "" : review.getReviewImages().get(0).getImageUrl();
 
         return ReviewListDTO.builder()
                 .matzipId(review.getMatzip().getId())
@@ -169,8 +174,7 @@ public class ReviewService {
 
         String profileImageUrl = appConfig.getDefaultProfileImageUrl();
 
-        return comments.stream()
-                .map(comment -> CommentInfoDTO.builder()
+        return comments.stream().map(comment -> CommentInfoDTO.builder()
                         .profileImageUrl(comment.getAuthor().getProfileImage() != null ? comment.getAuthor().getProfileImage().getImageUrl() : profileImageUrl)
                         .id(comment.getId())
                         .loginId(authorId)
@@ -251,8 +255,7 @@ public class ReviewService {
 
     @Transactional
     public void updateHeart(Long memberId, Long reviewId) {
-        Member findMember = memberRepository.findById(memberId)
-                .orElseThrow(() -> new EntityNotFoundException("Review not Found"));
+        Member findMember = memberRepository.findById(memberId).orElseThrow(() -> new EntityNotFoundException("Review not Found"));
         Review findReview = findReview(reviewId);
         Optional<Heart> findHeart = heartRepository.findByMemberAndReview(findMember, findReview);
 
@@ -267,9 +270,7 @@ public class ReviewService {
     }
 
     private Review findReview(Long reviewId) {
-        return reviewRepository
-                .findById(reviewId)
-                .orElseThrow(() -> new EntityNotFoundException("Review not Found"));
+        return reviewRepository.findById(reviewId).orElseThrow(() -> new EntityNotFoundException("Review not Found"));
     }
 
     public boolean isImageFileEmpty(ReviewCreationDTO reviewCreationDTO) {

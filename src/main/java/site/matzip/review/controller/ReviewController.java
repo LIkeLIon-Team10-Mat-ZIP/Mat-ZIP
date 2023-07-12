@@ -2,10 +2,9 @@ package site.matzip.review.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -14,6 +13,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import site.matzip.badge.service.MemberBadgeService;
+import site.matzip.base.rq.Rq;
 import site.matzip.comment.domain.Comment;
 import site.matzip.comment.dto.CommentInfoDTO;
 import site.matzip.config.auth.PrincipalDetails;
@@ -30,6 +30,7 @@ import site.matzip.review.service.ReviewService;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Controller
@@ -40,13 +41,16 @@ public class ReviewController {
     private final ReviewImageService reviewImageService;
     private final MatzipService matzipService;
     private final MemberBadgeService memberBadgeService;
+    private final Rq rq;
 
+    // 맛집과 함께 생성
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/create")
     public String create() {
         return "/review/create";
     }
 
+    // 리뷰만 생성
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/create/{matzipId}")
     public String create(Model model, @PathVariable Long matzipId) {
@@ -63,18 +67,21 @@ public class ReviewController {
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/create/{matzipId}")
     public String create(@PathVariable Long matzipId,
-                         @ModelAttribute ReviewCreationDTO reviewCreationDTO,
+                         @ModelAttribute @Valid ReviewCreationDTO reviewCreationDTO,
                          BindingResult result,
                          @AuthenticationPrincipal PrincipalDetails principalDetails) throws IOException {
+
         if (result.hasErrors()) {
-            return "/review/add";
+            return rq.historyBack("리뷰등록에 올바른 값이 아닙니다.");
         }
+
         Matzip matzip = matzipService.findById(matzipId);
         Long authorId = principalDetails.getMember().getId();
 
         Review createdReview = reviewService.create(reviewCreationDTO, authorId, matzip);
         reviewImageService.create(reviewCreationDTO.getImageFiles(), createdReview);
-        return "redirect:/main";
+
+        return rq.redirectWithMsg("/main", "리뷰가 등록되었습니다.");
     }
 
     @PreAuthorize("isAuthenticated()")
@@ -100,13 +107,16 @@ public class ReviewController {
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/modify/{reviewId}")
-    public String modify(@PathVariable Long reviewId, ReviewCreationDTO reviewCreationDTO, BindingResult bindingResult,
+    public String modify(@PathVariable Long reviewId,
+                         @ModelAttribute @Valid ReviewCreationDTO reviewCreationDTO,
+                         BindingResult bindingResult,
                          @AuthenticationPrincipal PrincipalDetails principalDetails) throws IOException {
+        
         Review review = reviewService.findById(reviewId);
         reviewService.checkAccessPermission(reviewId, principalDetails);
 
         if (bindingResult.hasErrors()) {
-            return "/review/add";
+            return rq.historyBack("리뷰 수정에 올바른 형식이 아닙니다.");
         }
 
         Review modifyReview = reviewService.modify(review, reviewCreationDTO);
@@ -115,7 +125,7 @@ public class ReviewController {
             reviewImageService.modify(reviewCreationDTO.getImageFiles(), modifyReview);
         }
 
-        return "redirect:/review/detail/" + reviewId;
+        return rq.redirectWithMsg("/review/detail/" + reviewId, "리뷰 수정이 완료되었습니다.");
     }
 
     @GetMapping("/api/list/{matzipId}")
@@ -123,8 +133,7 @@ public class ReviewController {
     public ResponseEntity<Page<ReviewListDTO>> getReviewsByMatzipId(@PathVariable Long matzipId,
                                                                     @RequestParam int pageSize,
                                                                     @RequestParam int pageNumber) {
-        Pageable pageable = PageRequest.of(pageNumber, pageSize);
-        Page<ReviewListDTO> reviews = reviewService.findByMatzipIdAndConvertToDTO(matzipId, pageable);
+        Page<ReviewListDTO> reviews = reviewService.findByMatzipIdAndConvertToDTO(matzipId, pageSize, pageNumber);
 
         return ResponseEntity.ok(reviews);
     }
@@ -135,8 +144,7 @@ public class ReviewController {
                                                                              @RequestParam int pageNumber,
                                                                              @AuthenticationPrincipal PrincipalDetails principalDetails) {
         Long authorId = principalDetails.getMember().getId();
-        Pageable pageable = PageRequest.of(pageNumber, pageSize);
-        Page<ReviewListDTO> reviews = reviewService.findByMatzipIdWithAuthorAndConvertToReviewDTO(matzipId, authorId, pageable);
+        Page<ReviewListDTO> reviews = reviewService.findByMatzipIdWithAuthorAndConvertToReviewDTO(matzipId, authorId, pageSize, pageNumber);
 
         return ResponseEntity.ok(reviews);
     }
@@ -150,7 +158,7 @@ public class ReviewController {
         reviewService.remove(review);
         reviewImageService.remove(review);
 
-        return "redirect:/main";
+        return rq.redirectWithMsg("/main", "리뷰 삭제가 완료되었습니다.");
     }
 
     @PreAuthorize("isAuthenticated()")
