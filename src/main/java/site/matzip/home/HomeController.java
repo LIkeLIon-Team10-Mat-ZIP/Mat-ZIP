@@ -19,7 +19,7 @@ public class HomeController {
     private final MatzipService matzipService;
     private final MemberService memberService;
 
-    @GetMapping
+    @GetMapping("/")
     public String showHome() {
         return "/main/main";
     }
