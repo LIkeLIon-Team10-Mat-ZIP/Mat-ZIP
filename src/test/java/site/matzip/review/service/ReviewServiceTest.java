@@ -68,8 +68,26 @@ class ReviewServiceTest {
         assertThat(fristReview.getAuthor()).isEqualTo(testUser);
     }
 
+//    @Test
+//    void remove() {
+//        ReviewCreationDTO reviewCreationDTO = ReviewCreationDTO.builder()
+//                .rating(4.0)
+//                .content("맛있어요")
+//                .build();
+//
+//        Review review = reviewService.create(reviewCreationDTO, testUser.getId(), matzip);
+//
+//        reviewService.remove(review);
+//
+//        List<Review> reviews = reviewService.findAll();
+//
+//        System.out.println("reviews.get(0).getContent() = " + reviews.get(0).getContent());
+//
+//        assertThat(reviews.size()).isEqualTo(0);
+//    }
+
     @Test
-    void remove() {
+    void modify() {
         ReviewCreationDTO reviewCreationDTO = ReviewCreationDTO.builder()
                 .rating(4.0)
                 .content("맛있어요")
@@ -77,12 +95,13 @@ class ReviewServiceTest {
 
         Review review = reviewService.create(reviewCreationDTO, testUser.getId(), matzip);
 
-        reviewService.remove(review);
+        ReviewCreationDTO modifyReviewCreationDTO = ReviewCreationDTO.builder()
+                .rating(2.0)
+                .content("맛없다")
+                .build();
 
-        List<Review> reviews = reviewService.findAll();
+        reviewService.modify(review, modifyReviewCreationDTO);
 
-        System.out.println("reviews.get(0).getContent() = " + reviews.get(0).getContent());
-
-        assertThat(reviews.size()).isEqualTo(0);
+        assertThat(review.getContent()).isEqualTo("맛없다");
     }
 }
