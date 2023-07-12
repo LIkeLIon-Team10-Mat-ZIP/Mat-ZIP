@@ -292,7 +292,7 @@
                 })
                 .catch((error) => {
                     if (callback) callback();
-                    toastWarning(error.message); // 에러 메세지를 알림으로 표시
+                    toastWarning(error.data()); // 에러 메세지를 알림으로 표시
                 });
         }
 
