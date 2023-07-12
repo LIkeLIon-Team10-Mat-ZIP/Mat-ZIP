@@ -51,10 +51,6 @@ public class FriendRequestService {
         friendRequestRepository.deleteById(friendRequestId);
     }
 
-    public boolean checkNicknameExists(String nickname) {
-        return memberRepository.findByNickname(nickname).isPresent();
-    }
-
     public Member getMember(String nickname) {
         return memberRepository.findByNickname(nickname)
                 .orElseThrow(() -> new EntityNotFoundException("member not found"));
