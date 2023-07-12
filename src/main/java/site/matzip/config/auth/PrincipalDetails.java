@@ -41,6 +41,10 @@ public class PrincipalDetails implements OAuth2User {
         return member.getId();
     }
 
+    public String getNickname() {
+        return member.getNickname();
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<GrantedAuthority> grantedAuthorities = new ArrayList<>();

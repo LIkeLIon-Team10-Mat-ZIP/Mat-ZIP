@@ -12,6 +12,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import site.matzip.base.event.EventAfterFriendRequestAccept;
 import site.matzip.base.rq.Rq;
+import site.matzip.base.rsData.RsData;
 import site.matzip.config.auth.PrincipalDetails;
 import site.matzip.friendRequest.dto.FriendRequestDTO;
 import site.matzip.friendRequest.entity.FriendRequest;
@@ -46,14 +47,16 @@ public class FriendRequestController {
     public ResponseEntity<String> addFriend(@AuthenticationPrincipal PrincipalDetails principalDetails, String nickname) {
         Member fromMember = principalDetails.getMember();
 
-        if (!friendRequestService.checkNicknameExists(nickname)) {
-            return new ResponseEntity<>("fail", HttpStatus.BAD_REQUEST);
+        RsData<FriendRequest> friendRequestRsData = friendRequestService.checkRequestAdmin(nickname, fromMember.getNickname());
+
+        if (friendRequestRsData.isFail()) {
+            return new ResponseEntity<>(friendRequestRsData.getMsg(), HttpStatus.BAD_REQUEST);
         }
 
         Member toMember = friendRequestService.getMember(nickname);
         friendRequestService.addFriendRequest(toMember, fromMember);
 
-        return new ResponseEntity<>("success", HttpStatus.OK);
+        return new ResponseEntity<>(friendRequestRsData.getMsg(), HttpStatus.OK);
     }
 
     @PostMapping("/add/{nickname}")
