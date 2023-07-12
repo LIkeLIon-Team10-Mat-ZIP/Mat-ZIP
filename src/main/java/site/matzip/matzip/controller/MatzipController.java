@@ -50,12 +50,13 @@ public class MatzipController {
                          BindingResult result,
                          Authentication authentication) {
         if (result.hasErrors()) {
-            return "/matzip/create";
+            return rq.historyBack("맛집등록에 실패했습니다.");
         }
         Member author = rq.getMember(authentication);
 
         matzipService.create(matzipCreationDTO, author.getId());
-        return "redirect:/";
+
+        return rq.redirectWithMsg("/main", "맛집이 등록되었습니다.");
     }
 
     @PreAuthorize("isAuthenticated()")
@@ -65,7 +66,7 @@ public class MatzipController {
                                    @AuthenticationPrincipal PrincipalDetails principalDetails) throws IOException {
 
         if (result.hasErrors()) {
-            return rq.historyBack("리뷰 등록을 위한 올바른 값을 입력해주세요.");
+            return rq.historyBack("리뷰등록에 올바른 값이 아닙니다.");
         }
 
         MatzipCreationDTO matzipCreationDTO = matzipReviewDTO.getMatzipCreationDTO();
@@ -77,7 +78,7 @@ public class MatzipController {
         Review createdReview = reviewService.create(reviewCreationDTO, authorId, createdMatzip);
         reviewImageService.create(reviewCreationDTO.getImageFiles(), createdReview);
 
-        return rq.redirectWithMsg("/", "맛집과 리뷰가 등록되었습니다.");
+        return rq.redirectWithMsg("/main", "맛집과 리뷰가 등록되었습니다.");
     }
 
     @PreAuthorize("isAuthenticated()")

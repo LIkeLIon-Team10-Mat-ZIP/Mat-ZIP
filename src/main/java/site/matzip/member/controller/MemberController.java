@@ -56,7 +56,7 @@ public class MemberController {
         cookie.setPath("/");
         response.addCookie(cookie);
 
-        return rq.redirectWithMsg("/", "로그아웃이 완료되었습니다.");
+        return rq.redirectWithMsg("/main", "로그아웃이 완료되었습니다.");
     }
 
     @PreAuthorize("isAuthenticated()")

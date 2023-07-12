@@ -74,7 +74,7 @@ public class ReviewController {
                          @AuthenticationPrincipal PrincipalDetails principalDetails) throws IOException {
 
         if (result.hasErrors()) {
-            return rq.historyBack("리뷰 등록을 위한 올바른 값을 입력해주세요.");
+            return rq.historyBack("리뷰등록에 올바른 값이 아닙니다.");
         }
 
         Matzip matzip = matzipService.findById(matzipId);
@@ -83,7 +83,7 @@ public class ReviewController {
         Review createdReview = reviewService.create(reviewCreationDTO, authorId, matzip);
         reviewImageService.create(reviewCreationDTO.getImageFiles(), createdReview);
 
-        return rq.redirectWithMsg("/", "리뷰가 등록되었습니다.");
+        return rq.redirectWithMsg("/main", "리뷰가 등록되었습니다.");
     }
 
     @PreAuthorize("isAuthenticated()")
