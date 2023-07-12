@@ -111,7 +111,20 @@ public class ReviewService {
 
         String reviewFirstImageUrl = (review.getReviewImages().size() == 0) ? "" : review.getReviewImages().get(0).getImageUrl();
 
-        return ReviewListDTO.builder().matzipId(review.getMatzip().getId()).reviewId(review.getId()).authorNickname(review.getAuthor().getNickname()).profileImageUrl(profileImageUrl).content(review.getContent()).rating(review.getRating()).createDate(review.getCreateDate()).matzipCount(review.getAuthor().getMatzipMembers().size()).reviewCount(review.getAuthor().getReviews().size()).friendCount(review.getAuthor().getFriends2().size()).reviewImageUrl(reviewFirstImageUrl).reviewImageCount(review.getReviewImages().size()).build();
+        return ReviewListDTO.builder()
+                .matzipId(review.getMatzip().getId())
+                .reviewId(review.getId())
+                .authorNickname(review.getAuthor().getNickname())
+                .profileImageUrl(profileImageUrl)
+                .content(review.getContent())
+                .rating(review.getRating())
+                .createDate(review.getCreateDate())
+                .matzipCount(review.getAuthor().getMatzipMembers().size())
+                .reviewCount(review.getAuthor().getReviews().size())
+                .friendCount(review.getAuthor().getFriends2().size())
+                .reviewImageUrl(reviewFirstImageUrl).
+                reviewImageCount(review.getReviewImages().size())
+                .build();
     }
 
     public ReviewDetailDTO convertToReviewDetailDTO(Long id, Long loginId) {
@@ -124,7 +137,24 @@ public class ReviewService {
             profileImageUrl = review.getAuthor().getProfileImage().getImageUrl();
         }
 
-        return ReviewDetailDTO.builder().profileImageUrl(profileImageUrl).authorNickname(review.getAuthor().getNickname()).matzipUrl(review.getMatzip().getMatzipUrl()).reviewId(review.getId()).authorId(review.getAuthor().getId()).loginId(loginId).matzipName(matzip.getMatzipName()).createDate(review.getCreateDate()).address(matzip.getAddress()).rating(review.getRating()).matzipType(matzip.getMatzipType()).phoneNumber(matzip.getPhoneNumber()).content(review.getContent()).heartCount(countHeart(review)).imageUrls(review.getReviewImages().stream().map(ReviewImage::getImageUrl).collect(Collectors.toList())).build();
+        return ReviewDetailDTO.builder()
+                .profileImageUrl(profileImageUrl)
+                .authorNickname(review.getAuthor().getNickname())
+                .matzipUrl(review.getMatzip().getMatzipUrl())
+                .reviewId(review.getId())
+                .authorId(review.getAuthor().getId())
+                .loginId(loginId).matzipName(matzip.getMatzipName())
+                .createDate(review.getCreateDate())
+                .address(matzip.getAddress())
+                .rating(review.getRating())
+                .matzipType(matzip.getMatzipType())
+                .phoneNumber(matzip.getPhoneNumber())
+                .content(review.getContent())
+                .heartCount(countHeart(review))
+                .imageUrls(review.getReviewImages()
+                        .stream()
+                        .map(ReviewImage::getImageUrl)
+                        .collect(Collectors.toList())).build();
     }
 
     private int countHeart(Review review) {
@@ -135,7 +165,15 @@ public class ReviewService {
 
         String profileImageUrl = appConfig.getDefaultProfileImageUrl();
 
-        return comments.stream().map(comment -> CommentInfoDTO.builder().profileImageUrl(comment.getAuthor().getProfileImage() != null ? comment.getAuthor().getProfileImage().getImageUrl() : profileImageUrl).id(comment.getId()).loginId(authorId).authorId(comment.getAuthor().getId()).authorNickname(comment.getAuthor().getNickname()).createDate(comment.getCreateDate()).content(comment.getContent()).build()).collect(Collectors.toList());
+        return comments.stream().map(comment -> CommentInfoDTO.builder()
+                        .profileImageUrl(comment.getAuthor().getProfileImage() != null ? comment.getAuthor().getProfileImage().getImageUrl() : profileImageUrl).id(comment.getId())
+                        .loginId(authorId)
+                        .authorId(comment.getAuthor().getId())
+                        .authorNickname(comment.getAuthor().getNickname())
+                        .createDate(comment.getCreateDate())
+                        .content(comment.getContent())
+                        .build())
+                .collect(Collectors.toList());
     }
 
     public void incrementViewCount(Review review) {
