@@ -604,28 +604,25 @@
             nameDateWrapper.appendChild(friendAddButton);
 
             friendAddButton.addEventListener('click', () => {
-                const url = 'friends/add/' + review.authorNickname;
+                const url = '/friends/add/' + review.authorId;
                 const csrfToken = document.querySelector('meta[name="_csrf"]').content;
 
                 fetch(url, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': csrfToken
-                    }
+                        'X-CSRF-TOKEN': csrfToken,
+                    },
                 })
                     .then((response) => {
                         return response.text();
                     })
                     .then((text) => {
-                        if (text === 'success') {
-                            toastNotice('친구 요청을 보냈습니다.');
-                        } else {
-                            toastWarning('친구 요청을 보낼 수 없습니다.');
-                        }
+                        toastNotice(text);
                     })
                     .catch((error) => {
                         console.log(error);
+                        toastWarning("친구 요청을 보낼 수 없습니다.");
                     });
             });
 
@@ -675,7 +672,7 @@
 
                 const reviewImage = document.createElement('img');
                 reviewImage.src = review.reviewImageUrl;
-                reviewImage.classList.add('top-0', 'left-0', 'w-32','object-cover', 'rounded');
+                reviewImage.classList.add('top-0', 'left-0', 'w-32', 'object-cover', 'rounded');
                 reviewImage.style.maxWidth = "200px";
                 reviewImageContainer.appendChild(reviewImage);
 

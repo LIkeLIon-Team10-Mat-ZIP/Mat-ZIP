@@ -2,6 +2,7 @@ package site.matzip.friendRequest.controller;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +11,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
 import site.matzip.base.event.EventAfterFriendRequestAccept;
 import site.matzip.base.rq.Rq;
 import site.matzip.base.rsData.RsData;
@@ -50,7 +52,7 @@ public class FriendRequestController {
         RsData<FriendRequest> friendRequestRsData = friendRequestService.checkRequestAdmin(nickname, fromMember.getNickname());
 
         if (friendRequestRsData.isFail()) {
-            return new ResponseEntity<>(friendRequestRsData.getMsg(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(friendRequestRsData.getMsg(), HttpStatus.OK);
         }
 
         Member toMember = friendRequestService.getMember(nickname);
@@ -59,10 +61,12 @@ public class FriendRequestController {
         return new ResponseEntity<>(friendRequestRsData.getMsg(), HttpStatus.OK);
     }
 
-    @PostMapping("/add/{nickname}")
+    @PostMapping("/add/{memberId}")
     @ResponseBody
-    public ResponseEntity<String> addFriend(@PathVariable String nickname, @AuthenticationPrincipal PrincipalDetails principalDetails) {
-        return addFriend(principalDetails, nickname);
+    public ResponseEntity<String> addFriend(@PathVariable Long memberId, @AuthenticationPrincipal PrincipalDetails principalDetails) {
+        Member member = friendRequestService.getMember(memberId);
+
+        return addFriend(principalDetails, member.getNickname());
     }
 
     @PostMapping("/accept")
@@ -77,7 +81,7 @@ public class FriendRequestController {
 
         friendRequestService.deleteRequest(friendRequestId); // 요청 삭제
 
-        return "redirect:/usr/member/myPage?menu=3";
+        return "redirect:/usr/member/myPage";
     }
 
     @PostMapping("/reject")

@@ -51,6 +51,11 @@ public class FriendRequestService {
         friendRequestRepository.deleteById(friendRequestId);
     }
 
+    public Member getMember(Long memberId) {
+        return memberRepository.findById(memberId)
+                .orElseThrow(() -> new EntityNotFoundException("member not found"));
+    }
+
     public Member getMember(String nickname) {
         return memberRepository.findByNickname(nickname)
                 .orElseThrow(() -> new EntityNotFoundException("member not found"));
