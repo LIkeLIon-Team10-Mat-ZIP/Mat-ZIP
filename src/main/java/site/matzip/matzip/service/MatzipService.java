@@ -14,14 +14,12 @@ import site.matzip.matzip.domain.Matzip;
 import site.matzip.matzip.domain.MatzipMember;
 import site.matzip.matzip.dto.MatzipCreationDTO;
 import site.matzip.matzip.dto.MatzipListDTO;
-import site.matzip.matzip.dto.MatzipUpdateDTO;
 import site.matzip.matzip.dto.MatzipRankDTO;
-import site.matzip.matzip.dto.MatzipReviewListDTO;
+import site.matzip.matzip.dto.MatzipUpdateDTO;
 import site.matzip.matzip.repository.MatzipMemberRepository;
 import site.matzip.matzip.repository.MatzipRepository;
 import site.matzip.member.domain.Member;
 import site.matzip.member.repository.MemberRepository;
-import site.matzip.review.dto.ReviewListDTO;
 
 import java.util.List;
 import java.util.Optional;
@@ -146,6 +144,7 @@ public class MatzipService {
                     .x(matzip.getX())
                     .y(matzip.getY())
                     .rating(rating)
+                    .averageRating(getAverageRating(matzip))
                     .description(description)
                     .matzipId(matzip.getId())
                     .build();
@@ -153,7 +152,7 @@ public class MatzipService {
     }
 
     @CacheEvict(value = {"matzipListCache", "myMatzipListCache"}, allEntries = true)
-    public RsData update(Long matzipId, Long authorId, MatzipUpdateDTO matzipUpdateDTO) {
+    public RsData modify(Long matzipId, Long authorId, MatzipUpdateDTO matzipUpdateDTO) {
         MatzipMember matzipMember = matzipMemberRepository.findByMatzipIdAndAuthorId(matzipId, authorId).orElse(null);
         if (matzipMember == null) {
             return RsData.of("F-1", "사용자의 후기를 찾을 수 없습니다.");

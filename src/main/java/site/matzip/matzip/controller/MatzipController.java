@@ -129,7 +129,7 @@ public class MatzipController {
     @PostMapping("/api/update/{id}")
     public ResponseEntity<RsData> update(@PathVariable Long id, @AuthenticationPrincipal PrincipalDetails principalDetails,
                                          @RequestBody MatzipUpdateDTO matzipUpdateDTO) {
-        RsData updateRs = matzipService.update(id, principalDetails.getMember().getId(), matzipUpdateDTO);
+        RsData updateRs = matzipService.modify(id, principalDetails.getMember().getId(), matzipUpdateDTO);
         if (updateRs.isFail()) {
             return new ResponseEntity<>(updateRs, HttpStatus.NOT_FOUND);
         }
