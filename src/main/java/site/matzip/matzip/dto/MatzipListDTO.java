@@ -3,10 +3,10 @@ package site.matzip.matzip.dto;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import site.matzip.matzip.domain.MatzipType;
 
-@Data
+@Getter
 @Builder
 public class MatzipListDTO {
     private Long matzipId;

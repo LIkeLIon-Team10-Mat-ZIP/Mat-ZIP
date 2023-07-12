@@ -1,12 +1,12 @@
 package site.matzip.matzip.dto;
 
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import site.matzip.review.dto.ReviewListDTO;
 
 import java.util.List;
 
-@Data
+@Getter
 @Builder
 public class MatzipReviewListDTO {
     private MatzipListDTO matzipListDTO;
