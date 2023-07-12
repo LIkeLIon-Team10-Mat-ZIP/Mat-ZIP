@@ -57,7 +57,7 @@ public class MemberController {
         cookie.setPath("/");
         response.addCookie(cookie);
 
-        return "redirect:/";
+        return "redirect:/main";
     }
 
     @PreAuthorize("isAuthenticated()")
