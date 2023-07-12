@@ -18,6 +18,11 @@ public class HomeController {
     private final MemberService memberService;
 
     @GetMapping("/")
+    public String showHome() {
+        return "/main/main";
+    }
+
+    @GetMapping("/main")
     public String showMain() {
         return "matzip/list";
     }
