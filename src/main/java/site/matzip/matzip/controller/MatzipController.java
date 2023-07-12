@@ -55,7 +55,7 @@ public class MatzipController {
         Member author = rq.getMember(authentication);
 
         matzipService.create(matzipCreationDTO, author.getId());
-        return "redirect:/";
+        return "redirect:/main";
     }
 
     @PreAuthorize("isAuthenticated()")
@@ -72,7 +72,7 @@ public class MatzipController {
         Review createdReview = reviewService.create(reviewCreationDTO, authorId, createdMatzip);
         reviewImageService.create(reviewCreationDTO.getImageFiles(), createdReview);
 
-        return rq.redirectWithMsg("/", "맛집과 리뷰가 등록되었습니다.");
+        return rq.redirectWithMsg("/main", "맛집과 리뷰가 등록되었습니다.");
     }
 
     @PreAuthorize("isAuthenticated()")

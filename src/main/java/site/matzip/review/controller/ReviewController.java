@@ -74,7 +74,7 @@ public class ReviewController {
 
         Review createdReview = reviewService.create(reviewCreationDTO, authorId, matzip);
         reviewImageService.create(reviewCreationDTO.getImageFiles(), createdReview);
-        return "redirect:/";
+        return "redirect:/main";
     }
 
     @PreAuthorize("isAuthenticated()")
@@ -150,7 +150,7 @@ public class ReviewController {
         reviewService.remove(review);
         reviewImageService.remove(review);
 
-        return "redirect:/";
+        return "redirect:/main";
     }
 
     @PreAuthorize("isAuthenticated()")
