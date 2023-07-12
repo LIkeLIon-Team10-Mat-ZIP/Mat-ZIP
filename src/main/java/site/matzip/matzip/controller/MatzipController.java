@@ -13,9 +13,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import site.matzip.base.exception.UnauthorizedException;
 import site.matzip.base.rq.Rq;
 import site.matzip.base.rsData.RsData;
 import site.matzip.config.auth.PrincipalDetails;
+import site.matzip.friend.service.FriendService;
 import site.matzip.image.service.ReviewImageService;
 import site.matzip.matzip.domain.Matzip;
 import site.matzip.matzip.dto.MatzipCreationDTO;
@@ -38,6 +40,7 @@ public class MatzipController {
     private final MatzipService matzipService;
     private final ReviewService reviewService;
     private final ReviewImageService reviewImageService;
+    private final FriendService friendService;
     private final Rq rq;
 
     @GetMapping("create")
@@ -85,42 +88,41 @@ public class MatzipController {
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/api/list")
     @ResponseBody
-    public ResponseEntity<List<MatzipListDTO>> searchAll(Authentication authentication) {
-        try {
-            if (authentication == null || !authentication.isAuthenticated()) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-            }
-            List<MatzipListDTO> matzipDtoList = matzipService.findAndConvertAll(rq.getMember(authentication).getId());
-            return ResponseEntity.ok(matzipDtoList);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+    public ResponseEntity<List<MatzipListDTO>> searchAll(Authentication authentication) throws UnauthorizedException {
+        if (authentication == null) {
+            throw new UnauthorizedException("Please login");
         }
+        List<MatzipListDTO> matzipDtoList = matzipService.findAndConvertAll(rq.getMember(authentication).getId());
+        return ResponseEntity.ok(matzipDtoList);
     }
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/api/mylist")
     @ResponseBody
-    public ResponseEntity<List<MatzipListDTO>> searchMine(Authentication authentication) {
-        try {
-            List<MatzipListDTO> matzipDtoList = matzipService.findAndConvertById(rq.getMember(authentication).getId());
-            return ResponseEntity.ok(matzipDtoList);
-        } catch (Exception e) {
-            // 예외 발생 시 처리
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+    public ResponseEntity<List<MatzipListDTO>> searchMine(Authentication authentication) throws UnauthorizedException {
+
+        if (authentication == null) {
+            throw new UnauthorizedException("Please login");
         }
+        List<MatzipListDTO> matzipDtoList = matzipService.findAndConvertById(rq.getMember(authentication).getId());
+        return ResponseEntity.ok(matzipDtoList);
     }
-    
+
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/api/list/{id}")
     @ResponseBody
-    public ResponseEntity<List<MatzipListDTO>> searchFriendsMap(@PathVariable Long id) {
-        try {
-            List<MatzipListDTO> matzipDtoList = matzipService.findAndConvertById(id);
-            return ResponseEntity.ok(matzipDtoList);
-        } catch (Exception e) {
-            // 예외 발생 시 처리
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+    public ResponseEntity<List<MatzipListDTO>> searchFriendsMap(@PathVariable Long id,
+                                                                @AuthenticationPrincipal PrincipalDetails principalDetails) throws UnauthorizedException {
+        // 인증되지 않은 사용자는 UnauthorizedException 발생
+        if (principalDetails == null) {
+            throw new UnauthorizedException("Please Login");
         }
+        // 둘이 친구가 아닌 경우, BadRequest(잘못된 요청) 응답 반환
+        if (!friendService.isFriend(id, principalDetails.getUserId())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+        List<MatzipListDTO> matzipDtoList = matzipService.findAndConvertById(id);
+        return ResponseEntity.ok(matzipDtoList);
     }
 
     @PreAuthorize("isAuthenticated()")
