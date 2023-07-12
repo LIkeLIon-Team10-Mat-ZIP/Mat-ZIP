@@ -8,6 +8,7 @@ import java.time.format.DateTimeFormatter;
 
 @Data
 public class MyReviewDTO {
+    private Long id;
     private String matzipName;
     private double rating;
     private String content;
@@ -15,6 +16,7 @@ public class MyReviewDTO {
     private LocalDateTime createDate;
 
     public MyReviewDTO(Review review) {
+        this.id = review.getId();
         this.matzipName = review.getMatzip().getMatzipName();
         this.rating = review.getRating();
         this.content = review.getContent();

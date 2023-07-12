@@ -23,7 +23,7 @@
 
 <!--Content 내용 영역을 참조합니다-->
 <!-- class="flex-1 pt-12" Navbar의 고정으로 인해 z-50(header에 기능 안곂치게 하기위해 부여) pt-12로 Navbar 밑으로 간격 맞춤-->
-<main layout:fragment="Content" class="flex-1 pt-20"></main>
+<main layout:fragment="Content" class="flex-grow pt-20"></main>
 
 <script th:inline="javascript">
     // 타임리프 문법(파라미터, ? 뒤에 입력된 매개변수들)
@@ -64,8 +64,7 @@
         modal.classList.add("hidden");
     }
 
-    function
-    loadContent(url, contentId) {
+    function loadContent(url, contentId) {
         $.ajax({
             url: url,
             method: "GET",
@@ -112,8 +111,10 @@
 
         // 설정된 아이디가 있는 경우에만 클래스를 추가/삭제합니다.
         if (activeBtn && inactiveBtn) {
-            activeBtn.classList.add('btn-primary');
-            inactiveBtn.classList.remove('btn-primary');
+            activeBtn.classList.add('bg-blue-800');
+            activeBtn.classList.add('text-white');
+            inactiveBtn.classList.remove('bg-blue-800');
+            inactiveBtn.classList.remove('text-white');
         }
 
         if (activeId === 'friendBtn') { // 친구 버튼 활성화
@@ -212,7 +213,6 @@
             });
         }
     }
-
 </script>
 
 </body>

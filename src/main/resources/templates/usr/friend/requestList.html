@@ -8,18 +8,18 @@
                 <div class="mt-1 flex flex-col gap-2">
                     <div class="flex items-center">
                         <div>
-                            <span class="badge badge-primary"
+                            <span class="badge bg-blue-800 text-white"
                                   th:text="${friendRequestDTO.fromMemberNickname}"></span> 님이 친구 요청을 보냈습니다.
                         </div>
                     </div>
                     <div class="flex justify-end mt-2">
                         <form th:action="@{/friends/accept}" method="post">
                             <input type="hidden" name="friendRequestId" th:value="${friendRequestDTO.id}">
-                            <button class="btn btn-primary btn-xs mr-2" type="submit">수락</button>
+                            <button class="btn bg-blue-800 text-white btn-xs mr-2" type="submit">수락</button>
                         </form>
                         <form th:action="@{/friends/reject}" method="post">
                             <input type="hidden" name="friendRequestId" th:value="${friendRequestDTO.id}">
-                            <button class="btn btn-primary btn-xs" type="submit">거절</button>
+                            <button class="btn bg-blue-800 text-white btn-xs" type="submit">거절</button>
                         </form>
                     </div>
                 </div>
