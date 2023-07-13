@@ -253,26 +253,6 @@
     </dialog>
 
     <script>
-        const tBtn_1 = document.getElementById('menu1');
-        tBtn_1.addEventListener('click', () => {
-            window.location.href = '#matzip';
-        });
-
-        const tBtn_2 = document.getElementById('menu2');
-        tBtn_2.addEventListener('click', () => {
-            window.location.href = '#review';
-        });
-
-        const tBtn_3 = document.getElementById('menu3');
-        tBtn_3.addEventListener('click', () => {
-            window.location.href = '#friend';
-        });
-
-        const tBtn_4 = document.getElementById('menu4');
-        tBtn_4.addEventListener('click', () => {
-            window.location.href = "#point";
-        });
-
         document.querySelector('.addFriend').addEventListener('click', function (event) {
             event.preventDefault(); // 폼의 기본 제출 동작을 취소
             var token = $("meta[name='_csrf']").attr("content");
