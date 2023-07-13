@@ -31,12 +31,12 @@ public class NotificationService {
 
         return notifications.stream()
                 .map(notification -> NotificationDTO.builder()
-                    .id(notification.getId())
-                    .typeCode(notification.getTypeCode())
-                    .createDate(notification.getCreateDate())
-                    .readDate(notification.getReadDate())
-                    .fromMemberNickname(notification.getFromMember().getNickname())
-                    .build())
+                        .id(notification.getId())
+                        .typeCode(notification.getTypeCode())
+                        .createDate(notification.getCreateDate())
+                        .readDate(notification.getReadDate())
+                        .fromMemberNickname(notification.getFromMember().getNickname())
+                        .build())
                 .collect(Collectors.toList());
     }
 

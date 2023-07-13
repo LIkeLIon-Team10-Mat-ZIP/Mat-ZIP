@@ -22,7 +22,8 @@ public class MemberBadge extends BaseEntity {
     private Badge badge;
 
     @Builder
-    public MemberBadge() {}
+    public MemberBadge() {
+    }
 
     public void addAssociation(Member member, Badge badge) {
         addMember(member);

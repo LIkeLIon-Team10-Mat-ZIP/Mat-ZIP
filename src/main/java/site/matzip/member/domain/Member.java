@@ -97,4 +97,8 @@ public class Member {
     public void addPoints(long point) {
         this.point += point;
     }
+
+    public void removeReview(Review review) {
+        this.reviews.remove(review);
+    }
 }

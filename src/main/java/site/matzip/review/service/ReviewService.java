@@ -82,6 +82,10 @@ public class ReviewService {
         return reviewRepository.findById(reviewId).orElseThrow(() -> new EntityNotFoundException("Review not Found"));
     }
 
+    public List<Review> findAll() {
+        return reviewRepository.findAll();
+    }
+
     @Cacheable(value = "reviewListCache")
     public Page<ReviewListDTO> findByMatzipIdAndConvertToDTO(Long matzipId, int pageSize, int pageNumber) {
         Sort sort = Sort.by(Sort.Direction.DESC, "views");
@@ -188,20 +192,22 @@ public class ReviewService {
         Cookie cookie = null;
         boolean isCookie = false;
         // request에 쿠키가 있을 때
-        for (int i = 0; cookies != null & i < cookies.length; i++) {
-            if (cookies[i].getName().equals("reviewView")) {
-                cookie = cookies[i];
-                if (!cookie.getValue().contains("[" + review.getId() + "]")) {
-                    incrementViewCount(review);
-                    cookie.setValue(cookie.getValue() + "[" + review.getId() + "]");
+        if (cookies != null) {
+            for (Cookie value : cookies) {
+                if (value.getName().equals("reviewView")) {
+                    cookie = value;
+                    if (!cookie.getValue().contains("[" + review.getId() + "]")) {
+                        incrementViewCount(review);
+                        cookie.setValue(cookie.getValue() + "[" + review.getId() + "]");
+                    }
+                    isCookie = true;
+                    break;
                 }
-                isCookie = true;
-                break;
             }
         }
 
         // request에 쿠기가 없을 때
-        if (!isCookie) {
+        if (cookies == null || !isCookie) {
             incrementViewCount(review);
             cookie = new Cookie("reviewView", "[" + review.getId() + "]");
         }
