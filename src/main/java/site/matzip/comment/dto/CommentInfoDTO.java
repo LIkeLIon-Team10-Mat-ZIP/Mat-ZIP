@@ -1,13 +1,12 @@
 package site.matzip.comment.dto;
 
 import lombok.Builder;
-import lombok.Data;
-import site.matzip.comment.domain.Comment;
+import lombok.Getter;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-@Data
+@Getter
 @Builder
 public class CommentInfoDTO {
     private String profileImageUrl;

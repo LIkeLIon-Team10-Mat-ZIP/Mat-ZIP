@@ -20,7 +20,8 @@ public class MemberBadge extends BaseEntity {
     private Badge badge;
 
     @Builder
-    public MemberBadge() {}
+    public MemberBadge() {
+    }
 
     public void setMember(Member member) {
         if (this.member != null) {

@@ -86,11 +86,7 @@
                         <div class="flex-grow">
                             <div class="flex items-center">
                                 <span class="font-bold text-xl mr-3" id="matzipName"></span>
-                                <a id="_matzipUrl" target="_blank">
-                                    <button class="btn bg-blue-800 hover:bg-blue-500 btn-xs text-white" type="button">
-                                        상세보기
-                                    </button>
-                                </a>
+                                <a href="#" id="detailBtn" class="btn btn-outline btn-xs" target="_blank">상세보기</a>
                             </div>
                             <div class="flex flex-col">
                                 <span id="matzipType"></span>
@@ -150,7 +146,8 @@
                             </div>
                         </div>
                         <div class="mt-2 flex justify-end">
-                            <button class="btn bg-blue-800 hover:bg-blue-500 text-white btn-sm" type="submit">등록하기</button>
+                            <button class="btn bg-blue-800 hover:bg-blue-500 text-white btn-sm" type="submit">등록하기
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -168,7 +165,6 @@
         document.getElementById('address').textContent = matzipCreationDTO.address;
         document.getElementById('phoneNumber').textContent = matzipCreationDTO.phoneNumber;
         document.getElementById('matzipType').textContent = matzipCreationDTO.matzipType;
-        document.getElementById('_matzipUrl').setAttribute('href', matzipCreationDTO.matzipUrl);
 
         var ratingContainer = document.getElementById(eval("'rating-" + matzipCreationDTO.rating + "'"));
         ratingContainer.checked = true;

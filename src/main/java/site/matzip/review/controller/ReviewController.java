@@ -30,7 +30,6 @@ import site.matzip.review.service.ReviewService;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Controller
@@ -111,7 +110,7 @@ public class ReviewController {
                          @ModelAttribute @Valid ReviewCreationDTO reviewCreationDTO,
                          BindingResult bindingResult,
                          @AuthenticationPrincipal PrincipalDetails principalDetails) throws IOException {
-        
+
         Review review = reviewService.findById(reviewId);
         reviewService.checkAccessPermission(reviewId, principalDetails);
 

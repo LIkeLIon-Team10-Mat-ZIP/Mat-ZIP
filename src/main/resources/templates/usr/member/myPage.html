@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html layout:decorate="~{common/layout/defaultLayout.html}">
+<html layout:decorate="~{common/layout/defaultLayout.html}" xmlns:th="http://www.thymeleaf.org">
 
 <head>
     <title>마이 페이지</title>
@@ -13,15 +13,6 @@
 
 
     <style>
-        body {
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-
         #map {
             position: relative;
             margin: auto;
@@ -64,6 +55,7 @@
         #reviewListContainer {
             transition: height 0.5s; /* 높이에 대한 0.5초 동안의 transition 효과 설정 */
         }
+
         .modal-box {
             max-width: none !important;
         }
@@ -89,11 +81,12 @@
                         <span class="mr-3 text-xl font-bold" th:text="${memberInfoDTO.nickname}"></span>
                         <div class="flex flex-grow">
                             <div th:each="badge : ${memberInfoDTO.badgeImage}">
-                                <img th:src="${badge.key}" class="w-7 h-7 rounded-full mr-1" th:title="${badge.value}">
+                                <img th:src="${badge.key}" class="w-12 h-12 rounded-full mr-1"
+                                     th:title="${badge.value}">
                             </div>
                         </div>
                         <div class="dropdown dropdown-left">
-                            <label tabindex="0" class="btn btn-xs bg-pink-200 hover:bg-pink-300 m-1">
+                            <label tabindex="0" class="btn btn-xs bg-blue-800 hover:bg-blue-700 text-white m-1">
                                 <i class="fa-solid fa-gear"></i>Edit
                             </label>
                             <ul tabindex="0" class="dropdown-content menu p-2 shadow rounded-box w-52">
@@ -112,84 +105,61 @@
                     </div>
                     <p th:text="${memberInfoDTO.email}"></p>
                     <div class="flex gap-10 h-full mt-10">
-                        <div id="menu1"
+                        <a href="#matzip"
                              class="bg-base-100 rounded-xl shadow-xl transform hover:scale-110 transition-transform duration-300 cursor-pointer">
                             <div class="flex flex-col justify-center items-center h-full w-32">
-                                <div class="bg-pink-200 rounded-t-xl flex justify-center items-center w-full font-bold flex-grow text-lg">
+                                <div class="bg-blue-800 rounded-t-xl flex justify-center items-center w-full font-bold flex-grow text-lg text-white">
                                     맛집
                                 </div>
                                 <div class="flex justify-center items-center w-full flex-grow">
                                     <h2 class="card-title" th:text="${memberInfoCntDTO.matzipCnt}"></h2>
                                 </div>
                             </div>
-                        </div>
-                        <div id="menu2"
+                        </a>
+                        <a href="#review"
                              class="bg-base-100 rounded-xl shadow-xl transform hover:scale-110 transition-transform duration-300 cursor-pointer">
                             <div class="flex flex-col justify-center items-center h-full w-32">
-                                <div class="bg-pink-200 rounded-t-xl flex justify-center items-center w-full font-bold flex-grow text-lg">
+                                <div class="bg-blue-800 rounded-t-xl flex justify-center items-center w-full font-bold flex-grow text-lg text-white">
                                     리뷰
                                 </div>
                                 <div class="flex justify-center items-center w-full flex-grow">
                                     <h2 class="card-title" th:text="${memberInfoCntDTO.reviewCnt}"></h2>
                                 </div>
                             </div>
-                        </div>
-                        <div id="menu3"
+                        </a>
+                        <a href="#friend"
                              class="bg-base-100 rounded-xl shadow-xl transform hover:scale-110 transition-transform duration-300 cursor-pointer">
                             <div class="flex flex-col justify-center items-center h-full w-32">
-                                <div class="bg-pink-200 rounded-t-xl flex justify-center items-center w-full font-bold flex-grow text-lg">
+                                <div class="bg-blue-800 rounded-t-xl flex justify-center items-center w-full font-bold flex-grow text-lg text-white">
                                     친구
                                 </div>
                                 <div class="flex justify-center items-center w-full flex-grow">
                                     <h2 class="card-title" th:text="${memberInfoCntDTO.friendCnt}"></h2>
                                 </div>
                             </div>
-                        </div>
-                        <div id="menu4"
+                        </a>
+                        <a href="#point"
                              class="bg-base-100 rounded-xl shadow-xl transform hover:scale-110 transition-transform duration-300 cursor-pointer">
                             <div class="flex flex-col justify-center items-center h-full w-32">
-                                <div class="bg-pink-200 rounded-t-xl flex justify-center items-center w-full font-bold flex-grow text-lg">
+                                <div class="bg-blue-800 rounded-t-xl flex justify-center items-center w-full font-bold flex-grow text-lg text-white">
                                     포인트
                                 </div>
                                 <div class="flex justify-center items-center w-full flex-grow">
                                     <h2 class="card-title" th:text="${memberInfoCntDTO.point}"></h2>
                                 </div>
                             </div>
-                        </div>
+                        </a>
                     </div>
                 </div>
             </div>
 
-            <!-- tab menu -->
-            <div class="flex flex-grow p-2">
-                <div class="tabmenu-container w-full">
-                    <div class="tabmenu out-tabmenu">
-                        <ul>
-                            <li id="tab1" class="btnCon">
-                                <input type="radio" checked name="tabmenu" id="tabmenu1" hidden="hidden">
-                                <div class="tabCon">
-                                    <div layout:fragment="content" class="mt-4"></div>
-                                </div>
-                            </li>
-                            <li id="tab2" class="btnCon">
-                                <input type="radio" name="tabmenu" id="tabmenu2" hidden="hidden">
-                                <div class="tabCon">
-                                    <div layout:fragment="content" class="mt-4"></div>
-                                </div>
-                            </li>
-                            <li id="tab3" class="btnCon">
-                                <input type="radio" name="tabmenu" id="tabmenu3" hidden="hidden">
-                                <div class="tabCon">
-                                    <div layout:fragment="content" class="mt-4"></div>
-                                </div>
-                            </li>
-                            <li id="tab4" class="btnCon">
-                                <input type="radio" name="tabmenu" id="tabmenu4" hidden="hidden">
-                                <div class="tabCon">
-                                    <div layout:fragment="content" class="mt-4"></div>
-                                </div>
-                            </li>
-                        </ul>
+            <div class="flex flex-grow">
+                <div class="w-full">
+                    <div>
+                        <div id="matzip" style="scroll-margin-top: 100px"><div th:replace="/usr/member/myPage/matzip :: matzipSection"></div></div>
+                        <div id="review" style="scroll-margin-top: 100px"><div th:replace="/usr/member/myPage/review :: reviewSection"></div></div>
+                        <div id="friend" style="scroll-margin-top: 100px"><div th:replace="/usr/member/myPage/friend :: friendSection"></div></div>
+                        <div id="point" style="scroll-margin-top: 100px"><div th:replace="/usr/member/myPage/point :: pointSection"></div></div>
                     </div>
                 </div>
             </div>
@@ -204,12 +174,12 @@
                     <p class="mb-3 text-lg"><i class="fa-regular fa-face-smile"></i> 추가할 친구의 닉네임을 입력해 주세요.</p>
                     <div class="flex items-center space-x-4">
                         <input type="text" name="nickname" placeholder="닉네임" autocomplete="off"
-                               class="bg-pink-100 h-10 p-4 w-80"/>
+                               class="bg-blue-100 h-10 p-4 w-80"/>
                     </div>
                     <div class="flex justify-end mt-5">
                         <a href="/usr/member/myPage?menu=3"
-                           class="btn btn-sm bg-pink-200 h-10 w-16 mr-2 text-sm flex items-center justify-center hover:bg-pink-100">취소</a>
-                        <button class="addFriend btn btn-sm bg-pink-200 h-10 w-16 text-sm flex items-center justify-center hover:bg-pink-100"
+                           class="btn btn-sm bg-blue-800 h-10 w-16 mr-2 text-sm text-white flex items-center justify-center hover:bg-blue-700">취소</a>
+                        <button class="addFriend btn btn-sm bg-blue-800 h-10 w-16 text-sm text-white flex items-center justify-center hover:bg-blue-700"
                                 type="submit">
                             <span class="text-center">추가</span>
                         </button>
@@ -246,7 +216,8 @@
                             <option value="CAFE">카페</option>
                             <option value="ETC">기타</option>
                         </select>
-                        <button class="btn bg-blue-800 hover:bg-blue-500 rounded-md px-3 text-white w-20" id="filterBtn"
+                        <button class="btn bg-blue-800 hover:bg-blue-500 rounded-md px-3 text-white w-20" type="button"
+                                id="filterBtn"
                                 onclick="search()">
                             검색
                         </button>
@@ -259,13 +230,16 @@
                         <p id="placePhone">전화번호</p>
                         <p id="placeDescription">설명</p>
                         <p id="placeRating">내 평점</p>
-                        <a class="inline-block w-full py-1 px-4 rounded-3xl text-center bg-gray-100 shadow mb-2" id="mapLink"
+                        <a class="inline-block w-full py-1 px-4 rounded-3xl text-center bg-gray-100 shadow mb-2"
+                           id="mapLink"
                            target="_blank">큰지도 보기</a>
                         <br>
-                        <a class="inline-block w-full py-1 px-4 rounded-3xl text-center bg-gray-100 shadow mb-2" id="routeLink"
+                        <a class="inline-block w-full py-1 px-4 rounded-3xl text-center bg-gray-100 shadow mb-2"
+                           id="routeLink"
                            target="_blank">길찾기</a>
                         <br>
-                        <a class="inline-block w-full py-1 px-4 rounded-3xl text-center bg-gray-100 shadow mb-2" id="detailLink"
+                        <a class="inline-block w-full py-1 px-4 rounded-3xl text-center bg-gray-100 shadow mb-2"
+                           id="detailLink"
                            target="_blank">상세정보</a>
                         <br>
                         <hr>
@@ -281,26 +255,22 @@
     <script>
         const tBtn_1 = document.getElementById('menu1');
         tBtn_1.addEventListener('click', () => {
-            document.getElementById('tabmenu1').checked = true;
-            window.location.href = '/usr/member/myPage?menu=1';
+            window.location.href = '#matzip';
         });
 
         const tBtn_2 = document.getElementById('menu2');
         tBtn_2.addEventListener('click', () => {
-            document.getElementById('tabmenu2').checked = true;
-            window.location.href = '/usr/member/myPage?menu=2';
+            window.location.href = '#review';
         });
 
         const tBtn_3 = document.getElementById('menu3');
         tBtn_3.addEventListener('click', () => {
-            document.getElementById('tabmenu3').checked = true;
-            window.location.href = '/usr/member/myPage?menu=3';
+            window.location.href = '#friend';
         });
 
         const tBtn_4 = document.getElementById('menu4');
         tBtn_4.addEventListener('click', () => {
-            document.getElementById('tabmenu4').checked = true;
-            window.location.href = '/usr/member/myPage?menu=4';
+            window.location.href = "#point";
         });
 
         document.querySelector('.addFriend').addEventListener('click', function (event) {
@@ -539,6 +509,16 @@
             const searchType = document.getElementById("matzipTypeSelect").value;
             filterByNameOrType(searchName, searchType);
         }
+
+        // 검색 폼에서 엔터 입력 시 submit 처리
+        document.getElementById("searchInput").addEventListener("keypress", function (event) {
+            if (event.key === "Enter") {
+                event.preventDefault(); // 기본 동작 방지
+                const searchName = document.getElementById("searchInput").value;
+                const searchType = document.getElementById("matzipTypeSelect").value;
+                filterByNameOrType(searchName, searchType);
+            }
+        });
 
         function addMarkerClickEvent(marker, matzip) {
             kakao.maps.event.addListener(marker, 'click', (function (marker, matzip) {

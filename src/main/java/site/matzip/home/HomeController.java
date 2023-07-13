@@ -1,9 +1,11 @@
 package site.matzip.home;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import site.matzip.config.auth.PrincipalDetails;
 import site.matzip.matzip.dto.MatzipRankDTO;
 import site.matzip.matzip.service.MatzipService;
 import site.matzip.member.dto.MemberRankDTO;
@@ -23,7 +25,9 @@ public class HomeController {
     }
 
     @GetMapping("/main")
-    public String showMain() {
+    public String showMain(Model model, @AuthenticationPrincipal PrincipalDetails principalDetails) {
+        model.addAttribute("memberId", principalDetails.getUserId());
+
         return "matzip/list";
     }
 

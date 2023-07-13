@@ -3,13 +3,13 @@ package site.matzip.matzip.dto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import site.matzip.matzip.domain.MatzipType;
 
-@Data
-@Builder
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class MatzipCreationDTO {
@@ -17,8 +17,8 @@ public class MatzipCreationDTO {
     private String matzipName;
     @NotBlank(message = "맛집 주소를 입력해주세요.")
     private String address;
-    @Pattern(regexp = "^\\(?(\\d{2,3})\\)?[- ]?(\\d{3,4})[- ]?(\\d{4})$",
-            message = "전화번호 형식이 잘못되었습니다. (올바른 형식: 010-1234-5678 or 02-123-4567)")
+    @Pattern(regexp = "^(\\d{2,4})[- ]?(\\d{2,4})[- ]?(\\d{4})$",
+            message = "전화번호 형식이 잘못되었습니다. (올바른 형식: 010-1234-5678 or 02-123-4567 or 1666-2753)")
     private String phoneNumber;
     @NotBlank(message = "맛집의 URL을 입력해주세요")
     private String matzipUrl;
