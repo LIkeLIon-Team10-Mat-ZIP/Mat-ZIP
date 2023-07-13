@@ -14,6 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.quality.Strictness;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 import site.matzip.base.appConfig.AppConfig;
@@ -59,10 +60,6 @@ class ReviewServiceTest {
     @Mock
     private ReviewRepository reviewRepository;
     @Mock
-    private MemberRepository memberRepository;
-    @Mock
-    private HeartRepository heartRepository;
-    @Mock
     private HttpServletRequest request;
     @Mock
     private HttpServletResponse response;
@@ -102,7 +99,7 @@ class ReviewServiceTest {
         assertThat(fristReview.getAuthor()).isEqualTo(testUser);
     }
 
-/*    @Test
+    @Test
     void remove() {
         ReviewCreationDTO reviewCreationDTO = ReviewCreationDTO.builder()
                 .rating(4.0)
@@ -111,14 +108,15 @@ class ReviewServiceTest {
 
         Review review = reviewService.create(reviewCreationDTO, testUser.getId(), matzip);
 
+        testUser.removeReview(review);
+        matzip.removeReview(review);
+
         reviewService.remove(review);
 
         List<Review> reviews = reviewService.findAll();
 
-        System.out.println("reviews.get(0).getContent() = " + reviews.get(0).getContent());
-
         assertThat(reviews.size()).isEqualTo(0);
-    }*/
+    }
 
     @Test
     void modify() {
@@ -212,8 +210,9 @@ class ReviewServiceTest {
         assertThat(review.getHearts()).isNotEmpty();
         assertThat(review.getHearts().size()).isEqualTo(1);
 
-//        reviewService.updateHeart(testUser.getId(), review.getId());
-//
-//        assertThat(review.getHearts()).isEmpty();
+        review.removeHeart(review.getHearts().get(0));
+        reviewService.updateHeart(testUser.getId(), review.getId());
+
+        assertThat(review.getHearts()).isEmpty();
     }
 }
