@@ -183,7 +183,7 @@
                     const matzipCount = response.matzipCount;
                     const reviewCount = response.reviewCount;
                     const point = response.point;
-                    //const friendCount = response.modal-friend-count;
+                    const friendCount = response.friendCount;
 
                     // 가져온 프로필 정보를 원하는 대로 처리합니다. (콜백방식)
                     $('#modal-profile-image').attr('src', profileImageUrl);
@@ -191,8 +191,8 @@
                     $('#modal-createDate').text(createDate);
                     $('#modal-matzip-count').text(matzipCount);
                     $('#modal-review-count').text(reviewCount);
+                    $('#modal-friend-count').text(friendCount);
                     $('#modal-point').text(point);
-                    //$('#modal-friend-count').text(friendCount);
                 },
                 error: function (error) {
                     console.error('Error retrieving profile:', error);
