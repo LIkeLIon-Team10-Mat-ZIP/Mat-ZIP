@@ -87,7 +87,7 @@ public class MemberController {
         List<MatzipInfoDTO> matzipInfoDTOS = memberService.convertToMatzipInfoDTO(MemberId);
         model.addAttribute("matzipInfoDTOS", matzipInfoDTOS);
 
-        return "usr/member/myPage";
+        return "usr/member/myPage2";
     }
 
     @GetMapping("/myPage/friendMap")

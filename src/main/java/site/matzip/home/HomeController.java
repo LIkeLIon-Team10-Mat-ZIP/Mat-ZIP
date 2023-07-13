@@ -21,7 +21,7 @@ public class HomeController {
 
     @GetMapping("/")
     public String showHome() {
-        return "/main/main";
+        return "main/main";
     }
 
     @GetMapping("/main")
@@ -41,6 +41,6 @@ public class HomeController {
         model.addAttribute("memberRankDtoList", memberRankDtoList);
         model.addAttribute("matzipRankDTOS", matzipRankDTOS);
 
-        return "/ranking/ranking";
+        return "ranking/ranking";
     }
 }
