@@ -20,7 +20,7 @@ import site.matzip.badge.repository.MemberBadgeRepository;
 import site.matzip.base.appConfig.AppConfig;
 import site.matzip.base.rsData.RsData;
 import site.matzip.friend.dto.FriendDetailDTO;
-import site.matzip.friend.entity.Friend;
+import site.matzip.friend.domain.Friend;
 import site.matzip.matzip.domain.Matzip;
 import site.matzip.matzip.domain.MatzipMember;
 import site.matzip.matzip.dto.MatzipInfoDTO;

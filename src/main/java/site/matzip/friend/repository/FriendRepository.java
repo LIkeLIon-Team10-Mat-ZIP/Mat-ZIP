@@ -2,7 +2,7 @@ package site.matzip.friend.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import site.matzip.friend.entity.Friend;
+import site.matzip.friend.domain.Friend;
 import site.matzip.member.domain.Member;
 
 import java.util.List;

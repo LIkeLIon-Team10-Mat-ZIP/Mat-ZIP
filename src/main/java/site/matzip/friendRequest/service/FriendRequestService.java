@@ -7,7 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import site.matzip.base.rsData.RsData;
 import site.matzip.friend.repository.FriendRepository;
 import site.matzip.friendRequest.dto.FriendRequestDTO;
-import site.matzip.friendRequest.entity.FriendRequest;
+import site.matzip.friendRequest.domain.FriendRequest;
 import site.matzip.friendRequest.repository.FriendRequestRepository;
 import site.matzip.member.domain.Member;
 import site.matzip.member.repository.MemberRepository;

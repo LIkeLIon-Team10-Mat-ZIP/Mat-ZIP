@@ -1,4 +1,4 @@
-package site.matzip.friend.entity;
+package site.matzip.friend.domain;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;

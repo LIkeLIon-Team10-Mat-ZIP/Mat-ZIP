@@ -7,7 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import site.matzip.badge.domain.MemberBadge;
 import site.matzip.comment.domain.Comment;
-import site.matzip.friend.entity.Friend;
+import site.matzip.friend.domain.Friend;
 import site.matzip.image.domain.ProfileImage;
 import site.matzip.matzip.domain.MatzipMember;
 import site.matzip.review.domain.Heart;

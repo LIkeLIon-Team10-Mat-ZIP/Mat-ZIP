@@ -17,7 +17,7 @@ import site.matzip.base.rq.Rq;
 import site.matzip.base.rsData.RsData;
 import site.matzip.config.auth.PrincipalDetails;
 import site.matzip.friendRequest.dto.FriendRequestDTO;
-import site.matzip.friendRequest.entity.FriendRequest;
+import site.matzip.friendRequest.domain.FriendRequest;
 import site.matzip.friendRequest.service.FriendRequestService;
 import site.matzip.member.domain.Member;
 import site.matzip.member.service.MemberService;

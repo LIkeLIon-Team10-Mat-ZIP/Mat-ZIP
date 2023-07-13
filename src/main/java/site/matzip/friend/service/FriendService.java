@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import site.matzip.base.appConfig.AppConfig;
 import site.matzip.friend.dto.FriendDTO;
-import site.matzip.friend.entity.Friend;
+import site.matzip.friend.domain.Friend;
 import site.matzip.friend.repository.FriendRepository;
 import site.matzip.member.domain.Member;
 

@@ -1,4 +1,4 @@
-package site.matzip.notification.entity;
+package site.matzip.notification.domain;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
