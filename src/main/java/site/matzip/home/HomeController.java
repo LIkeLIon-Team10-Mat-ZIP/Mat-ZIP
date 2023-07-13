@@ -21,12 +21,15 @@ public class HomeController {
 
     @GetMapping("/")
     public String showHome() {
-        return "/main/main";
+        return "main/main";
     }
 
     @GetMapping("/main")
+
     public String showMain(Model model, @AuthenticationPrincipal PrincipalDetails principalDetails) {
-        model.addAttribute("memberId", principalDetails.getUserId());
+        if (principalDetails != null) {
+            model.addAttribute("memberId", principalDetails.getUserId());
+        }
 
         return "matzip/list";
     }
@@ -39,6 +42,6 @@ public class HomeController {
         model.addAttribute("memberRankDtoList", memberRankDtoList);
         model.addAttribute("matzipRankDTOS", matzipRankDTOS);
 
-        return "/ranking/ranking";
+        return "ranking/ranking";
     }
 }

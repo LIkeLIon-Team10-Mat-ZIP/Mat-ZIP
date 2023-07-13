@@ -56,7 +56,7 @@ public class MemberController {
         cookie.setPath("/");
         response.addCookie(cookie);
 
-        return rq.redirectWithMsg("/main", "로그아웃이 완료되었습니다.");
+        return "redirect:/main";
     }
 
     @PreAuthorize("isAuthenticated()")
@@ -85,7 +85,7 @@ public class MemberController {
         List<MatzipInfoDTO> matzipInfoDTOS = memberService.convertToMatzipInfoDTO(member.getId());
         model.addAttribute("matzipInfoDTOS", matzipInfoDTOS);
 
-        return "usr/member/myPage";
+        return "usr/member/myPage2";
     }
 
     @GetMapping("/myPage/friendMap")
@@ -105,7 +105,7 @@ public class MemberController {
                                  BindingResult result,
                                  @AuthenticationPrincipal PrincipalDetails principalDetails) {
         if (result.hasErrors()) {
-            return "/usr/member/myPage/modifyNickname";
+            return "usr/member/myPage/modifyNickname";
         }
 
         RsData<Member> member = memberService.modifyNickname(principalDetails.getMember(), nicknameUpdateDTO);

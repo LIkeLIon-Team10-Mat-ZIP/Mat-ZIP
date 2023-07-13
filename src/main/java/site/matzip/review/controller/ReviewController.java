@@ -46,7 +46,7 @@ public class ReviewController {
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/create")
     public String create() {
-        return "/review/create";
+        return "review/create";
     }
 
     // 리뷰만 생성
@@ -60,7 +60,7 @@ public class ReviewController {
         model.addAttribute("reviewCreationDTO", reviewCreationDTO);
         model.addAttribute("create", true);
 
-        return "/review/add";
+        return "review/add";
     }
 
     @PreAuthorize("isAuthenticated()")
@@ -101,7 +101,7 @@ public class ReviewController {
                 .map(ReviewImage::getImageUrl)
                 .collect(Collectors.toList()));
 
-        return "/review/add";
+        return "review/add";
     }
 
     @PreAuthorize("isAuthenticated()")
@@ -176,7 +176,7 @@ public class ReviewController {
 
         reviewService.updateViewCountWithCookie(review, request, response);
 
-        return "/review/detail";
+        return "review/detail";
     }
 
     @GetMapping("/getViewCount")
