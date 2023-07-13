@@ -2,11 +2,12 @@ package site.matzip.notification.dto;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
-@Data
+@Getter
 @Builder
 public class NotificationDTO {
     private Long id;

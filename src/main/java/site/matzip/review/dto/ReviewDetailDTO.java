@@ -1,7 +1,8 @@
 package site.matzip.review.dto;
 
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import site.matzip.matzip.domain.MatzipType;
 
 import java.time.LocalDateTime;
@@ -9,7 +10,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 
-@Data
+@Setter
+@Getter
 @Builder
 public class ReviewDetailDTO {
     private String profileImageUrl;
