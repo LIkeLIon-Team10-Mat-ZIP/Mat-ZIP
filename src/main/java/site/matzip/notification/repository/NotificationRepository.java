@@ -3,7 +3,7 @@ package site.matzip.notification.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import site.matzip.member.domain.Member;
-import site.matzip.notification.entity.Notification;
+import site.matzip.notification.domain.Notification;
 
 import java.util.List;
 

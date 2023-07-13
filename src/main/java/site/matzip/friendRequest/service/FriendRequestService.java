@@ -3,10 +3,11 @@ package site.matzip.friendRequest.service;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import site.matzip.base.rsData.RsData;
 import site.matzip.friend.repository.FriendRepository;
 import site.matzip.friendRequest.dto.FriendRequestDTO;
-import site.matzip.friendRequest.entity.FriendRequest;
+import site.matzip.friendRequest.domain.FriendRequest;
 import site.matzip.friendRequest.repository.FriendRequestRepository;
 import site.matzip.member.domain.Member;
 import site.matzip.member.repository.MemberRepository;
@@ -17,6 +18,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class FriendRequestService {
     private final FriendRequestRepository friendRequestRepository;
     private final FriendRepository friendRepository;
@@ -26,7 +28,7 @@ public class FriendRequestService {
         return friendRequestRepository.findById(friendRequestId);
     }
 
-    public List<FriendRequest> getFriendRequest(Member toMember) {
+    private List<FriendRequest> getFriendRequest(Member toMember) {
         return friendRequestRepository.findByToMember(toMember);
     }
 
@@ -41,12 +43,14 @@ public class FriendRequestService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public void addFriendRequest(Member toMember, Member fromMember) {
         FriendRequest friendRequest = new FriendRequest(toMember, fromMember);
 
         friendRequestRepository.save(friendRequest);
     }
 
+    @Transactional
     public void deleteRequest(Long friendRequestId) {
         friendRequestRepository.deleteById(friendRequestId);
     }

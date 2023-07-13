@@ -20,7 +20,7 @@ import site.matzip.badge.repository.MemberBadgeRepository;
 import site.matzip.base.appConfig.AppConfig;
 import site.matzip.base.rsData.RsData;
 import site.matzip.friend.dto.FriendDetailDTO;
-import site.matzip.friend.entity.Friend;
+import site.matzip.friend.domain.Friend;
 import site.matzip.matzip.domain.Matzip;
 import site.matzip.matzip.domain.MatzipMember;
 import site.matzip.matzip.dto.MatzipInfoDTO;
@@ -41,6 +41,7 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class MemberService {
     private final MemberRepository memberRepository;
     private final MemberTokenRepository memberTokenRepository;
@@ -139,6 +140,7 @@ public class MemberService {
                 .orElseThrow(() -> new EntityNotFoundException("Member not found"));
     }
 
+    @Transactional
     public Member signUp(String username, String kakao_nickname, String password, String email) {
         password = passwordEncoder.encode(password);
         Member member = Member.builder()

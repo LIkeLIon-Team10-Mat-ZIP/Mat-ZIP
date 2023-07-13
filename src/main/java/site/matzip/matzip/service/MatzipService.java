@@ -27,12 +27,14 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class MatzipService {
     private final MatzipRepository matzipRepository;
     private final MemberRepository memberRepository;
     private final MatzipMemberRepository matzipMemberRepository;
 
 
+    @Transactional
     @CacheEvict(value = {"matzipListCache", "myMatzipListCache", "reviewListCache"}, allEntries = true)
     public Matzip create(MatzipCreationDTO creationDTO, Long authorId) {
         Optional<Matzip> optionalExistingMatzip = matzipRepository.findByKakaoId(creationDTO.getKakaoId());
@@ -69,11 +71,10 @@ public class MatzipService {
     //개인의 맛집 추천(후기) 엔티티 생성
     private MatzipMember createMatzipRecommendationEntity(MatzipCreationDTO creationDTO, Matzip savedMatzip, Member author) {
         MatzipMember createdMatzipMember = MatzipMember.builder()
-                .rating(creationDTO.getRating())
                 .description(creationDTO.getDescription())
+                .rating(creationDTO.getRating())
                 .build();
-        createdMatzipMember.setAuthor(author);
-        createdMatzipMember.setMatzip(savedMatzip);
+        createdMatzipMember.addAssociation(author, savedMatzip);
 
         return createdMatzipMember;
     }
@@ -103,6 +104,7 @@ public class MatzipService {
         return convertToListDTO(findAllByAuthorId(authorId), authorId);
     }
 
+    @Transactional
     @CacheEvict(value = {"matzipListCache", "myMatzipListCache"}, allEntries = true)
     public RsData delete(Long matzipId, Long authorId) {
         MatzipMember matzipMember = matzipMemberRepository.findByMatzipIdAndAuthorId(matzipId, authorId).orElse(null);
@@ -151,6 +153,7 @@ public class MatzipService {
         }).collect(Collectors.toList());
     }
 
+    @Transactional
     @CacheEvict(value = {"matzipListCache", "myMatzipListCache"}, allEntries = true)
     public RsData modify(Long matzipId, Long authorId, MatzipModifyDTO matzipModifyDTO) {
         MatzipMember matzipMember = matzipMemberRepository.findByMatzipIdAndAuthorId(matzipId, authorId).orElse(null);
@@ -162,7 +165,6 @@ public class MatzipService {
         return RsData.of("S-1", "업데이트가 완료되었습니다.");
     }
 
-    @Transactional
     public List<MatzipRankDTO> findAndConvertTopTenMatzip() {
         List<Matzip> matzips = getTop10ByOrderByMatzipMembersSize();
         return matzips.stream().map(this::convertToMatzipDTO).collect(Collectors.toList());
@@ -184,6 +186,7 @@ public class MatzipService {
                 .build();
     }
 
+    // TODO Entity로 로직 빼기
     private double getAverageRating(Matzip matzip) {
         double sum = 0;
 

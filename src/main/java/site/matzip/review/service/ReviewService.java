@@ -39,12 +39,14 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final MemberRepository memberRepository;
     private final HeartRepository heartRepository;
     private final AppConfig appConfig;
 
+    @Transactional
     @CacheEvict(value = {"reviewListCache", "myReviewListCache"}, allEntries = true)
     public Review create(ReviewCreationDTO reviewCreationDTO, Long authorId, Matzip matzip) {
 
@@ -54,18 +56,19 @@ public class ReviewService {
                 .build();
 
         Member author = memberRepository.findById(authorId).orElseThrow(() -> new EntityNotFoundException("Member not Found"));
-        createdReview.setMatzip(matzip);
-        createdReview.setAuthor(author);
+        createdReview.addAssociation(matzip, author);
         reviewRepository.save(createdReview);
 
         return createdReview;
     }
 
+    @Transactional
     @CacheEvict(value = {"reviewListCache", "myReviewListCache"}, allEntries = true)
     public void remove(Review review) {
         reviewRepository.delete(review);
     }
 
+    @Transactional
     @CacheEvict(value = {"reviewListCache", "myReviewListCache"}, allEntries = true)
     public Review modify(Review review, ReviewCreationDTO reviewCreationDTO) {
         review.updateContent(reviewCreationDTO.getContent());
@@ -88,6 +91,7 @@ public class ReviewService {
         Sort sort = Sort.by(Sort.Direction.DESC, "views");
         Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
         Page<Review> reviewPage = reviewRepository.findByMatzipId(matzipId, pageable);
+
         return reviewPage.map(this::convertToReviewDTO);
     }
 
@@ -96,6 +100,7 @@ public class ReviewService {
         Sort sort = Sort.by(Sort.Direction.DESC, "views");
         Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
         Page<Review> reviewPage = reviewRepository.findByMatzipIdAndAuthorId(matzipId, authorId, pageable);
+
         return reviewPage.map(this::convertToReviewDTO);
     }
 
@@ -160,6 +165,7 @@ public class ReviewService {
         return heartRepository.findByReview(review).size();
     }
 
+    @Transactional
     public List<CommentInfoDTO> convertToCommentInfoDTOS(List<Comment> comments, Long authorId) {
 
         String profileImageUrl = appConfig.getDefaultProfileImageUrl();
@@ -221,6 +227,7 @@ public class ReviewService {
         return review.getViews();
     }
 
+    @Transactional
     @Scheduled(fixedRate = 10 * 60 * 1000) // 주기 10분
     public void rewardPointsForReviews() {
         LocalDateTime referenceTime = LocalDateTime.now().minusHours(appConfig.getPointRewardReferenceTime());
@@ -253,8 +260,7 @@ public class ReviewService {
 
         if (findHeart.isEmpty()) {
             Heart createdHeart = Heart.builder().build();
-            createdHeart.setMember(findMember);
-            createdHeart.setReview(findReview);
+            createdHeart.addAssociation(findMember, findReview);
             heartRepository.save(createdHeart);
         } else {
             heartRepository.delete(findHeart.get());

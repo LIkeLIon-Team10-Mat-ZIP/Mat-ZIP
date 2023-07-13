@@ -7,7 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import site.matzip.member.domain.Member;
 import site.matzip.member.repository.MemberRepository;
 import site.matzip.notification.dto.NotificationDTO;
-import site.matzip.notification.entity.Notification;
+import site.matzip.notification.domain.Notification;
 import site.matzip.notification.repository.NotificationRepository;
 
 import java.time.LocalDateTime;
@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class NotificationService {
     private final NotificationRepository notificationRepository;
     private final MemberRepository memberRepository;

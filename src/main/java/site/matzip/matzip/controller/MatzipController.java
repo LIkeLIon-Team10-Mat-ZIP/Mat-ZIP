@@ -67,7 +67,7 @@ public class MatzipController {
                                    @AuthenticationPrincipal PrincipalDetails principalDetails) throws IOException {
 
         if (result.hasErrors()) {
-            return rq.historyBack("전화번호가 없는 맛집은 등록할 수 없습니다.");
+            return rq.historyBack("올바른 맛집과 리뷰 형식으로 등록해주세요.");
         }
 
         MatzipCreationDTO matzipCreationDTO = matzipReviewDTO.getMatzipCreationDTO();

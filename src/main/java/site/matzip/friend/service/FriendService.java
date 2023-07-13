@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import site.matzip.base.appConfig.AppConfig;
 import site.matzip.friend.dto.FriendDTO;
-import site.matzip.friend.entity.Friend;
+import site.matzip.friend.domain.Friend;
 import site.matzip.friend.repository.FriendRepository;
 import site.matzip.member.domain.Member;
 
@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class FriendService {
     private final FriendRepository friendRepository;
     private final AppConfig appConfig;
@@ -41,6 +42,7 @@ public class FriendService {
 
         String profileImageUrl = appConfig.getDefaultProfileImageUrl();
 
+        // TODO 메서드로 분리
         return friendList.stream()
                 .map(friend -> FriendDTO.builder()
                         .id(friend.getId())
@@ -65,7 +67,6 @@ public class FriendService {
     }
 
     public boolean isFriend(Long userId, Long friendId) {
-        if (friendRepository.findByMember1IdAndMember2Id(userId, friendId) == null) return false;
-        return true;
+        return friendRepository.findByMember1IdAndMember2Id(userId, friendId).isPresent();
     }
 }
