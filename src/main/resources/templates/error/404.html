@@ -3,6 +3,12 @@
 
 <head>
     <title>Mat.ZIP | 404 NOT FOUND</title>
+
+    <script>
+        function goToMain() {
+            window.location.href = "/"; // 메인 화면으로 이동하는 URL로 변경해주세요
+        }
+    </script>
 </head>
 
 <body>
@@ -16,9 +22,7 @@
         </div>
     </div>
     <div class="flex justify-center mx-auto max-w-5xl">
-        <a href="/main">
-            <button type="button" class="btn btn-outline-info btn-lg">메인 화면으로</button>
-        </a>
+        <button class="btn btn-info" onclick="goToMain()">메인 화면으로</button>
     </div>
 </main>
 </body>
