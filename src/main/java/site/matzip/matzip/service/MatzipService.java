@@ -106,17 +106,17 @@ public class MatzipService {
 
     @Transactional
     @CacheEvict(value = {"matzipListCache", "myMatzipListCache"}, allEntries = true)
-    public RsData delete(Long matzipId, Long authorId) {
+    public RsData deleteMatzipMember(Long matzipId, Long authorId) {
         MatzipMember matzipMember = matzipMemberRepository.findByMatzipIdAndAuthorId(matzipId, authorId).orElse(null);
         if (matzipMember == null) {
             return RsData.of("F-1", "이미 삭제된 맛집입니다");
         }
         Matzip matzip = matzipMember.getMatzip();
-        matzipMemberRepository.delete(matzipMember);
         //누구의 맛집 지도에도 남아있지 않으면 맛집 자체를 삭제
-        if (matzip.getMatzipMembers().isEmpty()) {
+        if (matzip.getMatzipMembers().size() == 1) {
             matzipRepository.delete(matzip);
         }
+        matzipMemberRepository.delete(matzipMember);
         return RsData.of("S-1", "맛집이 삭제되었습니다.");
     }
 

@@ -39,7 +39,7 @@ public class MatzipController {
     private final FriendService friendService;
     private final Rq rq;
 
-    @GetMapping("create")
+    @GetMapping("/create")
     public String create() {
         return "matzip/create";
     }
@@ -126,7 +126,7 @@ public class MatzipController {
     public ResponseEntity<RsData> delete(@PathVariable Long id,
                                          @AuthenticationPrincipal PrincipalDetails principalDetails) {
 
-        RsData deleteRs = matzipService.delete(id, principalDetails.getMember().getId());
+        RsData deleteRs = matzipService.deleteMatzipMember(id, principalDetails.getMember().getId());
         if (deleteRs.isFail()) {
             return new ResponseEntity<>(deleteRs, HttpStatus.NOT_FOUND);
         }
