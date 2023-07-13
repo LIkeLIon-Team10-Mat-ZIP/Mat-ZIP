@@ -63,6 +63,63 @@ function showDeleteConfirmDialog(msg, callback) {
     });
 }
 
+function showDeleteConfirmDialogMsg(msg, element) {
+    Swal.fire({
+        title: '주의',
+        text: msg,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#2e3bc0',
+        cancelButtonColor: '#d33',
+        confirmButtonText: '삭제',
+        cancelButtonText: '취소',
+        reverseButtons: true,
+    }).then((result) => {
+        // 사용자가 '수정' 버튼을 누른 경우, 폼을 제출합니다.
+        if (result.isConfirmed) {
+            $(element).next().submit();
+        }
+    });
+}
+
+function showDeleteNotificationConfirmDialogMsg(msg) {
+    Swal.fire({
+        title: '주의',
+        text: msg,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#2e3bc0',
+        cancelButtonColor: '#d33',
+        confirmButtonText: '삭제',
+        cancelButtonText: '취소',
+        reverseButtons: true,
+    }).then((result) => {
+        // 사용자가 '수정' 버튼을 누른 경우, 폼을 제출합니다.
+        if (result.isConfirmed) {
+            $(this).next().submit();
+        }
+    });
+}
+
+function showModifyConfirmDialogMsg(msg, element) {
+    Swal.fire({
+        title: '주의',
+        text: msg,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#2e3bc0',
+        cancelButtonColor: '#d33',
+        confirmButtonText: '수정',
+        cancelButtonText: '취소',
+        reverseButtons: true,
+    }).then((result) => {
+        // 사용자가 '수정' 버튼을 누른 경우, 폼을 제출합니다.
+        if (result.isConfirmed) {
+            $(element).next().submit();
+        }
+    });
+}
+
 function showMovetoMainConfirmDialog(msg, callback) {
     Swal.fire({
         title: '성공',

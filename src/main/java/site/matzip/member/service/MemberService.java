@@ -313,6 +313,7 @@ public class MemberService {
                 .nickname(member.getNickname())
                 .matzipCount(member.getMatzipMembers().size())
                 .reviewCount(member.getReviews().size())
+                .friendCount(member.getFriends2().size())
                 .point(member.getPoint())
                 .build();
     }

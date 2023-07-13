@@ -10,6 +10,7 @@ public class MemberProfileDTO {
     private String nickname;
     private long matzipCount;
     private long reviewCount;
+    private long friendCount;
     private long point;
 
 }
