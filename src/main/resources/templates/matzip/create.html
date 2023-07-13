@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <meta name="_csrf" th:content="${_csrf.token}"/>
     <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+
     <!-- 테일윈드 불러오기 -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- 데이지 UI 불러오기 -->
@@ -23,6 +24,8 @@
 
         .map_wrap {
             position: relative;
+            width: 85vw;
+            height: 78vh;
         }
 
         #menu_wrap {
@@ -223,7 +226,7 @@
             <h1 class="text-lg">Search</h1>
         </div>
         -->
-        <div class="map_wrap h-[80vh] w-[70vw] mt-5">
+        <div class="map_wrap mt-5">
             <div class="w-full h-full" id="map"></div>
             <div class="bg_white" id="menu_wrap">
                 <div class="option">
