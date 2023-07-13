@@ -257,11 +257,14 @@
         }
 
         function showInfoWindow(marker, matzip) {
+            let averageRating = matzip.averageRating.toFixed(2); // 소수점 두 자리까지 반올림하여 표시
             if (matzip.matzipName.length > 9) {
-                iwContent = '<div style="padding:5px; overflow-wrap: break-word; font-size:0.8em;">' + matzip.matzipName + '</div>'
+                iwContent = '<div class="flex justify-center" style="padding:5px; overflow-wrap: break-word; font-size:0.8em;">' + matzip.matzipName + '</div>'
             } else {
-                iwContent = '<div style="padding:5px; overflow-wrap: break-word;">' + matzip.matzipName + '</div>';
+                iwContent = '<div class="flex justify-center" style="padding:5px; overflow-wrap: break-word;">' + matzip.matzipName + '</div>';
             }
+            iwContent += '<div style="padding:5px;">' + '<i class="fa-solid fa-star text-yellow-300"></i>' + '  :  ' + averageRating + '</div>'; // 평균 평점 추가
+            ': + averageRating'; // 평균 평점 추가
             infowindow.setContent(iwContent);
             infowindow.open(map, marker);
         }
@@ -403,8 +406,10 @@
                     deleteButton.innerText = '삭제';
                     deleteButton.classList.add('btn', 'btn-xs', 'delete-button', 'text-white', 'bg-blue-800', 'hover:bg-blue-700');
                     deleteButton.addEventListener('click', function () {
-                        const matzipId = matzip.matzipId;
-                        deleteMatzip(matzipId);
+                        showDeleteConfirmDialog("정말로 삭제하시겠습니까?", function () {
+                            const matzipId = matzip.matzipId;
+                            deleteMatzip(matzipId);
+                        });
                     });
                     placeName.insertAdjacentElement('afterend', deleteButton);
 
@@ -412,8 +417,7 @@
                     updateButton.innerText = '수정';
                     updateButton.classList.add('btn', 'btn-xs', 'update-button', 'text-white', 'bg-blue-800', 'hover:bg-blue-700');
                     updateButton.addEventListener('click', function () {
-                        const matzipId = matzip.matzipId;
-                        updateButtonClickListener(updateButton, matzipId);
+                        updateButtonClickListener(updateButton, matzip);
                     });
                     placeName.insertAdjacentElement('afterend', updateButton);
                 }
@@ -431,22 +435,23 @@
             placeInfo.style.display = 'flex'; // Show place info
         }
 
-        function updateButtonClickListener(updateButton, matzipId) {
+        function updateButtonClickListener(updateButton, matzip) {
             if (updateButton.innerText === "수정") {
                 updateButton.innerText = "완료";
                 makeEditable();
             } else if (updateButton.innerText === "완료") {
                 updateButton.innerText = "수정";
-                modifyMatzip(matzipId); // matzipId를 이용해 수정 요청 보냄
+                modifyMatzip(matzip); // matzipId를 이용해 수정 요청 보냄
                 doneEditing();
             }
         }
 
-        function modifyMatzip(matzipId) {
+        function modifyMatzip(matzip) {
             var description = document.getElementById("descriptionInput").value;
             var rating = document.querySelector('input[name="rating"]:checked')?.value ?? 0;
             const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
             const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+            const matzipId = matzip.matzipId;
 
             var matzipModifyDTO = {
                 description: description,
@@ -463,9 +468,14 @@
             })
                 .then(response => {
                     if (response.ok) {
-                        toastNotice("맛집 정보가 업데이트 되었습니다.")
-                        // 여기서 다시 맛집 정보를 가져오거나 페이지를 이동하는 등의 작업을 수행할 수 있습니다.
+                        sessionStorage.setItem("x", matzip.x);
+                        sessionStorage.setItem("y", matzip.y);
+                        toastNotice('맛집 정보가 업데이트 되었습니다');
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 500); // 1초 뒤에 새로고침
                     } else {
+
                         toastWarning('맛집 정보 업데이트에 실패했습니다.');
                     }
                 })
@@ -835,8 +845,10 @@
                 .then((response) => response.json())
                 .then((data) => {
                     if (data.success) {
-                        window.location.reload();
                         toastNotice('맛집이 삭제되었습니다.');
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 500); // 0.5초 뒤에 새로고침
                     } else {
                         toastWarning('맛집 삭제에 실패했습니다.');
                     }

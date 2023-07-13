@@ -30,7 +30,7 @@ public class SecurityConfig {
                         formLogin -> formLogin
                                 .loginPage("/usr/member/login")
                                 .failureHandler(userLoginFailureHandler)
-                                .defaultSuccessUrl("/")
+                                .defaultSuccessUrl("/main")
                 )
                 .oauth2Login(
                         oauth2Login -> oauth2Login

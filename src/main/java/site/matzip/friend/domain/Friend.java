@@ -1,14 +1,15 @@
-package site.matzip.friend.entity;
+package site.matzip.friend.domain;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import site.matzip.base.domain.BaseEntity;
 import site.matzip.member.domain.Member;
 
 @Entity
-@NoArgsConstructor
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Friend extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,3 +28,4 @@ public class Friend extends BaseEntity {
         this.member2 = member2;
     }
 }
+

@@ -2,7 +2,6 @@ package site.matzip.friendRequest.controller;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,13 +10,12 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
 import site.matzip.base.event.EventAfterFriendRequestAccept;
 import site.matzip.base.rq.Rq;
 import site.matzip.base.rsData.RsData;
 import site.matzip.config.auth.PrincipalDetails;
 import site.matzip.friendRequest.dto.FriendRequestDTO;
-import site.matzip.friendRequest.entity.FriendRequest;
+import site.matzip.friendRequest.domain.FriendRequest;
 import site.matzip.friendRequest.service.FriendRequestService;
 import site.matzip.member.domain.Member;
 import site.matzip.member.service.MemberService;

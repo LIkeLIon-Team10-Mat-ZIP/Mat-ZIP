@@ -16,13 +16,17 @@ public class Comment extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "review_id")
     private Review review;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member author;
+
     private String content;
+
     private boolean pointsRewarded;
 
     @Builder
@@ -30,7 +34,12 @@ public class Comment extends BaseEntity {
         this.content = content;
     }
 
-    public void setReview(Review review) {
+    public void addAssociation(Review review, Member author) {
+        addReview(review);
+        addAuthor(author);
+    }
+
+    private void addReview(Review review) {
         if (this.review != null) {
             this.review.getComments().remove(this);
         }
@@ -38,7 +47,7 @@ public class Comment extends BaseEntity {
         this.review.getComments().add(this);
     }
 
-    public void setAuthor(Member author) {
+    private void addAuthor(Member author) {
         if (this.author != null) {
             this.author.getComments().remove(this);
         }

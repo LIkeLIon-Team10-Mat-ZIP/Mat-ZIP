@@ -17,20 +17,29 @@ public class Matzip {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String matzipName;
+
     private String address;
+
     private String phoneNumber;
+
     private String matzipUrl;
+
     private Long kakaoId;
+
     @Enumerated(EnumType.STRING)
     private MatzipType matzipType;
+
     private double x;
+
     private double y;
+
     @OneToMany(mappedBy = "matzip", cascade = {CascadeType.ALL}, orphanRemoval = true)
     private List<Review> reviews = new ArrayList<>();
+
     @OneToMany(mappedBy = "matzip", cascade = CascadeType.ALL)
     private List<MatzipMember> matzipMembers = new ArrayList<>();
-
 
     @Builder
     public Matzip(String matzipName, String address, String phoneNumber,
@@ -44,5 +53,9 @@ public class Matzip {
         this.matzipType = matzipType;
         this.x = x;
         this.y = y;
+    }
+
+    public void removeReview(Review review) {
+        this.reviews.remove(review);
     }
 }

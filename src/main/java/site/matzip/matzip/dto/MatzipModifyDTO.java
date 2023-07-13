@@ -1,8 +1,8 @@
 package site.matzip.matzip.dto;
 
-import lombok.Data;
+import lombok.Getter;
 
-@Data
+@Getter
 public class MatzipModifyDTO {
     private String description;
     private double rating;

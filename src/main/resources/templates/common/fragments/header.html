@@ -44,7 +44,7 @@
             <ul tabindex="6"
                 class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-40 right-0">
                 <li><a sec:authorize="isAnonymous()"
-                       class="btn btn-ghost rounded-btn bg-transparent text-blue-800 dark:bg-transparent dark:text-gray-800"
+                       class="btn btn-ghost rounded-btn bg-transparent text-blue-800 dark:bg-transparent dark:text-blue-800"
                        href="/oauth2/authorization/kakao">로그인</a></li>
                 <li><a sec:authorize="isAuthenticated()"
                        class="btn btn-ghost rounded-btn bg-transparent text-blue-800 dark:bg-transparent dark:text-blue-800"
@@ -55,8 +55,8 @@
                 <li><a sec:authorize="isAuthenticated()"
                        class="btn btn-ghost rounded-btn bg-transparent text-blue-800 dark:bg-transparent dark:text-blue-800"
                        href="javascript:"
-                       onclick="$(this).next().submit();">로그아웃</a></li>
-                <form class="!hidden" hidden th:action="|/usr/member/logout|" method="POST"></form>
+                       onclick="$(this).next().submit();">로그아웃</a>
+                <form class="!hidden" hidden th:action="|/usr/member/logout|" method="POST"></form></li>
             </ul>
         </div>
     </div>

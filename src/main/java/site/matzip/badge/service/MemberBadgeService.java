@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
 // TODO count 쿼리로 변경 요소 있음
 @Service
 @RequiredArgsConstructor
@@ -68,8 +69,7 @@ public class MemberBadgeService {
 
         if (findMemberBadge.isEmpty() && matzipMembers.size() > 10) {
             MemberBadge createdMemberBadge = MemberBadge.builder().build();
-            createdMemberBadge.setMember(member);
-            createdMemberBadge.setBadge(badge);
+            createdMemberBadge.addAssociation(member, badge);
             memberBadgeRepository.save(createdMemberBadge);
         }
     }
@@ -92,8 +92,7 @@ public class MemberBadgeService {
 
         if (findMemberBadge.isEmpty() && reviews.size() > 10) {
             MemberBadge createdMemberBadge = MemberBadge.builder().build();
-            createdMemberBadge.setMember(member);
-            createdMemberBadge.setBadge(badge);
+            createdMemberBadge.addAssociation(member, badge);
             memberBadgeRepository.save(createdMemberBadge);
         }
     }
@@ -116,8 +115,7 @@ public class MemberBadgeService {
 
         if (findMemberBadge.isEmpty() && comments.size() > 10) {
             MemberBadge createdMemberBadge = MemberBadge.builder().build();
-            createdMemberBadge.setMember(member);
-            createdMemberBadge.setBadge(badge);
+            createdMemberBadge.addAssociation(member, badge);
             memberBadgeRepository.save(createdMemberBadge);
         }
     }
@@ -143,8 +141,7 @@ public class MemberBadgeService {
 
         if (findMemberBadge.isEmpty() && totalHeartCount > 0) {
             MemberBadge createdMemberBadge = MemberBadge.builder().build();
-            createdMemberBadge.setMember(member);
-            createdMemberBadge.setBadge(badge);
+            createdMemberBadge.addAssociation(member, badge);
             memberBadgeRepository.save(createdMemberBadge);
         }
     }
@@ -167,8 +164,7 @@ public class MemberBadgeService {
 
         if (findMemberBadge.isEmpty() && friendsCount > 0) {
             MemberBadge createdMemberBadge = MemberBadge.builder().build();
-            createdMemberBadge.setMember(member);
-            createdMemberBadge.setBadge(badge);
+            createdMemberBadge.addAssociation(member, badge);
             memberBadgeRepository.save(createdMemberBadge);
         }
     }

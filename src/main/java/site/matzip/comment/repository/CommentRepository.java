@@ -7,8 +7,6 @@ import org.springframework.data.repository.query.Param;
 import site.matzip.comment.domain.Comment;
 import site.matzip.member.domain.Member;
 
-import java.util.List;
-
 import java.time.LocalDateTime;
 import java.util.List;
 

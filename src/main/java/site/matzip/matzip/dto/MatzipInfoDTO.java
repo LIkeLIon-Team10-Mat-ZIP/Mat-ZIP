@@ -1,10 +1,10 @@
 package site.matzip.matzip.dto;
 
-import lombok.Data;
+import lombok.Getter;
 import site.matzip.matzip.domain.Matzip;
 import site.matzip.matzip.domain.MatzipType;
 
-@Data
+@Getter
 public class MatzipInfoDTO {
     private Long matzipId;
     private String matzipName;

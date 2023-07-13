@@ -32,5 +32,6 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     List<Member> findAllByOrderByPointDesc();
 
     Slice<Member> findTop4ByPointLessThanAndIdNotOrderByPointDesc(long point, long memberId, Pageable pageable);
+
     Slice<Member> findTop5ByPointGreaterThanAndIdNotOrderByPointAsc(long point, Long id, Pageable lower5Pageable);
 }

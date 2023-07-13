@@ -7,27 +7,35 @@ import site.matzip.member.domain.Member;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
-@Builder
 public class MatzipMember {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String description;
+
     private double rating;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member author;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "matzip_id")
     private Matzip matzip;
 
-    public void modify(String description, double rating) {
-        this.rating = rating;
+    @Builder
+    public MatzipMember(String description, double rating) {
         this.description = description;
+        this.rating = rating;
     }
 
-    public void setAuthor(Member author) {
+    public void addAssociation(Member author, Matzip matzip) {
+        addAuthor(author);
+        addMatzip(matzip);
+    }
+
+    private void addAuthor(Member author) {
         if (this.author != null) {
             this.author.getMatzipMembers().remove(this);
         }
@@ -35,11 +43,16 @@ public class MatzipMember {
         author.getMatzipMembers().add(this);
     }
 
-    public void setMatzip(Matzip matzip) {
+    private void addMatzip(Matzip matzip) {
         if (this.matzip != null) {
             this.matzip.getMatzipMembers().remove(this);
         }
         this.matzip = matzip;
         matzip.getMatzipMembers().add(this);
+    }
+
+    public void modify(String description, double rating) {
+        this.rating = rating;
+        this.description = description;
     }
 }

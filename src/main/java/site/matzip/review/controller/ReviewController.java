@@ -4,7 +4,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -13,7 +12,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-
 import site.matzip.badge.service.MemberBadgeService;
 import site.matzip.base.rq.Rq;
 import site.matzip.comment.domain.Comment;
@@ -48,7 +46,7 @@ public class ReviewController {
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/create")
     public String create() {
-        return "/review/create";
+        return "review/create";
     }
 
     // 리뷰만 생성
@@ -62,7 +60,7 @@ public class ReviewController {
         model.addAttribute("reviewCreationDTO", reviewCreationDTO);
         model.addAttribute("create", true);
 
-        return "/review/add";
+        return "review/add";
     }
 
     @PreAuthorize("isAuthenticated()")
@@ -103,7 +101,7 @@ public class ReviewController {
                 .map(ReviewImage::getImageUrl)
                 .collect(Collectors.toList()));
 
-        return "/review/add";
+        return "review/add";
     }
 
     @PreAuthorize("isAuthenticated()")
@@ -112,7 +110,7 @@ public class ReviewController {
                          @ModelAttribute @Valid ReviewCreationDTO reviewCreationDTO,
                          BindingResult bindingResult,
                          @AuthenticationPrincipal PrincipalDetails principalDetails) throws IOException {
-        
+
         Review review = reviewService.findById(reviewId);
         reviewService.checkAccessPermission(reviewId, principalDetails);
 
@@ -178,7 +176,7 @@ public class ReviewController {
 
         reviewService.updateViewCountWithCookie(review, request, response);
 
-        return "/review/detail";
+        return "review/detail";
     }
 
     @GetMapping("/getViewCount")

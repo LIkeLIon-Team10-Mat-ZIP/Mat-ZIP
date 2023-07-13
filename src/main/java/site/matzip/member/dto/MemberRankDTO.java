@@ -1,12 +1,11 @@
 package site.matzip.member.dto;
 
 import lombok.Builder;
-import lombok.Data;
-import lombok.ToString;
+import lombok.Getter;
 
 import java.util.Map;
 
-@Data
+@Getter
 @Builder
 public class MemberRankDTO {
     private int rank;
