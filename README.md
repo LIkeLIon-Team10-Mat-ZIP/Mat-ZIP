@@ -10,7 +10,7 @@
     <h1> 🍴 Mat.ZIP ( 맛집 지도 만들기 ) </h1>
 
 [<img src="https://img.shields.io/badge/-matzip.site-purple?style=flat&logo=google-chrome&logoColor=white" />](https://matzip.site)
-[<img src="https://img.shields.io/badge/-Mat.ZiP Notion-blue?style=flat&logo=google-chrome&logoColor=white" />](https://coursemores.notion.site/Moham-737a75b7ac1241a1b469b8ab5effd7c6)
+[<img src="https://img.shields.io/badge/-Mat.ZiP Notion-blue?style=flat&logo=google-chrome&logoColor=white" />](https://www.notion.so/MatZIP-MZ-2739bdf0a306410a831bbfc5128c437d)
 
 
 <div>
@@ -95,19 +95,19 @@
 - **각지 식당 검색**
 
   ```
-  각지 식당 검색
+  각지에 사용자들이 맛집으로 등록해놓은 가게들을 검색하고 확인할 수 있습니다!
   ```
 
 - **맛집 등록**
 
   ```
-  맛집 등록
+  자신이 맛집이라고 생각하는 가게에 대한 리뷰를 남기고 마커를 찍어 자신의 지도에 표기할 수 있습니다!
   ```
 
 - **맛집 공유**
 
   ```
-  맛집 공유
+  친구를 추가하고 해당 친구와 각자의 맛지도를 공유할 수 있습니다!
   ```
 
 <br />
@@ -151,6 +151,6 @@
 - 조희권(팀장 / BE) : 프로젝트 총괄, 지도, 맛집
 - 이재범(팀원 / BE) : 인프라 구축 및 CI/CD, 친구, 알림
 - 김준태(팀원 / BE) : 리뷰, 댓글, 포인트
-- 김시우(팀원 / BE) : 회원, S3, 뱃지
+- 김시우(팀원 / BE) : 회원, S3 이미지 업로드, 뱃지
 - 김희연(팀원 / BE) : 지도
 
