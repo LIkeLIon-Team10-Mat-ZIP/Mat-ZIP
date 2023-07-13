@@ -6,15 +6,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnit;
-import org.mockito.junit.MockitoRule;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.mockito.quality.Strictness;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 import site.matzip.base.appConfig.AppConfig;
@@ -23,20 +18,14 @@ import site.matzip.matzip.domain.MatzipType;
 import site.matzip.matzip.dto.MatzipCreationDTO;
 import site.matzip.matzip.service.MatzipService;
 import site.matzip.member.domain.Member;
-import site.matzip.member.repository.MemberRepository;
 import site.matzip.member.service.MemberService;
-import site.matzip.review.domain.Heart;
 import site.matzip.review.domain.Review;
 import site.matzip.review.dto.ReviewCreationDTO;
-import site.matzip.review.repository.HeartRepository;
 import site.matzip.review.repository.ReviewRepository;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
-
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
