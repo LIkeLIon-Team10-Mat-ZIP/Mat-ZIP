@@ -279,12 +279,11 @@
                     nickname: nicknameValue
                 },
                 success: function (response) {
-                    if (response === "success") {
+
                         modal.close();
-                        toastNotice("친구 요청을 보냈습니다.");
-                    } else {
-                        toastWarning("존재하지 않는 닉네임입니다.");
-                    }
+
+                        toastNotice(response);
+
                     // 서버로부터 성공적인 응답을 받았을 때의 처리 코드를 구현
                     console.log("Success:", response);
                 },

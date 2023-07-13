@@ -26,10 +26,12 @@ public class FriendService {
 
     @Transactional
     public void addFriend(Member member1, Member member2) {
-        Friend friend1 = new Friend(member1, member2);
+        Friend friend1 = new Friend();
+        friend1.addAssociation(member1, member2);
         friendRepository.save(friend1);
 
-        Friend friend2 = new Friend(member2, member1);
+        Friend friend2 = new Friend();
+        friend2.addAssociation(member2, member1);
         friendRepository.save(friend2);
     }
 
