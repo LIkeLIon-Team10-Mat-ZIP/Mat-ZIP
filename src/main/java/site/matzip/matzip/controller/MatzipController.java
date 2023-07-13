@@ -57,7 +57,7 @@ public class MatzipController {
 
         matzipService.create(matzipCreationDTO, author.getId());
 
-        return rq.redirectWithMsg("/main", "맛집이 등록되었습니다.");
+        return "redirect:/main";
     }
 
     @PreAuthorize("isAuthenticated()")

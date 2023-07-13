@@ -33,7 +33,7 @@
             border-radius: 5px;
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
             z-index: 2;
-            max-height:calc(100% - 40px);
+            max-height: calc(100% - 40px);
             flex-direction: column;
         }
 
@@ -45,6 +45,7 @@
 
         #placeName {
             display: flex;
+            flex-direction: row;
             margin-right: 8px;
         }
 
@@ -399,10 +400,20 @@
             if (currentListType === 'my') {
                 let updateButton = document.querySelector('#placeName + a.update-button');
                 let deleteButton = document.querySelector('#placeName + a.delete-button');
-                // 수정 버튼이 존재하지 않을 경우에만 생성합니다.
-                if (!updateButton && !deleteButton) {
-                    deleteButton = document.createElement('a');
+                let buttonContainer = document.querySelector('#placeName + .button-container');
+                if (!buttonContainer) {
+                    const buttonContainer = document.createElement('div');
+                    buttonContainer.classList.add('button-container');
 
+                    updateButton = document.createElement('a');
+                    updateButton.innerText = '수정';
+                    updateButton.classList.add('btn', 'btn-xs', 'update-button', 'text-white', 'bg-blue-800', 'hover:bg-blue-700');
+                    updateButton.addEventListener('click', function () {
+                        updateButtonClickListener(updateButton, matzip);
+                    });
+                    buttonContainer.appendChild(updateButton);
+
+                    deleteButton = document.createElement('a');
                     deleteButton.innerText = '삭제';
                     deleteButton.classList.add('btn', 'btn-xs', 'delete-button', 'text-white', 'bg-blue-800', 'hover:bg-blue-700');
                     deleteButton.addEventListener('click', function () {
@@ -411,25 +422,17 @@
                             deleteMatzip(matzipId);
                         });
                     });
-                    placeName.insertAdjacentElement('afterend', deleteButton);
+                    buttonContainer.classList.add('mx-3');
 
-                    updateButton = document.createElement('a');
-                    updateButton.innerText = '수정';
-                    updateButton.classList.add('btn', 'btn-xs', 'update-button', 'text-white', 'bg-blue-800', 'hover:bg-blue-700');
-                    updateButton.addEventListener('click', function () {
-                        updateButtonClickListener(updateButton, matzip);
-                    });
-                    placeName.insertAdjacentElement('afterend', updateButton);
+                    buttonContainer.appendChild(deleteButton);
+
+                    placeName.appendChild(buttonContainer);
                 }
             } else {
-                // 리스트 타입이 'all'인 경우, 삭제 버튼과 수정 버튼이 존재한다면 제거합니다.
-                const deleteButton = document.querySelector('#placeName + a.delete-button');
-                if (deleteButton) {
-                    deleteButton.remove();
-                }
-                const updateButton = document.querySelector('#placeName + a.update-button');
-                if (updateButton) {
-                    updateButton.remove();
+                // 컨테이너가 이미 존재하는 경우, 컨테이너를 삭제합니다.
+                const buttonContainer = document.querySelector('#placeName + .button-container');
+                if (buttonContainer) {
+                    buttonContainer.remove();
                 }
             }
             placeInfo.style.display = 'flex'; // Show place info
