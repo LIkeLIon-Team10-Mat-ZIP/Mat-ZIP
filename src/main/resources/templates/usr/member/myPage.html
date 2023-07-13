@@ -106,7 +106,7 @@
                     <p th:text="${memberInfoDTO.email}"></p>
                     <div class="flex gap-10 h-full mt-10">
                         <a href="#matzip"
-                             class="bg-base-100 rounded-xl shadow-xl transform hover:scale-110 transition-transform duration-300 cursor-pointer">
+                           class="bg-base-100 rounded-xl shadow-xl transform hover:scale-110 transition-transform duration-300 cursor-pointer">
                             <div class="flex flex-col justify-center items-center h-full w-32">
                                 <div class="bg-blue-800 rounded-t-xl flex justify-center items-center w-full font-bold flex-grow text-lg text-white">
                                     맛집
@@ -117,7 +117,7 @@
                             </div>
                         </a>
                         <a href="#review"
-                             class="bg-base-100 rounded-xl shadow-xl transform hover:scale-110 transition-transform duration-300 cursor-pointer">
+                           class="bg-base-100 rounded-xl shadow-xl transform hover:scale-110 transition-transform duration-300 cursor-pointer">
                             <div class="flex flex-col justify-center items-center h-full w-32">
                                 <div class="bg-blue-800 rounded-t-xl flex justify-center items-center w-full font-bold flex-grow text-lg text-white">
                                     리뷰
@@ -128,7 +128,7 @@
                             </div>
                         </a>
                         <a href="#friend"
-                             class="bg-base-100 rounded-xl shadow-xl transform hover:scale-110 transition-transform duration-300 cursor-pointer">
+                           class="bg-base-100 rounded-xl shadow-xl transform hover:scale-110 transition-transform duration-300 cursor-pointer">
                             <div class="flex flex-col justify-center items-center h-full w-32">
                                 <div class="bg-blue-800 rounded-t-xl flex justify-center items-center w-full font-bold flex-grow text-lg text-white">
                                     친구
@@ -139,7 +139,7 @@
                             </div>
                         </a>
                         <a href="#point"
-                             class="bg-base-100 rounded-xl shadow-xl transform hover:scale-110 transition-transform duration-300 cursor-pointer">
+                           class="bg-base-100 rounded-xl shadow-xl transform hover:scale-110 transition-transform duration-300 cursor-pointer">
                             <div class="flex flex-col justify-center items-center h-full w-32">
                                 <div class="bg-blue-800 rounded-t-xl flex justify-center items-center w-full font-bold flex-grow text-lg text-white">
                                     포인트
@@ -156,10 +156,18 @@
             <div class="flex flex-grow">
                 <div class="w-full">
                     <div>
-                        <div id="matzip" style="scroll-margin-top: 100px"><div th:replace="/usr/member/myPage/matzip :: matzipSection"></div></div>
-                        <div id="review" style="scroll-margin-top: 100px"><div th:replace="/usr/member/myPage/review :: reviewSection"></div></div>
-                        <div id="friend" style="scroll-margin-top: 100px"><div th:replace="/usr/member/myPage/friend :: friendSection"></div></div>
-                        <div id="point" style="scroll-margin-top: 100px"><div th:replace="/usr/member/myPage/point :: pointSection"></div></div>
+                        <div id="matzip" style="scroll-margin-top: 100px">
+                            <div th:replace="/usr/member/myPage/matzip :: matzipSection"></div>
+                        </div>
+                        <div id="review" style="scroll-margin-top: 100px">
+                            <div th:replace="/usr/member/myPage/review :: reviewSection"></div>
+                        </div>
+                        <div id="friend" style="scroll-margin-top: 100px">
+                            <div th:replace="/usr/member/myPage/friend :: friendSection"></div>
+                        </div>
+                        <div id="point" style="scroll-margin-top: 100px">
+                            <div th:replace="/usr/member/myPage/point :: pointSection"></div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -474,9 +482,40 @@
                 placeRating.style.display = 'none';
             } else {
                 placeDescription.style.display = 'block';
-                placeDescription.innerText = '설명: ' + matzip.description;
+                placeDescription.innerText = '친구 설명: ' + matzip.description;
                 placeRating.style.display = 'block';
-                placeRating.innerText = '내 평점: ' + matzip.rating;
+                placeRating.innerHTML = `
+      <div class="flex">
+        <span class="mb-2"> 친구 평점: </span>
+        <span class="rating rating-md rating-half" id="rating">
+        </span>
+      </div>
+    `;
+                const ratingValue = matzip.rating;
+                const ratingDiv = document.getElementById("rating");
+
+                for (let i = 1; i <= 10; i++) {
+                    const value = i * 0.5;
+                    const input = document.createElement('input');
+                    input.type = 'radio';
+                    input.className = 'bg-yellow-300 mask mask-star-2';
+                    input.name = 'rating';
+                    input.value = value.toFixed(1);
+                    input.id = 'rating-' + value.toFixed(1);
+                    input.disabled = true;
+
+                    if (i % 2 != 0) {
+                        input.classList.add('mask-half-1');
+                    } else {
+                        input.classList.add('mask-half-2');
+                    }
+                    ratingDiv.appendChild(input);
+                }
+                const ratingContainer = document.getElementById('rating-' + ratingValue.toFixed(1));
+
+                if (ratingContainer) {
+                    ratingContainer.checked = true;
+                }
             }
             mapLink.href = 'https://map.kakao.com/link/map/' + matzip.matzipName + ',' + matzip.y + ',' + matzip.x;
             mapLink.innerText = '큰지도보기';
