@@ -25,7 +25,12 @@ public class Heart {
 
     }
 
-    public void setMember(Member member) {
+    public void addAssociation(Member member, Review review) {
+        addMember(member);
+        addReview(review);
+    }
+
+    private void addMember(Member member) {
         if (this.member != null) {
             this.member.getHearts().remove(this);
         }
@@ -33,7 +38,7 @@ public class Heart {
         member.getHearts().add(this);
     }
 
-    public void setReview(Review review) {
+    private void addReview(Review review) {
         if (this.review != null) {
             this.review.getHearts().remove(this);
         }

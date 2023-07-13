@@ -23,30 +23,45 @@ public class Member {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String username;
+
     private String kakao_nickname;
+
     private String nickname;
+
     private String email;
+
     @Enumerated(EnumType.STRING)
     private MemberRole role;
+
     //TODO:이 부분도 oAuth만 이용시 필요없음. 삭제예정
     private String password;
+
     @Column(columnDefinition = "bigint default 0")
     private long point;
+
     @OneToOne(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private ProfileImage profileImage;
+
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MatzipMember> matzipMembers = new ArrayList<>();
+
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Review> reviews = new ArrayList<>();
+
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();
+
     @OneToMany(mappedBy = "member1", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Friend> friends1 = new ArrayList<>();
+
     @OneToMany(mappedBy = "member2", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Friend> friends2 = new ArrayList<>();
+
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MemberBadge> memberBadges = new ArrayList<>();
+
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Heart> hearts = new ArrayList<>();
 

@@ -48,7 +48,12 @@ public class Review extends BaseEntity {
         this.content = content;
     }
 
-    public void setMatzip(Matzip matzip) {
+    public void addAssociation(Matzip matzip, Member author) {
+        addMatzip(matzip);
+        addAuthor(author);
+    }
+
+    private void addMatzip(Matzip matzip) {
         if (this.matzip != null) {
             this.matzip.getReviews().remove(this);
         }
@@ -56,7 +61,7 @@ public class Review extends BaseEntity {
         matzip.getReviews().add(this);
     }
 
-    public void setAuthor(Member author) {
+    private void addAuthor(Member author) {
         if (this.author != null) {
             this.author.getReviews().remove(this);
         }
