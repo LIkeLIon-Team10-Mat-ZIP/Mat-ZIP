@@ -4,7 +4,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -13,7 +12,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-
 import site.matzip.badge.service.MemberBadgeService;
 import site.matzip.base.rq.Rq;
 import site.matzip.comment.domain.Comment;
@@ -112,7 +110,7 @@ public class ReviewController {
                          @ModelAttribute @Valid ReviewCreationDTO reviewCreationDTO,
                          BindingResult bindingResult,
                          @AuthenticationPrincipal PrincipalDetails principalDetails) throws IOException {
-        
+
         Review review = reviewService.findById(reviewId);
         reviewService.checkAccessPermission(reviewId, principalDetails);
 

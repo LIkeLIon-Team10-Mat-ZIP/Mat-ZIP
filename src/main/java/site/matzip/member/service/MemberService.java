@@ -119,7 +119,7 @@ public class MemberService {
         servletResponse.addCookie(cookie);
     }
 
-    private Member findMember(Long memberId) {
+    public Member findMember(Long memberId) {
         return memberRepository.findById(memberId)
                 .orElseThrow(() -> new EntityNotFoundException("Member not found"));
     }

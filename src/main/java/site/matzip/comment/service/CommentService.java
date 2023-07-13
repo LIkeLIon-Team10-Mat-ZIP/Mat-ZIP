@@ -3,12 +3,10 @@ package site.matzip.comment.service;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.stereotype.Service;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-
-import site.matzip.base.event.EventAfterComment;
 import site.matzip.base.appConfig.AppConfig;
+import site.matzip.base.event.EventAfterComment;
 import site.matzip.comment.domain.Comment;
 import site.matzip.comment.repository.CommentRepository;
 import site.matzip.member.domain.Member;
