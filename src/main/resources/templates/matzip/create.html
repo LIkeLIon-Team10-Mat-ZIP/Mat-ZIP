@@ -4,7 +4,6 @@
     <meta charset="utf-8">
     <meta name="_csrf" th:content="${_csrf.token}"/>
     <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
-
     <!-- 테일윈드 불러오기 -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- 데이지 UI 불러오기 -->
@@ -519,7 +518,6 @@
                         })
                         .catch(error => {
                             console.error('Error:', error);
-                            console.log(error);
                             alert('맛집 등록에 실패했습니다.');
                         });
                 }
