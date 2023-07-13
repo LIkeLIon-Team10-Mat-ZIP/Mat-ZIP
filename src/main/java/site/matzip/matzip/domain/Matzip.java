@@ -45,4 +45,8 @@ public class Matzip {
         this.x = x;
         this.y = y;
     }
+
+    public void removeReview(Review review) {
+        this.reviews.remove(review);
+    }
 }
