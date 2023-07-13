@@ -41,6 +41,7 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class MemberService {
     private final MemberRepository memberRepository;
     private final MemberTokenRepository memberTokenRepository;
@@ -139,6 +140,7 @@ public class MemberService {
                 .orElseThrow(() -> new EntityNotFoundException("Member not found"));
     }
 
+    @Transactional
     public Member signUp(String username, String kakao_nickname, String password, String email) {
         password = passwordEncoder.encode(password);
         Member member = Member.builder()
