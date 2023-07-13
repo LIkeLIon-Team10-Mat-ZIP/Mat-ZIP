@@ -51,7 +51,7 @@ function showDeleteConfirmDialog(msg, callback) {
         text: msg,
         icon: 'warning',
         showCancelButton: true,
-        confirmButtonColor: '#3085d6',
+        confirmButtonColor: '#2e3bc0',
         cancelButtonColor: '#d33',
         confirmButtonText: '승인',
         cancelButtonText: '취소',
