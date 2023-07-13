@@ -1,8 +1,7 @@
 package site.matzip.matzip.dto;
 
 import jakarta.validation.constraints.NotBlank;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import site.matzip.matzip.domain.MatzipType;
 
 @Getter
