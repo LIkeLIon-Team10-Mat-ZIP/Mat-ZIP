@@ -1,9 +1,9 @@
 package site.matzip.member.dto;
 
-import lombok.Data;
+import lombok.Getter;
 import site.matzip.member.domain.Member;
 
-@Data
+@Getter
 public class MemberRankInfoDTO {
     private int rank;
     private Member member;
