@@ -42,7 +42,7 @@ public class MatzipController {
 
     @GetMapping("create")
     public String create() {
-        return "/matzip/create";
+        return "matzip/create";
     }
 
     @PreAuthorize("isAuthenticated()")

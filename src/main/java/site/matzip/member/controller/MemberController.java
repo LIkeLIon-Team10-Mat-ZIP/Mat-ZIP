@@ -105,7 +105,7 @@ public class MemberController {
                                  BindingResult result,
                                  @AuthenticationPrincipal PrincipalDetails principalDetails) {
         if (result.hasErrors()) {
-            return "/usr/member/myPage/modifyNickname";
+            return "usr/member/myPage/modifyNickname";
         }
 
         RsData<Member> member = memberService.modifyNickname(principalDetails.getMember(), nicknameUpdateDTO);
