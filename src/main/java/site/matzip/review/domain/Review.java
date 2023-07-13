@@ -79,4 +79,8 @@ public class Review extends BaseEntity {
     public void updateRating(double rating) {
         this.rating = rating;
     }
+
+    public void removeHeart(Heart heart) {
+        this.hearts.remove(heart);
+    }
 }

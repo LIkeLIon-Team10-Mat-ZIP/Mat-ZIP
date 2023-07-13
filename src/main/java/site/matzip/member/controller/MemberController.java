@@ -6,7 +6,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -14,7 +13,6 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
 import site.matzip.base.rq.Rq;
 import site.matzip.base.rsData.RsData;
 import site.matzip.config.auth.PrincipalDetails;
@@ -125,7 +123,6 @@ public class MemberController {
         return "usr/member/myPage/modifyProfileImage";
     }
 
-    // DTO로 감싸서 검증하자
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/myPage/modifyProfileImage")
     public String modifyProfileImage(@RequestParam("profileImage") MultipartFile profileImage,

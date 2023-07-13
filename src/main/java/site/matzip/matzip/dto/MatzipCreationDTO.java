@@ -2,12 +2,14 @@ package site.matzip.matzip.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import site.matzip.matzip.domain.MatzipType;
 
 @Getter
 @Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class MatzipCreationDTO {
     @NotBlank(message = "맛집 이름을 입력해주세요.")
     private String matzipName;

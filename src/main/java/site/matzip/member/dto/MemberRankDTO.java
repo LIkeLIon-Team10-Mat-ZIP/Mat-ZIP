@@ -1,9 +1,7 @@
 package site.matzip.member.dto;
 
 import lombok.Builder;
-import lombok.Data;
 import lombok.Getter;
-import lombok.ToString;
 
 import java.util.Map;
 

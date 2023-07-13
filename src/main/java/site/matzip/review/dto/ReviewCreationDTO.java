@@ -2,14 +2,16 @@ package site.matzip.review.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
 @Getter
 @Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class ReviewCreationDTO {
     @NotNull(message = "리뷰점수를 입력해주세요")
     private double rating;
