@@ -145,7 +145,7 @@
                 <div class="flex">
                     <a href="javascript:void(0);" class="btn bg-blue-800 hover:bg-blue-500 text-white btn-sm mx-2"
                        th:if="${reviewDetailDTO.authorId != null and reviewDetailDTO.loginId == reviewDetailDTO.authorId}"
-                       onclick="if ( confirm('정말로 수정하시겠습니까?') ) $(this).next().submit();">
+                       onclick="showModifyConfirmDialogMsg('정말로 수정하시겠습니까?', this)">
                         수정
                     </a>
                     <form hidden th:action="@{|/review/modify/${reviewDetailDTO.reviewId}|}" method="GET">
@@ -154,7 +154,7 @@
                 <div class="flex">
                     <a href="javascript:void(0);" class="btn bg-blue-800 hover:bg-blue-500 text-white btn-sm mx-2"
                        th:if="${reviewDetailDTO.authorId != null and reviewDetailDTO.loginId == reviewDetailDTO.authorId}"
-                       onclick="if ( confirm('정말로 삭제하시겠습니까?') ) $(this).next().submit();">
+                       onclick="showDeleteConfirmDialogMsg('정말로 삭제하시겠습니까?', this)">
                         삭제
                     </a>
                     <form hidden th:action="@{|/review/delete/${reviewDetailDTO.reviewId}|}" method="POST"></form>
@@ -186,7 +186,7 @@
                                     <div class="text-xs mr-2" th:text="${comment.formattedCreateDate}"></div>
                                     <a href="javascript:void(0);" class="text-xs mr-1 hover:underline"
                                        th:if="${comment.authorId != null and comment.loginId == comment.authorId}"
-                                       onclick="if ( confirm('정말로 삭제하시겠습니까?') ) $(this).next().submit();">
+                                       onclick="showDeleteConfirmDialogMsg('정말로 삭제하시겠습니까?', this)">
                                         삭제
                                     </a>
                                     <form hidden th:action="@{|/comment/delete/${comment.id}|}" method="POST"></form>
