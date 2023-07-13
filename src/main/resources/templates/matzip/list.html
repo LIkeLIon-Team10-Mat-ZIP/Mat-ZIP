@@ -44,12 +44,8 @@
         }
 
         #placeName {
-            display: inline-block;
+            display: flex;
             margin-right: 8px;
-        }
-
-        #placeName + a {
-            margin-left: 8px;
         }
 
         #placeInfo p {
@@ -405,7 +401,7 @@
                     deleteButton = document.createElement('a');
 
                     deleteButton.innerText = '삭제';
-                    deleteButton.classList.add('btn', 'btn-xs', 'delete-button');
+                    deleteButton.classList.add('btn', 'btn-xs', 'delete-button', 'text-white', 'bg-blue-800', 'hover:bg-blue-700');
                     deleteButton.addEventListener('click', function () {
                         const matzipId = matzip.matzipId;
                         deleteMatzip(matzipId);
@@ -414,7 +410,7 @@
 
                     updateButton = document.createElement('a');
                     updateButton.innerText = '수정';
-                    updateButton.classList.add('btn', 'btn-xs', 'update-button');
+                    updateButton.classList.add('btn', 'btn-xs', 'update-button', 'text-white', 'bg-blue-800', 'hover:bg-blue-700');
                     updateButton.addEventListener('click', function () {
                         const matzipId = matzip.matzipId;
                         updateButtonClickListener(updateButton, matzipId);
