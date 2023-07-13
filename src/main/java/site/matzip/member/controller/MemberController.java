@@ -65,26 +65,26 @@ public class MemberController {
     @GetMapping("/myPage")
     public String showMyPage(Model model, @AuthenticationPrincipal PrincipalDetails principalDetails) {
 
-        Member member = principalDetails.getMember();
+        Long MemberId = principalDetails.getUserId();
 
-        MemberInfoDTO memberInfoDTO = memberService.convertToMemberInfoDTO(member.getId());
-        MemberInfoCntDTO memberInfoCntDTO = memberService.convertToMemberInfoCntDTO(member.getId());
+        MemberInfoDTO memberInfoDTO = memberService.convertToMemberInfoDTO(MemberId);
+        MemberInfoCntDTO memberInfoCntDTO = memberService.convertToMemberInfoCntDTO(MemberId);
 
         model.addAttribute("memberInfoCntDTO", memberInfoCntDTO);
         model.addAttribute("memberInfoDTO", memberInfoDTO);
 
-        List<MyReviewDTO> myReviewDTOS = memberService.converToMyReviewDTO(member.getId());
+        List<MyReviewDTO> myReviewDTOS = memberService.converToMyReviewDTO(MemberId);
         model.addAttribute("myReviewDTOS", myReviewDTOS);
 
-        List<FriendDetailDTO> friendDetailDTOS = memberService.converToFriendDetailDTO(member.getId());
+        List<FriendDetailDTO> friendDetailDTOS = memberService.converToFriendDetailDTO(MemberId);
         model.addAttribute("friendDetailDTOS", friendDetailDTOS);
 
-        List<MemberRankDTO> memberRankDTOS = memberService.findAndConvertTenMemberAroundMember(member.getId());
-        MemberPointDTO memberPointDTO = memberService.convertToMemberPointDTO(member.getId());
+        List<MemberRankDTO> memberRankDTOS = memberService.findAndConvertTenMemberAroundMember(MemberId);
+        MemberPointDTO memberPointDTO = memberService.convertToMemberPointDTO(MemberId);
         model.addAttribute("memberPointDTO", memberPointDTO);
         model.addAttribute("memberRankDTOS", memberRankDTOS);
 
-        List<MatzipInfoDTO> matzipInfoDTOS = memberService.convertToMatzipInfoDTO(member.getId());
+        List<MatzipInfoDTO> matzipInfoDTOS = memberService.convertToMatzipInfoDTO(MemberId);
         model.addAttribute("matzipInfoDTOS", matzipInfoDTOS);
 
         return "usr/member/myPage";
