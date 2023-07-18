@@ -67,6 +67,7 @@ public class NotificationService {
         return notificationRepository.countByToMemberAndReadDateIsNull(member) > 0;
     }
 
+    @Transactional
     public boolean deleteNotification(Long notificationId) {
         Optional<Notification> notification = notificationRepository.findById(notificationId);
         if (notification.isEmpty()) return false;
@@ -75,9 +76,11 @@ public class NotificationService {
         return true;
     }
 
-    public boolean allDeleteNotification(Integer deleteType) {
-        Member member = memberRepository.findById(1L).orElseThrow(() -> new EntityNotFoundException("member not found"));
+    @Transactional
+    public boolean allDeleteNotification(Integer deleteType, Long memberId) {
+        Member member = memberRepository.findById(memberId).orElseThrow(() -> new EntityNotFoundException("member not found"));
         List<Notification> notificationList = notificationRepository.findByToMember(member);
+
         if (notificationList.size() == 0) return false;
 
         if (deleteType == 1) {    // 읽은 알림 전체 삭제

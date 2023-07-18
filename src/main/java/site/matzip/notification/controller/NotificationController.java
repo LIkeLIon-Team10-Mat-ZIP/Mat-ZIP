@@ -2,10 +2,12 @@ package site.matzip.notification.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import site.matzip.base.rq.Rq;
 import site.matzip.config.auth.PrincipalDetails;
 import site.matzip.member.domain.Member;
 import site.matzip.member.service.MemberService;
@@ -18,8 +20,8 @@ import java.util.List;
 @RequestMapping("/usr/notification")
 @RequiredArgsConstructor
 public class NotificationController {
-    private final MemberService memberService;
     private final NotificationService notificationService;
+    private final Rq rq;
 
     @GetMapping("/list")
     @PreAuthorize("isAuthenticated()")
@@ -29,8 +31,10 @@ public class NotificationController {
 
     @GetMapping("/reviewList")
     @PreAuthorize("isAuthenticated()")
-    public String showReviewList(Model model, @AuthenticationPrincipal PrincipalDetails principalDetails) {
-        Member member = principalDetails.getMember();
+    // TODO: 수정 필요 @AuthenticationPrincipal PrincipalDetails principalDetails
+    public String showReviewList(Model model, Authentication authentication) {
+        // Member member = principalDetails.getMember();
+        Member member = rq.getMember(authentication);
 
         List<NotificationDTO> notificationDTOS = notificationService.convertToNotificationDTOS(member);
 
@@ -53,6 +57,7 @@ public class NotificationController {
     @ResponseBody
     @PreAuthorize("isAuthenticated()")
     public String deleteNotification(@RequestParam Long notificationId) {
+        System.out.println("cccccccccccc");
         if (notificationService.deleteNotification(notificationId)) {
             return "success";
         }
@@ -62,8 +67,8 @@ public class NotificationController {
     @PostMapping("/allDelete")
     @ResponseBody
     @PreAuthorize("isAuthenticated()")
-    public String allDeleteNotification(@RequestParam Integer deleteType) {
-        if (notificationService.allDeleteNotification(deleteType)) {
+    public String allDeleteNotification(@RequestParam Integer deleteType, Authentication authentication) {
+        if (notificationService.allDeleteNotification(deleteType, rq.getMember(authentication).getId())) {
             return "success";
         }
         return "fail";
