@@ -22,12 +22,15 @@ public class NotificationService {
     private final NotificationRepository notificationRepository;
     private final MemberRepository memberRepository;
 
-    public List<Notification> getNotifications(Member toMember) {
+    public List<Notification> getNotifications(Long toMemberId) {
+        Member toMember = memberRepository.findById(toMemberId)
+                .orElseThrow(() -> new EntityNotFoundException("member not found"));
+
         return notificationRepository.findByToMember(toMember);
     }
 
-    public List<NotificationDTO> convertToNotificationDTOS(Member toMember) {
-        List<Notification> notifications = getNotifications(toMember);
+    public List<NotificationDTO> convertToNotificationDTOS(Long toMemberId) {
+        List<Notification> notifications = getNotifications(toMemberId);
 
         return notifications.stream()
                 .map(notification -> NotificationDTO.builder()

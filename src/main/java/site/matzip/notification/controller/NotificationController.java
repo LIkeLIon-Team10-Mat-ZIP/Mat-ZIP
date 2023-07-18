@@ -34,9 +34,9 @@ public class NotificationController {
     // TODO: 수정 필요 @AuthenticationPrincipal PrincipalDetails principalDetails
     public String showReviewList(Model model, Authentication authentication) {
         // Member member = principalDetails.getMember();
-        Member member = rq.getMember(authentication);
+        Long memberId = rq.getMember(authentication).getId();
 
-        List<NotificationDTO> notificationDTOS = notificationService.convertToNotificationDTOS(member);
+        List<NotificationDTO> notificationDTOS = notificationService.convertToNotificationDTOS(memberId);
 
         model.addAttribute("notificationDTOS", notificationDTOS);
 
@@ -57,7 +57,6 @@ public class NotificationController {
     @ResponseBody
     @PreAuthorize("isAuthenticated()")
     public String deleteNotification(@RequestParam Long notificationId) {
-        System.out.println("cccccccccccc");
         if (notificationService.deleteNotification(notificationId)) {
             return "success";
         }
