@@ -24,7 +24,7 @@
     right: 0;  /* 우측에 위치하도록 설정 */
     visibility: visible !important;
     opacity: 1 !important;
-    z-index: 9999;
+    z-index: 3;
     width: 100%;
     height: calc(100% - 56px);
     background-color: rgba(0, 0, 0, 0);

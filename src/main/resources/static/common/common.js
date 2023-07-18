@@ -75,7 +75,7 @@ function showDeleteConfirmDialogMsg(msg, element) {
         cancelButtonText: '취소',
         reverseButtons: true,
     }).then((result) => {
-        // 사용자가 '수정' 버튼을 누른 경우, 폼을 제출합니다.
+        // 사용자가 '삭제' 버튼을 누른 경우, 폼을 제출합니다.
         if (result.isConfirmed) {
             $(element).next().submit();
         }
@@ -83,21 +83,21 @@ function showDeleteConfirmDialogMsg(msg, element) {
 }
 
 function showDeleteNotificationConfirmDialogMsg(msg) {
-    Swal.fire({
-        title: '주의',
-        text: msg,
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#2e3bc0',
-        cancelButtonColor: '#d33',
-        confirmButtonText: '삭제',
-        cancelButtonText: '취소',
-        reverseButtons: true,
-    }).then((result) => {
-        // 사용자가 '수정' 버튼을 누른 경우, 폼을 제출합니다.
-        if (result.isConfirmed) {
-            $(this).next().submit();
-        }
+    return new Promise((resolve) => {
+        Swal.fire({
+            title: '주의',
+            text: msg,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#2e3bc0',
+            cancelButtonColor: '#d33',
+            confirmButtonText: '삭제',
+            cancelButtonText: '취소',
+            reverseButtons: true,
+        }).then((result) => {
+            // 사용자가 '삭제' 버튼을 누른 경우, true 를 반환
+            resolve(result.isConfirmed);
+        });
     });
 }
 

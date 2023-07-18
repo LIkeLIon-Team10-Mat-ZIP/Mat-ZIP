@@ -22,7 +22,7 @@
     top: 58px; /* 상단바의 높이와 같아야 함 */
     visibility: visible !important;
     opacity: 1 !important;
-    z-index: 9999;
+    z-index: 3;
     background-color: rgba(0, 0, 0, 0);
 }
 
