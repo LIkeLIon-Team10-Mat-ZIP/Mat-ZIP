@@ -4,6 +4,7 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import site.matzip.base.rsData.RsData;
 import site.matzip.member.domain.Member;
 import site.matzip.member.repository.MemberRepository;
 import site.matzip.notification.dto.NotificationDTO;
@@ -71,30 +72,33 @@ public class NotificationService {
     }
 
     @Transactional
-    public boolean deleteNotification(Long notificationId) {
+    public RsData deleteNotification(Long notificationId) {
         Optional<Notification> notification = notificationRepository.findById(notificationId);
-        if (notification.isEmpty()) return false;
+        if (notification.isEmpty()) return RsData.of("F-1", "해당 알림이 존재하지 않습니다.");
 
         notificationRepository.delete(notification.get());
-        return true;
+        return RsData.of("S-1", "해당 알림이 삭제되었습니다.");
     }
 
     @Transactional
-    public boolean allDeleteNotification(Integer deleteType, Long memberId) {
+    public RsData allDeleteNotification(Integer deleteType, Long memberId) {
         Member member = memberRepository.findById(memberId).orElseThrow(() -> new EntityNotFoundException("member not found"));
         List<Notification> notificationList = notificationRepository.findByToMember(member);
 
-        if (notificationList.size() == 0) return false;
-
         if (deleteType == 1) {    // 읽은 알림 전체 삭제
+            if (notificationList.stream().noneMatch(notification -> notification.getReadDate() != null)) {
+                return RsData.of("F-1", "삭제 할 알림이 존재하지 않습니다.");
+            }
+
             notificationList.stream()
                     .filter(notification -> notification.getReadDate() != null)
                     .forEach(notificationRepository::delete);
-        } else if (deleteType == 2) {   // 알림 전체 삭제
+
+            return RsData.of("S-1", "읽은 알림이 모두 삭제되었습니다.");
+        } else {   // 알림 전체 삭제
             notificationRepository.deleteAll(notificationList);
+
+            return RsData.of("S-2", "알림이 모두 삭제되었습니다.");
         }
-
-        return true;
     }
-
 }

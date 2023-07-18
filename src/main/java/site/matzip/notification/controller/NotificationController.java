@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import site.matzip.base.rq.Rq;
+import site.matzip.base.rsData.RsData;
 import site.matzip.config.auth.PrincipalDetails;
 import site.matzip.member.domain.Member;
 import site.matzip.member.service.MemberService;
@@ -56,20 +57,14 @@ public class NotificationController {
     @PostMapping("/deleteNotification")
     @ResponseBody
     @PreAuthorize("isAuthenticated()")
-    public String deleteNotification(@RequestParam Long notificationId) {
-        if (notificationService.deleteNotification(notificationId)) {
-            return "success";
-        }
-        return "fail";
+    public RsData deleteNotification(@RequestParam Long notificationId) {
+        return notificationService.deleteNotification(notificationId);
     }
 
     @PostMapping("/allDelete")
     @ResponseBody
     @PreAuthorize("isAuthenticated()")
-    public String allDeleteNotification(@RequestParam Integer deleteType, Authentication authentication) {
-        if (notificationService.allDeleteNotification(deleteType, rq.getMember(authentication).getId())) {
-            return "success";
-        }
-        return "fail";
+    public RsData allDeleteNotification(@RequestParam Integer deleteType, Authentication authentication) {
+        return notificationService.allDeleteNotification(deleteType, rq.getMember(authentication).getId());
     }
 }
