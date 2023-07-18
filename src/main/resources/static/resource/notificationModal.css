@@ -20,13 +20,13 @@
 /* modal.css */
 .notificationModal {
     position: fixed;
-    top: 58px; /* 상단바의 높이와 같아야 함 */
+    top: 56px; /* 상단바의 높이와 같아야 함 */
     right: 0;  /* 우측에 위치하도록 설정 */
     visibility: visible !important;
     opacity: 1 !important;
     z-index: 9999;
     width: 100%;
-    height: 100%;
+    height: calc(100% - 56px);
     background-color: rgba(0, 0, 0, 0);
 }
 
