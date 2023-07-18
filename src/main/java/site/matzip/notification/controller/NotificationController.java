@@ -2,16 +2,12 @@ package site.matzip.notification.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import site.matzip.base.rq.Rq;
 import site.matzip.base.rsData.RsData;
 import site.matzip.config.auth.PrincipalDetails;
-import site.matzip.member.domain.Member;
-import site.matzip.member.service.MemberService;
 import site.matzip.notification.dto.NotificationDTO;
 import site.matzip.notification.service.NotificationService;
 
@@ -22,7 +18,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class NotificationController {
     private final NotificationService notificationService;
-    private final Rq rq;
 
     @GetMapping("/list")
     @PreAuthorize("isAuthenticated()")
@@ -32,10 +27,8 @@ public class NotificationController {
 
     @GetMapping("/reviewList")
     @PreAuthorize("isAuthenticated()")
-    // TODO: 수정 필요 @AuthenticationPrincipal PrincipalDetails principalDetails
-    public String showReviewList(Model model, Authentication authentication) {
-        // Member member = principalDetails.getMember();
-        Long memberId = rq.getMember(authentication).getId();
+    public String showReviewList(Model model, @AuthenticationPrincipal PrincipalDetails principalDetails) {
+        Long memberId = principalDetails.getMember().getId();
 
         List<NotificationDTO> notificationDTOS = notificationService.convertToNotificationDTOS(memberId);
 
@@ -64,7 +57,7 @@ public class NotificationController {
     @PostMapping("/allDelete")
     @ResponseBody
     @PreAuthorize("isAuthenticated()")
-    public RsData allDeleteNotification(@RequestParam Integer deleteType, Authentication authentication) {
-        return notificationService.allDeleteNotification(deleteType, rq.getMember(authentication).getId());
+    public RsData allDeleteNotification(@RequestParam Integer deleteType, @AuthenticationPrincipal PrincipalDetails principalDetails) {
+        return notificationService.allDeleteNotification(deleteType, principalDetails.getUserId());
     }
 }
