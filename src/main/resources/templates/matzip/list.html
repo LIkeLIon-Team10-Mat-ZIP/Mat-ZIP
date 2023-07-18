@@ -7,18 +7,9 @@
     <title>Mat.ZIP</title>
 
     <style>
-        body {
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-
         #map {
             position: relative;
-            width: 85vw;
+            width: 100%;
             height: 78vh;
         }
 
@@ -65,9 +56,9 @@
 </head>
 <body th:data-user-id="${memberId}">
 <main layout:fragment="Content">
-    <container class="container mx-auto my-3">
+    <div class="mx-auto max-w-screen-2xl">
         <div class="flex flex-shrink-0 btn-group justify-end">
-            <div class="btn-group rounded-md border border-blue-200 mt-8 mb-2">
+            <div class="btn-group rounded-md border border-blue-200 mb-2">
                 <button class="btn-sm bg-blue-800 text-white rounded-md py-1 px-3 space-x-2 mr-2"
                         data-list-type="all"
                         id="listBtnAll"
@@ -142,7 +133,7 @@
                 </div>
             </div>
         </div>
-    </container>
+    </div>
     <div id="isLogin" sec:authorize="isAuthenticated()" style="display: none;" th:text="true"></div>
     <div id="isLogin" sec:authorize="isAnonymous()" style="display: none;" th:text="false"></div>
     <script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=868d9aa6d8d0e67bad6c59729809c3fa&libraries=services,clusterer"

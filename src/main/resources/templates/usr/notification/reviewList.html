@@ -40,7 +40,8 @@
                         </div>
                         <div>
                             <a style="cursor: pointer" class="flex items-center" th:data-id="${notificationDTO.id}"
-                               onclick="if ( confirm('정말로 삭제하시겠습니까?') ) TrashCanIconClick(this);">
+                               onclick="showDeleteNotificationConfirmDialogMsg('정말로 해당 알림을 삭제하시겠습니까?')
+                               .then((confirmed) => { if (confirmed) TrashCanIconClick(this); })">
                                 <i class="fa-solid fa-trash-can"></i>
                             </a>
                         </div>
