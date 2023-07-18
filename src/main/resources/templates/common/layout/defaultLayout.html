@@ -190,14 +190,23 @@
                 data: {
                     notificationId: notificationId
                 },
-                dataType: "text",
-                success: function (result) {
-                    if (result === 'success') {
+                dataType: "json",
+                success: function(response) {
+                    if (response.resultCode.startsWith('S-')) {
+                        // 성공 처리
+                        const msg = response.msg;
                         reviewBtn.click();
-                        toastNotice('해당 알림이 삭제되었습니다.')
+                        toastNotice(msg);
                     } else {
-                        toastWarning('해당 알림이 없습니다.');
+                        // 실패 처리
+                        const msg = response.msg;
+                        reviewBtn.click();
+                        toastWarning(msg);
                     }
+                },
+                error: function(error) {
+                    // 오류 처리
+                    toastWarning("오류가 발생했습니다.");
                 }
             });
         }
@@ -220,14 +229,23 @@
                 data: {
                     deleteType: deleteType
                 },
-                dataType: "text",
-                success: function (result) {
-                    if (result === 'success') {
+                dataType: "json",
+                success: function(response) {
+                    if (response.resultCode.startsWith('S-')) {
+                        // 성공 처리
+                        const msg = response.msg;
                         reviewBtn.click();
-                        toastNotice('해당 알림이 모두 삭제되었습니다.')
+                        toastNotice(msg);
                     } else {
-                        toastWarning('삭제하지 못 했습니다.');
+                        // 실패 처리
+                        const msg = response.msg;
+                        reviewBtn.click();
+                        toastWarning(msg);
                     }
+                },
+                error: function(error) {
+                    // 오류 처리
+                    toastWarning("오류가 발생했습니다.");
                 }
             });
         }

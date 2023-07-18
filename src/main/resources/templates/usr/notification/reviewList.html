@@ -5,7 +5,6 @@
     <div class="flex justify-end">
         <a id="readAllDelete" style="cursor: pointer" th:data-id="1" class="text-sm mr-5 hover:underline"
            onclick="if ( confirm('정말로 읽은 알림들을 전부 삭제하시겠습니까?') ) AllDelete(this);">
-            <!--onclick="showDeleteNotificationConfirmDialogMsg('정말로 읽은 알림들을 전부 삭제하시겠습니까?');AllDelete(this)">-->
             읽은 알림 삭제
         </a>
         <a id="allDelete" style="cursor: pointer" th:data-id="2" class="text-sm mr-2 hover:underline"
@@ -48,8 +47,8 @@
                 <div class="mt-1 flex flex-col gap-2">
                     <div class="flex items-center">
                         <div th:if="${notificationDTO.typeCode.equals('comment')}">
-                                    <span class="badge bg-blue-800 text-white"
-                                          th:text="${notificationDTO.fromMemberNickname}"></span> 님이 당신의 리뷰에 댓글을 달았습니다.
+                            <span class="badge bg-blue-800 text-white"
+                                  th:text="${notificationDTO.fromMemberNickname}"></span> 님이 당신의 리뷰에 댓글을 달았습니다.
                         </div>
                     </div>
                 </div>

@@ -6,9 +6,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import site.matzip.base.rsData.RsData;
 import site.matzip.config.auth.PrincipalDetails;
-import site.matzip.member.domain.Member;
-import site.matzip.member.service.MemberService;
 import site.matzip.notification.dto.NotificationDTO;
 import site.matzip.notification.service.NotificationService;
 
@@ -18,7 +17,6 @@ import java.util.List;
 @RequestMapping("/usr/notification")
 @RequiredArgsConstructor
 public class NotificationController {
-    private final MemberService memberService;
     private final NotificationService notificationService;
 
     @GetMapping("/list")
@@ -30,9 +28,9 @@ public class NotificationController {
     @GetMapping("/reviewList")
     @PreAuthorize("isAuthenticated()")
     public String showReviewList(Model model, @AuthenticationPrincipal PrincipalDetails principalDetails) {
-        Member member = principalDetails.getMember();
+        Long memberId = principalDetails.getMember().getId();
 
-        List<NotificationDTO> notificationDTOS = notificationService.convertToNotificationDTOS(member);
+        List<NotificationDTO> notificationDTOS = notificationService.convertToNotificationDTOS(memberId);
 
         model.addAttribute("notificationDTOS", notificationDTOS);
 
@@ -52,20 +50,14 @@ public class NotificationController {
     @PostMapping("/deleteNotification")
     @ResponseBody
     @PreAuthorize("isAuthenticated()")
-    public String deleteNotification(@RequestParam Long notificationId) {
-        if (notificationService.deleteNotification(notificationId)) {
-            return "success";
-        }
-        return "fail";
+    public RsData deleteNotification(@RequestParam Long notificationId) {
+        return notificationService.deleteNotification(notificationId);
     }
 
     @PostMapping("/allDelete")
     @ResponseBody
     @PreAuthorize("isAuthenticated()")
-    public String allDeleteNotification(@RequestParam Integer deleteType) {
-        if (notificationService.allDeleteNotification(deleteType)) {
-            return "success";
-        }
-        return "fail";
+    public RsData allDeleteNotification(@RequestParam Integer deleteType, @AuthenticationPrincipal PrincipalDetails principalDetails) {
+        return notificationService.allDeleteNotification(deleteType, principalDetails.getUserId());
     }
 }

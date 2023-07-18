@@ -6,6 +6,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -28,13 +29,14 @@ import java.util.List;
 public class FriendRequestController {
     private final FriendRequestService friendRequestService;
     private final ApplicationEventPublisher publisher;
-    private final MemberService memberService;
     private final Rq rq;
 
     @GetMapping("/list")
     @PreAuthorize("isAuthenticated()")
-    public String showList(Model model, @AuthenticationPrincipal PrincipalDetails principalDetails) {
-        Member member = principalDetails.getMember();
+    //TODO: 수정 필요 @AuthenticationPrincipal PrincipalDetails principalDetails
+    public String showList(Model model, Authentication authentication) {
+        // Member member = principalDetails.getMember();
+        Member member = rq.getMember(authentication);
 
         List<FriendRequestDTO> friendRequestDTOS = friendRequestService.convertToFriendRequestDTOS(member);
 
