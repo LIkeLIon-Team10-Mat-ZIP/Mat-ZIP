@@ -187,6 +187,7 @@ public class ReviewService {
         reviewRepository.save(review);
     }
 
+    @Transactional
     public void updateViewCountWithCookie(Review review, HttpServletRequest request, HttpServletResponse response) {
         Cookie[] cookies = request.getCookies();
         Cookie cookie = null;
