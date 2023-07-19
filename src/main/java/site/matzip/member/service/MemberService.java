@@ -282,6 +282,7 @@ public class MemberService {
         for (Friend friend : member.getFriends1()) {
             FriendDetailDTO friendDetailDTO = FriendDetailDTO.builder()
                     .id(friend.getId())
+                    .memberId(friend.getMember2().getId())
                     .profileImageUrl(friend.getMember2().getProfileImage() != null ? friend.getMember2().getProfileImage().getImageUrl() : profileImageUrl)
                     .friendNickname(friend.getMember2().getNickname())
                     .badgeImage(showMemberBadge(friend.getMember2()))
