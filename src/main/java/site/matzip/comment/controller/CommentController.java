@@ -23,32 +23,23 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class CommentController {
     private final CommentService commentService;
-    private final ReviewService reviewService;
     private final Rq rq;
 
     @PreAuthorize("isAuthenticated()")
-    @PostMapping("/create/{id}")
-    public String create(@PathVariable Long id, String content, @AuthenticationPrincipal PrincipalDetails principalDetails) {
-        Review review = reviewService.findById(id);
-        Member author = principalDetails.getMember();
+    @PostMapping("/create/{reviewId}")
+    public String create(@PathVariable Long reviewId, String content, @AuthenticationPrincipal PrincipalDetails principalDetails) {
+        commentService.create(reviewId, principalDetails.getMember().getId(), content);
 
-        commentService.create(review, author, content);
-
-        return rq.redirectWithMsg("/review/detail/%d".formatted(id), "댓글 등록이 완료되었습니다.");
+        return rq.redirectWithMsg("/review/detail/%d".formatted(reviewId), "댓글 등록이 완료되었습니다.");
     }
 
     @PreAuthorize("isAuthenticated()")
-    @PostMapping("/delete/{id}")
-    public String delete(@PathVariable Long id, @AuthenticationPrincipal PrincipalDetails principalDetails) {
-        Comment comment = commentService.findById(id);
-        Long reviewId = comment.getReview().getId();
+    @PostMapping("/delete/{commentId}")
+    public String delete(@PathVariable Long commentId, @AuthenticationPrincipal PrincipalDetails principalDetails) {
+        Comment comment = commentService.checkAccessPermission(principalDetails.getMember().getId(), commentId);
 
-        if (!Objects.equals(comment.getAuthor().getId(), principalDetails.getMember().getId())) {
-            throw new AccessDeniedException("You do not have permission to delete.");
-        }
+        commentService.remove(commentId);
 
-        commentService.remove(comment);
-
-        return rq.redirectWithMsg("/review/detail/%d".formatted(reviewId), "댓글 삭제가 완료되었습니다.");
+        return rq.redirectWithMsg("/review/detail/%d".formatted(comment.getReview().getId()), "댓글 삭제가 완료되었습니다.");
     }
 }
