@@ -4,10 +4,9 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.annotation.Scheduled;
-
-import org.springframework.transaction.annotation.Transactional;
-import site.matzip.base.event.EventAfterComment;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import site.matzip.base.appConfig.AppConfig;
 import site.matzip.base.event.EventAfterComment;
 import site.matzip.comment.domain.Comment;
@@ -18,6 +17,7 @@ import site.matzip.review.domain.Review;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -65,6 +65,12 @@ public class CommentService {
                 comment.updatePointsRewarded(); // 포인트 지급 여부 업데이트
                 commentRepository.save(comment); // 댓글 업데이트
             }
+        }
+    }
+
+    public void checkAccessPermission(Long authorId, Comment comment) {
+        if (!Objects.equals(comment.getAuthor().getId(), authorId)) {
+            throw new AccessDeniedException("You do not have permission to delete.");
         }
     }
 }

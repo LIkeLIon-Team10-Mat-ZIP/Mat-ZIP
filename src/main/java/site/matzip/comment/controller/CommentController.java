@@ -43,10 +43,7 @@ public class CommentController {
         Comment comment = commentService.findById(id);
         Long reviewId = comment.getReview().getId();
 
-        if (!Objects.equals(comment.getAuthor().getId(), principalDetails.getMember().getId())) {
-            throw new AccessDeniedException("You do not have permission to delete.");
-        }
-
+        commentService.checkAccessPermission(principalDetails.getMember().getId(), comment);
         commentService.remove(comment);
 
         return rq.redirectWithMsg("review/detail/%d".formatted(reviewId), "댓글 삭제가 완료되었습니다.");
