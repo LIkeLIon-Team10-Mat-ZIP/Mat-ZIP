@@ -14,6 +14,7 @@ import site.matzip.comment.repository.CommentRepository;
 import site.matzip.member.domain.Member;
 import site.matzip.member.repository.MemberRepository;
 import site.matzip.review.domain.Review;
+import site.matzip.review.repository.ReviewRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -23,15 +24,20 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class CommentService {
     private final CommentRepository commentRepository;
-    private final ApplicationEventPublisher publisher;
+    private final ReviewRepository reviewRepository;
     private final MemberRepository memberRepository;
+    private final ApplicationEventPublisher publisher;
+
     private final AppConfig appConfig;
 
     @Transactional
-    public void create(Review review, Member author, String content) {
+    public void create(Long reviewId, Long authorId, String content) {
+        Review review = reviewRepository.getReferenceById(reviewId);
+        Member author = memberRepository.getReferenceById(authorId);
         Comment createdComment = Comment.builder()
                 .content(content)
                 .build();
+
         createdComment.addAssociation(review, author);
         commentRepository.save(createdComment);
 

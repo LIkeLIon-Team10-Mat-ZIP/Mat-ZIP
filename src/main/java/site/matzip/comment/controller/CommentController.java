@@ -23,18 +23,14 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class CommentController {
     private final CommentService commentService;
-    private final ReviewService reviewService;
     private final Rq rq;
 
     @PreAuthorize("isAuthenticated()")
-    @PostMapping("/create/{id}")
-    public String create(@PathVariable Long id, String content, @AuthenticationPrincipal PrincipalDetails principalDetails) {
-        Review review = reviewService.findById(id);
-        Member author = principalDetails.getMember();
+    @PostMapping("/create/{reviewId}")
+    public String create(@PathVariable Long reviewId, String content, @AuthenticationPrincipal PrincipalDetails principalDetails) {
+        commentService.create(reviewId, principalDetails.getMember().getId(), content);
 
-        commentService.create(review, author, content);
-
-        return rq.redirectWithMsg("review/detail/%d".formatted(id), "댓글 등록이 완료되었습니다.");
+        return rq.redirectWithMsg("review/detail/%d".formatted(reviewId), "댓글 등록이 완료되었습니다.");
     }
 
     @PreAuthorize("isAuthenticated()")
