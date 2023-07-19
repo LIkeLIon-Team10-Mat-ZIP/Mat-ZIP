@@ -9,6 +9,7 @@ import java.util.Map;
 @Builder
 public class FriendDetailDTO {
     private Long id;
+    private Long memberId;
     private String profileImageUrl;
     private String friendNickname;
     private Map<String, String> badgeImage;
