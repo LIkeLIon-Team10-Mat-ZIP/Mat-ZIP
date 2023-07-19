@@ -27,7 +27,6 @@ public class CommentService {
     private final ReviewRepository reviewRepository;
     private final MemberRepository memberRepository;
     private final ApplicationEventPublisher publisher;
-
     private final AppConfig appConfig;
 
     @Transactional
@@ -48,7 +47,9 @@ public class CommentService {
     }
 
     @Transactional
-    public void remove(Comment comment) {
+    public void remove(Long commentId) {
+        Comment comment = findById(commentId);
+
         commentRepository.delete(comment);
     }
 
@@ -74,9 +75,13 @@ public class CommentService {
         }
     }
 
-    public void checkAccessPermission(Long authorId, Comment comment) {
+    public Comment checkAccessPermission(Long authorId, Long commentId) {
+        Comment comment = findById(commentId);
+
         if (!Objects.equals(comment.getAuthor().getId(), authorId)) {
             throw new AccessDeniedException("You do not have permission to delete.");
         }
+
+        return comment;
     }
 }
