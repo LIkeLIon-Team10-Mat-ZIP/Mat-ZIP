@@ -73,7 +73,6 @@ public class MatzipController {
         MatzipCreationDTO matzipCreationDTO = matzipReviewDTO.getMatzipCreationDTO();
         ReviewCreationDTO reviewCreationDTO = matzipReviewDTO.getReviewCreationDTO();
         Long authorId = principalDetails.getMember().getId();
-        Member author = principalDetails.getMember();
 
         Matzip createdMatzip = matzipService.create(matzipCreationDTO, authorId);
         Review createdReview = reviewService.create(reviewCreationDTO, authorId, createdMatzip);

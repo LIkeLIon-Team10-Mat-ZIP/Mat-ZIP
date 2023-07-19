@@ -25,7 +25,9 @@ spring:
         #  show_sql: true
         format_sql: true
         use_sql_comments: true
-
+server:
+  tomcat:
+    use-relative-redirects: true
 logging.level:
   org.hibernate.SQL: debug
 management:
