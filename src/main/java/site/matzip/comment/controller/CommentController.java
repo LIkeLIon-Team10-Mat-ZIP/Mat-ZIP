@@ -34,7 +34,7 @@ public class CommentController {
 
         commentService.create(review, author, content);
 
-        return rq.redirectWithMsg("/review/detail/%d".formatted(id), "댓글 등록이 완료되었습니다.");
+        return rq.redirectWithMsg("review/detail/%d".formatted(id), "댓글 등록이 완료되었습니다.");
     }
 
     @PreAuthorize("isAuthenticated()")
@@ -49,6 +49,6 @@ public class CommentController {
 
         commentService.remove(comment);
 
-        return rq.redirectWithMsg("/review/detail/%d".formatted(reviewId), "댓글 삭제가 완료되었습니다.");
+        return rq.redirectWithMsg("review/detail/%d".formatted(reviewId), "댓글 삭제가 완료되었습니다.");
     }
 }
