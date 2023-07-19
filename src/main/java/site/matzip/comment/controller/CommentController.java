@@ -37,6 +37,7 @@ public class CommentController {
     @PostMapping("/delete/{commentId}")
     public String delete(@PathVariable Long commentId, @AuthenticationPrincipal PrincipalDetails principalDetails) {
         Comment comment = commentService.checkAccessPermission(principalDetails.getMember().getId(), commentId);
+
         commentService.remove(commentId);
 
         return rq.redirectWithMsg("/review/detail/%d".formatted(comment.getReview().getId()), "댓글 삭제가 완료되었습니다.");
