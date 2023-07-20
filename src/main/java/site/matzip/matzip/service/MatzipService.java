@@ -42,8 +42,14 @@ public class MatzipService {
 
         if (optionalExistingMatzip.isPresent()) {
             Matzip existingMatzip = optionalExistingMatzip.get();
-            MatzipMember matzipmember = createMatzipMemberEntity(creationDTO, existingMatzip, author);
-            matzipMemberRepository.save(matzipmember);
+            MatzipMember existingMatzipMember = matzipMemberRepository.findByMatzipIdAndAuthorId(existingMatzip.getId(), authorId).orElse(null);
+            if (existingMatzipMember != null) {
+                existingMatzipMember.modify(creationDTO.getDescription(), creationDTO.getRating());
+                matzipMemberRepository.save(existingMatzipMember);
+            } else {
+                MatzipMember matzipmember = createMatzipMemberEntity(creationDTO, existingMatzip, author);
+                matzipMemberRepository.save(matzipmember);
+            }
             return existingMatzip;
         } else {
             Matzip matzip = createMatzipEntity(creationDTO);
