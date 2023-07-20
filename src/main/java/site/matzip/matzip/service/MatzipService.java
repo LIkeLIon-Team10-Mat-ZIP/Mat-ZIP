@@ -42,13 +42,13 @@ public class MatzipService {
 
         if (optionalExistingMatzip.isPresent()) {
             Matzip existingMatzip = optionalExistingMatzip.get();
-            MatzipMember matzipRecommendation = createMatzipRecommendationEntity(creationDTO, existingMatzip, author);
-            matzipMemberRepository.save(matzipRecommendation);
+            MatzipMember matzipmember = createMatzipMemberEntity(creationDTO, existingMatzip, author);
+            matzipMemberRepository.save(matzipmember);
             return existingMatzip;
         } else {
             Matzip matzip = createMatzipEntity(creationDTO);
             Matzip savedMatzip = matzipRepository.save(matzip);
-            MatzipMember matzipRecommendation = createMatzipRecommendationEntity(creationDTO, savedMatzip, author);
+            MatzipMember matzipRecommendation = createMatzipMemberEntity(creationDTO, savedMatzip, author);
             matzipMemberRepository.save(matzipRecommendation);
             return savedMatzip;
         }
@@ -69,7 +69,7 @@ public class MatzipService {
     }
 
     //개인의 맛집 추천(후기) 엔티티 생성
-    private MatzipMember createMatzipRecommendationEntity(MatzipCreationDTO creationDTO, Matzip savedMatzip, Member author) {
+    private MatzipMember createMatzipMemberEntity(MatzipCreationDTO creationDTO, Matzip savedMatzip, Member author) {
         MatzipMember createdMatzipMember = MatzipMember.builder()
                 .description(creationDTO.getDescription())
                 .rating(creationDTO.getRating())
@@ -117,35 +117,37 @@ public class MatzipService {
 
     //후기와 맛집 정보를 하나로 묶어서 MatzipListDTO로 변환
     private List<MatzipListDTO> convertToListDTO(List<Matzip> matzipList, Long authorId) {
-        return matzipList.stream().map(matzip -> {
-            List<MatzipMember> matzipMemberList = matzip.getMatzipMembers();
+        return matzipList.stream()
+                .filter(matzip -> matzip.getMatzipMembers().size() > 0)
+                .map(matzip -> {
+                    List<MatzipMember> matzipMemberList = matzip.getMatzipMembers();
 
-            Optional<MatzipMember> authorRecommendation = matzipMemberList.stream()
-                    .filter(recommendation -> recommendation.getAuthor().getId().equals(authorId))
-                    .findFirst();
+                    Optional<MatzipMember> authorRecommendation = matzipMemberList.stream()
+                            .filter(recommendation -> recommendation.getAuthor().getId().equals(authorId))
+                            .findFirst();
 
-            double rating = 0;
-            String description = "";
-            //사용자 후기 존재하는 곳이면 유저 후기, 없으면 0, 빈칸
-            if (authorRecommendation.isPresent()) {
-                rating = authorRecommendation.get().getRating();
-                description = authorRecommendation.get().getDescription();
-            }
-            // 리스트 DTO 생성
-            return MatzipListDTO.builder()
-                    .matzipName(matzip.getMatzipName())
-                    .address(matzip.getAddress())
-                    .phoneNumber(matzip.getPhoneNumber())
-                    .matzipUrl(matzip.getMatzipUrl())
-                    .matzipType(matzip.getMatzipType())
-                    .x(matzip.getX())
-                    .y(matzip.getY())
-                    .rating(rating)
-                    .averageRating(getAverageRating(matzip))
-                    .description(description)
-                    .matzipId(matzip.getId())
-                    .build();
-        }).collect(Collectors.toList());
+                    double rating = 0;
+                    String description = "";
+                    //사용자 후기 존재하는 곳이면 유저 후기, 없으면 0, 빈칸
+                    if (authorRecommendation.isPresent()) {
+                        rating = authorRecommendation.get().getRating();
+                        description = authorRecommendation.get().getDescription();
+                    }
+                    // 리스트 DTO 생성
+                    return MatzipListDTO.builder()
+                            .matzipName(matzip.getMatzipName())
+                            .address(matzip.getAddress())
+                            .phoneNumber(matzip.getPhoneNumber())
+                            .matzipUrl(matzip.getMatzipUrl())
+                            .matzipType(matzip.getMatzipType())
+                            .x(matzip.getX())
+                            .y(matzip.getY())
+                            .rating(rating)
+                            .averageRating(getAverageRating(matzip))
+                            .description(description)
+                            .matzipId(matzip.getId())
+                            .build();
+                }).collect(Collectors.toList());
     }
 
     @Transactional
@@ -191,4 +193,10 @@ public class MatzipService {
 
         return sum / (double) matzip.getMatzipMembers().size();
     }
+
+    private boolean isMatzipMemberExisting(Matzip matzip, Member member) {
+        MatzipMember existingMatzipMember = matzipMemberRepository.findByMatzipIdAndAuthorId(matzip.getId(), member.getId()).orElse(null);
+        return existingMatzipMember != null;
+    }
+
 }
