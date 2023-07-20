@@ -62,12 +62,24 @@ public class MatzipService {
 
     //맛집 엔티티 생성 메서드
     private Matzip createMatzipEntity(MatzipCreationDTO creationDTO) {
-        return Matzip.builder().matzipName(creationDTO.getMatzipName()).address(creationDTO.getAddress()).matzipType(creationDTO.getMatzipTypeEnum()).phoneNumber(creationDTO.getPhoneNumber()).matzipUrl(creationDTO.getMatzipUrl()).kakaoId(creationDTO.getKakaoId()).x(creationDTO.getX()).y(creationDTO.getY()).build();
+        return Matzip.builder()
+                .matzipName(creationDTO.getMatzipName())
+                .address(creationDTO.getAddress())
+                .matzipType(creationDTO.getMatzipTypeEnum())
+                .phoneNumber(creationDTO.getPhoneNumber())
+                .matzipUrl(creationDTO.getMatzipUrl())
+                .kakaoId(creationDTO.getKakaoId())
+                .x(creationDTO.getX())
+                .y(creationDTO.getY())
+                .build();
     }
 
     //개인의 맛집 추천(후기) 엔티티 생성
     private MatzipMember createMatzipMemberEntity(MatzipCreationDTO creationDTO, Matzip savedMatzip, Member author) {
-        MatzipMember createdMatzipMember = MatzipMember.builder().description(creationDTO.getDescription()).rating(creationDTO.getRating()).build();
+        MatzipMember createdMatzipMember = MatzipMember.builder()
+                .description(creationDTO.getDescription())
+                .rating(creationDTO.getRating())
+                .build();
         createdMatzipMember.addAssociation(author, savedMatzip);
 
         return createdMatzipMember;
@@ -111,21 +123,37 @@ public class MatzipService {
 
     //후기와 맛집 정보를 하나로 묶어서 MatzipListDTO로 변환
     private List<MatzipListDTO> convertToListDTO(List<Matzip> matzipList, Long authorId) {
-        return matzipList.stream().filter(matzip -> matzip.getMatzipMembers().size() > 0).map(matzip -> {
-            List<MatzipMember> matzipMemberList = matzip.getMatzipMembers();
+        return matzipList.stream()
+                .filter(matzip -> matzip.getMatzipMembers().size() > 0)
+                .map(matzip -> {
+                    List<MatzipMember> matzipMemberList = matzip.getMatzipMembers();
 
-            Optional<MatzipMember> authorRecommendation = matzipMemberList.stream().filter(recommendation -> recommendation.getAuthor().getId().equals(authorId)).findFirst();
+                    Optional<MatzipMember> authorRecommendation = matzipMemberList.stream()
+                            .filter(recommendation -> recommendation.getAuthor().getId().equals(authorId))
+                            .findFirst();
 
-            double rating = 0;
-            String description = "";
-            //사용자 후기 존재하는 곳이면 유저 후기, 없으면 0, 빈칸
-            if (authorRecommendation.isPresent()) {
-                rating = authorRecommendation.get().getRating();
-                description = authorRecommendation.get().getDescription();
-            }
-            // 리스트 DTO 생성
-            return MatzipListDTO.builder().matzipName(matzip.getMatzipName()).address(matzip.getAddress()).phoneNumber(matzip.getPhoneNumber()).matzipUrl(matzip.getMatzipUrl()).matzipType(matzip.getMatzipType()).x(matzip.getX()).y(matzip.getY()).rating(rating).averageRating(getAverageRating(matzip)).description(description).matzipId(matzip.getId()).build();
-        }).collect(Collectors.toList());
+                    double rating = 0;
+                    String description = "";
+                    //사용자 후기 존재하는 곳이면 유저 후기, 없으면 0, 빈칸
+                    if (authorRecommendation.isPresent()) {
+                        rating = authorRecommendation.get().getRating();
+                        description = authorRecommendation.get().getDescription();
+                    }
+                    // 리스트 DTO 생성
+                    return MatzipListDTO.builder()
+                            .matzipName(matzip.getMatzipName())
+                            .address(matzip.getAddress())
+                            .phoneNumber(matzip.getPhoneNumber())
+                            .matzipUrl(matzip.getMatzipUrl())
+                            .matzipType(matzip.getMatzipType())
+                            .x(matzip.getX())
+                            .y(matzip.getY())
+                            .rating(rating)
+                            .averageRating(getAverageRating(matzip))
+                            .description(description)
+                            .matzipId(matzip.getId())
+                            .build();
+                }).collect(Collectors.toList());
     }
 
     @Transactional
@@ -152,7 +180,13 @@ public class MatzipService {
 
     private MatzipRankDTO convertToMatzipDTO(Matzip matzip) {
 
-        return MatzipRankDTO.builder().matzipName(matzip.getMatzipName()).averageRating(getAverageRating(matzip)).reviewCount(matzip.getReviews().size()).userCount(matzip.getMatzipMembers().size()).matzipUrl(matzip.getMatzipUrl()).build();
+        return MatzipRankDTO.builder()
+                .matzipName(matzip.getMatzipName())
+                .averageRating(getAverageRating(matzip))
+                .reviewCount(matzip.getReviews().size())
+                .userCount(matzip.getMatzipMembers().size())
+                .matzipUrl(matzip.getMatzipUrl())
+                .build();
     }
 
     // TODO Entity로 로직 빼기
