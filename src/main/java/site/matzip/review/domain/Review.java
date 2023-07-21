@@ -23,6 +23,7 @@ public class Review extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private double rating;
+    @Column(columnDefinition = "LONGTEXT")
     private String content;
     @Column(columnDefinition = "integer default 0", nullable = false)
     private int views;

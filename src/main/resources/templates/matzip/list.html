@@ -788,17 +788,60 @@
             reviewContentWrapper.classList.add('mt-3', 'flex', 'justify-between');
             reviewContainer.appendChild(reviewContentWrapper);
 
+            const contentWrapper = document.createElement('div');
+            contentWrapper.classList.add('flex', 'flex-col');
+            reviewContentWrapper.appendChild(contentWrapper);
+
             const reviewContent = document.createElement('a');
             reviewContent.setAttribute('href', 'review/detail/' + review.reviewId);
 
             reviewContent.classList.add('break-all');
             reviewContent.innerText = review.content;
-            reviewContentWrapper.appendChild(reviewContent);
+            contentWrapper.appendChild(reviewContent);
+
+            const buttonWrapper = document.createElement('div');
+            buttonWrapper.classList.add('flex', 'justify-end', 'mr-2');
+            contentWrapper.appendChild(buttonWrapper)
+
+            // Review content의 최대 높이
+            const MAX_CONTENT_HEIGHT = 99;
+
+            // 비동기적으로 높이 측정 <- reviewContent는 <a> 요소로 생성, 생성 후 바로 reviewContent.clientHeight를 호출하면 요소가 아직 실제로 DOM에 추가되기 전이기 때문에 높이가 0으로 반환
+            requestAnimationFrame(() => {
+                const reviewContentHeight = reviewContent.clientHeight;
+                if (reviewContentHeight > MAX_CONTENT_HEIGHT) {
+                    reviewContent.style.overflow = 'hidden';
+                    reviewContent.style.maxHeight = `${MAX_CONTENT_HEIGHT}px`;
+
+                    // 더보기 버튼
+                    const readMoreButton = document.createElement('button');
+                    readMoreButton.classList.add('read-more', 'text-xs', 'text-gray-500', 'hover:underline');
+                    readMoreButton.innerText = '더보기';
+                    readMoreButton.onclick = function () {
+                        reviewContent.style.maxHeight = reviewContentHeight + 'px';
+                        readMoreButton.style.display = 'none';
+                        readLessButton.style.display = 'inline';
+                    };
+                    buttonWrapper.appendChild(readMoreButton);
+
+                    // 줄이기 버튼
+                    const readLessButton = document.createElement('button');
+                    readLessButton.classList.add('read-less', 'text-xs', 'text-gray-500', 'hover:underline');
+                    readLessButton.innerText = '줄이기';
+                    readLessButton.style.display = 'none';
+                    readLessButton.onclick = function () {
+                        reviewContent.style.maxHeight = `${MAX_CONTENT_HEIGHT}px`;
+                        readMoreButton.style.display = 'inline';
+                        readLessButton.style.display = 'none';
+                    };
+                    buttonWrapper.appendChild(readLessButton);
+                }
+            });
 
             // 7. 리뷰 이미지와 이미지 개수 추가 (리뷰 이미지가 없을 경우 제외하고 출력)
             if (review.reviewImageCount !== 0) {
                 const reviewImageContainer = document.createElement('div');
-                reviewImageContainer.classList.add('mt-2', 'mb-2', 'mr-3', 'relative', 'w-32', 'h-32', 'flex', 'justify-end');
+                reviewImageContainer.classList.add('relative', 'w-32', 'h-32', 'flex', 'justify-end');
                 reviewContentWrapper.appendChild(reviewImageContainer);
 
                 const reviewImage = document.createElement('img');
@@ -812,6 +855,7 @@
                 imageCount.innerText = review.reviewImageCount;
                 reviewImageContainer.appendChild(imageCount);
             }
+
             // 8. 리뷰 리스트 컨테이너에 전체 리뷰 컨테이너 추가
             const hr = document.createElement('hr')
             reviewContainer.appendChild(hr);
