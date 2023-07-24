@@ -136,7 +136,7 @@ class ReviewServiceTest {
         Review review = reviewService.create(reviewCreationDTO, testUser.getId(), matzip);
         when(request.getCookies()).thenReturn(null);
 
-        reviewService.updateViewCountWithCookie(review, request, response);
+        reviewService.updateViewCountWithCookie(review, request, response, testUser.getId());
 
         Review result = reviewService.findById(review.getId());
 
@@ -151,7 +151,7 @@ class ReviewServiceTest {
 
         when(request.getCookies()).thenReturn(cookies);
 
-        reviewService.updateViewCountWithCookie(review, request, response);
+        reviewService.updateViewCountWithCookie(review, request, response, testUser.getId());
 
         Review result = reviewService.findById(review.getId());
 
@@ -162,11 +162,11 @@ class ReviewServiceTest {
     @Test
     void updateViewCountWithCookie_withCookie_alreadyInView() {
         Review review = reviewService.create(reviewCreationDTO, testUser.getId(), matzip);
-        Cookie[] cookies = {new Cookie("reviewView", "[" + review.getId() + "]")};
+        Cookie[] cookies = {new Cookie("reviewView", "[" + testUser.getId() + "_" + review.getId() + "]")};
 
         when(request.getCookies()).thenReturn(cookies);
 
-        reviewService.updateViewCountWithCookie(review, request, response);
+        reviewService.updateViewCountWithCookie(review, request, response, testUser.getId());
 
         Review result = reviewService.findById(review.getId());
 
