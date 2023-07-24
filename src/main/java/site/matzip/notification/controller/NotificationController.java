@@ -58,6 +58,6 @@ public class NotificationController {
     @ResponseBody
     @PreAuthorize("isAuthenticated()")
     public RsData allDeleteNotification(@RequestParam Integer deleteType, @AuthenticationPrincipal PrincipalDetails principalDetails) {
-        return notificationService.allDeleteNotification(deleteType, principalDetails.getUserId());
+        return notificationService.allDeleteNotification(deleteType, principalDetails.getMember().getId());
     }
 }

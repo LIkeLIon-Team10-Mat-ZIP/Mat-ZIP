@@ -27,7 +27,7 @@ public class HomeController {
     @GetMapping("/main")
     public String showMain(Model model, @AuthenticationPrincipal PrincipalDetails principalDetails) {
         if (principalDetails != null) {
-            model.addAttribute("memberId", principalDetails.getUserId());
+            model.addAttribute("memberId", principalDetails.getMember().getId());
         }
 
         return "matzip/list";

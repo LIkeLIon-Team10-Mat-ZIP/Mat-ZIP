@@ -63,7 +63,7 @@ public class MemberController {
     @GetMapping("/myPage")
     public String showMyPage(Model model, @AuthenticationPrincipal PrincipalDetails principalDetails) {
 
-        Long MemberId = principalDetails.getUserId();
+        Long MemberId = principalDetails.getMember().getId();
 
         MemberInfoDTO memberInfoDTO = memberService.convertToMemberInfoDTO(MemberId);
         MemberInfoCntDTO memberInfoCntDTO = memberService.convertToMemberInfoCntDTO(MemberId);

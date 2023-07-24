@@ -87,7 +87,7 @@ public class MatzipController {
         if (principalDetails == null) {
             throw new UnauthorizedException(HttpStatus.UNAUTHORIZED);
         }
-        List<MatzipListDTO> matzipDtoList = matzipService.findAndConvertAll(principalDetails.getUserId());
+        List<MatzipListDTO> matzipDtoList = matzipService.findAndConvertAll(principalDetails.getMember().getId());
         return ResponseEntity.ok(matzipDtoList);
     }
 
@@ -98,7 +98,7 @@ public class MatzipController {
         if (principalDetails == null) {
             throw new UnauthorizedException(HttpStatus.UNAUTHORIZED);
         }
-        List<MatzipListDTO> matzipDtoList = matzipService.findAndConvertById(principalDetails.getUserId());
+        List<MatzipListDTO> matzipDtoList = matzipService.findAndConvertById(principalDetails.getMember().getId());
         return ResponseEntity.ok(matzipDtoList);
     }
 
@@ -111,7 +111,7 @@ public class MatzipController {
             throw new UnauthorizedException(HttpStatus.UNAUTHORIZED);
         }
         // 둘이 친구가 아닌 경우, BadRequest(잘못된 요청) 응답 반환
-        if (!friendService.isFriend(id, principalDetails.getUserId())) {
+        if (!friendService.isFriend(id, principalDetails.getMember().getId())) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
         List<MatzipListDTO> matzipDtoList = matzipService.findAndConvertById(id);
