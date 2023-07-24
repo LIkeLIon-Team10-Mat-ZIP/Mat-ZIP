@@ -174,7 +174,7 @@ public class ReviewController {
         model.addAttribute("reviewDetailDTO", reviewDetailDTO);
         model.addAttribute("commentInfoDTOS", commentInfoDTOS);
 
-        reviewService.updateViewCountWithCookie(review, request, response);
+        reviewService.updateViewCountWithCookie(review, request, response, principalDetails.getUserId());
 
         return "review/detail";
     }
