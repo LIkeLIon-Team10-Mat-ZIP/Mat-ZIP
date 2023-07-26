@@ -188,7 +188,7 @@ public class ReviewService {
     }
 
     @Transactional
-    public void updateViewCountWithCookie(Review review, HttpServletRequest request, HttpServletResponse response) {
+    public void updateViewCountWithCookie(Review review, HttpServletRequest request, HttpServletResponse response, Long memberId) {
         Cookie[] cookies = request.getCookies();
         Cookie cookie = null;
         boolean isCookie = false;
@@ -197,9 +197,9 @@ public class ReviewService {
             for (Cookie value : cookies) {
                 if (value.getName().equals("reviewView")) {
                     cookie = value;
-                    if (!cookie.getValue().contains("[" + review.getId() + "]")) {
+                    if (!cookie.getValue().contains("[" + memberId + "_" + review.getId() + "]")) {
                         incrementViewCount(review);
-                        cookie.setValue(cookie.getValue() + "[" + review.getId() + "]");
+                        cookie.setValue(cookie.getValue() + "[" + memberId + "_" + review.getId() + "]");
                     }
                     isCookie = true;
                     break;
@@ -210,7 +210,7 @@ public class ReviewService {
         // request에 쿠기가 없을 때
         if (cookies == null || !isCookie) {
             incrementViewCount(review);
-            cookie = new Cookie("reviewView", "[" + review.getId() + "]");
+            cookie = new Cookie("reviewView", "[" + memberId + "_" + review.getId() + "]");
         }
 
         // Cookie 유지시간 = 당일 자정까지로 설정
