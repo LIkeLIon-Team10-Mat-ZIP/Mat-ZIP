@@ -5,6 +5,7 @@ import site.matzip.member.domain.Member;
 
 @Getter
 public class MemberRankInfoDTO {
+
     private int rank;
     private Member member;
 

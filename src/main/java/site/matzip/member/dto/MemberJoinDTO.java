@@ -1,7 +1,6 @@
 package site.matzip.member.dto;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter

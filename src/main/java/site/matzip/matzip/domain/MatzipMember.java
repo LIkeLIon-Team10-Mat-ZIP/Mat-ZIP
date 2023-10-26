@@ -8,6 +8,7 @@ import site.matzip.member.domain.Member;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MatzipMember {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

@@ -4,6 +4,7 @@ import lombok.Getter;
 
 @Getter
 public enum MatzipType {
+
     KOREAN("한식"),
     JAPANESE("회/일식"),
     CHINESE("중식"),

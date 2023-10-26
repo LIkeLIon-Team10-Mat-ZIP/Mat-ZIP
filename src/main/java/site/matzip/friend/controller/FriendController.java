@@ -5,10 +5,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import site.matzip.base.rq.Rq;
 import site.matzip.config.auth.PrincipalDetails;
 import site.matzip.friend.dto.FriendDTO;
@@ -21,6 +18,7 @@ import java.util.List;
 @RequestMapping("/usr/friends")
 @RequiredArgsConstructor
 public class FriendController {
+
     private final FriendService friendService;
     private final Rq rq;
 

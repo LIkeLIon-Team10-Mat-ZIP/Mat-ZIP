@@ -9,6 +9,7 @@ import site.matzip.friend.service.FriendService;
 @RequiredArgsConstructor
 @Component
 public class FriendEventListener {
+
     private final FriendService friendService;
 
     @EventListener

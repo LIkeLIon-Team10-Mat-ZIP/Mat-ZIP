@@ -1,14 +1,13 @@
 package site.matzip.matzip.dto;
 
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import lombok.Builder;
-import lombok.Getter;
+import jakarta.persistence.*;
+import lombok.*;
 import site.matzip.matzip.domain.MatzipType;
 
 @Getter
 @Builder
 public class MatzipListDTO {
+
     private Long matzipId;
     private String matzipName;
     private String description;

@@ -16,6 +16,7 @@ import java.util.List;
 @Controller
 @RequiredArgsConstructor
 public class HomeController {
+
     private final MatzipService matzipService;
     private final MemberService memberService;
 

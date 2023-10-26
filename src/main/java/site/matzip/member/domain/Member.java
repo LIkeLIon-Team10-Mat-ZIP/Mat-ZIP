@@ -8,8 +8,7 @@ import site.matzip.comment.domain.Comment;
 import site.matzip.friend.domain.Friend;
 import site.matzip.image.domain.ProfileImage;
 import site.matzip.matzip.domain.MatzipMember;
-import site.matzip.review.domain.Heart;
-import site.matzip.review.domain.Review;
+import site.matzip.review.domain.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +17,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Member {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

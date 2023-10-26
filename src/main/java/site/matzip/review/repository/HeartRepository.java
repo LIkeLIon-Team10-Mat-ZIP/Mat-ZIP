@@ -2,11 +2,9 @@ package site.matzip.review.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import site.matzip.member.domain.Member;
-import site.matzip.review.domain.Heart;
-import site.matzip.review.domain.Review;
+import site.matzip.review.domain.*;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public interface HeartRepository extends JpaRepository<Heart, Long> {
 

@@ -1,13 +1,13 @@
 package site.matzip.review.domain;
 
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 import site.matzip.member.domain.Member;
 
 @Entity
 @Getter
 public class Heart {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -21,9 +21,7 @@ public class Heart {
     private Review review;
 
     @Builder
-    public Heart() {
-
-    }
+    public Heart() {}
 
     public void addAssociation(Member member, Review review) {
         addMember(member);

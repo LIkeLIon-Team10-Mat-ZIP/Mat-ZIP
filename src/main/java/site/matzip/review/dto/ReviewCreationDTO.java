@@ -13,6 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ReviewCreationDTO {
+
     @NotNull(message = "리뷰점수를 입력해주세요")
     private double rating;
     @NotBlank(message = "리뷰 내용을 입력해주세요")

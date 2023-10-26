@@ -9,10 +9,13 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MemberToken {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String accessToken;
+
     private LocalDateTime accessTokenExpiredAt;
 
     @OneToOne(fetch = FetchType.LAZY)

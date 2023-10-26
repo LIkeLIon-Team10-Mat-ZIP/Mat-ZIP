@@ -8,5 +8,6 @@ import java.util.Optional;
 
 @Repository
 public interface MemberTokenRepository extends JpaRepository<MemberToken, Long> {
+
     Optional<MemberToken> findByMemberId(Long memberId);
 }

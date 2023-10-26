@@ -7,6 +7,7 @@ import java.util.Map;
 @Getter
 @Builder
 public class MemberInfoDTO {
+
     private String nickname;
     private String email;
     private String profileImageUrl;

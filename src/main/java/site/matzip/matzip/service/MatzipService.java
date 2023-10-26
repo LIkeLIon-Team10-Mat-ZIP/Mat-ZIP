@@ -2,37 +2,28 @@ package site.matzip.matzip.service;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.cache.annotation.*;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import site.matzip.base.rsData.RsData;
-import site.matzip.matzip.domain.Matzip;
-import site.matzip.matzip.domain.MatzipMember;
-import site.matzip.matzip.dto.MatzipCreationDTO;
-import site.matzip.matzip.dto.MatzipListDTO;
-import site.matzip.matzip.dto.MatzipModifyDTO;
-import site.matzip.matzip.dto.MatzipRankDTO;
-import site.matzip.matzip.repository.MatzipMemberRepository;
-import site.matzip.matzip.repository.MatzipRepository;
+import site.matzip.matzip.domain.*;
+import site.matzip.matzip.dto.*;
+import site.matzip.matzip.repository.*;
 import site.matzip.member.domain.Member;
 import site.matzip.member.repository.MemberRepository;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class MatzipService {
+
     private final MatzipRepository matzipRepository;
     private final MemberRepository memberRepository;
     private final MatzipMemberRepository matzipMemberRepository;
-
 
     @Transactional
     @CacheEvict(value = {"matzipListCache", "myMatzipListCache", "reviewListCache"}, allEntries = true)

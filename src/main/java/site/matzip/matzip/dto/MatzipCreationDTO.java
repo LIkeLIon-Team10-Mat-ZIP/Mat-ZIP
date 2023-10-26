@@ -10,6 +10,7 @@ import site.matzip.matzip.domain.MatzipType;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MatzipCreationDTO {
+
     @NotBlank(message = "맛집 이름을 입력해주세요.")
     private String matzipName;
     @NotBlank(message = "맛집 주소를 입력해주세요.")

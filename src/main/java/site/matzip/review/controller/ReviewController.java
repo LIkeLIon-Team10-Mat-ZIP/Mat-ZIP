@@ -23,9 +23,7 @@ import site.matzip.matzip.domain.Matzip;
 import site.matzip.matzip.dto.MatzipInfoDTO;
 import site.matzip.matzip.service.MatzipService;
 import site.matzip.review.domain.Review;
-import site.matzip.review.dto.ReviewCreationDTO;
-import site.matzip.review.dto.ReviewDetailDTO;
-import site.matzip.review.dto.ReviewListDTO;
+import site.matzip.review.dto.*;
 import site.matzip.review.service.ReviewService;
 
 import java.io.IOException;
@@ -36,6 +34,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/review")
 @RequiredArgsConstructor
 public class ReviewController {
+
     private final ReviewService reviewService;
     private final ReviewImageService reviewImageService;
     private final MatzipService matzipService;

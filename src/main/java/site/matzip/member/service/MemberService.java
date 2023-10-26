@@ -1,10 +1,7 @@
 package site.matzip.member.service;
 
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,21 +11,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
-import site.matzip.badge.domain.Badge;
-import site.matzip.badge.domain.MemberBadge;
+import site.matzip.badge.domain.*;
 import site.matzip.badge.repository.MemberBadgeRepository;
 import site.matzip.base.appConfig.AppConfig;
 import site.matzip.base.rsData.RsData;
 import site.matzip.friend.domain.Friend;
 import site.matzip.friend.dto.FriendDetailDTO;
-import site.matzip.matzip.domain.Matzip;
-import site.matzip.matzip.domain.MatzipMember;
+import site.matzip.matzip.domain.*;
 import site.matzip.matzip.dto.MatzipInfoDTO;
-import site.matzip.member.domain.Member;
-import site.matzip.member.domain.MemberToken;
+import site.matzip.member.domain.*;
 import site.matzip.member.dto.*;
-import site.matzip.member.repository.MemberRepository;
-import site.matzip.member.repository.MemberTokenRepository;
+import site.matzip.member.repository.*;
 import site.matzip.review.domain.Review;
 import site.matzip.review.dto.MyReviewDTO;
 
@@ -43,6 +36,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class MemberService {
+
     private final MemberRepository memberRepository;
     private final MemberTokenRepository memberTokenRepository;
     private final MemberBadgeRepository memberBadgeRepository;

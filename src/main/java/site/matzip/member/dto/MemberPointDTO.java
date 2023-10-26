@@ -1,11 +1,11 @@
 package site.matzip.member.dto;
 
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 
 @Getter
 @Builder
 public class MemberPointDTO {
+
     private long point;
     private int rank;
 }

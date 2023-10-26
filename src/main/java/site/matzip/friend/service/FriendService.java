@@ -17,15 +17,16 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class FriendService {
+
     private final FriendRepository friendRepository;
     private final AppConfig appConfig;
 
+    @Transactional
     public void whenAfterFriendRequestAccept(Member member1, Member member2) {
-        addFriend(member1, member2); // 친구 요청 수락 시 친구 추가
+        addFriend(member1, member2);
     }
 
-    @Transactional
-    public void addFriend(Member member1, Member member2) {
+    private void addFriend(Member member1, Member member2) {
         Friend friend1 = new Friend();
         friend1.addAssociation(member1, member2);
         friendRepository.save(friend1);
@@ -33,10 +34,6 @@ public class FriendService {
         Friend friend2 = new Friend();
         friend2.addAssociation(member2, member1);
         friendRepository.save(friend2);
-    }
-
-    public List<Friend> getFriendList(Member member) {
-        return friendRepository.findByMember1(member);
     }
 
     public List<FriendDTO> convertToFriendDTOS(Member member) {
@@ -52,6 +49,10 @@ public class FriendService {
                         .friendNickname(friend.getMember2().getNickname())
                         .build())
                 .collect(Collectors.toList());
+    }
+
+    private List<Friend> getFriendList(Member member) {
+        return friendRepository.findByMember1(member);
     }
 
     @Transactional

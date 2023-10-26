@@ -4,6 +4,7 @@ import lombok.Getter;
 
 @Getter
 public class MatzipModifyDTO {
+
     private String description;
     private double rating;
 }

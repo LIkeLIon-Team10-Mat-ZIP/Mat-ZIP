@@ -1,16 +1,10 @@
 package site.matzip.review.service;
 
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.*;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.cache.annotation.*;
+import org.springframework.data.domain.*;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
@@ -20,27 +14,22 @@ import site.matzip.comment.domain.Comment;
 import site.matzip.comment.dto.CommentInfoDTO;
 import site.matzip.config.auth.PrincipalDetails;
 import site.matzip.image.domain.ReviewImage;
-import site.matzip.matzip.domain.Matzip;
+import site.matzip.matzip.domain.*;
 import site.matzip.member.domain.Member;
 import site.matzip.member.repository.MemberRepository;
-import site.matzip.review.domain.Heart;
-import site.matzip.review.domain.Review;
-import site.matzip.review.dto.ReviewCreationDTO;
-import site.matzip.review.dto.ReviewDetailDTO;
-import site.matzip.review.dto.ReviewListDTO;
-import site.matzip.review.repository.HeartRepository;
-import site.matzip.review.repository.ReviewRepository;
+import site.matzip.review.domain.*;
+import site.matzip.review.dto.*;
+import site.matzip.review.repository.*;
 
 import java.time.*;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class ReviewService {
+
     private final ReviewRepository reviewRepository;
     private final MemberRepository memberRepository;
     private final HeartRepository heartRepository;

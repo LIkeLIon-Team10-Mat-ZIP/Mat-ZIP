@@ -1,11 +1,11 @@
 package site.matzip.matzip.dto;
 
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 
 @Getter
 @Builder
 public class MatzipRankDTO {
+
     private String matzipName;
     private double averageRating;
     private long userCount;

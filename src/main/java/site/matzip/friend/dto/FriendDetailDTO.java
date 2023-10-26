@@ -1,13 +1,12 @@
 package site.matzip.friend.dto;
 
-import lombok.Builder;
-import lombok.Getter;
-
+import lombok.*;
 import java.util.Map;
 
 @Getter
 @Builder
 public class FriendDetailDTO {
+
     private Long id;
     private Long memberId;
     private String profileImageUrl;

@@ -19,6 +19,7 @@ import java.util.Optional;
 @Slf4j
 @RequiredArgsConstructor
 public class ProfileImageService {
+
     private final AmazonS3 amazonS3;
     private final ProfileImageRepository profileImageRepository;
 

@@ -2,8 +2,7 @@ package site.matzip.matzip.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -16,10 +15,7 @@ import site.matzip.config.auth.PrincipalDetails;
 import site.matzip.friend.service.FriendService;
 import site.matzip.image.service.ReviewImageService;
 import site.matzip.matzip.domain.Matzip;
-import site.matzip.matzip.dto.MatzipCreationDTO;
-import site.matzip.matzip.dto.MatzipListDTO;
-import site.matzip.matzip.dto.MatzipModifyDTO;
-import site.matzip.matzip.dto.MatzipReviewDTO;
+import site.matzip.matzip.dto.*;
 import site.matzip.matzip.service.MatzipService;
 import site.matzip.member.domain.Member;
 import site.matzip.review.domain.Review;
@@ -33,6 +29,7 @@ import java.util.List;
 @RequestMapping("/matzip")
 @RequiredArgsConstructor
 public class MatzipController {
+
     private final MatzipService matzipService;
     private final ReviewService reviewService;
     private final ReviewImageService reviewImageService;

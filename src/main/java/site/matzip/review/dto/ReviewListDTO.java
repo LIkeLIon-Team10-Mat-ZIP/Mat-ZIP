@@ -1,13 +1,12 @@
 package site.matzip.review.dto;
 
-import lombok.Builder;
-import lombok.Getter;
-
+import lombok.*;
 import java.time.LocalDateTime;
 
 @Getter
 @Builder
 public class ReviewListDTO {
+
     private Long matzipId;
     private Long reviewId;
     private Long authorId;

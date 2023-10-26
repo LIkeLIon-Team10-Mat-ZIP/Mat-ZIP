@@ -8,6 +8,7 @@ import java.time.format.DateTimeFormatter;
 
 @Getter
 public class MyReviewDTO {
+
     private Long id;
     private String matzipName;
     private double rating;

@@ -12,14 +12,14 @@ import site.matzip.friendRequest.repository.FriendRequestRepository;
 import site.matzip.member.domain.Member;
 import site.matzip.member.repository.MemberRepository;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class FriendRequestService {
+
     private final FriendRequestRepository friendRequestRepository;
     private final FriendRepository friendRepository;
     private final MemberRepository memberRepository;
