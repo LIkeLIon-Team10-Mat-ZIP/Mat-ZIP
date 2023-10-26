@@ -38,11 +38,6 @@ public class MemberController {
         return "usr/member/login";
     }
 
-    @GetMapping("/joinForm")
-    public String joinForm() {
-        return "usr/member/joinForm";
-    }
-
     @PostMapping("/logout")
     public String logout(@AuthenticationPrincipal PrincipalDetails principalDetails,
                          HttpServletRequest request,

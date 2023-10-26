@@ -31,4 +31,10 @@ public class AdminMemberController {
 
         return principalDetails.getUsername();
     }
+
+    @GetMapping("test")
+    public String test() {
+        return "/usr/member/test";
+
+    }
 }
