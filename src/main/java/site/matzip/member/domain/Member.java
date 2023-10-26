@@ -2,9 +2,7 @@ package site.matzip.member.domain;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import site.matzip.badge.domain.MemberBadge;
 import site.matzip.comment.domain.Comment;
 import site.matzip.friend.domain.Friend;
@@ -100,5 +98,9 @@ public class Member {
 
     public void removeReview(Review review) {
         this.reviews.remove(review);
+    }
+
+    public void setRoleAdmin() {
+        this.role = MemberRole.ROLE_ADMIN;
     }
 }

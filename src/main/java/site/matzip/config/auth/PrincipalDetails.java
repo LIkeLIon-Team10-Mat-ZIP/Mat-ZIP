@@ -3,19 +3,21 @@ package site.matzip.config.auth;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import site.matzip.config.oauth.provider.OAuth2UserInfo;
 import site.matzip.member.domain.Member;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Getter
-public class PrincipalDetails implements OAuth2User {
+public class PrincipalDetails implements UserDetails, OAuth2User {
     private final Member member;
-    private final OAuth2UserInfo oAuth2UserInfo;
+    private OAuth2UserInfo oAuth2UserInfo;
+
+    public PrincipalDetails(Member member) {
+        this.member = member;
+    }
 
     public PrincipalDetails(Member member, OAuth2UserInfo oAuth2UserInfo) {
         this.member = member;
@@ -48,5 +50,35 @@ public class PrincipalDetails implements OAuth2User {
         grantedAuthorities.add(new SimpleGrantedAuthority("member"));
 
         return grantedAuthorities;
+    }
+
+    @Override
+    public String getPassword() {
+        return member.getPassword();
+    }
+
+    @Override
+    public String getUsername() {
+        return member.getUsername();
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
     }
 }

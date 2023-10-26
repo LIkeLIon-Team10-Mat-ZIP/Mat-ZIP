@@ -3,23 +3,17 @@ package site.matzip.config.oauth;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
-import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
+import org.springframework.security.oauth2.client.userinfo.*;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import site.matzip.config.auth.PrincipalDetails;
-import site.matzip.config.oauth.provider.KakaoUserInfo;
-import site.matzip.config.oauth.provider.OAuth2UserInfo;
-import site.matzip.member.domain.Member;
-import site.matzip.member.domain.MemberToken;
-import site.matzip.member.repository.MemberRepository;
-import site.matzip.member.repository.MemberTokenRepository;
+import site.matzip.config.oauth.provider.*;
+import site.matzip.member.domain.*;
+import site.matzip.member.repository.*;
 
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
+import java.time.*;
 import java.util.Optional;
 
 @Service
@@ -70,7 +64,6 @@ public class PrincipalOAuth2UserService extends DefaultOAuth2UserService {
         return new PrincipalDetails(findMember.get(), oAuth2UserInfo);
     }
 
-    // Member 새로 생성
     private PrincipalDetails saveNewMember(OAuth2UserRequest userRequest,
                                            OAuth2UserInfo oAuth2UserInfo) {
 
@@ -89,7 +82,6 @@ public class PrincipalOAuth2UserService extends DefaultOAuth2UserService {
         return new PrincipalDetails(createdMember, oAuth2UserInfo);
     }
 
-    // Member 수정
     private PrincipalDetails updateMember(OAuth2UserRequest userRequest,
                                           OAuth2UserInfo oAuth2UserInfo,
                                           String email,
