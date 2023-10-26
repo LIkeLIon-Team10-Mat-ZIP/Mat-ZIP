@@ -16,6 +16,9 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(indexes = {
+        @Index(name = "uk__username", columnList = "username", unique = true)
+})
 public class Member {
 
     @Id
