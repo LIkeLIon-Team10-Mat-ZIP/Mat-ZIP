@@ -34,7 +34,11 @@ public class MemberController {
     private final Rq rq;
 
     @GetMapping("/login")
-    public String login() {
+    public String login(@RequestParam(value = "error", required = false)String error,
+                        @RequestParam(value = "exception", required = false)String exception) {
+        if (error != null && error.equals("true")) {
+            return rq.redirectWithMsg("/usr/member/login", exception);
+        }
         return "usr/member/login";
     }
 
