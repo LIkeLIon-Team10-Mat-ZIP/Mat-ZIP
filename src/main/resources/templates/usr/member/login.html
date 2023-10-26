@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html layout:decorate="~{common/layout/defaultLayout.html}">
 <head>
+    <title>Mat.ZIP | 로그인</title>
+
     <meta charset="utf-8">
     <meta name="_csrf" th:content="${_csrf.token}"/>
     <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
@@ -8,29 +10,44 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- 데이지 UI 불러오기 -->
     <link href="https://cdn.jsdelivr.net/npm/daisyui@2.51.5/dist/full.css" rel="stylesheet" type="text/css"/>
+
+    <style>
+        .input-box-inner {
+            border: 1px solid #ccc; /* 박스 테두리 스타일 및 두께 설정 */
+            border-radius: 5px; /* 둥근 모서리 설정 */
+            padding: 5px; /* 내부 패딩 설정 */
+            margin: 5px; /* 외부 여백 설정 */
+        }
+    </style>
 </head>
 
 <body>
-
 <main layout:fragment="Content">
+    <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-2/3">
+        <div class="max-w-screen-md w-full p-5 border border-gray-300 rounded-lg">
+            <div class="max-w-2xl w-full px-4">
+                <h1 class="mb-4">
+                    <i class="fa-solid fa-user"></i>
+                    <span th:text="카카오로그인"></span>
+                </h1>
+                <a href="/oauth2/authorization/kakao" class="btn btn-block btn-outline gap-1 mb-10">
+                    <i class="fa-solid fa-comment text-[color:#ffe812]"></i>
+                    <span class="normal-case" th:text="카카오로그인"></span>
+                </a>
 
-    <div class="max-w-2xl w-full px-4">
-        <h1 class="mb-4">
-            <i class="fa-solid fa-arrow-right-to-bracket"></i>
-            <span th:text="로그인페이지"></span>
-        </h1>
-
-            <a href="/oauth2/authorization/kakao" class="btn btn-block btn-outline gap-1">
-                <i class="fa-solid fa-comment text-[color:#ffe812]"></i>
-                <span class="normal-case" th:text="카카오로그인"></span>
-            </a>
-        </form>
-        <form th:action="@{/login}" method="POST">
-            <input type="text" name="username" placeholder="Username" /> <br/>
-            <input type="password" name="password" placeholder="Password" /> <br/>
-<!--            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />-->
-            <button>관리자 로그인</button>
-        </form>
+                <h1 class="mb-2">
+                    <i class="fa-solid fa-hammer"></i>
+                    <span th:text="관리자로그인"></span>
+                </h1>
+                <form th:action="@{/login}" method="POST" id="login-form">
+                    <div class="input-box mb-2">
+                        <input class="input-box-inner" type="text" name="username" placeholder="Username"/>
+                        <input class="input-box-inner" type="password" name="password" placeholder="Password"/>
+                    </div>
+                    <button class="btn btn-outline">관리자 로그인</button>
+                </form>
+            </div>
+        </div>
     </div>
 </main>
 </body>
