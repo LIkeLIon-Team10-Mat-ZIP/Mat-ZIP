@@ -129,6 +129,242 @@
 
 <br />
 
+<details>
+    <summary>자세히</summary>
+
+```bash
+Mat-ZIP:.
+└─site
+    └─matzip
+        │  MatzipApplication.java
+        │  
+        ├─badge
+        │  ├─domain
+        │  │      Badge.java
+        │  │      BadgeType.java
+        │  │      MemberBadge.java
+        │  │      
+        │  ├─repository
+        │  │      BadgeRepository.java
+        │  │      MemberBadgeRepository.java
+        │  │      
+        │  └─service
+        │          MemberBadgeService.java
+        │          
+        ├─base
+        │  ├─appConfig
+        │  │      AppConfig.java
+        │  │      CacheConfig.java
+        │  │      
+        │  ├─domain
+        │  │      BaseEntity.java
+        │  │      
+        │  ├─event
+        │  │      EventAfterComment.java
+        │  │      EventAfterFriendRequestAccept.java
+        │  │      
+        │  ├─exception
+        │  │      GlobalExceptionHandler.java
+        │  │      UnauthorizedException.java
+        │  │      
+        │  ├─rq
+        │  │      Rq.java
+        │  │      
+        │  ├─rsData
+        │  │      RsData.java
+        │  │      
+        │  └─utill
+        │          Ut.java
+        │          
+        ├─comment
+        │  ├─controller
+        │  │      CommentController.java
+        │  │      
+        │  ├─domain
+        │  │      Comment.java
+        │  │      
+        │  ├─dto
+        │  │      CommentInfoDTO.java
+        │  │      
+        │  ├─repository
+        │  │      CommentRepository.java
+        │  │      
+        │  └─service
+        │          CommentService.java
+        │          
+        ├─config
+        │  │  S3Config.java
+        │  │  SecurityConfig.java
+        │  │  
+        │  ├─auth
+        │  │      PrincipalDetails.java
+        │  │      PrincipalDetailsService.java
+        │  │      UserLoginFailureHandler.java
+        │  │      
+        │  ├─initData
+        │  │      NotProd.java
+        │  │      
+        │  └─oauth
+        │      │  PrincipalOAuth2UserService.java
+        │      │  
+        │      └─provider
+        │              KakaoUserInfo.java
+        │              OAuth2UserInfo.java
+        │              
+        ├─friend
+        │  ├─controller
+        │  │      FriendController.java
+        │  │      
+        │  ├─domain
+        │  │      Friend.java
+        │  │      
+        │  ├─dto
+        │  │      FriendDetailDTO.java
+        │  │      FriendDTO.java
+        │  │      
+        │  ├─eventListener
+        │  │      FriendEventListener.java
+        │  │      
+        │  ├─repository
+        │  │      FriendRepository.java
+        │  │      
+        │  └─service
+        │          FriendService.java
+        │          
+        ├─friendRequest
+        │  ├─controller
+        │  │      FriendRequestController.java
+        │  │      
+        │  ├─domain
+        │  │      FriendRequest.java
+        │  │      
+        │  ├─dto
+        │  │      FriendRequestDTO.java
+        │  │      
+        │  ├─repository
+        │  │      FriendRequestRepository.java
+        │  │      
+        │  └─service
+        │          FriendRequestService.java
+        │          
+        ├─home
+        │      HomeController.java
+        │      
+        ├─image
+        │  ├─domain
+        │  │      ProfileImage.java
+        │  │      ReviewImage.java
+        │  │      
+        │  ├─repository
+        │  │      ProfileImageRepository.java
+        │  │      ReviewImageRepository.java
+        │  │      
+        │  └─service
+        │          ProfileImageService.java
+        │          ReviewImageService.java
+        │          
+        ├─logging
+        │      LoggingAspect.java
+        │      
+        ├─matzip
+        │  ├─controller
+        │  │      MatzipController.java
+        │  │      
+        │  ├─domain
+        │  │      Matzip.java
+        │  │      MatzipMember.java
+        │  │      MatzipType.java
+        │  │      
+        │  ├─dto
+        │  │      MatzipCreationDTO.java
+        │  │      MatzipInfoDTO.java
+        │  │      MatzipListDTO.java
+        │  │      MatzipModifyDTO.java
+        │  │      MatzipRankDTO.java
+        │  │      MatzipReviewDTO.java
+        │  │      MatzipReviewListDTO.java
+        │  │      
+        │  ├─repository
+        │  │      MatzipMemberRepository.java
+        │  │      MatzipRepository.java
+        │  │      
+        │  └─service
+        │          MatzipService.java
+        │          
+        ├─member
+        │  ├─controller
+        │  │      AdminMemberController.java
+        │  │      MemberController.java
+        │  │      
+        │  ├─domain
+        │  │      Member.java
+        │  │      MemberRole.java
+        │  │      MemberToken.java
+        │  │      
+        │  ├─dto
+        │  │      MemberInfoCntDTO.java
+        │  │      MemberInfoDTO.java
+        │  │      MemberJoinDTO.java
+        │  │      MemberPointDTO.java
+        │  │      MemberProfileDTO.java
+        │  │      MemberRankDTO.java
+        │  │      MemberRankInfoDTO.java
+        │  │      NicknameUpdateDTO.java
+        │  │      
+        │  ├─repository
+        │  │      MemberRepository.java
+        │  │      MemberTokenRepository.java
+        │  │      
+        │  └─service
+        │          AdminMemberService.java
+        │          MemberService.java
+        │          
+        ├─notification
+        │  ├─controller
+        │  │      NotificationController.java
+        │  │      
+        │  ├─domain
+        │  │      Notification.java
+        │  │      
+        │  ├─dto
+        │  │      NotificationDTO.java
+        │  │      
+        │  ├─eventListener
+        │  │      NotificationEventListener.java
+        │  │      
+        │  ├─repository
+        │  │      NotificationRepository.java
+        │  │      
+        │  └─service
+        │          NotificationService.java
+        │          
+        └─review
+            ├─controller
+            │      ReviewController.java
+            │      
+            ├─domain
+            │      Heart.java
+            │      Review.java
+            │      
+            ├─dto
+            │      MyReviewDTO.java
+            │      ReviewCreationDTO.java
+            │      ReviewDetailDTO.java
+            │      ReviewListDTO.java
+            │      
+            ├─repository
+            │      HeartRepository.java
+            │      ReviewRepository.java
+            │      
+            └─service
+                    ReviewService.java
+                    
+
+```
+</details>
+
+<br />
+
 # 🎥시연 영상
 
 
@@ -151,6 +387,6 @@
 - 조희권(팀장 / BE) : 프로젝트 총괄, 지도, 맛집
 - 이재범(팀원 / BE) : 인프라 구축 및 CI/CD, 친구, 알림
 - 김준태(팀원 / BE) : 리뷰, 댓글, 포인트
-- 김시우(팀원 / BE) : 회원, S3 이미지 업로드, 뱃지
+- 김시우(팀원 / BE) : 회원, 관리자회원, S3 이미지 업로드, 뱃지
 - 김희연(팀원 / BE) : 지도
 
