@@ -13,6 +13,8 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
     Optional<Member> findByNickname(String nickname);
 
+    boolean existsByUsername(String username);
+
     @Query("SELECT m FROM Member m JOIN FETCH m.matzipMembers")
     List<Member> findAllWithMatzipMembers();
 
