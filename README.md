@@ -129,8 +129,9 @@
 
 <br />
 
+- **Project Tree**
 <details>
-    <summary>자세히</summary>
+    <summary>펼치기</summary>
 
 ```bash
 Mat-ZIP:.
@@ -358,8 +359,6 @@ Mat-ZIP:.
             │      
             └─service
                     ReviewService.java
-                    
-
 ```
 </details>
 
