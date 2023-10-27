@@ -1,14 +1,14 @@
 package site.matzip.badge.domain;
 
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 import site.matzip.base.domain.BaseEntity;
 import site.matzip.member.domain.Member;
 
 @Entity
 @Getter
 public class MemberBadge extends BaseEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

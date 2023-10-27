@@ -4,11 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import site.matzip.badge.domain.Badge;
-import site.matzip.badge.domain.BadgeType;
-import site.matzip.badge.domain.MemberBadge;
-import site.matzip.badge.repository.BadgeRepository;
-import site.matzip.badge.repository.MemberBadgeRepository;
+import site.matzip.badge.domain.*;
+import site.matzip.badge.repository.*;
 import site.matzip.comment.domain.Comment;
 import site.matzip.comment.repository.CommentRepository;
 import site.matzip.friend.repository.FriendRepository;
@@ -19,15 +16,19 @@ import site.matzip.member.repository.MemberRepository;
 import site.matzip.review.domain.Review;
 import site.matzip.review.repository.ReviewRepository;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Optional;
 
-// TODO count 쿼리로 변경 요소 있음
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class MemberBadgeService {
+
+    private static final int MATZIP_BADGE_COUNT = 10;
+    private static final int REVIEW_BADGE_COUNT = 10;
+    private static final int COMMENT_BADGE_COUNT = 10;
+    private static final int FRIEND_BADGE_COUNT = 1;
+
     private final BadgeRepository badgeRepository;
     private final MemberBadgeRepository memberBadgeRepository;
     private final MemberRepository memberRepository;
@@ -51,18 +52,16 @@ public class MemberBadgeService {
         return badgeMap;
     }
 
-    @Scheduled(cron = "0 0 * * * *")
+    @Scheduled(cron = "0 * * * * *")
     @Transactional
     public void calculateMatzipCountBadge() {
-        List<Member> members = memberRepository.findAllWithMatzipMembers();
+        List<Member> members = memberRepository.findMembersWithMatzipCountGreaterThan(MATZIP_BADGE_COUNT);
         Badge checkBadge = badgeRepository.findByBadgeType(BadgeType.MAP_MASTER);
 
-        for (Member member : members) {
-            checkMatzipCount(member, checkBadge);
-        }
+        members.forEach(member -> checkMatzipCountCondition(member, checkBadge));
     }
 
-    private void checkMatzipCount(Member member, Badge badge) {
+    private void checkMatzipCountCondition(Member member, Badge badge) {
         List<MatzipMember> matzipMembers = matzipMemberRepository.findByAuthor(member);
         Optional<MemberBadge> findMemberBadge =
                 memberBadgeRepository.findByMemberAndBadge(member, badge);
@@ -74,18 +73,16 @@ public class MemberBadgeService {
         }
     }
 
-    @Scheduled(cron = "0 0 * * * *")
+    @Scheduled(cron = "0 * * * * *")
     @Transactional
     public void calculateReviewBadge() {
-        List<Member> members = memberRepository.findAllWithReviews();
+        List<Member> members = memberRepository.findMembersWithReviewsAndCountGreaterThan(REVIEW_BADGE_COUNT);
         Badge checkBadge = badgeRepository.findByBadgeType(BadgeType.COMMENTER);
 
-        for (Member member : members) {
-            checkReviews(member, checkBadge);
-        }
+        members.forEach(member -> checkReviewsCondition(member, checkBadge));
     }
 
-    private void checkReviews(Member member, Badge badge) {
+    private void checkReviewsCondition(Member member, Badge badge) {
         List<Review> reviews = reviewRepository.findByAuthor(member);
         Optional<MemberBadge> findMemberBadge =
                 memberBadgeRepository.findByMemberAndBadge(member, badge);
@@ -97,18 +94,16 @@ public class MemberBadgeService {
         }
     }
 
-    @Scheduled(cron = "0 0 * * * *")
+    @Scheduled(cron = "0 * * * * *")
     @Transactional
     public void calculateCommentBadge() {
-        List<Member> members = memberRepository.findAllWithComments();
+        List<Member> members = memberRepository.findMembersWithCommentsAndCountGreaterThan(COMMENT_BADGE_COUNT);
         Badge checkBadge = badgeRepository.findByBadgeType(BadgeType.REVIEWER);
 
-        for (Member member : members) {
-            checkComments(member, checkBadge);
-        }
+        members.forEach(member -> checkCommentsCondition(member, checkBadge));
     }
 
-    private void checkComments(Member member, Badge badge) {
+    private void checkCommentsCondition(Member member, Badge badge) {
         List<Comment> comments = commentRepository.findByAuthor(member);
         Optional<MemberBadge> findMemberBadge =
                 memberBadgeRepository.findByMemberAndBadge(member, badge);
@@ -120,18 +115,16 @@ public class MemberBadgeService {
         }
     }
 
-    @Scheduled(cron = "0 0 * * * *")
+    @Scheduled(cron = "0 * * * * *")
     @Transactional
     public void calculateHeartBadge() {
         List<Member> members = memberRepository.findAllWithReviews();
         Badge checkBadge = badgeRepository.findByBadgeType(BadgeType.LOVED_ONE);
 
-        for (Member member : members) {
-            checkHearts(member, checkBadge);
-        }
+        members.forEach(member -> checkHeartsCondition(member, checkBadge));
     }
 
-    private void checkHearts(Member member, Badge badge) {
+    private void checkHeartsCondition(Member member, Badge badge) {
         List<Review> reviews = reviewRepository.findByAuthor(member);
         long totalHeartCount = reviews.stream()
                 .mapToLong(review -> review.getHearts().size())
@@ -146,18 +139,16 @@ public class MemberBadgeService {
         }
     }
 
-    @Scheduled(cron = "0 0 * * * *")
+    @Scheduled(cron = "0 * * * * *")
     @Transactional
     public void calculateFriendBadge() {
-        List<Member> members = memberRepository.findAllWithFriends2();
+        List<Member> members = memberRepository.findMembersWithFriends2AndCountGreaterThan(FRIEND_BADGE_COUNT);
         Badge checkBadge = badgeRepository.findByBadgeType(BadgeType.LOTS_FRIENDS);
 
-        for (Member member : members) {
-            checkFriends(member, checkBadge);
-        }
+        members.forEach(member -> checkFriendsCondition(member, checkBadge));
     }
 
-    private void checkFriends(Member member, Badge badge) {
+    private void checkFriendsCondition(Member member, Badge badge) {
         Long friendsCount = friendRepository.countByMember2(member);
         Optional<MemberBadge> findMemberBadge =
                 memberBadgeRepository.findByMemberAndBadge(member, badge);
