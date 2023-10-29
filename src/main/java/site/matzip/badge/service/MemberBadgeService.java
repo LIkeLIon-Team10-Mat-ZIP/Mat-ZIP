@@ -52,7 +52,7 @@ public class MemberBadgeService {
         return badgeMap;
     }
 
-    @Scheduled(cron = "*/10 * * * * *")
+    @Scheduled(cron = "0 * * * * *")
     @Transactional
     public void calculateMatzipCountBadge() {
         List<Member> members = memberRepository.findMembersWithMatzipCountGreaterThan(MATZIP_BADGE_COUNT);
@@ -73,7 +73,7 @@ public class MemberBadgeService {
         }
     }
 
-    @Scheduled(cron = "*/10 * * * * *")
+    @Scheduled(cron = "0 * * * * *")
     @Transactional
     public void calculateReviewBadge() {
         List<Member> members = memberRepository.findMembersWithReviewsAndCountGreaterThan(REVIEW_BADGE_COUNT);
@@ -94,7 +94,7 @@ public class MemberBadgeService {
         }
     }
 
-    @Scheduled(cron = "*/10 * * * * *")
+    @Scheduled(cron = "0 * * * * *")
     @Transactional
     public void calculateCommentBadge() {
         List<Member> members = memberRepository.findMembersWithCommentsAndCountGreaterThan(COMMENT_BADGE_COUNT);
@@ -115,7 +115,7 @@ public class MemberBadgeService {
         }
     }
 
-    @Scheduled(cron = "*/10 * * * * *")
+    @Scheduled(cron = "0 * * * * *")
     @Transactional
     public void calculateHeartBadge() {
         List<Member> members = memberRepository.findAllWithReviews();
@@ -139,7 +139,7 @@ public class MemberBadgeService {
         }
     }
 
-    @Scheduled(cron = "*/10 * * * * *")
+    @Scheduled(cron = "0 * * * * *")
     @Transactional
     public void calculateFriendBadge() {
         List<Member> members = memberRepository.findMembersWithFriends2AndCountGreaterThan(FRIEND_BADGE_COUNT);
