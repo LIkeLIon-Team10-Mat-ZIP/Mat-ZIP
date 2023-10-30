@@ -33,8 +33,6 @@ import static org.mockito.Mockito.*;
 
 @SpringBootTest
 @Transactional
-@ActiveProfiles("test")
-@ExtendWith(MockitoExtension.class)
 class ReviewServiceTest {
     private Member testUser;
     private Matzip matzip;
