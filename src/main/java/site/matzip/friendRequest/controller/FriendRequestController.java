@@ -32,7 +32,6 @@ public class FriendRequestController {
 
     @GetMapping("/list")
     @PreAuthorize("isAuthenticated()")
-    //TODO: 수정 필요 @AuthenticationPrincipal PrincipalDetails principalDetails
     public String showList(Model model, Authentication authentication) {
         Member member = rq.getMember(authentication);
         List<FriendRequestDTO> friendRequestDTOS = friendRequestService.convertToFriendRequestDTOS(member);
