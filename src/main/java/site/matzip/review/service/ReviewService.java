@@ -218,9 +218,9 @@ public class ReviewService {
     }
 
     @Transactional
-    @Scheduled(fixedRate = 10 * 60 * 1000) // 주기 10분
+    @Scheduled(fixedRate = 60 * 1000)
     public void rewardPointsForReviews() {
-        LocalDateTime referenceTime = LocalDateTime.now().minusHours(appConfig.getPointRewardReferenceTime());
+        LocalDateTime referenceTime = LocalDateTime.now().minusMinutes(appConfig.getPointRewardReferenceTime());
         List<Review> validReviews = reviewRepository.findReviewsOlderThan(referenceTime);
 
         for (Review review : validReviews) {

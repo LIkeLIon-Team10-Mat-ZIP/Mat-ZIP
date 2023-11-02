@@ -21,8 +21,10 @@ import java.util.List;
 import java.util.Objects;
 
 @Service
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class CommentService {
+
     private final CommentRepository commentRepository;
     private final ReviewRepository reviewRepository;
     private final MemberRepository memberRepository;
@@ -59,9 +61,9 @@ public class CommentService {
     }
 
     @Transactional
-    @Scheduled(fixedRate = 10 * 60 * 1000) // 주기 10분
+    @Scheduled(fixedRate = 60 * 1000)
     public void rewardPointsForComments() {
-        LocalDateTime referenceTime = LocalDateTime.now().minusHours(appConfig.getPointRewardReferenceTime());
+        LocalDateTime referenceTime = LocalDateTime.now().minusMinutes(appConfig.getPointRewardReferenceTime());
         List<Comment> validComments = commentRepository.findCommentsOlderThan(referenceTime);
 
         for (Comment comment : validComments) {
