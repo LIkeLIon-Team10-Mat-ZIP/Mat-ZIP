@@ -11,7 +11,7 @@ COPY . /app
 RUN chmod +x ./gradlew && gradle --no-daemon clean build
 
 # 런타임 스테이지
-FROM openjdk:jre-alpine
+FROM openjdk:17-jdk-alpine
 COPY --from=build /app/build/libs/*.jar /app.jar
 EXPOSE 8080
 ENTRYPOINT ["java","-jar","-Dspring.profiles.active=prod","/app.jar"]
